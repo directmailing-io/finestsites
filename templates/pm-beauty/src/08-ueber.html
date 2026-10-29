@@ -3,15 +3,17 @@
   <div class="about-grid">
     <div class="about-photo reveal">
       <img loading="lazy" decoding="async" width="600" height="750" src="{{about_bild}}" alt="{{vorname}} {{nachname}}">
+      <div class="cap"><b>{{vorname}} {{nachname}}</b><span>{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}</span></div>
     </div>
     <div class="about-copy">
-      <h2><span class="l-de">{{{about_intro_de_html}}}</span><span class="l-en">{{{about_intro_en_html}}}</span></h2>
-      <div class="about-text">
-        <span class="l-de">{{about_me_html}}</span>
-        <span class="l-en">{{about_me_html_en}}</span>
+      <span class="eye">Über mich</span>
+      <h2>{{{about_intro_de_html}}}</h2>
+      <div class="about-text">{{about_me_html}}</div>
+      <div class="about-pills">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Beauty-Check kostenlos</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>Per Video, Telefon oder WhatsApp</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/></svg>Ehrliche Empfehlung, keine Kaufpflicht</span>
       </div>
-      <div class="about-sig">{{vorname}} {{nachname}}</div>
     </div>
   </div>
 </section>
-

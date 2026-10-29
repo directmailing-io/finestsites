@@ -2,10 +2,11 @@
 <section class="check" id="check">
   <div class="check-grid">
     <div class="check-phone reveal">
-      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536"><svg class="scan-ring" id="scanRing" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"></svg>{{/if}}
-      {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
+      {{#if scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-face.webp" alt="" width="1024" height="1536"><svg class="scan-ring" id="scanRing" viewBox="0 0 100 150" preserveAspectRatio="none" aria-hidden="true"></svg><span class="eye light tag">Hautanalyse per App</span>{{/if}}
+      {{#unless scanner_anzeigen=an}}<img loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
     </div>
     <div class="check-copy">
+      <span class="eye">So läuft es ab</span>
       <h2>Dein Beauty-Check</h2>
       <p class="lead">{{#if scanner_anzeigen=an}}Ein Selfie, und du siehst, wie es deiner Haut geht. Ich sage dir, was sie braucht. Fertig.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir von deiner Haut. Ich sage dir, was sie braucht. Fertig.{{/unless}}</p>
       <ol class="ck-steps">

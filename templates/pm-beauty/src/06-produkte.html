@@ -1,76 +1,66 @@
 <!-- PRODUKTE -->
 <section class="products" id="produkte">
-  <div class="pr-head">
+  <div class="s-head">
+    <span class="eye">Die Produkte</span>
     <h2>Was dir zur Auswahl steht</h2>
-    <p>Vier Schritte für jede Haut. Dazu ein paar Extras, falls du sie willst.</p>
-  </div>
-  <div class="pr-stage">
-    <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
+    <p>Vier Schritte für jede Haut. Dazu ein paar Extras, falls du sie willst. Tipp auf ein Produkt für Details.</p>
   </div>
 
-  <div class="pr-wrap">
-    <div class="pr-block">
-      <div class="pr-block-head"><h3>Die Basis</h3><span>für jede Haut, morgens und abends</span></div>
-      <div class="pr-tiles five">
-        <button type="button" class="pr-tile" data-open="cleansing"><span class="pr-step">1</span><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt=""><b>Reinigen</b><span>Cleansing Lotion</span><em>morgens &amp; abends</em></button>
-        <button type="button" class="pr-tile" data-open="tonic"><span class="pr-step">2</span><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt=""><b>Klären</b><span>Tonic</span><em>morgens &amp; abends</em></button>
-        <button type="button" class="pr-tile" data-open="4ever"><span class="pr-step">3</span><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><b>Tagescreme</b><span>4ever · normale Haut<br>4ever enriched · trockene Haut</span><em>morgens</em></button>
-        <button type="button" class="pr-tile" data-open="overnight"><span class="pr-step">4</span><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><b>Nachtcreme</b><span>4ever overnight enriched</span><em>abends</em></button>
-        <button type="button" class="pr-tile innen" data-open="beauty"><span class="pr-step">+</span><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><b>Von innen</b><span>Beauty-Drink</span><em>1 Glas am Tag</em></button>
-      </div>
-    </div>
+  <div class="pr-rows">
+    <button type="button" class="pr-row" data-open="cleansing"><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt=""><span class="t"><b>Reinigen</b><span>Cleansing Lotion · entfernt Make-up und Schmutz, ohne auszutrocknen</span><em>Morgens &amp; abends · alle Hauttypen</em></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="tonic"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt=""><span class="t"><b>Klären</b><span>Tonic · erfrischt und bereitet die Haut auf die Creme vor</span><em>Morgens &amp; abends · alle Hauttypen</em></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="4ever"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><span class="t"><b>Tagescreme</b><span>4ever für normale bis Mischhaut · 4ever enriched für trockene, reifere Haut</span><em>Morgens · je nach Hauttyp</em></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="overnight"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><span class="t"><b>Nachtcreme</b><span>4ever overnight enriched · unterstützt die Haut, während du schläfst</span><em>Abends · alle Hauttypen</em></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="beauty"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><span class="t"><b>Von innen</b><span>Beauty-Drink · Beerengeschmack mit Biotin, Zink und Vitamin C¹</span><em>1 Glas am Tag</em></span><span class="more">+</span></button>
+  </div>
 
-    <div class="pr-block">
-      <div class="pr-block-head"><h3>Extras</h3><span>nur, wenn du einen konkreten Wunsch hast</span></div>
-      <div class="pr-tiles small">
-        <button type="button" class="pr-tile" data-open="serum"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt=""><b>Für mehr Glow</b><span>Activize Serum</span><em>vor der Creme</em></button>
-        <button type="button" class="pr-tile" data-open="augen"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""><b>Für die Augenpartie</b><span>Augencreme</span><em>morgens &amp; abends</em></button>
-        <button type="button" class="pr-tile" data-open="darkspot"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""><b>Für einen ebenmäßigen Teint</b><span>Dark Spot Corrector</span><em>vor dem Serum</em></button>
-        <button type="button" class="pr-tile" data-open="ultimate"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""><b>Für besondere Anlässe</b><span>Ultimate Young</span><em>bei Bedarf</em></button>
-        {{#if maenner_anzeigen=an}}<button type="button" class="pr-tile" data-open="men"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt=""><b>Für Männer</b><span>Men Face, alles in einem</span><em>morgens &amp; abends</em></button>{{/if}}
-      </div>
-    </div>
+  <div class="pr-sub"><h3>Extras</h3><span>nur, wenn du einen konkreten Wunsch hast</span></div>
+  <div class="pr-cards">
+    <button type="button" class="pr-card" data-open="serum"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt=""></span><span class="chip">vor der Creme</span><span class="cap"><b>Für mehr Glow</b><span>Activize Serum</span></span></button>
+    <button type="button" class="pr-card" data-open="augen"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""></span><span class="chip">morgens &amp; abends</span><span class="cap"><b>Für die Augenpartie</b><span>Augencreme</span></span></button>
+    <button type="button" class="pr-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="chip">vor dem Serum</span><span class="cap"><b>Für einen ebenmäßigen Teint</b><span>Dark Spot Corrector</span></span></button>
+    <button type="button" class="pr-card" data-open="ultimate"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""></span><span class="chip">bei Bedarf</span><span class="cap"><b>Für besondere Anlässe</b><span>Ultimate Young</span></span></button>
+    {{#if maenner_anzeigen=an}}<button type="button" class="pr-card" data-open="men"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt=""></span><span class="chip">alles in einem</span><span class="cap"><b>Für Männer</b><span>Men Face</span></span></button>{{/if}}
+  </div>
 
-    <div class="pr-block">
-      <div class="pr-block-head"><h3>Sets zum Starten</h3><span>günstiger als einzeln</span></div>
-      <div class="pr-tiles small three">
-        <button type="button" class="pr-tile" data-open="set-young"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt=""><b>Für den Einstieg</b><span>Young Care Set</span><em>Reinigung, Tonic, Creme</em></button>
-        <button type="button" class="pr-tile" data-open="set-4ever"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""><b>Für normale Haut</b><span>Starter Set 4ever</span><em>Tag &amp; Nacht</em></button>
-        <button type="button" class="pr-tile" data-open="set-enriched"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt=""><b>Für trockene Haut</b><span>Starter Set enriched</span><em>Tag &amp; Nacht</em></button>
-      </div>
-    </div>
+  <div class="pr-sub"><h3>Sets zum Starten</h3><span>günstiger als einzeln</span></div>
+  <div class="pr-cards three">
+    <button type="button" class="pr-card" data-open="set-young"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt=""></span><span class="chip">3 Produkte</span><span class="cap"><b>Für den Einstieg</b><span>Young Care Set · Reinigung, Tonic, Creme</span></span></button>
+    <button type="button" class="pr-card" data-open="set-4ever"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für normale Haut</b><span>Starter Set 4ever</span></span></button>
+    <button type="button" class="pr-card" data-open="set-enriched"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für trockene Haut</b><span>Starter Set 4ever enriched</span></span></button>
+  </div>
 
-    <div class="pr-cta reveal">
-      <div class="pr-cta-copy">
-        <h3>Du brauchst nicht alles. <strong>Ich berate dich.</strong></h3>
-        <p>{{#if scanner_anzeigen=an}}Im Beauty-Check siehst du deine Werte und bekommst nur das, was zu deiner Haut passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was zu dir passt.{{/unless}}</p>
-        <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
-      </div>
-      <!-- Ergebnis-Ansicht, nachgebaut wie in der App (neutral, ohne Marken) -->
-      <div class="phone" aria-hidden="true">
-        <div class="phone-screen">
-          <div class="ph-tabs"><span class="on">Analyse</span><span>Produkte</span></div>
-          <div class="ph-gauge">
-            <svg viewBox="0 0 120 68"><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#E9EDEA" stroke-width="11" stroke-linecap="round"/><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#2DBE6C" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="84 100"/></svg>
-            <b>84 %</b>
-            <small>Geschätztes Hautalter: 31</small>
-          </div>
-          <p class="ph-text">Sieht gut aus! Deine Haut ist gut versorgt, ein paar Kleinigkeiten lohnen einen Blick.</p>
-          <div class="ph-sub">Hautdetails</div>
-          <div class="ph-tiles">
-            <div><i class="d"></i><span>Feuchtigkeit</span><u style="--v:78%"></u><em class="g">Gut</em></div>
-            <div><i class="w"></i><span>Fältchen</span><u style="--v:70%"></u><em class="g">Gut</em></div>
-            <div><i class="r"></i><span>Rötungen</span><u style="--v:82%"></u><em class="g">Gut</em></div>
-            <div><i class="s"></i><span>Pigmentflecken</span><u style="--v:48%;--c:#E4B23A"></u><em class="o">Okay</em></div>
-            <div><i class="p"></i><span>Poren</span><u style="--v:36%;--c:#E35D5D"></u><em class="l">Niedrig</em></div>
-            <div><i class="t"></i><span>Textur</span><u style="--v:66%"></u><em class="g">Gut</em></div>
-          </div>
+  <div class="pr-cta reveal">
+    <div class="pr-cta-copy">
+      <span class="eye light">Beauty-Check</span>
+      <h3>Du brauchst nicht alles. <em>Ich berate dich.</em></h3>
+      <p>{{#if scanner_anzeigen=an}}Im Beauty-Check siehst du deine Werte und bekommst nur das, was zu deiner Haut passt.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check schauen wir gemeinsam auf deine Haut und du bekommst nur das, was zu dir passt.{{/unless}}</p>
+      <a href="#kontakt" class="btn btn-light">Beauty-Check sichern <span class="arr">→</span></a>
+    </div>
+    <!-- Ergebnis-Ansicht, nachgebaut wie in der App (neutral, ohne Marken) -->
+    <div class="phone" aria-hidden="true">
+      <div class="phone-screen">
+        <div class="ph-tabs"><span class="on">Analyse</span><span>Produkte</span></div>
+        <div class="ph-gauge">
+          <svg viewBox="0 0 120 68"><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#E9EDEA" stroke-width="11" stroke-linecap="round"/><path d="M12 62 A48 48 0 0 1 108 62" fill="none" stroke="#2DBE6C" stroke-width="11" stroke-linecap="round" pathLength="100" stroke-dasharray="84 100"/></svg>
+          <b>84 %</b>
+          <small>Geschätztes Hautalter: 31</small>
+        </div>
+        <p class="ph-text">Sieht gut aus! Deine Haut ist gut versorgt, ein paar Kleinigkeiten lohnen einen Blick.</p>
+        <div class="ph-sub">Hautdetails</div>
+        <div class="ph-tiles">
+          <div><i class="d"></i><span>Feuchtigkeit</span><u style="--v:78%"></u><em class="g">Gut</em></div>
+          <div><i class="w"></i><span>Fältchen</span><u style="--v:70%"></u><em class="g">Gut</em></div>
+          <div><i class="r"></i><span>Rötungen</span><u style="--v:82%"></u><em class="g">Gut</em></div>
+          <div><i class="s"></i><span>Pigmentflecken</span><u style="--v:48%;--c:#E4B23A"></u><em class="o">Okay</em></div>
+          <div><i class="p"></i><span>Poren</span><u style="--v:36%;--c:#E35D5D"></u><em class="l">Niedrig</em></div>
+          <div><i class="t"></i><span>Textur</span><u style="--v:66%"></u><em class="g">Gut</em></div>
         </div>
       </div>
     </div>
-
-    <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. Die Ergebnis-Ansicht ist ein Beispiel mit Beispielwerten. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
   </div>
+
+  <p class="foot-note pr-note">Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. Die Ergebnis-Ansicht ist ein Beispiel mit Beispielwerten. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
 </section>
 
 <!-- Produkt-Fenster -->
