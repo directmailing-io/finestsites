@@ -181,15 +181,76 @@ const PRODUCTS = {
     skin: { de: 'Für trockene und reife Haut.', en: 'Dry and mature skin.' },
     pros: { de: ['4ever enriched (Tag)', '4ever overnight enriched (Nacht)'], en: ['4ever enriched (day)', '4ever overnight enriched (night)'] } }
 };
+// ============ Inhaltsstoffe: wofür? (kosmetische Funktion bzw. zugelassene Angabe, keine Wirkversprechen) ============
+const ING = {
+  'Sonnenblumenöl': 'Pflegendes Öl. Löst Make-up und hinterlässt ein weiches Hautgefühl.',
+  'Milde Zucker-Tenside': 'Sanfte Reinigungsstoffe aus Zucker. Reinigen gründlich, ohne die Haut auszutrocknen.',
+  'Kamillenextrakt': 'Pflanzenextrakt, der die Haut pflegt und ein angenehmes Hautgefühl gibt.',
+  'Glycerin': 'Bindet Feuchtigkeit in der Haut. Ein Klassiker in der Hautpflege.',
+  'Ergothionein': 'Antioxidativer Pflegestoff, ursprünglich aus Pilzen.',
+  'Squalan': 'Leichtes Pflegeöl, ähnlich dem hauteigenen Fett. Macht die Haut geschmeidig.',
+  'Vitamin E': 'Antioxidativer Pflegestoff für ein gepflegtes Hautgefühl.',
+  'Hyaluron': 'Kann ein Vielfaches seines Gewichts an Wasser binden. Spendet Feuchtigkeit.',
+  'Ceramid NP': 'Hautähnlicher Baustein. Pflegt die Hautbarriere.',
+  'Peptid': 'Kleine Eiweißbausteine, die in der Pflege für ein glatteres Hautgefühl eingesetzt werden.',
+  'Peptide': 'Kleine Eiweißbausteine, die in der Pflege für ein glatteres Hautgefühl eingesetzt werden.',
+  'Oligopeptid': 'Kurzer Eiweißbaustein für ein gepflegtes, glattes Hautgefühl.',
+  'Bakuchiol': 'Pflanzlicher Pflegestoff aus der Babchi-Pflanze. Für ein glattes, ebenmäßiges Hautbild.',
+  'Goji-Extrakt': 'Pflanzenextrakt aus der Gojibeere, reich an Antioxidantien.',
+  'UV-Filter (Anti-Pollution)': 'Filter in der Tagespflege, der die Haut vor Umwelteinflüssen schützt.',
+  'Sheabutter': 'Reichhaltiges Pflanzenfett. Pflegt trockene Haut und macht sie geschmeidig.',
+  'Ectoin': 'Natürlicher Schutzstoff. Spendet Feuchtigkeit und pflegt beanspruchte Haut.',
+  'Hafer': 'Pflegender Extrakt für ein beruhigtes, angenehmes Hautgefühl.',
+  'Avocadoöl': 'Reichhaltiges Pflanzenöl. Pflegt und macht die Haut geschmeidig.',
+  'Q10': 'Antioxidativer Pflegestoff, der auch in der Haut vorkommt.',
+  'Lactobacillus-Ferment': 'Pflegestoff aus Fermentation. Pflegt das Gleichgewicht der Haut.',
+  'Betain': 'Feuchtigkeitsspender aus der Zuckerrübe.',
+  'Spilanthes-Extrakt': 'Pflanzenextrakt für ein glatteres Hautgefühl.',
+  'Jojobaöl': 'Leichtes Pflegeöl, zieht gut ein und macht die Haut geschmeidig.',
+  'Kollagenpeptide (Rind)': 'Eiweißbausteine aus Kollagen vom Rind. Fester Bestandteil des Beauty-Drinks.',
+  'Vitamin C': 'Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.¹',
+  'Biotin': 'Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei.¹',
+  'Zink': 'Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.¹',
+  'Niacin': 'Niacin trägt zur Erhaltung normaler Haut bei.¹',
+  'Vitamin B2': 'Riboflavin (Vitamin B2) trägt zur Erhaltung normaler Haut bei.¹',
+  'Guarana': 'Pflanzenextrakt mit natürlichem Koffein. Für ein frisches, wach wirkendes Hautbild.',
+  'Vitamin C (Ascorbyl Glucoside)': 'Stabile Form von Vitamin C für die Hautpflege. Für einen strahlenden Teint.',
+  'Niacinamid (B3)': 'Vitamin B3 für die Haut. Für ein ebenmäßigeres, verfeinertes Hautbild.',
+  'Niacinamid': 'Vitamin B3 für die Haut. Für ein ebenmäßigeres, verfeinertes Hautbild.',
+  'Panthenol (B5)': 'Provitamin B5. Spendet Feuchtigkeit und pflegt.',
+  'Panthenol': 'Provitamin B5. Spendet Feuchtigkeit und pflegt.',
+  'Koffein': 'Für ein frisches, wach wirkendes Erscheinungsbild.',
+  'Kojisäure': 'Pflegestoff für einen ebenmäßiger wirkenden Teint.',
+  'Gluconolacton (PHA)': 'Sanfte Fruchtsäure. Für ein glatteres, verfeinertes Hautbild.',
+  'Allantoin': 'Pflegestoff für ein angenehmes, geschmeidiges Hautgefühl.',
+  'Gerstenextrakt': 'Pflanzenextrakt für ein ebenmäßiger wirkendes Hautbild.',
+  'Rosskastanie': 'Pflanzenextrakt, der in der Augenpflege für ein frisches Erscheinungsbild eingesetzt wird.',
+  'Süßholzwurzel': 'Pflanzenextrakt für ein ebenmäßiger wirkendes Hautbild.',
+  'Grüntee': 'Pflanzenextrakt mit Antioxidantien.',
+  'Silikate (Soforteffekt)': 'Mineralische Partikel, die die Haut sofort glatter und ebenmäßiger aussehen lassen.',
+  'Mineralpigmente (Skin Tone Matcher)': 'Passen sich dem Hautton an und sorgen optisch für einen ebenmäßigen Teint.',
+  'Rooibos': 'Pflanzenextrakt mit Antioxidantien.',
+  'Granatapfel': 'Fruchtextrakt mit Antioxidantien.'
+};
 const LBL = {
-  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So nutzt du es', en: 'How to use' }, skin: { de: 'Für wen · Hinweise', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Inhaltsstoffe im Überblick', en: 'What\'s inside (selection)' },
-  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Direkt bestellen', en: 'Order now' }, price: { de: 'Offizieller Kundenpreis', en: 'Customer price' },
-  note: { de: 'Regulärer Kundenpreis des Herstellers. Es gelten die Angaben im offiziellen Shop. Im Beauty-Check besprechen wir auch, ob ein Kundenprogramm des Herstellers für dich infrage kommt.', en: 'This is the regular customer price in the manufacturer\'s shop. In the beauty check we look at whether one of the manufacturer\'s customer programmes suits you.' },
+  desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So nutzt du es', en: 'How to use' }, skin: { de: 'Für wen · Hinweise', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Was drin ist – tipp für Wofür?', en: 'What\'s inside (selection)' },
+  pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Lieber direkt bestellen', en: 'Order directly' }, price: { de: 'Offizieller Kundenpreis', en: 'Customer price' },
+  note: { de: 'Bevor du bestellst: Im Beauty-Check schaue ich mit dir, wie du am günstigsten an deine Produkte kommst – über die Kundenvorteile des Herstellers.', en: 'Before you order: in the beauty check I show you how to get your products at the best price through the manufacturer\'s customer benefits.' },
+  saveT: { de: 'Spar-Tipp', en: 'Saving tip' }, check: { de: 'Beauty-Check sichern', en: 'Book a beauty check' },
   src: { de: 'Ausgewählte Inhaltsstoffe laut Hersteller. Die vollständige Liste findest du im offiziellen Shop.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
 };
 function fsLang() { return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
 function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 const pmModal = document.getElementById('pmModal');
+document.addEventListener('click', function (e) {
+  if (e.target.closest('.pm-save a')) { closeModal(); return; }
+  const b = e.target.closest('.pm-ing'); if (!b || !pmCurrent) return;
+  const name = PRODUCTS[pmCurrent].actives[+b.dataset.i]; const box = document.getElementById('pmIngInfo');
+  const same = b.classList.contains('on');
+  document.querySelectorAll('.pm-ing.on').forEach(x => x.classList.remove('on'));
+  if (same) { box.hidden = true; return; }
+  b.classList.add('on'); box.innerHTML = '<b>' + esc(name) + '</b><p>' + esc(ING[name]) + '</p>' + (/¹/.test(ING[name]) ? '<small>¹ Zugelassene Angabe nach VO (EU) 432/2012.</small>' : ''); box.hidden = false;
+});
 let pmCurrent = null;
 function renderModal() {
   const p = PRODUCTS[pmCurrent]; if (!p) return;
@@ -198,12 +259,14 @@ function renderModal() {
   document.getElementById('pmBody').innerHTML =
     '<div class="pm-head"><img src="assets/produkte/' + (IMG[pmCurrent] || pmCurrent) + '.webp" alt="" onerror="this.style.display=\'none\'"><div><span class="pm-tag">' + esc(p.tag[L]) + '</span>' +
     '<h3 id="pmTitle">' + esc(p.name) + '</h3>' +
-    '<div class="pm-price"><strong>' + esc(p.price) + '</strong> · ' + esc(p.size) + ' <span>· ' + LBL.price[L] + '</span></div></div></div>' +
+    '<div class="pm-price">' + esc(p.size) + '</div></div></div>' +
     '<div class="pm-facts"><div class="pm-fact"><small>' + LBL.when[L] + '</small><span>' + esc(p.when[L]) + '</span></div><div class="pm-fact"><small>' + LBL.skin[L] + '</small><span>' + esc(p.skin[L]) + '</span></div></div>' +
     '<div class="pm-block"><p class="pm-desc">' + esc(p.desc[L]) + '</p></div>' +
     '<div class="pm-block"><h4>' + LBL.pros[L] + '</h4><ul class="pm-pros">' + p.pros[L].map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>' +
-    '<div class="pm-block pm-two"><div><h4>' + LBL.use[L] + '</h4><p>' + esc(p.use[L]) + '</p></div><div><h4>' + LBL.actives[L] + '</h4><div class="pm-actives">' + p.actives.map(x => '<span>' + esc(x) + '</span>').join('') + '</div></div></div>' +
-    '<div class="pm-actions"><a class="btn btn-primary" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' <span class="arr">→</span></a><p class="pm-note">' + LBL.note[L] + '</p></div>' +
+    '<div class="pm-block"><h4>' + LBL.actives[L] + '</h4><div class="pm-actives">' + p.actives.map((x, i) => ING[x] ? '<button type="button" class="pm-ing" data-i="' + i + '">' + esc(x) + '<i>?</i></button>' : '<span>' + esc(x) + '</span>').join('') + '</div><div class="pm-ing-info" id="pmIngInfo" hidden></div></div>' +
+    '<div class="pm-block"><h4>' + LBL.use[L] + '</h4><p>' + esc(p.use[L]) + '</p></div>' +
+    '<div class="pm-save"><b>' + LBL.saveT[L] + '</b><p>' + LBL.note[L] + '</p><a class="btn btn-primary" href="#kontakt" data-close>' + LBL.check[L] + ' <span class="arr">→</span></a></div>' +
+    '<div class="pm-actions"><a class="pm-direct" href="' + fsShopUrl(p.id) + '" target="_blank" rel="noopener">' + LBL.shop[L] + ' →</a></div>' +
     '<p class="pm-src foot-note">' + LBL.src[L] + '</p>';
 }
 function openModal(key) { pmCurrent = key; renderModal(); pmModal.classList.add('open'); pmModal.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
