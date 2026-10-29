@@ -1,0 +1,1560 @@
+{
+  "_hinweise": {
+    "seite": "Beauty-Template „Schönheit von innen & außen“ (FinestSites, Vorlage pm-beauty) für selbstständige Vertriebspartner/innen der PM-International (FitLine). Beispielperson in der Vorschau: Anna.",
+    "zielgruppe": "Menschen, die weder die Produkte noch das Konzept kennen, über eine Story/persönliche Ansprache kommen und bessere Haut möchten. Ziel: kostenlosen Beauty-Check (Beratungstermin) buchen; Alternative: selbst im Hersteller-Shop bestellen.",
+    "ton": "Du-Form, aus Sicht der Beraterin/des Beraters, kurz, klar, umgangssprachlich, ruhig. Keine Ausrufezeichen-Werbesprache. Taglines/Headlines ohne Schlusspunkt.",
+    "platzhalter": "{{vorname}}, {{nachname}}, {{profilbild}} usw. sind Platzhalter und müssen unverändert bleiben. {{#if x=y}}…{{/if}} und {{#unless …}}…{{/unless}} sind Bedingungen (Varianten), ebenfalls unverändert lassen; nur den Text dazwischen bearbeiten.",
+    "html": "Werte enthalten teils Inline-HTML (<em> = kursiv/Serif-Akzent in Überschriften, <b>, <sup>, <br>). Tags bitte erhalten bzw. sinnvoll setzen, keine neuen Block-Tags.",
+    "regeln": "Alle Texte müssen den Regeln in „beauty-richtlinien-und-regeln.txt“ entsprechen (PM-Richtlinien, HCVO, HWG, Kosmetik-VO, UWG). Produktfakten nur aus „beauty-wissen-produkte-und-recherche.txt“.",
+    "laenge": "Texte möglichst kurz halten (Daniel: „zu viel Text“), ungefähr gleiche Länge wie das Original oder kürzer.",
+    "rueckgabe": "Bitte exakt dieselbe JSON-Struktur mit denselben Schlüsseln zurückgeben, nur die Werte von „text“ bzw. die Produkttexte ändern."
+  },
+  "abschnitte": [
+    {
+      "id": "00-meta",
+      "name": "Seitentitel & Beschreibung (Google)",
+      "texte": [
+        {
+          "key": "00-meta.title",
+          "text": "Schönheit von innen & außen · {{vorname}}"
+        },
+        {
+          "key": "00-meta.description",
+          "text": "Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, der dir zeigt, was deine Haut braucht."
+        }
+      ]
+    },
+    {
+      "id": "02-nav",
+      "name": "Navigation (Kopfleiste + Kontakt-Menü + Handy-Menü)",
+      "texte": [
+        {
+          "key": "02-nav.01",
+          "element": "a.brand",
+          "text": "<span class=\"brand-text\">{{vorname}} {{nachname}}</span>"
+        },
+        {
+          "key": "02-nav.02",
+          "element": "a",
+          "text": "Beauty-Check"
+        },
+        {
+          "key": "02-nav.03",
+          "element": "a",
+          "text": "Produkte"
+        },
+        {
+          "key": "02-nav.04",
+          "element": "a",
+          "text": "Über mich"
+        },
+        {
+          "key": "02-nav.05",
+          "element": "button.kc-btn",
+          "text": "Kontakt"
+        },
+        {
+          "key": "02-nav.06",
+          "element": "a.kc-item.kc-ch",
+          "text": "<span><b>Schreib mir auf WhatsApp</b><small>Kurze Frage? Gern direkt.</small></span>"
+        },
+        {
+          "key": "02-nav.07",
+          "element": "a.kc-item",
+          "text": "<span><b>Beauty-Check sichern</b><small>Kostenlos, unverbindlich, persönlich.</small></span>"
+        },
+        {
+          "key": "02-nav.08",
+          "element": "span.l-de",
+          "text": "Folge mir auf"
+        },
+        {
+          "key": "02-nav.09",
+          "element": "a.kc-pill.kc-ch",
+          "text": "Instagram"
+        },
+        {
+          "key": "02-nav.10",
+          "element": "a.kc-pill.kc-ch",
+          "text": "Facebook"
+        },
+        {
+          "key": "02-nav.11",
+          "element": "a.nav-cta",
+          "text": "Beauty-Check sichern"
+        },
+        {
+          "key": "02-nav.13",
+          "element": "a",
+          "text": "Innen & außen"
+        },
+        {
+          "key": "02-nav.14",
+          "element": "a",
+          "text": "Beauty-Check"
+        },
+        {
+          "key": "02-nav.15",
+          "element": "a",
+          "text": "Produkte"
+        },
+        {
+          "key": "02-nav.16",
+          "element": "a",
+          "text": "Über mich"
+        },
+        {
+          "key": "02-nav.17",
+          "element": "a",
+          "text": "Fragen"
+        },
+        {
+          "key": "02-nav.18",
+          "element": "p.mc-title",
+          "text": "Schreib mir direkt"
+        },
+        {
+          "key": "02-nav.19",
+          "element": "a.mc-wa.kc-ch",
+          "text": "Schreib mir auf WhatsApp"
+        },
+        {
+          "key": "02-nav.20",
+          "element": "a.mc-pill.kc-ch",
+          "text": "<span class=\"mc-lbl\">Instagram</span>"
+        },
+        {
+          "key": "02-nav.21",
+          "element": "a.mc-pill.kc-ch",
+          "text": "<span class=\"mc-lbl\">Facebook</span>"
+        },
+        {
+          "key": "02-nav.22",
+          "element": "a.btn.btn-primary.nav-mobile-cta",
+          "text": "Beauty-Check sichern <span class=\"arr\">→</span>"
+        }
+      ]
+    },
+    {
+      "id": "03-hero",
+      "name": "Hero + Pflichthinweis + Intro-Satz",
+      "texte": [
+        {
+          "key": "03-hero.01",
+          "element": "span.hero-who",
+          "text": "Die Beauty-Empfehlung von {{vorname}}"
+        },
+        {
+          "key": "03-hero.02",
+          "element": "h1.reveal",
+          "text": "Schönheit von <em>innen</em> & <em>außen</em>"
+        },
+        {
+          "key": "03-hero.03",
+          "element": "p.sub.reveal",
+          "text": "Mein Konzept für gute Haut: eine Pflege von außen, ein Drink von innen und ein kostenloser Beauty-Check, in dem ich dir zeige, was deine Haut wirklich braucht"
+        },
+        {
+          "key": "03-hero.04",
+          "element": "a.btn.btn-primary",
+          "text": "Beauty-Check sichern <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "03-hero.05",
+          "element": "a.btn.btn-light",
+          "text": "Meine Empfehlung ansehen"
+        },
+        {
+          "key": "03-hero.06",
+          "element": "span",
+          "text": "Patentierte Technologie"
+        },
+        {
+          "key": "03-hero.07",
+          "element": "span",
+          "text": "Hersteller seit 1993"
+        },
+        {
+          "key": "03-hero.08",
+          "element": "span",
+          "text": "30 Tage Geld-zurück"
+        },
+        {
+          "key": "03-hero.09",
+          "element": "div",
+          "text": "Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Webseite der PM-International AG."
+        },
+        {
+          "key": "03-hero.10",
+          "element": "span.eye",
+          "text": "Mein Konzept"
+        },
+        {
+          "key": "03-hero.11",
+          "element": "p.big.reveal",
+          "text": "Gute Haut braucht beides: eine Pflege, die <em>von außen</em> versorgt, und Nährstoffe, die <em>von innen</em> dazukommen. Genau das benutze ich selbst, jeden Tag."
+        }
+      ]
+    },
+    {
+      "id": "04-konzept",
+      "name": "Innen & außen",
+      "texte": [
+        {
+          "key": "04-konzept.01",
+          "element": "small",
+          "text": "Pflege für die Haut"
+        },
+        {
+          "key": "04-konzept.02",
+          "element": "b",
+          "text": "Außen"
+        },
+        {
+          "key": "04-konzept.03",
+          "element": "span.pt",
+          "text": "Reinigen, Tagescreme, Nachtcreme. Morgens und abends, ein paar Minuten."
+        },
+        {
+          "key": "04-konzept.04",
+          "element": "small",
+          "text": "Ein Drink am Tag"
+        },
+        {
+          "key": "04-konzept.05",
+          "element": "b",
+          "text": "Innen"
+        },
+        {
+          "key": "04-konzept.06",
+          "element": "span.pt",
+          "text": "Ein Glas mit Biotin, Zink und Vitamin C. Beerengeschmack, in Wasser angerührt."
+        },
+        {
+          "key": "04-konzept.07",
+          "element": "span.eye",
+          "text": "Außen"
+        },
+        {
+          "key": "04-konzept.08",
+          "element": "h3",
+          "text": "Drei Schritte, die deine Haut jeden Tag bekommt"
+        },
+        {
+          "key": "04-konzept.09",
+          "element": "li",
+          "text": "<b>01</b>Reinigen – Make-up und Schmutz weg, ohne auszutrocknen"
+        },
+        {
+          "key": "04-konzept.10",
+          "element": "li",
+          "text": "<b>02</b>Klären – das Tonic bereitet die Haut auf die Creme vor"
+        },
+        {
+          "key": "04-konzept.11",
+          "element": "li",
+          "text": "<b>03</b>Pflegen – tagsüber die passende Tagescreme, nachts die Nachtcreme"
+        },
+        {
+          "key": "04-konzept.12",
+          "element": "p",
+          "text": "Welche Tagescreme zu dir passt, hängt von deiner Haut ab. Das klären wir im Beauty-Check."
+        },
+        {
+          "key": "04-konzept.13",
+          "element": "span.eye.light",
+          "text": "Innen"
+        },
+        {
+          "key": "04-konzept.14",
+          "element": "h3",
+          "text": "Ein Glas am Tag, das von innen dazukommt"
+        },
+        {
+          "key": "04-konzept.15",
+          "element": "li",
+          "text": "<b>C</b>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹"
+        },
+        {
+          "key": "04-konzept.16",
+          "element": "li",
+          "text": "<b>B</b>Biotin trägt zur Erhaltung normaler Haut und Haare bei¹"
+        },
+        {
+          "key": "04-konzept.17",
+          "element": "li",
+          "text": "<b>Zn</b>Zink trägt zur Erhaltung normaler Haut, Haare und Nägel bei¹"
+        },
+        {
+          "key": "04-konzept.18",
+          "element": "p",
+          "text": "Der Beauty-Drink: in Wasser anrühren, trinken, fertig. Schmeckt nach Beeren."
+        },
+        {
+          "key": "04-konzept.19",
+          "element": "p.foot-note.split-note",
+          "text": "¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise."
+        }
+      ]
+    },
+    {
+      "id": "05-check",
+      "name": "Beauty-Check (Ablauf)",
+      "texte": [
+        {
+          "key": "05-check.01",
+          "element": "span.eye.light.tag",
+          "text": "Hautanalyse in der Beratung"
+        },
+        {
+          "key": "05-check.02",
+          "element": "span.eye.light.tag",
+          "text": "Beauty-Check"
+        },
+        {
+          "key": "05-check.03",
+          "element": "span.eye",
+          "text": "So läuft es ab"
+        },
+        {
+          "key": "05-check.04",
+          "element": "h2",
+          "text": "Dein Beauty-Check <em>mit mir</em>"
+        },
+        {
+          "key": "05-check.05",
+          "element": "p.lead",
+          "text": "{{#if scanner_anzeigen=an}}Die Hautanalyse machen wir gemeinsam in der Beratung: Ein Selfie, und du siehst, wie es deiner Haut geht. Du brauchst keine App und keine Vorbereitung, ich kümmere mich um alles.{{/if}}{{#unless scanner_anzeigen=an}}Du erzählst mir von deiner Haut, ich schaue mit dir hin und sage dir ehrlich, was sie braucht. Keine Vorbereitung nötig.{{/unless}}"
+        },
+        {
+          "key": "05-check.06",
+          "element": "b",
+          "text": "Termin sichern"
+        },
+        {
+          "key": "05-check.07",
+          "element": "span",
+          "text": "Per Video, Telefon oder WhatsApp, etwa 30 Minuten"
+        },
+        {
+          "key": "05-check.08",
+          "element": "b",
+          "text": "{{#if scanner_anzeigen=an}}Hautanalyse zusammen{{/if}}{{#unless scanner_anzeigen=an}}Gemeinsam hinschauen{{/unless}}"
+        },
+        {
+          "key": "05-check.09",
+          "element": "span",
+          "text": "{{#if scanner_anzeigen=an}}Feuchtigkeit, Poren, Fältchen, Hauttyp – wir schauen uns die Werte gemeinsam an{{/if}}{{#unless scanner_anzeigen=an}}Wie fühlt sich deine Haut an, was stört dich, was wünschst du dir{{/unless}}"
+        },
+        {
+          "key": "05-check.10",
+          "element": "b",
+          "text": "Deine Empfehlung"
+        },
+        {
+          "key": "05-check.11",
+          "element": "span",
+          "text": "Nur das, was zu deiner Haut passt, nichts, was du nicht brauchst"
+        },
+        {
+          "key": "05-check.12",
+          "element": "div (Text zwischen Elementen)",
+          "text": "Was ich dir danach empfehle: die Basis aus Reinigung, Tonic, Tages- und Nachtcreme plus Beauty-Drink, und nur bei einem konkreten Wunsch ein Extra."
+        },
+        {
+          "key": "05-check.13",
+          "element": "a",
+          "text": "Alle Produkte ansehen"
+        },
+        {
+          "key": "05-check.14",
+          "element": "a.btn.btn-primary",
+          "text": "Beauty-Check sichern <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "05-check.15",
+          "element": "span.ck-free",
+          "text": "Kostenlos und unverbindlich"
+        },
+        {
+          "key": "05-check.16",
+          "element": "p.ck-note",
+          "text": "Die Hautanalyse ist eine kosmetische Einschätzung, keine medizinische Untersuchung."
+        }
+      ]
+    },
+    {
+      "id": "06-produkte",
+      "name": "Produkte (Liste, Extras, Sets, CTA-Karte)",
+      "texte": [
+        {
+          "key": "06-produkte.01",
+          "element": "span.eye",
+          "text": "Meine Empfehlung"
+        },
+        {
+          "key": "06-produkte.02",
+          "element": "h2",
+          "text": "Was dir zur <em>Auswahl</em> steht"
+        },
+        {
+          "key": "06-produkte.03",
+          "element": "p",
+          "text": "Vier Schritte für jede Haut, dazu ein paar Extras, falls du einen konkreten Wunsch hast. Tipp auf ein Produkt für Details"
+        },
+        {
+          "key": "06-produkte.04",
+          "element": "button.pr-row",
+          "text": "<span class=\"t\"><b>Reinigen</b><span>Cleansing Lotion · entfernt Make-up und Schmutz, ohne auszutrocknen</span><span class=\"pr-meta\"><i>Morgens</i><i>Abends</i><em>alle Hauttypen</em></span></span><span class=\"more\">+</span>"
+        },
+        {
+          "key": "06-produkte.05",
+          "element": "button.pr-row",
+          "text": "<span class=\"t\"><b>Klären</b><span>Tonic · erfrischt und bereitet die Haut auf die Creme vor</span><span class=\"pr-meta\"><i>Morgens</i><i>Abends</i><em>alle Hauttypen</em></span></span><span class=\"more\">+</span>"
+        },
+        {
+          "key": "06-produkte.06",
+          "element": "button.pr-row",
+          "text": "<span class=\"t\"><b>Tagescreme</b><span>4ever für normale bis Mischhaut · 4ever enriched für trockene, reifere Haut</span><span class=\"pr-meta\"><i>Morgens</i><em>je nach Hauttyp</em></span></span><span class=\"more\">+</span>"
+        },
+        {
+          "key": "06-produkte.07",
+          "element": "button.pr-row",
+          "text": "<span class=\"t\"><b>Nachtcreme</b><span>4ever overnight enriched · unterstützt die Haut, während du schläfst</span><span class=\"pr-meta\"><i>Abends</i><em>alle Hauttypen</em></span></span><span class=\"more\">+</span>"
+        },
+        {
+          "key": "06-produkte.08",
+          "element": "button.pr-row",
+          "text": "<span class=\"t\"><b>Von innen</b><span>Beauty-Drink · Beerengeschmack mit Biotin, Zink und Vitamin C¹</span><span class=\"pr-meta\"><i>1 Glas am Tag</i></span></span><span class=\"more\">+</span>"
+        },
+        {
+          "key": "06-produkte.09",
+          "element": "h3",
+          "text": "Extras"
+        },
+        {
+          "key": "06-produkte.10",
+          "element": "span",
+          "text": "nur, wenn du einen konkreten Wunsch hast"
+        },
+        {
+          "key": "06-produkte.11",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">vor der Creme</span><span class=\"cap\"><b>Für mehr Glow</b><span>Activize Serum</span></span>"
+        },
+        {
+          "key": "06-produkte.12",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">morgens & abends</span><span class=\"cap\"><b>Für die Augenpartie</b><span>Augencreme</span></span>"
+        },
+        {
+          "key": "06-produkte.13",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">vor dem Serum</span><span class=\"cap\"><b>Für einen ebenmäßigen Teint</b><span>Dark Spot Corrector</span></span>"
+        },
+        {
+          "key": "06-produkte.14",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">bei Bedarf</span><span class=\"cap\"><b>Für besondere Anlässe</b><span>Ultimate Young</span></span>"
+        },
+        {
+          "key": "06-produkte.15",
+          "element": "h3",
+          "text": "Sets zum Starten"
+        },
+        {
+          "key": "06-produkte.16",
+          "element": "span",
+          "text": "günstiger als einzeln"
+        },
+        {
+          "key": "06-produkte.17",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">3 Produkte</span><span class=\"cap\"><b>Für den Einstieg</b><span>Young Care Set · Reinigung, Tonic, Creme</span></span>"
+        },
+        {
+          "key": "06-produkte.18",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">Tag & Nacht</span><span class=\"cap\"><b>Für normale Haut</b><span>Starter Set 4ever</span></span>"
+        },
+        {
+          "key": "06-produkte.19",
+          "element": "button.pr-card",
+          "text": "<span class=\"chip\">Tag & Nacht</span><span class=\"cap\"><b>Für trockene Haut</b><span>Starter Set 4ever enriched</span></span>"
+        },
+        {
+          "key": "06-produkte.20",
+          "element": "span.eye.light",
+          "text": "Beauty-Check"
+        },
+        {
+          "key": "06-produkte.21",
+          "element": "h3",
+          "text": "Du brauchst nicht alles. <em>Ich berate dich</em>"
+        },
+        {
+          "key": "06-produkte.22",
+          "element": "p",
+          "text": "Im Beauty-Check schauen wir gemeinsam auf deine Haut, und du bekommst nur das, was wirklich zu dir passt."
+        },
+        {
+          "key": "06-produkte.23",
+          "element": "a.btn.btn-light",
+          "text": "Beauty-Check sichern <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "06-produkte.24",
+          "element": "span",
+          "text": "{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}"
+        },
+        {
+          "key": "06-produkte.25",
+          "element": "p (Text zwischen Elementen)",
+          "text": "Verkauf und Versand ausschließlich über den offiziellen Shop des Herstellers (PM-International AG), dort stehen Preise und alle Inhaltsstoffe. ¹ Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel, Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut."
+        },
+        {
+          "key": "06-produkte.26",
+          "element": "a.link-more",
+          "text": "Zum Shop →"
+        }
+      ]
+    },
+    {
+      "id": "06b-maenner",
+      "name": "Für Männer",
+      "texte": [
+        {
+          "key": "06b-maenner.01",
+          "element": "span.eye.light",
+          "text": "Für Männer"
+        },
+        {
+          "key": "06b-maenner.02",
+          "element": "h2",
+          "text": "Ein Produkt. <em>Alles drin</em>"
+        },
+        {
+          "key": "06b-maenner.03",
+          "element": "p",
+          "text": "Men Face: Feuchtigkeitspflege, Rasurpflege und Schutz vor Umwelteinflüssen in einem Schritt. Morgens nach dem Waschen auftragen, fertig."
+        },
+        {
+          "key": "06b-maenner.04",
+          "element": "button.btn.btn-light",
+          "text": "Details ansehen <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "06b-maenner.05",
+          "element": "button.men-prod",
+          "text": "<span><b>Men Face</b>All-in-one Gesichtspflege</span>"
+        }
+      ]
+    },
+    {
+      "id": "07-usp",
+      "name": "Was diese Produkte anders macht (Vorteile)",
+      "texte": [
+        {
+          "key": "07-usp.01",
+          "element": "span.eye",
+          "text": "Warum diese Produkte"
+        },
+        {
+          "key": "07-usp.02",
+          "element": "h2",
+          "text": "Was diese Produkte <em>anders</em> macht"
+        },
+        {
+          "key": "07-usp.03",
+          "element": "span.eyebrow",
+          "text": "Nicht nur von außen"
+        },
+        {
+          "key": "07-usp.04",
+          "element": "h3",
+          "text": "Der Beauty-Drink kommt von innen dazu"
+        },
+        {
+          "key": "07-usp.05",
+          "element": "p",
+          "text": "Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Vitamin C zur normalen Kollagenbildung.¹ Ein Glas am Tag, Beerengeschmack."
+        },
+        {
+          "key": "07-usp.06",
+          "element": "span.eyebrow",
+          "text": "Patentierte Technologie · NTC®"
+        },
+        {
+          "key": "07-usp.07",
+          "element": "h3",
+          "text": "Nährstoffe dorthin, wo sie gebraucht werden"
+        },
+        {
+          "key": "07-usp.08",
+          "element": "p",
+          "text": "„Das exklusive Nährstoff-Transportkonzept (NTC®) bringt die Nährstoffe, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden – auf die Zellebene von innen und außen.“ Über 100 Patente stehen dahinter.²"
+        },
+        {
+          "key": "07-usp.09",
+          "element": "b.big",
+          "text": "1993"
+        },
+        {
+          "key": "07-usp.10",
+          "element": "h3",
+          "text": "Seit über 30 Jahren"
+        },
+        {
+          "key": "07-usp.11",
+          "element": "p",
+          "text": "Produktion nach GMP-Standard, regelmäßig unabhängig geprüft, nachvollziehbar per QR-Code auf jedem Produkt. Du bestellst direkt beim Hersteller."
+        },
+        {
+          "key": "07-usp.12",
+          "element": "span.eyebrow",
+          "text": "Was drin ist"
+        },
+        {
+          "key": "07-usp.13",
+          "element": "h3",
+          "text": "Wirkstoffe, die man kennt"
+        },
+        {
+          "key": "07-usp.14",
+          "element": "span",
+          "text": "Hyaluron"
+        },
+        {
+          "key": "07-usp.15",
+          "element": "span",
+          "text": "Ceramid"
+        },
+        {
+          "key": "07-usp.16",
+          "element": "span",
+          "text": "Peptid"
+        },
+        {
+          "key": "07-usp.17",
+          "element": "span",
+          "text": "Bakuchiol"
+        },
+        {
+          "key": "07-usp.18",
+          "element": "span",
+          "text": "Ectoin"
+        },
+        {
+          "key": "07-usp.19",
+          "element": "span",
+          "text": "Niacinamid"
+        },
+        {
+          "key": "07-usp.20",
+          "element": "span",
+          "text": "Q10"
+        },
+        {
+          "key": "07-usp.21",
+          "element": "span.eyebrow",
+          "text": "Für jede Haut"
+        },
+        {
+          "key": "07-usp.22",
+          "element": "h3",
+          "text": "Ob 20 oder 60, Frau oder Mann"
+        },
+        {
+          "key": "07-usp.23",
+          "element": "p",
+          "text": "Zwei Tagescremes für normale und trockene Haut, eine Nachtcreme für alle, ein eigenes Produkt für Männer. Was zu dir passt, klären wir im Beauty-Check."
+        },
+        {
+          "key": "07-usp.24",
+          "element": "b",
+          "text": "30"
+        },
+        {
+          "key": "07-usp.25",
+          "element": "span",
+          "text": "Tage"
+        },
+        {
+          "key": "07-usp.26",
+          "element": "h3",
+          "text": "Geld-zurück-Garantie"
+        },
+        {
+          "key": "07-usp.27",
+          "element": "p",
+          "text": "Passt ein Produkt nicht, schickst du es innerhalb von 30 Tagen zurück. Garantiegeber ist der Hersteller, Bedingungen laut Shop."
+        },
+        {
+          "key": "07-usp.28",
+          "element": "p.foot-note.wrap",
+          "text": "¹ Zugelassene Angaben nach VO (EU) 432/2012 für den Beauty-Drink (Nahrungsergänzungsmittel). ² Markenaussage des Herstellers (PM-International AG); NTC® ist eine eingetragene Marke der PM-International AG."
+        }
+      ]
+    },
+    {
+      "id": "08-ueber",
+      "name": "Über mich",
+      "texte": [
+        {
+          "key": "08-ueber.01",
+          "element": "span",
+          "text": "{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}"
+        },
+        {
+          "key": "08-ueber.02",
+          "element": "span.eye",
+          "text": "Über mich"
+        },
+        {
+          "key": "08-ueber.03",
+          "element": "h2",
+          "text": "{{{about_intro_de_html}}}"
+        },
+        {
+          "key": "08-ueber.04",
+          "element": "span",
+          "text": "Beauty-Check kostenlos"
+        },
+        {
+          "key": "08-ueber.05",
+          "element": "span",
+          "text": "Per Video, Telefon oder WhatsApp"
+        },
+        {
+          "key": "08-ueber.06",
+          "element": "span",
+          "text": "Ehrliche Empfehlung, keine Kaufpflicht"
+        }
+      ]
+    },
+    {
+      "id": "09-routine",
+      "name": "Empfohlene Routine",
+      "texte": [
+        {
+          "key": "09-routine.01",
+          "element": "span.eye",
+          "text": "Mein Vorschlag"
+        },
+        {
+          "key": "09-routine.02",
+          "element": "h2",
+          "text": "Empfohlene Routine"
+        },
+        {
+          "key": "09-routine.03",
+          "element": "p",
+          "text": "So sieht das bei mir aus. Fünf Minuten morgens, drei abends."
+        },
+        {
+          "key": "09-routine.04",
+          "element": "h3",
+          "text": "Morgens<span class=\"t\">5 Minuten</span>"
+        },
+        {
+          "key": "09-routine.05",
+          "element": "b",
+          "text": "Reinigen"
+        },
+        {
+          "key": "09-routine.06",
+          "element": "small",
+          "text": "Cleansing Lotion"
+        },
+        {
+          "key": "09-routine.07",
+          "element": "b",
+          "text": "Klären"
+        },
+        {
+          "key": "09-routine.08",
+          "element": "small",
+          "text": "Tonic"
+        },
+        {
+          "key": "09-routine.09",
+          "element": "b",
+          "text": "Tagescreme"
+        },
+        {
+          "key": "09-routine.10",
+          "element": "small",
+          "text": "4ever"
+        },
+        {
+          "key": "09-routine.11",
+          "element": "b",
+          "text": "Ein Glas trinken"
+        },
+        {
+          "key": "09-routine.12",
+          "element": "small",
+          "text": "Beauty-Drink"
+        },
+        {
+          "key": "09-routine.13",
+          "element": "h3",
+          "text": "Abends<span class=\"t\">3 Minuten</span>"
+        },
+        {
+          "key": "09-routine.14",
+          "element": "b",
+          "text": "Reinigen"
+        },
+        {
+          "key": "09-routine.15",
+          "element": "small",
+          "text": "Cleansing Lotion"
+        },
+        {
+          "key": "09-routine.16",
+          "element": "b",
+          "text": "Klären"
+        },
+        {
+          "key": "09-routine.17",
+          "element": "small",
+          "text": "Tonic"
+        },
+        {
+          "key": "09-routine.18",
+          "element": "b",
+          "text": "Nachtcreme"
+        },
+        {
+          "key": "09-routine.19",
+          "element": "small",
+          "text": "4ever overnight enriched"
+        }
+      ]
+    },
+    {
+      "id": "10-faq",
+      "name": "Antworten auf häufige Fragen",
+      "texte": [
+        {
+          "key": "10-faq.01",
+          "element": "h2",
+          "text": "Antworten auf häufige Fragen"
+        },
+        {
+          "key": "10-faq.02",
+          "element": "button.faq-q",
+          "text": "Muss ich alles kaufen?"
+        },
+        {
+          "key": "10-faq.03",
+          "element": "span.l-de",
+          "text": "Nein. Reinigung, Tagespflege, Nachtpflege und der Drink sind die Basis. Alles andere nur, wenn du einen konkreten Wunsch hast."
+        },
+        {
+          "key": "10-faq.04",
+          "element": "button.faq-q",
+          "text": "Was kostet der Beauty-Check?"
+        },
+        {
+          "key": "10-faq.05",
+          "element": "span.l-de",
+          "text": "Nichts. Kostenlos, unverbindlich, etwa eine halbe Stunde. Ob du danach etwas bestellst, entscheidest du."
+        },
+        {
+          "key": "10-faq.06",
+          "element": "button.faq-q",
+          "text": "Wie läuft der Beauty-Check ab?"
+        },
+        {
+          "key": "10-faq.07",
+          "element": "span.l-de",
+          "text": "Per Videocall, am Telefon oder über WhatsApp. Am besten ungeschminkt, dann sehen wir deine Haut, wie sie ist."
+        },
+        {
+          "key": "10-faq.08",
+          "element": "button.faq-q",
+          "text": "Wo bestelle ich?"
+        },
+        {
+          "key": "10-faq.09",
+          "element": "span.l-de",
+          "text": "Im offiziellen Hersteller-Shop über meinen Link. Offizielle Preise, Lieferung in 2 bis 4 Werktagen, 30 Tage Geld-zurück-Garantie. Ich habe kein Lager und verkaufe nichts selbst."
+        },
+        {
+          "key": "10-faq.10",
+          "element": "button.faq-q",
+          "text": "Verdienst du daran?"
+        },
+        {
+          "key": "10-faq.11",
+          "element": "span.l-de",
+          "text": "Ja, ich bin {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} und bekomme eine Provision, wenn du über meinen Link bestellst. Für dich bleibt der Preis gleich. Deshalb sage ich dir auch ehrlich, wenn du etwas nicht brauchst."
+        }
+      ]
+    },
+    {
+      "id": "11-kontakt",
+      "name": "Kontakt / Beauty-Check sichern (3-Schritt-Formular)",
+      "texte": [
+        {
+          "key": "11-kontakt.01",
+          "element": "span.eye.light",
+          "text": "Kostenlos & unverbindlich"
+        },
+        {
+          "key": "11-kontakt.02",
+          "element": "h2",
+          "text": "Beauty-Check mit <strong>{{vorname}}</strong> sichern"
+        },
+        {
+          "key": "11-kontakt.03",
+          "element": "p",
+          "text": "Drei kurze Fragen, dann melde ich mich bei dir. Kostenlos und unverbindlich."
+        },
+        {
+          "key": "11-kontakt.04",
+          "element": "h3",
+          "text": "Was trifft auf dich zu?"
+        },
+        {
+          "key": "11-kontakt.05",
+          "element": "button.f-opt",
+          "text": "<b>Ich will meine Pflege einfacher machen</b>"
+        },
+        {
+          "key": "11-kontakt.06",
+          "element": "button.f-opt",
+          "text": "<b>Ich will wissen, was zu meiner Haut passt</b>"
+        },
+        {
+          "key": "11-kontakt.07",
+          "element": "button.f-opt",
+          "text": "<b>Ich will das Ganze erst mal kennenlernen</b>"
+        },
+        {
+          "key": "11-kontakt.08",
+          "element": "button.btn.btn-primary.f-next",
+          "text": "Weiter <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "11-kontakt.09",
+          "element": "h3",
+          "text": "Was wünschst du dir?"
+        },
+        {
+          "key": "11-kontakt.10",
+          "element": "p.f-hint",
+          "text": "Mehrere Antworten möglich."
+        },
+        {
+          "key": "11-kontakt.11",
+          "element": "button.f-opt",
+          "text": "<b>Mehr Feuchtigkeit und Frische</b>"
+        },
+        {
+          "key": "11-kontakt.12",
+          "element": "button.f-opt",
+          "text": "<b>Ein gleichmäßigeres Hautbild</b>"
+        },
+        {
+          "key": "11-kontakt.13",
+          "element": "button.f-opt",
+          "text": "<b>Eine wache Augenpartie</b>"
+        },
+        {
+          "key": "11-kontakt.14",
+          "element": "button.f-opt",
+          "text": "<b>Pflege von innen kennenlernen</b>"
+        },
+        {
+          "key": "11-kontakt.15",
+          "element": "button.f-opt",
+          "text": "<b>Weniger Aufwand im Alltag</b>"
+        },
+        {
+          "key": "11-kontakt.16",
+          "element": "button.f-opt",
+          "text": "<b>Etwas Passendes für Männer</b>"
+        },
+        {
+          "key": "11-kontakt.17",
+          "element": "button.f-back",
+          "text": "← Zurück"
+        },
+        {
+          "key": "11-kontakt.18",
+          "element": "button.btn.btn-primary.f-next",
+          "text": "Weiter <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "11-kontakt.19",
+          "element": "h3",
+          "text": "Wie erreiche ich dich?"
+        },
+        {
+          "key": "11-kontakt.20",
+          "element": "span.l-de",
+          "text": "Am liebsten per"
+        },
+        {
+          "key": "11-kontakt.21",
+          "element": "button.chip.on",
+          "text": "WhatsApp"
+        },
+        {
+          "key": "11-kontakt.22",
+          "element": "button.chip",
+          "text": "Anruf"
+        },
+        {
+          "key": "11-kontakt.23",
+          "element": "button.chip",
+          "text": "E-Mail"
+        },
+        {
+          "key": "11-kontakt.24",
+          "element": "span.l-de",
+          "text": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden."
+        },
+        {
+          "key": "11-kontakt.25",
+          "element": "button.f-back",
+          "text": "← Zurück"
+        },
+        {
+          "key": "11-kontakt.26",
+          "element": "button.btn.btn-primary",
+          "text": "Beauty-Check sichern <span class=\"arr\">→</span>"
+        },
+        {
+          "key": "11-kontakt.27",
+          "element": "h3",
+          "text": "Danke<span id=\"successNameDe\"></span>!"
+        },
+        {
+          "key": "11-kontakt.28",
+          "element": "p",
+          "text": "Deine Anfrage ist bei mir. Ich melde mich innerhalb von 24 Stunden persönlich bei dir."
+        },
+        {
+          "key": "11-kontakt.29",
+          "element": "span.l-de",
+          "text": "{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}"
+        },
+        {
+          "key": "11-kontakt.30",
+          "element": "a",
+          "text": "WhatsApp"
+        },
+        {
+          "key": "11-kontakt.31",
+          "element": "a",
+          "text": "E-Mail"
+        },
+        {
+          "key": "11-kontakt.32",
+          "element": "p",
+          "text": "Du weißt schon, was du willst? Dann bestell direkt im Shop des Herstellers, 30 Tage Geld-zurück-Garantie."
+        },
+        {
+          "key": "11-kontakt.33",
+          "element": "a",
+          "text": "Zum Shop →"
+        },
+        {
+          "key": "11-kontakt.34",
+          "element": "a.sticky-cta",
+          "text": "Beauty-Check sichern"
+        },
+        {
+          "key": "11-kontakt.35",
+          "element": "input-placeholder#cf-name",
+          "text": "Dein Name"
+        },
+        {
+          "key": "11-kontakt.36",
+          "element": "input-placeholder#cf-email",
+          "text": "Deine E-Mail"
+        },
+        {
+          "key": "11-kontakt.37",
+          "element": "input-placeholder#cf-phone",
+          "text": "Telefon oder WhatsApp (optional)"
+        }
+      ]
+    },
+    {
+      "id": "12-footer",
+      "name": "Fußzeile",
+      "texte": [
+        {
+          "key": "12-footer.01",
+          "element": "span.l-de",
+          "text": "Die Seite"
+        },
+        {
+          "key": "12-footer.02",
+          "element": "a",
+          "text": "Innen & außen"
+        },
+        {
+          "key": "12-footer.03",
+          "element": "a",
+          "text": "Die Routine"
+        },
+        {
+          "key": "12-footer.04",
+          "element": "a",
+          "text": "Beauty-Check"
+        },
+        {
+          "key": "12-footer.05",
+          "element": "span.l-de",
+          "text": "Mehr"
+        },
+        {
+          "key": "12-footer.06",
+          "element": "a",
+          "text": "Produkte"
+        },
+        {
+          "key": "12-footer.07",
+          "element": "a",
+          "text": "Über mich"
+        },
+        {
+          "key": "12-footer.08",
+          "element": "a",
+          "text": "Fragen & Antworten"
+        },
+        {
+          "key": "12-footer.09",
+          "element": "span.l-de",
+          "text": "Kontakt"
+        },
+        {
+          "key": "12-footer.10",
+          "element": "a",
+          "text": "Beauty-Check vereinbaren"
+        },
+        {
+          "key": "12-footer.11",
+          "element": "a",
+          "text": "WhatsApp"
+        },
+        {
+          "key": "12-footer.12",
+          "element": "a",
+          "text": "Instagram"
+        },
+        {
+          "key": "12-footer.13",
+          "element": "a",
+          "text": "Facebook"
+        },
+        {
+          "key": "12-footer.14",
+          "element": "span.l-de",
+          "text": "Rechtliches"
+        },
+        {
+          "key": "12-footer.15",
+          "element": "a",
+          "text": "Impressum"
+        },
+        {
+          "key": "12-footer.16",
+          "element": "a",
+          "text": "Datenschutz"
+        },
+        {
+          "key": "12-footer.17",
+          "element": "div",
+          "text": "© 2026 {{vorname}} {{nachname}}"
+        },
+        {
+          "key": "12-footer.18",
+          "element": "a.fs-credit",
+          "text": "Made with <span class=\"heart\">♥</span> von"
+        },
+        {
+          "key": "12-footer.19",
+          "element": "p",
+          "text": "{{vorname}} {{nachname}} ist {{#if geschlecht=weiblich}}selbstständige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}selbstständiger Vertriebspartner{{/if}} der PM-International AG. Dies ist keine offizielle Webseite der PM-International AG; FitLine® und NTC® sind eingetragene Marken der PM-International AG. Die Pflegeprodukte sind kosmetische Mittel. Der Beauty-Drink ist ein Nahrungsergänzungsmittel und kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise; die empfohlene tägliche Verzehrmenge nicht überschreiten, außerhalb der Reichweite von kleinen Kindern aufbewahren. Alle Produktangaben entsprechen den offiziellen Angaben des Herstellers. Diese Seite dient der Information und stellt keine medizinische Beratung dar. Ergebnisse können von Person zu Person unterschiedlich sein. Verkauf und Versand erfolgen ausschließlich über den offiziellen Shop der PM-International AG."
+        }
+      ]
+    }
+  ],
+  "produktfenster": {
+    "cleansing": {
+      "id": "0116127",
+      "name": "Cleansing Lotion",
+      "tag": "Schritt 1 · Reinigen",
+      "when": "Morgens & abends",
+      "actives": [
+        "Sonnenblumenöl",
+        "Milde Zucker-Tenside",
+        "Kamillenextrakt",
+        "Glycerin",
+        "Ergothionein"
+      ],
+      "price": "26,90 €",
+      "size": "200 ml",
+      "desc": "Die milde Reinigungslotion entfernt Make-up und Schmutz, ohne die Haut auszutrocknen. Für ein frisches, seidig-zartes Hautgefühl ohne Spannungsgefühl.",
+      "use": "Morgens und abends auf das feuchte Gesicht geben, sanft einmassieren und mit lauwarmem Wasser abspülen.",
+      "skin": "Für alle Hauttypen, auch trockene und sensible Haut.",
+      "pros": [
+        "Optimale Reinigung",
+        "Frisches Hautgefühl",
+        "Verfeinertes & geklärtes Hautbild",
+        "Ohne Spannungsgefühl",
+        "Vegan"
+      ]
+    },
+    "tonic": {
+      "id": "0116007",
+      "name": "Tonic",
+      "tag": "Schritt 2 · Klären",
+      "when": "Morgens & abends",
+      "actives": [
+        "Kamillenextrakt",
+        "Glycerin",
+        "Squalan",
+        "Vitamin E",
+        "Ergothionein"
+      ],
+      "price": "26,90 €",
+      "size": "200 ml",
+      "desc": "Das erfrischende und klärende Tonic schließt den Säureschutzmantel der Haut und bereitet sie optimal auf die nachfolgende Pflege vor.",
+      "use": "Morgens und abends nach der Reinigung auf ein Wattepad geben und Gesicht, Hals und Dekolleté sanft abreiben.",
+      "skin": "Für alle Hauttypen.",
+      "pros": [
+        "Frisches Hautgefühl",
+        "Verfeinertes & geklärtes Hautbild",
+        "Bereitet die Haut auf die Pflege vor"
+      ]
+    },
+    "4ever": {
+      "id": "0116122",
+      "name": "4ever",
+      "tag": "Tagespflege · normale bis Mischhaut",
+      "when": "Morgens",
+      "actives": [
+        "Hyaluron",
+        "Ceramid NP",
+        "Peptid",
+        "Bakuchiol",
+        "Goji-Extrakt",
+        "Squalan",
+        "UV-Filter (Anti-Pollution)"
+      ],
+      "price": "64,90 €",
+      "size": "50 ml",
+      "desc": "Die Tagespflege mit Hyaluron, Ceramid, Peptid, Bakuchiol und Goji-Extrakt. Versorgt die Haut intensiv mit Feuchtigkeit, unterstützt die Hautbarriere und schützt mit Anti-Pollution-Filter vor Umwelteinflüssen.",
+      "use": "Morgens nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.",
+      "skin": "Normale bis Mischhaut. Vegan.",
+      "pros": [
+        "Intensive Feuchtigkeitsversorgung",
+        "Unterstützung der Hautbarriere",
+        "Anti-Pollution-Filter",
+        "Anti-Aging"
+      ]
+    },
+    "4ever-enriched": {
+      "id": "0116220",
+      "name": "4ever enriched",
+      "tag": "Tagespflege · trockene bis reife Haut",
+      "when": "Morgens",
+      "actives": [
+        "Peptid",
+        "Sheabutter",
+        "Ectoin",
+        "Hafer",
+        "Avocadoöl",
+        "Hyaluron",
+        "Ceramid NP",
+        "Q10"
+      ],
+      "price": "64,90 €",
+      "size": "50 ml",
+      "desc": "Die reichhaltige Tagespflege mit Peptid, Sheabutter und Ectoin. Intensive, hautberuhigende Pflege mit langanhaltender Feuchtigkeit und Anti-Pollution-Schutz.",
+      "use": "Morgens nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.",
+      "skin": "Trockene und reife Haut.",
+      "pros": [
+        "Intensive & hautberuhigende Pflege",
+        "Langanhaltende Feuchtigkeit",
+        "Anti-Pollution",
+        "Anti-Aging"
+      ]
+    },
+    "overnight": {
+      "id": "0116223",
+      "name": "4ever overnight enriched",
+      "tag": "Nachtpflege · alle Hauttypen",
+      "when": "Abends",
+      "actives": [
+        "Lactobacillus-Ferment",
+        "Betain",
+        "Spilanthes-Extrakt",
+        "Jojobaöl",
+        "Squalan",
+        "Q10",
+        "Vitamin E"
+      ],
+      "price": "64,90 €",
+      "size": "50 ml",
+      "desc": "Die Nachtpflege zu beiden Tagescremes. Unterstützt über Nacht das Mikrobiom und die Hautbarriere, ohne Lichtschutzfilter, damit die Haut regenerieren kann.",
+      "use": "Abends nach Reinigung, Tonic und Serum auf Gesicht, Hals und Dekolleté auftragen.",
+      "skin": "Für alle Hauttypen, besonders normale bis trockene Haut.",
+      "pros": [
+        "Unterstützung des Mikrobioms",
+        "Unterstützung der Hautbarriere",
+        "Anti-Aging"
+      ]
+    },
+    "beauty": {
+      "id": "0709028",
+      "name": "Beauty-Drink",
+      "tag": "Von innen · Nahrungsergänzung",
+      "when": "1 × täglich, z. B. morgens",
+      "actives": [
+        "Kollagenpeptide (Rind)",
+        "Vitamin C",
+        "Biotin",
+        "Zink",
+        "Niacin",
+        "Vitamin B2",
+        "Vitamin E",
+        "Kupfer"
+      ],
+      "price": "47,50 €",
+      "size": "30 Portionen",
+      "desc": "Trinkpulver mit fruchtigem Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin und Zink tragen zur Erhaltung normaler Haut und Haare bei, Zink zur Erhaltung normaler Nägel.",
+      "use": "1 × täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten.",
+      "skin": "Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.",
+      "pros": [
+        "Beerengeschmack, ohne Zuckerzusatz, mit Stevia",
+        "Vitamin C, Biotin, Zink, Niacin, Vitamin B2, Vitamin E",
+        "Mit NTC® Nährstoff-Transportkonzept"
+      ]
+    },
+    "serum": {
+      "id": "0116116",
+      "name": "Activize Serum",
+      "tag": "Ergänzung · Frische & Glow",
+      "when": "Morgens & abends, vor der Creme",
+      "actives": [
+        "Guarana",
+        "Vitamin C (Ascorbyl Glucoside)",
+        "Niacinamid (B3)",
+        "Panthenol (B5)",
+        "Biotin",
+        "Koffein",
+        "Hyaluron",
+        "Q10"
+      ],
+      "price": "48,90 €",
+      "size": "30 ml",
+      "desc": "Das Serum überträgt den Wirkstoffkomplex aus Guarana, Vitamin C und B-Vitaminen in die Hautpflege. Für natürlichen Glow, ein verfeinertes Hautbild und einen ebenmäßigen Hautton.",
+      "use": "Morgens und abends nach Reinigung und Tonic auftragen, 1 bis 2 Minuten einziehen lassen, dann die Tages- oder Nachtpflege.",
+      "skin": "Für alle Hauttypen.",
+      "pros": [
+        "Natürlicher Glow",
+        "Porenverfeinernd",
+        "Ebenmäßiger Hautton",
+        "Energie & Vitalisierung"
+      ]
+    },
+    "darkspot": {
+      "id": "0116222",
+      "name": "Dark Spot Corrector",
+      "tag": "Ergänzung · ebenmäßiger Teint",
+      "when": "Morgens & abends, vor dem Serum",
+      "actives": [
+        "Niacinamid",
+        "Kojisäure",
+        "Gluconolacton (PHA)",
+        "Allantoin",
+        "Gerstenextrakt",
+        "Jojobaöl",
+        "Squalan"
+      ],
+      "price": "58,90 €",
+      "size": "30 ml",
+      "desc": "Mit Niacinamid. Kann dazu beitragen, das Erscheinungsbild von Pigmentflecken zu reduzieren, unterstützt die natürliche Hauterneuerung, spendet Feuchtigkeit und unterstützt die Hautbarriere.",
+      "use": "Morgens und abends auf die gereinigte Haut auftragen, danach Serum und Pflege wie gewohnt.",
+      "skin": "Für alle Hauttypen mit Wunsch nach einem gleichmäßigeren Teint.",
+      "pros": [
+        "Unterstützt die natürliche Hauterneuerung",
+        "Feuchtigkeit",
+        "Unterstützung der Hautbarriere",
+        "Strahlkraft & Reinheit"
+      ]
+    },
+    "augen": {
+      "id": "0116093",
+      "name": "Augencreme",
+      "tag": "Ergänzung · Augenpartie",
+      "when": "Morgens & abends",
+      "actives": [
+        "Hyaluron",
+        "Peptide",
+        "Rosskastanie",
+        "Süßholzwurzel",
+        "Grüntee",
+        "Glycerin"
+      ],
+      "price": "49,90 €",
+      "size": "15 ml",
+      "desc": "Die leichte Augenpflege hilft, dunkle Augenringe sowie Linien und Fältchen abzumildern. Frei von Kriechölen, damit nichts ins Auge wandert.",
+      "use": "Morgens und abends nach der Reinigung sanft um die Augenpartie eintupfen, danach die Tages- oder Nachtpflege.",
+      "skin": "Für alle Hauttypen.",
+      "pros": [
+        "Anti-Augenringe",
+        "Schutz",
+        "Frei von Kriechölen",
+        "Anti-Aging"
+      ]
+    },
+    "ultimate": {
+      "id": "0116050",
+      "name": "Ultimate Young",
+      "tag": "Ergänzung · Soforteffekt",
+      "when": "Bei Bedarf, über Creme oder Make-up",
+      "actives": [
+        "Silikate (Soforteffekt)",
+        "Mineralpigmente (Skin Tone Matcher)",
+        "Q10",
+        "Grüntee",
+        "Rooibos",
+        "Granatapfel",
+        "Vitamin E"
+      ],
+      "price": "79,00 €",
+      "size": "15 ml",
+      "desc": "Das Highlight mit Soforteffekt für besondere Anlässe: seidig glatte, ebenmäßige Haut für ein paar Stunden. Kein Langzeitprodukt, sondern der Feinschliff obendrauf.",
+      "use": "Eine kleine Menge über der Tagespflege oder dem Make-up auftragen und einziehen lassen.",
+      "skin": "Für alle Hauttypen.",
+      "pros": [
+        "Seidig glatte & ebenmäßige Haut",
+        "Einfache Anwendung",
+        "Straffend"
+      ]
+    },
+    "men": {
+      "id": "0116109",
+      "name": "Men Face Rich & Hydrating",
+      "tag": "Für Männer · All-in-One",
+      "when": "Morgens & abends",
+      "actives": [
+        "Hyaluron",
+        "Niacinamid",
+        "Koffein",
+        "Panthenol",
+        "Ceramid NP",
+        "Q10",
+        "Oligopeptid"
+      ],
+      "price": "29,90 €",
+      "size": "50 ml",
+      "desc": "Die All-in-One-Gesichtspflege für Männer: Feuchtigkeit und Pflege in einem Schritt, mit Niacinamid, Koffein, Ceramid und Q10 und dem NTC® Nährstoff-Transportkonzept.",
+      "use": "Morgens und abends nach der Reinigung auf Gesicht und Hals auftragen.",
+      "skin": "Für alle Hauttypen. Vegan, glutenfrei.",
+      "pros": [
+        "Feuchtigkeit und Pflege in einem Schritt",
+        "Mit Niacinamid, Koffein, Ceramid, Q10",
+        "Vegan"
+      ]
+    },
+    "set-young": {
+      "id": "9116472",
+      "name": "Einsteiger-Set Young Care",
+      "tag": "Set · Einstieg",
+      "when": "Morgens & abends",
+      "actives": [
+        "Reinigungsschaum",
+        "Tonic",
+        "Balancing Creme"
+      ],
+      "price": "59,90 €",
+      "size": "3 Produkte",
+      "desc": "Die komplette, leichte Routine für den Anfang: Reinigungsschaum, Tonic und Balancing Creme. Einzeln 63,50 €.",
+      "use": "Morgens und abends: Reinigungsschaum, dann Tonic auf ein Wattepad, dann die Balancing Creme.",
+      "skin": "Für jüngere Haut und alle, die erst einmal einfach starten wollen.",
+      "pros": [
+        "Reinigungsschaum",
+        "Tonic",
+        "Balancing Creme"
+      ]
+    },
+    "set-4ever": {
+      "id": "9116562",
+      "name": "Starter Set 4ever",
+      "tag": "Set · Tag + Nacht",
+      "when": "Morgens 4ever, abends overnight",
+      "actives": [
+        "4ever (Tag)",
+        "4ever overnight enriched (Nacht)"
+      ],
+      "price": "123,90 €",
+      "size": "2 × 50 ml",
+      "desc": "4ever Tagespflege und 4ever overnight enriched Nachtpflege im Set. Einzeln 129,80 €.",
+      "use": "Morgens 4ever, abends 4ever overnight enriched, jeweils nach Reinigung und Tonic.",
+      "skin": "Normale bis Mischhaut.",
+      "pros": [
+        "4ever (Tag)",
+        "4ever overnight enriched (Nacht)"
+      ]
+    },
+    "set-enriched": {
+      "id": "9116563",
+      "name": "Starter Set 4ever enriched",
+      "tag": "Set · Tag + Nacht",
+      "when": "Morgens enriched, abends overnight",
+      "actives": [
+        "4ever enriched (Tag)",
+        "4ever overnight enriched (Nacht)"
+      ],
+      "price": "123,90 €",
+      "size": "2 × 50 ml",
+      "desc": "4ever enriched Tagespflege und 4ever overnight enriched Nachtpflege im Set, für trockene und reifere Haut. Einzeln 129,80 €.",
+      "use": "Morgens 4ever enriched, abends 4ever overnight enriched, jeweils nach Reinigung und Tonic.",
+      "skin": "Trockene und reife Haut.",
+      "pros": [
+        "4ever enriched (Tag)",
+        "4ever overnight enriched (Nacht)"
+      ]
+    }
+  },
+  "produktfenster_beschriftungen": {
+    "desc": "Was es ist",
+    "use": "So wendest du es an",
+    "skin": "Hauttyp",
+    "when": "Wann",
+    "actives": "Was drin ist (Auswahl)",
+    "pros": "Laut Hersteller",
+    "shop": "Direkt bestellen",
+    "price": "Kundenpreis",
+    "note": "Das ist der reguläre Kundenpreis im Shop des Herstellers. Im Beauty-Check schauen wir, ob ein Kundenprogramm des Herstellers für dich infrage kommt.",
+    "src": "Auswahl der Inhaltsstoffe laut Hersteller. Die vollständige Liste steht auf der offiziellen Produktseite."
+  },
+  "editor_vorgaben": {
+    "_hinweis": "Standard- bzw. Beispieltexte, die Nutzer im Editor selbst ändern können (about_me_html = Richtext mit KI-Compliance-Prüfung).",
+    "felder": [
+      {
+        "key": "about_intro",
+        "label": "Begrüßung",
+        "standard": "",
+        "beispiel_vorschau": ""
+      },
+      {
+        "key": "about_me_html",
+        "label": "Über mich-Text",
+        "standard": "<p>Kurz zu mir: Ich komme aus [Ort] und achte seit [Zeitraum] bewusst auf meine Haut, von außen und von innen. Ich kenne die Produkte aus meinem eigenen Alltag und zeige dir gern, was zu dir passt. Ohne Druck, ohne Verkaufsshow.</p>",
+        "beispiel_vorschau": "<p>Ich bin Anna, 38, Mama von zwei Kindern und lange auf der Suche nach einer Pflege gewesen, die ich wirklich durchhalte. Heute habe ich eine Routine, die in fünf Minuten erledigt ist, und ein Glas am Morgen, das dazugehört.</p><p>Genau das zeige ich dir: ehrlich, persönlich und nur, wenn es zu dir passt.</p>"
+      }
+    ]
+  }
+}
