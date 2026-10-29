@@ -1,7 +1,7 @@
 /**
- * Admin: Schalter des Besucher-Chats (app_settings visitor_chat_enabled / visitor_chat_users).
- *   GET → { enabled, usernames, updatedAt }
- *   PUT { enabled?: boolean, usernames?: string[] | string } → { ok, enabled, usernames }
+ * Admin: Schalter des Besucher-Chats (app_settings visitor_chat_enabled / visitor_chat_users / visitor_chat_app_users).
+ *   GET → { enabled, users, usernames, appUsers, updatedAt }   (users = usernames, Name der Admin-Seite)
+ *   PUT { enabled?: boolean, users?|usernames?: string[] | string, appUsers?: boolean } → wie GET + ok
  * Nur Admin (echte Sitzung, kein „Anmelden als“).
  */
 import { NextRequest, NextResponse } from 'next/server'
@@ -10,7 +10,8 @@ import { db } from '@/lib/db'
 import { appSettings, users } from '@/lib/db/schema'
 import { eq, inArray } from 'drizzle-orm'
 import {
-  parseUsernameList, readVisitorChatSettings, resetVisitorChatCache, VISITOR_CHAT_ENABLED_KEY, VISITOR_CHAT_USERS_KEY,
+  parseUsernameList, readVisitorChatSettings, resetVisitorChatCache, VISITOR_CHAT_APP_USERS_KEY, VISITOR_CHAT_ENABLED_KEY,
+  VISITOR_CHAT_USERS_KEY,
 } from '@/lib/chat/flags'
 
 export const dynamic = 'force-dynamic'
@@ -26,9 +27,15 @@ async function current() {
   resetVisitorChatCache()
   const s = await readVisitorChatSettings()
   const rows = await db.select({ key: appSettings.key, updatedAt: appSettings.updatedAt }).from(appSettings)
-    .where(inArray(appSettings.key, [VISITOR_CHAT_ENABLED_KEY, VISITOR_CHAT_USERS_KEY]))
+    .where(inArray(appSettings.key, [VISITOR_CHAT_ENABLED_KEY, VISITOR_CHAT_USERS_KEY, VISITOR_CHAT_APP_USERS_KEY]))
   const updatedAt = rows.map(r => r.updatedAt.getTime()).sort((a, b) => b - a)[0]
-  return { enabled: s.enabled, usernames: s.usernames, updatedAt: updatedAt ? new Date(updatedAt).toISOString() : null }
+  return {
+    enabled: s.enabled,
+    users: s.usernames,
+    usernames: s.usernames,
+    appUsers: s.appUsers,
+    updatedAt: updatedAt ? new Date(updatedAt).toISOString() : null,
+  }
 }
 
 export async function GET(req: NextRequest) {
@@ -44,7 +51,7 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const admin = await checkAdmin(req)
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  let body: { enabled?: unknown; usernames?: unknown }
+  let body: { enabled?: unknown; usernames?: unknown; users?: unknown; appUsers?: unknown }
   try {
     body = await req.json()
   } catch {
@@ -53,10 +60,14 @@ export async function PUT(req: NextRequest) {
   if (body.enabled !== undefined && typeof body.enabled !== 'boolean') {
     return NextResponse.json({ error: 'enabled muss true/false sein' }, { status: 400 })
   }
+  if (body.appUsers !== undefined && typeof body.appUsers !== 'boolean') {
+    return NextResponse.json({ error: 'appUsers muss true/false sein' }, { status: 400 })
+  }
+  const rawUsers = body.usernames !== undefined ? body.usernames : body.users
   let usernames: string[] | undefined
-  if (body.usernames !== undefined) {
-    if (Array.isArray(body.usernames)) usernames = parseUsernameList(body.usernames.filter((u): u is string => typeof u === 'string').join(','))
-    else if (typeof body.usernames === 'string') usernames = parseUsernameList(body.usernames)
+  if (rawUsers !== undefined) {
+    if (Array.isArray(rawUsers)) usernames = parseUsernameList(rawUsers.filter((u): u is string => typeof u === 'string').join(','))
+    else if (typeof rawUsers === 'string') usernames = parseUsernameList(rawUsers)
     else return NextResponse.json({ error: 'usernames muss eine Liste oder Kommaliste sein' }, { status: 400 })
     if (usernames.length > 500) return NextResponse.json({ error: 'Zu viele Benutzernamen' }, { status: 400 })
   }
@@ -68,6 +79,7 @@ export async function PUT(req: NextRequest) {
       .onConflictDoUpdate({ target: appSettings.key, set: { value, updatedBy: admin.id, updatedAt: now } })
     if (body.enabled !== undefined) await upsert(VISITOR_CHAT_ENABLED_KEY, body.enabled ? 'true' : 'false')
     if (usernames !== undefined) await upsert(VISITOR_CHAT_USERS_KEY, usernames.join(','))
+    if (body.appUsers !== undefined) await upsert(VISITOR_CHAT_APP_USERS_KEY, body.appUsers ? 'true' : 'false')
 
     // Unbekannte Benutzernamen nur melden, nicht ablehnen (Konto kann noch angelegt werden)
     let unknown: string[] = []

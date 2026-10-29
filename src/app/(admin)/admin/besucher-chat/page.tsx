@@ -2,7 +2,7 @@
 
 /**
  * Admin: Besucher-Chat ein-/ausschalten, freigeschaltete Konten pflegen, gemeldete Gespräche sehen.
- * Schreibt app_settings visitor_chat_enabled + visitor_chat_users über PUT /api/admin/chat/settings.
+ * Schreibt app_settings visitor_chat_enabled + visitor_chat_users + visitor_chat_app_users über PUT /api/admin/chat/settings.
  */
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -22,6 +22,7 @@ export default function AdminVisitorChatPage() {
   const [loading, setLoading] = useState(true)
   const [enabled, setEnabled] = useState(false)
   const [usersText, setUsersText] = useState('demo')
+  const [appUsers, setAppUsers] = useState(false)
   const [savedSnapshot, setSavedSnapshot] = useState('')
   const [saving, setSaving] = useState(false)
   const [saveState, setSaveState] = useState<{ ok: boolean; text: string } | null>(null)
@@ -35,9 +36,11 @@ export default function AdminVisitorChatPage() {
       .then(s => {
         if (!alive) return
         setEnabled(s.enabled)
-        const text = s.users.length ? s.users.join(', ') : 'demo'
+        setAppUsers(s.appUsers === true)
+        const list = s.users ?? []
+        const text = list.length ? list.join(', ') : 'demo'
         setUsersText(text)
-        setSavedSnapshot(JSON.stringify({ enabled: s.enabled, text }))
+        setSavedSnapshot(JSON.stringify({ enabled: s.enabled, text, appUsers: s.appUsers === true }))
       })
       .catch(() => { if (alive) setSaveState({ ok: false, text: 'Einstellungen konnten nicht geladen werden.' }) })
       .finally(() => { if (alive) setLoading(false) })
@@ -48,17 +51,18 @@ export default function AdminVisitorChatPage() {
   }, [])
 
   const users = usersText.split(',').map(x => x.trim().toLowerCase()).filter(Boolean)
-  const dirty = JSON.stringify({ enabled, text: usersText }) !== savedSnapshot
+  const dirty = JSON.stringify({ enabled, text: usersText, appUsers }) !== savedSnapshot
 
   async function save() {
     setSaving(true)
     setSaveState(null)
     try {
-      const s = await chatApi.adminSaveSettings({ enabled, users })
+      const s = await chatApi.adminSaveSettings({ enabled, users, appUsers })
       setEnabled(s.enabled)
-      const text = s.users.join(', ')
+      setAppUsers(s.appUsers === true)
+      const text = (s.users ?? []).join(', ')
       setUsersText(text)
-      setSavedSnapshot(JSON.stringify({ enabled: s.enabled, text }))
+      setSavedSnapshot(JSON.stringify({ enabled: s.enabled, text, appUsers: s.appUsers === true }))
       setSaveState({ ok: true, text: s.enabled ? 'Gespeichert. Der Chat ist eingeschaltet.' : 'Gespeichert. Der Chat ist ausgeschaltet.' })
     } catch {
       setSaveState({ ok: false, text: 'Speichern fehlgeschlagen. Bitte noch einmal versuchen.' })
@@ -73,7 +77,7 @@ export default function AdminVisitorChatPage() {
     <div className="max-w-4xl mx-auto py-4 sm:py-8 px-0 sm:px-4">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Besucher-Chat</h1>
-        <p className="text-sm text-gray-500 mt-1">Chat zwischen Seitenbesuchern und Betreibern. Erst nur für einzelne Konten freigeschaltet.</p>
+        <p className="text-sm text-gray-500 mt-1">Chat zwischen Seitenbesuchern und Betreibern. Freigeschaltet für einzelne Konten und, wenn unten an, für alle App-Nutzer. Auf einer Seite erscheint er erst, wenn der Nutzer ihn im Editor einschaltet.</p>
       </div>
 
       {/* Schalter + Konten */}
@@ -84,15 +88,25 @@ export default function AdminVisitorChatPage() {
           <div>
             <p className="text-[15px] font-medium text-gray-900 m-0">Besucher-Chat</p>
             <p className="text-sm m-0 mt-0.5" style={{ color: '#6B7280' }}>
-              {enabled ? 'Eingeschaltet – das Chat-Symbol erscheint auf den Seiten der Konten unten.' : 'Ausgeschaltet – auf keiner Seite erscheint ein Chat.'}
+              {enabled ? 'Eingeschaltet – freigeschaltete Konten können den Chat im Editor einschalten.' : 'Ausgeschaltet – auf keiner Seite erscheint ein Chat (Notaus).'}
             </p>
           </div>
           <Switch checked={enabled} onChange={setEnabled} disabled={loading} label="Besucher-Chat ein- oder ausschalten" />
         </div>
 
+        <div className="flex items-center justify-between gap-4 py-3" style={{ borderBottom: '1px solid #F3F4F6' }}>
+          <div>
+            <p className="text-[15px] font-medium text-gray-900 m-0">Alle App-Nutzer</p>
+            <p className="text-sm m-0 mt-0.5" style={{ color: '#6B7280' }}>
+              Konten, die die App benutzt haben, sehen „Chats“ und die Editor-Karte. Der Chat ist dort aus, bis sie ihn einschalten und der Auftragsverarbeitung zustimmen.
+            </p>
+          </div>
+          <Switch checked={appUsers} onChange={setAppUsers} disabled={loading} label="Chat für alle App-Nutzer freischalten" />
+        </div>
+
         <label className="block py-4">
-          <span className="text-[15px] font-medium text-gray-900">Freigeschaltete Konten</span>
-          <span className="block text-sm mt-0.5 mb-2" style={{ color: '#6B7280' }}>Benutzernamen, durch Komma getrennt. Nur diese Konten sehen den Bereich „Chats“ und bekommen das Chat-Symbol auf ihrer Seite.</span>
+          <span className="text-[15px] font-medium text-gray-900">Zusätzlich freigeschaltete Konten</span>
+          <span className="block text-sm mt-0.5 mb-2" style={{ color: '#6B7280' }}>Benutzernamen, durch Komma getrennt. Diese Konten sind immer freigeschaltet, auch ohne App.</span>
           <input
             type="text"
             value={usersText}

@@ -19,7 +19,7 @@ import type {
 
 export type ReportReason = 'spam' | 'abuse' | 'illegal' | 'other'
 
-export interface AdminChatSettings { enabled: boolean; users: string[] }
+export interface AdminChatSettings { enabled: boolean; users: string[]; appUsers: boolean }
 export interface AdminChatReport {
   conversationId: string
   username: string
@@ -264,7 +264,7 @@ const MOCK_REPLIES = [
   'Perfekt, vielen Dank 🙂',
 ]
 
-const mockAdmin: AdminChatSettings = { enabled: true, users: ['demo', 'qapro'] }
+const mockAdmin: AdminChatSettings = { enabled: true, appUsers: true, users: ['demo', 'qapro'] }
 
 const mockApi: ChatApi = {
   async listConversations({ status, q }) {
@@ -378,6 +378,7 @@ const mockApi: ChatApi = {
     await delay(300)
     mockAdmin.enabled = s.enabled
     mockAdmin.users = [...s.users]
+    mockAdmin.appUsers = s.appUsers
     return { ...mockAdmin, users: [...mockAdmin.users] }
   },
   async adminGetReports() {

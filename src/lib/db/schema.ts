@@ -203,8 +203,9 @@ export const userSites = pgTable('user_sites', {
   // liefert nur diesen aus; der Editor arbeitet am Entwurf in site_data. Siehe src/lib/sites/published-data.ts
   publishedData: jsonb('published_data').$type<Record<string, string> | null>(),
   publishedDataAt: timestamp('published_data_at', { withTimezone: true }),
-  /** Besucher-Chat auf dieser Seite (Editor-Schalter); wirkt nur, wenn das Konto freigeschaltet ist */
-  visitorChatEnabled: boolean('visitor_chat_enabled').notNull().default(true),
+  /** Besucher-Chat auf dieser Seite (Editor-Schalter); wirkt nur, wenn das Konto freigeschaltet ist.
+   *  Standard aus seit Migration 20261029120000 – Einschalten nur mit Zustimmung (chat_avv_consents). */
+  visitorChatEnabled: boolean('visitor_chat_enabled').notNull().default(false),
   // @deprecated — per-site consent fields (replaced by users.content_consent_at onboarding step)
   // Kept for historical data; no longer written by the publish flow. Admin panel still reads them.
   contentConsentGivenAt: timestamp('content_consent_given_at', { withTimezone: true }),
@@ -1059,6 +1060,20 @@ export const chatConversationsRelations = relations(chatConversations, ({ one, m
 export const chatMessagesRelations = relations(chatMessages, ({ one }) => ({
   conversation: one(chatConversations, { fields: [chatMessages.conversationId], references: [chatConversations.id] }),
 }))
+
+/** Zustimmung zur Ergänzung der Auftragsverarbeitung (Besucher-Chat), Migration 20261029120000 */
+export const chatAvvConsents = pgTable('chat_avv_consents', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  siteId: uuid('site_id').references(() => userSites.id, { onDelete: 'set null' }),
+  version: varchar('version', { length: 20 }).notNull(),
+  textHash: varchar('text_hash', { length: 64 }).notNull(),
+  ip: varchar('ip', { length: 64 }),
+  userAgent: text('user_agent'),
+  acceptedAt: timestamp('accepted_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_chat_avv_consents_user').on(t.userId),
+])
 
 export type ChatConversationRow = typeof chatConversations.$inferSelect
 export type ChatMessageRow = typeof chatMessages.$inferSelect

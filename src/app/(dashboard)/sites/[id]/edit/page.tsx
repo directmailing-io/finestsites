@@ -394,11 +394,17 @@ function DnsRecordTable({ type, name, value, typeWidth = 80, nameWidth = 100, co
 /**
  * Besucher-Chat je Webseite (Schalter). Erscheint nur, wenn das Konto freigeschaltet ist
  * (`GET /api/sites/[id]/chat` → available=true); sonst wird nichts gerendert – andere Nutzer
- * sollen vom Feature nichts mitbekommen. Wirkt sofort auf die Live-Seite, unabhängig vom Veröffentlichen.
+ * sollen vom Feature nichts mitbekommen. Standard aus. Beim ersten Einschalten stimmt der Nutzer
+ * der Ergänzung zur Auftragsverarbeitung zu (src/lib/chat/avv.ts). Wirkt sofort auf die Live-Seite,
+ * unabhängig vom Veröffentlichen.
  */
+type VisitorChatState = { available: boolean; enabled: boolean; avvAccepted: boolean; consentLine: string; avvUrl: string }
+
 function VisitorChatPanel({ siteId }: { siteId: string }) {
-  const [state, setState] = useState<{ available: boolean; enabled: boolean } | null>(null)
+  const openExternal = useOpenExternal()
+  const [state, setState] = useState<VisitorChatState | null>(null)
   const [saving, setSaving] = useState(false)
+  const [askConsent, setAskConsent] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -407,7 +413,13 @@ function VisitorChatPanel({ siteId }: { siteId: string }) {
       .then(r => (r.ok ? r.json() : null))
       .then(data => {
         if (cancelled || !data || typeof data.available !== 'boolean') return
-        setState({ available: data.available, enabled: data.enabled === true })
+        setState({
+          available: data.available,
+          enabled: data.enabled === true,
+          avvAccepted: data.avvAccepted === true,
+          consentLine: typeof data.consentLine === 'string' ? data.consentLine : '',
+          avvUrl: typeof data.avvUrl === 'string' ? data.avvUrl : 'https://finestsites.io/agb/avv-besucher-chat',
+        })
       })
       .catch(() => {})
     return () => { cancelled = true }
@@ -416,27 +428,39 @@ function VisitorChatPanel({ siteId }: { siteId: string }) {
   if (!state?.available) return null
   const enabled = state.enabled
 
-  async function handleToggle() {
-    if (saving) return
-    const next = !enabled
+  async function save(next: boolean, acceptAvv = false) {
+    if (saving || !state) return
     setError('')
     setSaving(true)
-    setState({ available: true, enabled: next })
+    const before = state
+    setState({ ...state, enabled: next })
     try {
       const res = await fetch(`/api/sites/${siteId}/chat`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ enabled: next }),
+        body: JSON.stringify(acceptAvv ? { enabled: next, acceptAvv: true } : { enabled: next }),
       })
       const data = await res.json().catch(() => null)
+      if (res.status === 409 && data?.error === 'AVV_REQUIRED') {
+        setState({ ...before, avvAccepted: false })
+        setAskConsent(true)
+        return
+      }
       if (!res.ok || typeof data?.enabled !== 'boolean') throw new Error('save failed')
-      setState({ available: data.available !== false, enabled: data.enabled })
+      setState({ ...before, enabled: data.enabled, avvAccepted: data.avvAccepted === true || before.avvAccepted })
+      setAskConsent(false)
     } catch {
-      setState({ available: true, enabled: !next })
+      setState(before)
       setError('Konnte nicht gespeichert werden.')
     } finally {
       setSaving(false)
     }
+  }
+
+  function handleToggle() {
+    if (saving || !state) return
+    if (!enabled && !state.avvAccepted) { setAskConsent(true); return }
+    save(!enabled)
   }
 
   return (
@@ -467,13 +491,47 @@ function VisitorChatPanel({ siteId }: { siteId: string }) {
           <span className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow transition-all" style={{ left: enabled ? 22 : 2 }} />
         </button>
       </div>
-      <p className="mt-4 text-xs leading-relaxed" style={{ color: '#9CA3AF' }}>
-        Gilt sofort für die veröffentlichte Seite, unabhängig vom Veröffentlichen.
-      </p>
-      {!enabled && !error && (
-        <p className="mt-1.5 text-xs leading-relaxed" style={{ color: '#6B7280' }}>
-          Das Chat-Symbol ist auf deiner Seite ausgeblendet.
-        </p>
+
+      {askConsent && !enabled ? (
+        <div className="mt-5 rounded-2xl p-5" style={{ background: '#F9FAFB', border: '1px solid #F0F0F0' }}>
+          <p className="text-sm font-semibold text-gray-900">Kurz zustimmen, dann ist der Chat an</p>
+          <ul className="mt-2.5 space-y-1.5 text-sm leading-relaxed" style={{ color: '#4B5563' }}>
+            <li>• Wir speichern die Nachrichten deiner Besucher für dich, auf Servern in Deutschland.</li>
+            <li>• Nach 180 Tagen ohne neue Nachricht wird ein Gespräch automatisch gelöscht.</li>
+            <li>• Deine Datenschutzerklärung ergänzen wir automatisch.</li>
+          </ul>
+          <p className="mt-3 text-xs leading-relaxed" style={{ color: '#6B7280' }}>
+            {state.consentLine}{' '}
+            <a href={state.avvUrl} target="_blank" rel="noopener noreferrer"
+              onClick={e => openExternal(e, state.avvUrl)}
+              className="underline underline-offset-2" style={{ color: '#111827' }}>
+              Ergänzung lesen
+            </a>
+          </p>
+          <div className="mt-4 flex flex-col-reverse sm:flex-row gap-2.5">
+            <button type="button" onClick={() => setAskConsent(false)} disabled={saving}
+              className="h-11 px-5 rounded-2xl text-sm font-semibold bg-white disabled:opacity-60"
+              style={{ border: '1px solid #E5E7EB', color: '#374151' }}>
+              Abbrechen
+            </button>
+            <button type="button" onClick={() => save(true, true)} disabled={saving}
+              className="h-11 px-5 rounded-2xl text-sm font-semibold text-white disabled:opacity-60"
+              style={{ background: '#16A34A' }}>
+              {saving ? 'Wird eingeschaltet …' : 'Zustimmen und einschalten'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="mt-4 text-xs leading-relaxed" style={{ color: '#9CA3AF' }}>
+            Gilt sofort für die veröffentlichte Seite, unabhängig vom Veröffentlichen.
+          </p>
+          {!enabled && !error && (
+            <p className="mt-1.5 text-xs leading-relaxed" style={{ color: '#6B7280' }}>
+              Der Chat ist aus. Schalte ihn ein, damit das Chat-Symbol auf deiner Seite erscheint.
+            </p>
+          )}
+        </>
       )}
       {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
     </div>

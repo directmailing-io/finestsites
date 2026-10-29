@@ -174,7 +174,7 @@ function ConversationRow({ conv, selected, onSelect }: { conv: ChatConversation;
 function EmptyList({ status, search }: { status: ChatConversationStatus; search: string }) {
   let title = 'Noch keine Gespräche'
   let text: React.ReactNode = (
-    <>Besucher deiner Webseite können dir über das Chat-Symbol unten rechts auf deiner Seite schreiben. Jedes Gespräch erscheint dann hier – und du antwortest direkt.</>
+    <>Schalte den Chat zuerst im Editor deiner Webseite ein (unter &bdquo;Domain&ldquo;). Dann können Besucher dir über das Chat-Symbol schreiben, und jedes Gespräch erscheint hier.</>
   )
   if (search) {
     title = 'Keine Ergebnisse'
