@@ -128,7 +128,8 @@ async function main() {
         ok++
       } catch (err) {
         failed++
-        console.error(`✗ ${url}: ${err instanceof Error ? err.message.split('\n')[0] : err}`)
+        const cause = err instanceof Error && err.cause instanceof Error ? ` (${err.cause.message})` : ''
+        console.error(`✗ ${url}: ${err instanceof Error ? err.message.split('\n')[0] : err}${cause}`)
         if (!DRY) await db.execute(sql`update user_sites set thumb_error_at = now() where id = ${s.id}`)
       }
     }
