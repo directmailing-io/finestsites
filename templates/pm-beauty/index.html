@@ -1386,6 +1386,14 @@ body { font-family: var(--font); font-size: 15.5px; }
   .pr-stage ~ .pr-rows { margin-top: 0; }
 }
 @media (max-width: 760px) { .pr-usps { grid-template-columns: 1fr 1fr; } .usp { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; } }
+
+/* Runde 14: Intro-Card mit kurzer Headline + Fließtext */
+.intro-card .big { font-size: clamp(32px, 3.6vw, 52px); line-height: 1.08; letter-spacing: -0.03em; max-width: 18ch; }
+.intro-text { font-size: clamp(15.5px, 1.2vw, 17.5px); line-height: 1.6; color: var(--ink-2); max-width: 58ch; }
+.split-word .pt { max-width: 26ch; }
+.hero h1 { font-size: clamp(44px, 5.4vw, 86px); line-height: 1.02; }
+@media (max-width: 760px) { .hero h1 { font-size: clamp(38px, 10.5vw, 52px); } .hero h1 .nw { white-space: normal; } .hero-frau > img { object-position: 82% 15%; } }
+@media (max-height: 520px) and (orientation: landscape) { .hero h1 { font-size: clamp(28px, 4.4vw, 42px); } }
 </style>
 </head>
 
@@ -1457,9 +1465,8 @@ body { font-family: var(--font); font-size: 15.5px; }
   <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
   <div class="hero-copy">
     <span class="hero-who"><img loading="eager" decoding="async" src="{{profilbild}}" alt="">Die Beauty-Empfehlung von {{vorname}}</span>
-    <h1 class="reveal">Schönheit von<br><span class="nw"><em>innen</em> &amp; <em>außen</em></span></h1>
-    <p class="tagline reveal">Für jede Haut, für Frau und Mann</p>
-    <p class="sub reveal">Du wünschst dir endlich eine Routine, mit der sich deine Haut jeden Tag gepflegt und frisch anfühlt – ohne zehn Produkte und ohne Rätselraten? Hier zeige ich dir mein Beauty-Konzept: Pflege von außen, ein Drink von innen, einfach und auf dich abgestimmt</p>
+    <h1 class="reveal">Deine Beauty-Routine.<br><span class="nw">Von <em>innen</em> und <em>außen</em>.</span></h1>
+    <p class="sub reveal">Mach deine tägliche Beauty-Routine zu deinem persönlichen Wohlfühlmoment. Lerne den Beauty-Drink und die Hautpflegeprodukte meiner Partnerfirma kennen. Gemeinsam finden wir heraus, was zu deinen Wünschen und deiner Haut passt.</p>
     <div class="hero-ctas reveal">
       <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
       <a href="#produkte" class="btn btn-light">Meine Empfehlung ansehen</a>
@@ -1484,9 +1491,9 @@ body { font-family: var(--font); font-size: 15.5px; }
 <!-- INNEN & AUSSEN · Vollbild-Split -->
 <section class="intro-card-wrap">
   <div class="intro-card reveal">
-    <span class="eye">Ganzheitliches Konzept</span>
-    <p class="big">Schöne Haut entsteht nicht nur im Badezimmer. Deshalb pflege ich sie von <em>außen</em> und versorge sie von <em>innen</em> mit Nährstoffen, die für die Haut wichtig sind</p>
-    <p class="intro-sub">Zum Beispiel trägt Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei</p>
+    <span class="eye">Beauty von innen &amp; außen</span>
+    <p class="big">Du cremst schon.<br>Jetzt kommt ein <em>Drink</em> dazu.</p>
+    <p class="intro-text">Mit dieser Beauty-Routine kommt zur täglichen Hautpflege ein fruchtiger Drink dazu. Er ergänzt deine Ernährung mit Vitaminen und Mineralstoffen. Das enthaltene Vitamin&nbsp;C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Ob morgens oder zwischendurch: Du entscheidest, wann es in deinen Tag passt.</p>
     <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
   </div>
 </section>
@@ -1494,8 +1501,8 @@ body { font-family: var(--font); font-size: 15.5px; }
 <section class="split" id="prinzip">
   <div class="split-stage">
     <img class="cut" loading="lazy" decoding="async" src="assets/split-cut.webp" alt="" width="716" height="885">
-    <div class="split-word l"><small>Pflege für die Haut</small><b>Außen</b><span class="pt">Reinigen, mit Tonic klären und eincremen. Morgens und abends.</span></div>
-    <div class="split-word r"><small>Ein Drink am Tag</small><b>Innen</b><span class="pt">Nahrungsergänzung mit Biotin, Zink und Vitamin C. Lecker mit Beerengeschmack.</span></div>
+    <div class="split-word l"><small>Deine tägliche Hautpflege</small><b>Außen</b><span class="pt">Reinigen, Serum auftragen, eincremen. Vom ersten Schritt bis zum Abschluss deiner Pflegeroutine.</span></div>
+    <div class="split-word r"><small>Dein Beauty-Drink</small><b>Innen</b><span class="pt">Pulver ins Wasser, umrühren, genießen. Mit Beerengeschmack, Vitaminen und Mineralstoffen ergänzt der Drink deine tägliche Ernährung.</span></div>
   </div>
 
   <div class="split-cols">

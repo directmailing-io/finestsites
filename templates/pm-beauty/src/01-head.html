@@ -687,5 +687,13 @@ body { font-family: var(--font); font-size: 15.5px; }
   .pr-stage ~ .pr-rows { margin-top: 0; }
 }
 @media (max-width: 760px) { .pr-usps { grid-template-columns: 1fr 1fr; } .usp { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; } }
+
+/* Runde 14: Intro-Card mit kurzer Headline + Fließtext */
+.intro-card .big { font-size: clamp(32px, 3.6vw, 52px); line-height: 1.08; letter-spacing: -0.03em; max-width: 18ch; }
+.intro-text { font-size: clamp(15.5px, 1.2vw, 17.5px); line-height: 1.6; color: var(--ink-2); max-width: 58ch; }
+.split-word .pt { max-width: 26ch; }
+.hero h1 { font-size: clamp(44px, 5.4vw, 86px); line-height: 1.02; }
+@media (max-width: 760px) { .hero h1 { font-size: clamp(38px, 10.5vw, 52px); } .hero h1 .nw { white-space: normal; } .hero-frau > img { object-position: 82% 15%; } }
+@media (max-height: 520px) and (orientation: landscape) { .hero h1 { font-size: clamp(28px, 4.4vw, 42px); } }
 </style>
 </head>
