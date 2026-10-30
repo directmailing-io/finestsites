@@ -26,6 +26,9 @@ async function guarded(name: string, fn: () => Promise<unknown>): Promise<void> 
   }
 }
 
+/** Mitteilung je Besucher-Chat-Nachricht (Daniel 30.10.2026: aus). */
+const CHAT_MESSAGE_PUSH = false
+
 /** Gespräch gilt als „gerade offen“, wenn der Betreiber es in diesem Zeitraum abgerufen hat. */
 export const OWNER_ACTIVE_MS = 20_000
 
@@ -55,6 +58,9 @@ export const pushTriggers = {
    * Nie Besucherdaten oder Nachrichtentext im Sperrbildschirm.
    */
   newChatMessage(conversationId: string): Promise<void> {
+    // Aus seit 30.10.2026 (Daniel): keine Mitteilung je Chat-Nachricht, bei aktiven Chats wird das zu viel.
+    // Ungelesene Chats zeigen der Zähler am „Chats“-Tab und die Zahl am App-Symbol.
+    if (!CHAT_MESSAGE_PUSH) return Promise.resolve()
     return guarded('chat', async () => {
       const [conv] = await db.select({
         userId: chatConversations.userId,

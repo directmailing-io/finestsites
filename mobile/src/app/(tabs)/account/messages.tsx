@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { Stack, useRouter, type Href } from 'expo-router';
+import { Stack, useFocusEffect, useRouter, type Href } from 'expo-router';
 import { Bell, Globe, Handshake, Inbox, MessageCircle, type LucideIcon } from 'lucide-react-native';
-import { useEffect } from 'react';
+import { useCallback, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { markNotificationsRead } from '@/api/endpoints';
@@ -28,19 +28,24 @@ export default function NotificationsScreen() {
   const items = q.data?.items ?? [];
   const unread = q.data?.unreadCount ?? 0;
 
-  // Beim Verlassen alles als gelesen markieren
-  useEffect(
-    () => () => {
-      if (unread > 0) {
-        void markNotificationsRead({ all: true })
-          .catch(() => {})
-          .then(() => {
-            void qc.invalidateQueries({ queryKey: qk.notifications });
-            void qc.invalidateQueries({ queryKey: qk.overview });
-          });
-      }
-    },
-    [unread, qc],
+  // Beim Verlassen alles als gelesen markieren – auch beim Tab-Wechsel oder Antippen einer Mitteilung
+  // (der Bildschirm bleibt dabei im Stapel und wird nie „abgebaut“; vorher blieb die Zahl stehen).
+  const unreadRef = useRef(unread);
+  unreadRef.current = unread;
+  useFocusEffect(
+    useCallback(
+      () => () => {
+        if (unreadRef.current > 0) {
+          void markNotificationsRead({ all: true })
+            .catch(() => {})
+            .then(() => {
+              void qc.invalidateQueries({ queryKey: qk.notifications });
+              void qc.invalidateQueries({ queryKey: qk.overview });
+            });
+        }
+      },
+      [qc],
+    ),
   );
 
   return (

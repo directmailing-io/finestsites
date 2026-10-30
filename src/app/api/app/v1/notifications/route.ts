@@ -7,6 +7,7 @@ import { userNotifications } from '@/lib/db/schema'
 import { and, desc, eq, isNull, lt, sql } from 'drizzle-orm'
 import { appError, appJson, requireAppUser, toIso } from '@/lib/app-api/http'
 import { NotificationsQuery, NotificationsResponse } from '@/lib/contracts/app-v1/notifications'
+import { syncNotificationReads } from '@/lib/push/notification-sync'
 
 export const dynamic = 'force-dynamic'
 
@@ -24,6 +25,7 @@ export async function GET(req: Request) {
     ? and(eq(userNotifications.userId, userId), lt(userNotifications.createdAt, new Date(before)))
     : eq(userNotifications.userId, userId)
 
+  await syncNotificationReads(userId)
   const [rows, unread] = await Promise.all([
     db.select().from(userNotifications).where(where).orderBy(desc(userNotifications.createdAt)).limit(limit + 1),
     db.select({ n: sql<number>`count(*)::int`.mapWith(Number) }).from(userNotifications)

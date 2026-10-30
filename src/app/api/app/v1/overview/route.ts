@@ -8,6 +8,7 @@ import { db } from '@/lib/db'
 import { affiliateCommissions, affiliateTaxProfiles, formSubmissions, siteEvents, supportConversations, userNotifications } from '@/lib/db/schema'
 import { and, eq, gte, inArray, isNull, lt, sql } from 'drizzle-orm'
 import { appError, appJson, requireAppUser, toIso } from '@/lib/app-api/http'
+import { syncNotificationReads } from '@/lib/push/notification-sync'
 import { accountOffline, affiliateEligible, domainInfo, loadProfile, loadSites, siteStatus, siteUrl, thumbnailOf } from '@/lib/app-api/account'
 import { getAppRuntimeSettings } from '@/lib/app-api/settings'
 import { unpublishedChangesFor } from '@/lib/sites/published-data'
@@ -83,6 +84,7 @@ export async function GET(req: Request) {
   if (!profile) return appError('UNAUTHORIZED')
   const siteIds = sites.map(s => s.id)
 
+  await syncNotificationReads(userId)
   const [unreadBySite, supportRow, notifRow, last7, prev7, last30, visitors, changes, chatUnread, news] = await Promise.all([
     siteIds.length === 0 ? Promise.resolve([] as { siteId: string; n: number }[]) :
       db.select({ siteId: formSubmissions.userSiteId, n: sql<number>`count(*)::int`.mapWith(Number) })
