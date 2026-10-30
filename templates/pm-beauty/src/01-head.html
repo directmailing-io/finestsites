@@ -604,11 +604,9 @@ body { font-family: var(--font); font-size: 15.5px; }
 .hero-familie .hero-facts { flex-direction: column; gap: 8px; }
 
 .split-cols { position: relative; }
-.split-plus { position: absolute; left: 50%; top: calc(50% + clamp(14px, 2vh, 24px)); transform: translate(-50%, -50%); z-index: 3; width: 76px; height: 76px; border-radius: 50%; background: var(--paper); color: var(--innen); display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 34px -12px rgba(60,20,20,0.45); border: 7px solid var(--bg); }
-.split-plus svg { width: 30px; height: 30px; }
 .split-col.l li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; }
 .split-col li strong { font-weight: 700; }
-.split-col.l { padding-right: clamp(36px, 4.5vw, 64px); } .split-col.r { padding-left: clamp(36px, 4.5vw, 64px); }
+
 
 .pr-stage { padding-top: clamp(40px, 7vw, 100px); }
 
@@ -619,8 +617,6 @@ body { font-family: var(--font); font-size: 15.5px; }
 .about-social a:hover { border-color: var(--green); transform: translateY(-1px); }
 .about-social svg { width: 17px; height: 17px; color: var(--green-dark); }
 
-.rt-card.accent .rt-body { flex: 1; justify-content: center; gap: 10px; padding-top: 30px; padding-bottom: 30px; }
-.rt-card.accent .rt-body h3 { margin-bottom: 6px; }
 
 @media (max-width: 1024px) {
   .hero-familie > img { object-position: 78% 25%; }
@@ -628,9 +624,6 @@ body { font-family: var(--font); font-size: 15.5px; }
   .hero-familie .hero-copy { justify-content: flex-end; min-height: 100vh; min-height: 100svh; }
   .hero.hero-familie .hero-copy > * { max-width: 640px; }
   .hero-familie .hero-facts { flex-direction: row; }
-  .split-plus { position: relative; left: auto; top: auto; transform: none; justify-self: center; margin: -42px 0; width: 64px; height: 64px; } .split-plus svg { width: 26px; height: 26px; }
-  .split-col.l, .split-col.r { padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 44px); }
-  .split-col.l { padding-bottom: 48px; } .split-col.r { padding-top: 48px; }
 }
 @media (max-width: 760px) {
   .hero-familie .hero-copy { min-height: 0; }
@@ -695,5 +688,34 @@ body { font-family: var(--font); font-size: 15.5px; }
 .hero h1 { font-size: clamp(44px, 5.4vw, 86px); line-height: 1.02; }
 @media (max-width: 760px) { .hero h1 { font-size: clamp(38px, 10.5vw, 52px); } .hero h1 .nw { white-space: normal; } .hero-frau > img { object-position: 82% 15%; } }
 @media (max-height: 520px) and (orientation: landscape) { .hero h1 { font-size: clamp(28px, 4.4vw, 42px); } }
+
+/* ============ Außen/Innen-Karten mit Bild (Runde 15) ============ */
+.split-cols { gap: clamp(14px, 1.6vw, 22px); align-items: stretch; }
+.split-col { padding: 0; overflow: hidden; gap: 0; }
+.sc-img { aspect-ratio: 16 / 9; overflow: hidden; }
+.sc-img img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; display: block; }
+.sc-body { padding: clamp(26px, 3.2vw, 46px) clamp(22px, 3.2vw, 46px) clamp(28px, 3.4vw, 48px); display: flex; flex-direction: column; gap: 16px; flex: 1; }
+.split-col h3 { max-width: 22ch; font-size: clamp(26px, 2.4vw, 36px); }
+.sc-steps { list-style: none; display: grid; gap: 14px; margin: 4px 0 0; }
+.sc-steps li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: baseline; font-size: 16px; line-height: 1.55; }
+.sc-steps li b { font-family: var(--font); font-weight: 700; font-size: 12px; letter-spacing: .1em; }
+.sc-steps strong { font-weight: 700; }
+.sc-intro { font-size: 16px; line-height: 1.6; max-width: 46ch; }
+.split-col .nutri { gap: 14px; }
+.split-col .nutri li { grid-template-columns: 44px 1fr; font-size: 15.5px; }
+.split-col .nutri li b { width: 44px; height: 44px; font-size: 12px; }
+.sc-end { max-width: none !important; margin-top: auto; padding-top: 16px; border-top: 1px solid currentColor; border-top-color: color-mix(in srgb, currentColor 22%, transparent); font-size: 15.5px; font-weight: 600; opacity: 1 !important; }
+.split-note, .rt-foot { color: var(--ink-2) !important; font-size: 13px; line-height: 1.6; }
+.rt-foot { max-width: var(--max); margin: 18px auto 0; }
+
+/* ============ Routine (Runde 15): Überschriften auf einer Höhe, Glas statt Häkchen ============ */
+.rt-body { padding: 24px 24px 22px; gap: 4px; }
+.rt-body h3 { font-size: clamp(24px, 2vw, 29px); min-height: 0; margin-bottom: 10px; }
+.rt3 .rt-step i.glass { background: rgba(255,255,255,0.16); color: #fff; }
+.rt3 .rt-step i.glass svg { width: 14px; height: 14px; }
+.rt-desc { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.9); margin-top: 10px; }
+.rt-card.accent .rt-note { font-size: 13px; color: rgba(255,255,255,0.72); margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.16); }
+@media (min-width: 1025px) { .rt-body h3 { min-height: 2.25em; } }
+.rt-card.accent .rt-img img { object-position: 50% 22%; }
 </style>
 </head>
