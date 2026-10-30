@@ -12,8 +12,8 @@
  * Kein Besuch in der Statistik, kein Werbe-Pixel: der User-Agent enthält „headless“ (Worker BOT_UA_RE) und die
  * Cookie-Einwilligung ist vorab abgelehnt, das Banner wird ausgeblendet.
  *
- * App-Server (systemd-Timer fs-site-thumbs, Nutzer finestsites):
- *   node --env-file=.env.production --import tsx scripts/site-thumbnails.ts [--limit 25] [--budget 100]
+ * App-Server (systemd-Timer fs-site-thumbs, Nutzer finestsites; .env.production gehört root → Kopie aus dem Build):
+ *   node --env-file=.next/standalone/.env.production --import tsx scripts/site-thumbnails.ts [--limit 25] [--budget 100]
  * Einzelne Seite / Test ohne Schreiben (Bild landet unter --out, DB und R2 bleiben unberührt):
  *   … scripts/site-thumbnails.ts --site <siteId> [--dry --out ./thumbs]
  * Beliebige Adressen ansehen (immer ohne Schreiben): … scripts/site-thumbnails.ts --url https://demo.dailyoptimal.de --out ./thumbs
@@ -122,7 +122,7 @@ async function main() {
           await uploadToR2(key, webp, 'image/webp') // überschreibt das alte Bild
           const thumbUrl = `${APP_URL}/api/media/${key}?v=${at}` // neue Version → Caches holen das neue Bild
           // thumb_at = Beginn der Aufnahme: wird währenddessen neu veröffentlicht, kommt die Seite gleich wieder dran
-          await db.execute(sql`update user_sites set thumb_url = ${thumbUrl}, thumb_at = ${new Date(at)}, thumb_error_at = null where id = ${s.id}`)
+          await db.execute(sql`update user_sites set thumb_url = ${thumbUrl}, thumb_at = to_timestamp(${at}::bigint / 1000.0), thumb_error_at = null where id = ${s.id}`)
           console.log(`✓ ${url} (${Math.round(webp.length / 1024)} KB)`)
         }
         ok++

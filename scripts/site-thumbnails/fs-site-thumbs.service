@@ -11,7 +11,7 @@ Type=oneshot
 User=finestsites
 WorkingDirectory=/var/www/finestsites
 Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
-ExecStart=/usr/bin/node --env-file=.env.production --import tsx scripts/site-thumbnails.ts --limit 25 --budget 100
+ExecStart=/usr/bin/node --env-file=.next/standalone/.env.production --import tsx scripts/site-thumbnails.ts --limit 25 --budget 100
 TimeoutStartSec=300
 Nice=10
 MemoryMax=1500M
