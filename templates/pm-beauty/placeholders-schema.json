@@ -226,13 +226,6 @@
       "required": true,
       "card_options": [
         {
-          "label": "Drei Generationen",
-          "value": "familie",
-          "card_type": "image",
-          "image_url": "/templates/pm-beauty/hero-previews/familie.webp",
-          "description": "Mann, Frau und reife Frau im Morgenlicht."
-        },
-        {
           "label": "Frau, natürlich",
           "value": "frau",
           "card_type": "image",
@@ -259,9 +252,16 @@
           "card_type": "image",
           "image_url": "/templates/pm-beauty/hero-previews/stillleben.webp",
           "description": "Creme, Glas und Beeren im Licht."
+        },
+        {
+          "label": "Drei Generationen",
+          "value": "familie",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/hero-previews/familie.webp",
+          "description": "Mann, Frau und reife Frau im Morgenlicht."
         }
       ],
-      "default_value": "familie",
+      "default_value": "frau",
       "preview_value": "frau",
       "placeholder_text": "Das große Bild ganz oben auf deiner Seite."
     },
@@ -377,7 +377,7 @@
     "team_partner_number": "40237198",
     "whatsapp_nummer": "491761234567",
     "farbthema": "rose",
-    "hero_variante": "familie",
+    "hero_variante": "frau",
     "scanner_anzeigen": "an",
     "maenner_anzeigen": "an",
     "tiktok_url": "",

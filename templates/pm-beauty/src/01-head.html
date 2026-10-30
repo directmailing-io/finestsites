@@ -24,21 +24,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<!-- Schriften im Stil von theworldofboudoir.com (dort: „Editor's Note“ Regular + Italic für Überschriften/Unterzeilen, Open Sans für Text und
+<!-- Schriften im Stil von theworldofboudoir.com (dort: „Editor’s Note“ für Überschriften, Open Sans für Text und
      versale Kennzeichen/Buttons). Editor's Note ist lizenzpflichtig, deshalb der freie, sehr ähnliche Caslon-Mix:
-     Libre Caslon Display (Überschriften) + Libre Caslon Text Italic (kursive Akzente) + Open Sans.
+     Libre Caslon Display (Überschriften, Akzente nur farbig, nicht kursiv) + Open Sans.
      Liegen lizenzierte Dateien unter assets/fonts/EditorsNote-*.woff2, werden sie automatisch verwendet. -->
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital@1&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @font-face { font-family: 'Editors Note'; src: local("Editor's Note Regular"), url('assets/fonts/EditorsNote-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Editors Note Italic'; src: local("Editor's Note Italic"), url('assets/fonts/EditorsNote-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
 </style>
 
 <style>
 :root {
   --font: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --display: 'Editors Note', 'Libre Caslon Display', Georgia, 'Times New Roman', serif;
-  --italic: 'Editors Note Italic', 'Libre Caslon Text', Georgia, serif;
+  --italic: var(--display);
   --label: var(--font);
   --mono: var(--font);
   --serif: var(--display);
@@ -514,8 +513,8 @@ h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro-card .big, .bento-card .
 h1 { font-size: clamp(48px, 6.4vw, 100px); line-height: 1; letter-spacing: -0.03em; }
 h2 { font-size: clamp(36px, 4.2vw, 62px); line-height: 1.04; letter-spacing: -0.03em; }
 h3 { font-size: clamp(24px, 2.1vw, 31px); line-height: 1.1; letter-spacing: -0.025em; }
-h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--italic); font-style: italic; font-weight: 400; font-size: 0.94em; line-height: inherit; letter-spacing: -0.02em; color: var(--green); }
-.tagline { font-family: var(--italic); font-style: italic; font-size: clamp(19px, 1.6vw, 24px); letter-spacing: -0.01em; color: var(--ink); line-height: 1.3; }
+h1 em, h2 em, h3 em, .intro-card .big em, .about-copy h2 em, .about-copy h2 .accent { font-family: var(--display); font-style: normal; font-weight: 400; font-size: 1em; line-height: inherit; letter-spacing: inherit; color: var(--green); }
+.tagline { font-family: var(--display); font-style: normal; font-size: clamp(20px, 1.7vw, 26px); letter-spacing: -0.02em; color: var(--ink); line-height: 1.3; }
 .split-word b { font-size: clamp(64px, 10.5vw, 180px); letter-spacing: -0.04em; line-height: 0.92; }
 .bento-card .big { font-size: clamp(76px, 7.5vw, 120px); letter-spacing: -0.03em; }
 .guar-badge b { font-size: 48px; }
@@ -523,7 +522,7 @@ h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--italic); font-styl
 .faq-q { font-size: clamp(20px, 1.7vw, 25px); letter-spacing: -0.02em; }
 .pm-sheet h3 { font-size: clamp(30px, 3vw, 38px); }
 .pr-cta h3 em, .contact .s-head h2 strong, .men-copy h2 em { color: var(--accent); }
-.contact .s-head h2 strong { font-family: var(--italic); font-style: italic; font-weight: 400; padding: 0 0.1em; }
+.contact .s-head h2 strong { font-family: var(--display); font-style: normal; font-weight: 400; }
 .bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(25px, 2.2vw, 32px); }
 body { font-family: var(--font); font-size: 15.5px; }
 /* Kennzeichen, Eyebrows, Buttons: Open Sans versal mit Laufweite (wie Boudoir) */
@@ -612,17 +611,7 @@ body { font-family: var(--font); font-size: 15.5px; }
 .split-col.l { padding-right: clamp(36px, 4.5vw, 64px); } .split-col.r { padding-left: clamp(36px, 4.5vw, 64px); }
 
 .pr-stage { padding-top: clamp(40px, 7vw, 100px); }
-.ntc-badge { display: inline-flex; align-items: center; gap: 12px; padding: 10px 18px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--green); box-shadow: 0 8px 24px -14px rgba(60,20,20,0.35); text-align: left; }
-.ntc-badge svg { width: 34px; height: 34px; padding: 7px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); flex: none; }
-.ntc-badge b { display: block; font-family: var(--font); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
-.ntc-badge small { display: block; font-size: 13px; color: var(--ink-3); }
 
-.world { display: inline-flex; align-items: center; gap: 14px; padding: 10px 18px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); flex-wrap: wrap; justify-content: center; }
-.world .globe { width: 28px; height: 28px; color: var(--green-dark); flex: none; }
-.world .flags { display: inline-flex; }
-.world .flags img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 2px solid var(--paper); margin-left: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
-.world .flags img:first-child { margin-left: 0; }
-.world b { font-family: var(--font); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
 
 .about-social { display: flex; flex-wrap: wrap; gap: 8px; }
 .about-social:empty { display: none; }
@@ -647,9 +636,7 @@ body { font-family: var(--font); font-size: 15.5px; }
   .hero-familie .hero-copy { min-height: 0; }
   .hero-familie > img { aspect-ratio: 4 / 3.6; object-position: 72% 30%; }
   .hero.hero-familie .hero-copy > * { max-width: none; }
-  .ntc-badge, .world { border-radius: 20px; }
   .pr-stage > img { aspect-ratio: 16 / 9; object-position: 50% 92%; margin-top: -8px; }
-  .world .flags img { width: 22px; height: 22px; }
 }
 /* Tablet hochkant: Bild oben, Text darunter (sonst wird das Gruppenbild zu stark gezoomt) */
 @media (min-width: 761px) and (max-width: 1024px) and (orientation: portrait) {
@@ -676,5 +663,29 @@ body { font-family: var(--font); font-size: 15.5px; }
   .rt3 { grid-template-columns: repeat(3, 1fr); max-width: none; }
   .rt-img { aspect-ratio: 4 / 3; }
 }
+
+/* ============ Vorteile schweben um die Produkte (wie Wellpreneur) ============ */
+.pr-usps { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.usp { position: absolute; pointer-events: auto; display: flex; align-items: center; gap: 12px; max-width: 270px; padding: 12px 16px 12px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 14px 34px -14px rgba(60,30,20,0.22); transition: transform .3s, box-shadow .3s; animation: uspFloat 6s ease-in-out infinite; }
+.usp:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -14px rgba(60,30,20,0.3); }
+.usp-icon { width: 38px; height: 38px; border-radius: 12px; background: var(--green-soft); color: var(--green-dark); display: flex; align-items: center; justify-content: center; flex: none; }
+.usp-icon svg { width: 19px; height: 19px; }
+.usp-text { line-height: 1.3; }
+.usp-text b { display: block; font-size: 14px; font-weight: 700; color: var(--ink); }
+.usp-text small { display: block; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+.usp-1 { top: 13%; left: 4%; } .usp-2 { top: 29%; left: 9%; animation-delay: -2s; } .usp-3 { top: 41%; left: 3%; animation-delay: -4s; }
+.usp-4 { top: 13%; right: 4%; animation-delay: -1s; } .usp-5 { top: 29%; right: 9%; animation-delay: -3s; } .usp-6 { top: 41%; right: 3%; animation-delay: -5s; }
+@keyframes uspFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+@media (prefers-reduced-motion: reduce) { .usp { animation: none; } }
+@media (max-width: 1180px) { .usp { max-width: 210px; } .usp-text small { font-size: 11.5px; } .usp-1, .usp-3 { left: 2%; } .usp-4, .usp-6 { right: 2%; } .usp-2 { left: 4%; } .usp-5 { right: 4%; } }
+@media (max-width: 1024px) {
+  .pr-stage { display: flex; flex-direction: column; }
+  .pr-stage .s-head { position: static; order: -1; padding: 0 var(--pad-x) 8px; margin: 0 auto; }
+  .pr-usps { position: static; order: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 8px var(--pad-x) 40px; }
+  .usp { position: static; max-width: none; animation: none; }
+  .pr-stage > img { aspect-ratio: 16 / 9; object-fit: cover; object-position: 50% 92%; }
+  .pr-stage ~ .pr-rows { margin-top: 0; }
+}
+@media (max-width: 760px) { .pr-usps { grid-template-columns: 1fr 1fr; } .usp { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; } }
 </style>
 </head>
