@@ -1356,30 +1356,6 @@ body { font-family: var(--font); font-size: 15.5px; }
   .rt-img { aspect-ratio: 4 / 3; }
 }
 
-/* ============ Vorteile schweben um die Produkte (wie Wellpreneur) ============ */
-.pr-usps { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
-.usp { position: absolute; pointer-events: auto; display: flex; align-items: center; gap: 12px; max-width: 270px; padding: 12px 16px 12px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 14px 34px -14px rgba(60,30,20,0.22); transition: transform .3s, box-shadow .3s; animation: uspFloat 6s ease-in-out infinite; }
-.usp:hover { transform: translateY(-3px); box-shadow: 0 20px 40px -14px rgba(60,30,20,0.3); }
-.usp-icon { width: 38px; height: 38px; border-radius: 12px; background: var(--green-soft); color: var(--green-dark); display: flex; align-items: center; justify-content: center; flex: none; }
-.usp-icon svg { width: 19px; height: 19px; }
-.usp-text { line-height: 1.3; }
-.usp-text b { display: block; font-size: 14px; font-weight: 700; color: var(--ink); }
-.usp-text small { display: block; font-size: 12px; color: var(--ink-3); margin-top: 2px; }
-.usp-1 { top: 13%; left: 4%; } .usp-2 { top: 29%; left: 9%; animation-delay: -2s; } .usp-3 { top: 41%; left: 3%; animation-delay: -4s; }
-.usp-4 { top: 13%; right: 4%; animation-delay: -1s; } .usp-5 { top: 29%; right: 9%; animation-delay: -3s; } .usp-6 { top: 41%; right: 3%; animation-delay: -5s; }
-@keyframes uspFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
-@media (prefers-reduced-motion: reduce) { .usp { animation: none; } }
-@media (max-width: 1180px) { .usp { max-width: 210px; } .usp-text small { font-size: 11.5px; } .usp-1, .usp-3 { left: 2%; } .usp-4, .usp-6 { right: 2%; } .usp-2 { left: 4%; } .usp-5 { right: 4%; } }
-@media (max-width: 1024px) {
-  .pr-stage { display: flex; flex-direction: column; }
-  .pr-stage .s-head { position: static; order: -1; padding: 0 var(--pad-x) 8px; margin: 0 auto; }
-  .pr-usps { position: static; order: 1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 8px var(--pad-x) 40px; }
-  .usp { position: static; max-width: none; animation: none; }
-  .pr-stage > img { aspect-ratio: 16 / 9; object-fit: cover; object-position: 50% 92%; }
-  .pr-stage ~ .pr-rows { margin-top: 0; }
-}
-@media (max-width: 760px) { .pr-usps { grid-template-columns: 1fr 1fr; } .usp { flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px; } }
-
 /* Runde 14: Intro-Card mit kurzer Headline + Fließtext */
 .intro-card .big { font-size: clamp(32px, 3.6vw, 52px); line-height: 1.08; letter-spacing: -0.03em; max-width: 18ch; }
 .intro-text { font-size: clamp(15.5px, 1.2vw, 17.5px); line-height: 1.6; color: var(--ink-2); max-width: 58ch; }
@@ -1416,6 +1392,98 @@ body { font-family: var(--font); font-size: 15.5px; }
 .rt-card.accent .rt-note { font-size: 13px; color: rgba(255,255,255,0.72); margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.16); }
 @media (min-width: 1025px) { .rt-body h3 { min-height: 2.25em; } }
 .rt-card.accent .rt-img img { object-position: 50% 22%; }
+
+/* ============ PRODUKTE (Runde 16): kompakte Auswahl ============ */
+.prx .s-head { margin-bottom: 8px; }
+.prx-visual { max-width: 1040px; margin: 0 auto; aspect-ratio: 3.4 / 1; overflow: hidden; border-radius: var(--r); }
+.prx-visual img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 74%; display: block; }
+.prx-list { max-width: 1040px; margin: 16px auto 0; display: grid; gap: 8px; }
+.prx-item { background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-sm); overflow: hidden; transition: border-color .2s; }
+.prx-item[open] { border-color: var(--line-2); }
+.prx-item summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 64px 1fr 36px; gap: 16px; align-items: center; padding: 10px 16px 10px 10px; }
+.prx-item summary::-webkit-details-marker { display: none; }
+.prx-item summary img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; }
+.prx-t small { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green-dark); }
+.prx-t b { display: block; font-family: var(--display); font-weight: 400; font-size: clamp(20px, 1.7vw, 24px); letter-spacing: -0.02em; color: var(--ink); line-height: 1.15; margin-top: 1px; }
+.prx-t > span { display: block; font-size: 14px; color: var(--ink-2); margin-top: 1px; }
+.prx-plus { position: relative; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--bg); }
+.prx-plus::before, .prx-plus::after { content: ''; position: absolute; left: 50%; top: 50%; width: 13px; height: 1.6px; background: var(--ink); transform: translate(-50%, -50%); transition: transform .25s; }
+.prx-plus::after { transform: translate(-50%, -50%) rotate(90deg); }
+.prx-item[open] .prx-plus::after { transform: translate(-50%, -50%) rotate(0deg); }
+.prx-body { padding: 4px 20px 20px 90px; display: grid; gap: 14px; }
+.prx-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 22px; margin: 0; }
+.prx-facts dt { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 4px; }
+.prx-facts dd { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+.prx-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.prx-compare > div { background: var(--bg); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.prx-compare b { font-family: var(--display); font-weight: 400; font-size: 21px; color: var(--ink); letter-spacing: -0.02em; }
+.prx-skin { display: inline-block; margin: 4px 0 6px; padding: 3px 9px; border-radius: 100px; background: var(--green-soft); color: var(--green-dark); font-size: 12.5px; font-weight: 600; }
+.prx-compare p { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.prx-mores { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.prx-more { justify-self: start; font-size: 14px; font-weight: 600; color: var(--green-dark); border-bottom: 1px solid currentColor; padding: 0 0 1px; }
+.prx-sub { max-width: 1040px; margin: clamp(32px, 4.5vh, 48px) auto 14px; }
+.prx-sub h3 { font-size: clamp(26px, 2.4vw, 34px); }
+.prx-sub p { font-size: 15px; color: var(--ink-2); margin-top: 4px; }
+.prx-cards { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.prx-cards.three { grid-template-columns: repeat(3, 1fr); }
+.prx-card { display: grid; grid-template-columns: 76px 1fr; gap: 12px; align-items: start; text-align: left; padding: 12px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-sm); transition: border-color .2s, transform .2s; }
+.prx-card:hover { border-color: var(--line-2); transform: translateY(-1px); }
+.prx-card .im { width: 76px; height: 76px; border-radius: 12px; overflow: hidden; background: var(--bg-2); }
+.prx-card .im img { width: 100%; height: 100%; object-fit: cover; }
+.prx-card .cap { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.prx-card small { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green-dark); line-height: 1.35; }
+.prx-card b { font-size: 15.5px; font-weight: 700; color: var(--ink); line-height: 1.25; }
+.prx-card .cap > span { font-size: 13px; line-height: 1.45; color: var(--ink-2); margin-top: 2px; }
+.prx-cards:not(.three) { grid-template-columns: repeat(2, 1fr); }
+.prx-card.set ul { list-style: none; margin: 6px 0 4px; display: grid; gap: 3px; }
+.prx-card.set li { font-size: 13px; color: var(--ink-2); padding-left: 14px; position: relative; }
+.prx-card.set li::before { content: ''; position: absolute; left: 2px; top: .62em; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+.prx-card.set em { font-style: normal; font-size: 12.5px; color: var(--ink-3); }
+.pr-cta-ai { font-size: 14px !important; color: rgba(255,255,255,0.86) !important; padding: 10px 14px; border-radius: 12px; background: rgba(255,255,255,0.08); max-width: 480px !important; }
+.pr-cta-ai b { color: #fff; font-weight: 700; }
+.pr-cta h3 { max-width: 20ch; }
+.prx-shop { max-width: 1040px; margin: 16px auto 0; display: flex; justify-content: space-between; align-items: center; gap: 12px 20px; flex-wrap: wrap; padding: 16px 20px; border-radius: var(--r-sm); background: var(--paper); border: 1px solid var(--line); }
+.prx-shop p { font-size: 15px; color: var(--ink); }
+.prx-shop a { font-size: 14.5px; font-weight: 700; color: var(--green-dark); border-bottom: 1px solid currentColor; white-space: nowrap; }
+.prx-note { max-width: 1040px; margin: 14px auto 0; color: var(--ink-2) !important; font-size: 13px; line-height: 1.6; }
+@media (max-width: 900px) {
+  .prx-cards.three { grid-template-columns: 1fr; }
+  .prx-body { padding: 4px 16px 18px; }
+  .prx-facts { grid-template-columns: 1fr; gap: 12px; }
+}
+@media (max-width: 640px) {
+  .prx-visual { aspect-ratio: 2.2 / 1; border-radius: var(--r-sm); }
+  .prx-cards:not(.three) { grid-template-columns: 1fr; }
+  .prx-compare { grid-template-columns: 1fr; }
+  .prx-item summary { grid-template-columns: 56px 1fr 32px; gap: 12px; }
+  .prx-item summary img { width: 56px; height: 56px; }
+  .prx-plus { width: 32px; height: 32px; }
+}
+
+/* ============ MÄNNER (Runde 16): breiterer Text, Produktkarte darunter ============ */
+.men-stage { height: clamp(560px, 82vh, 820px); }
+.men-stage::after { background: linear-gradient(90deg, rgba(43,38,35,0) 30%, rgba(43,38,35,0.55) 52%, rgba(43,38,35,0.82) 100%); }
+.men-copy { width: min(640px, 48%); display: flex; flex-direction: column; align-items: flex-start; gap: 26px; grid-template-columns: none; }
+.men-text { gap: 16px; }
+.men-copy h2 { font-size: clamp(38px, 4.2vw, 62px); line-height: 1.04; }
+.men-copy h2 em { color: var(--accent); }
+.men-copy p { max-width: 48ch; font-size: 16.5px; line-height: 1.6; color: rgba(255,255,255,0.86); }
+.men-prod { flex-direction: row; align-items: center; gap: 16px; padding: 12px 16px 12px 12px; border-radius: var(--r-sm); background: rgba(255,255,255,0.96); max-width: 520px; width: 100%; }
+.men-prod-im { position: relative; flex: none; width: 76px; height: 76px; border-radius: 12px; overflow: hidden; padding: 0 !important; }
+.men-prod-im img { width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; }
+.men-prod-im i { position: absolute; left: 4px; bottom: 4px; font-style: normal; font-size: 8.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 5px; border-radius: 6px; background: rgba(255,255,255,0.85); color: var(--ink-3); }
+.men-prod-t { flex: 1; padding: 0 !important; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.men-prod .men-prod-t small { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green-dark); }
+.men-prod .men-prod-t b { display: block; line-height: 1.1;  font-family: var(--display); font-weight: 400; font-size: 24px; letter-spacing: -0.02em; color: var(--ink); }
+.men-prod .btn { flex: none; background: var(--ink); color: #fff; padding: 13px 18px; font-size: 11.5px; }
+@media (max-width: 1024px) {
+  .men-stage { height: auto; }
+  .men-copy { width: auto; padding: 32px var(--pad-x) 44px; }
+}
+@media (max-width: 560px) {
+  .men-prod { flex-wrap: wrap; }
+  .men-prod .btn { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 
@@ -1598,55 +1666,79 @@ body { font-family: var(--font); font-size: 15.5px; }
 </section>
 
 <!-- PRODUKTE -->
-<section class="products" id="produkte">
-  <div class="pr-stage">
-    <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
-    <div class="s-head">
-      <span class="eye">Unser Beauty-Konzept</span>
-      <h2>Die Produkte, die ich dir <em>empfehle</em></h2>
-      <p>Pflege für außen und ein Drink für innen, die sich ergänzen. Tipp auf ein Produkt für Details</p>
-    </div>
-    <div class="pr-usps"><div class="usp usp-1"><span class="usp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M8.8 12l2.2 2.2 4.2-4.4"/></svg></span><span class="usp-text"><b>Patentierte NTC®-Technologie</b><small>Laut Hersteller über 100 Patente</small></span></div><div class="usp usp-2"><span class="usp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M8.2 13.4L7 22l5-3 5 3-1.2-8.6"/></svg></span><span class="usp-text"><b>Geprüfte Qualität</b><small>Laut Hersteller nach GMP-Standard, unabhängig geprüft</small></span></div><div class="usp usp-3"><span class="usp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="usp-text"><b>Seit 1993</b><small>Über 30 Jahre Erfahrung des Herstellers</small></span></div><div class="usp usp-4"><span class="usp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/></svg></span><span class="usp-text"><b>Außen &amp; innen</b><small>Pflege und Drink, die sich ergänzen</small></span></div><div class="usp usp-5"><span class="usp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg></span><span class="usp-text"><b>Für deinen Hauttyp</b><small>Tagespflege für Misch- oder trockene Haut</small></span></div><div class="usp usp-6"><span class="usp-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span><span class="usp-text"><b>30 Tage Geld zurück</b><small>Garantie des Herstellers</small></span></div></div>
+<section class="products prx" id="produkte">
+  <div class="s-head">
+    <span class="eye">Die Produkte im Überblick</span>
+    <h2>Was kommt in dein <em>Bad</em>?<br>Was in dein <em>Glas</em>?</h2>
+    <p>Von der Reinigung über die Gesichtscreme bis zum Beauty-Drink: Hier siehst du die Produkte und wofür sie gedacht sind.</p>
+  </div>
+  <div class="prx-visual"><img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024"></div>
+
+  <div class="prx-list">
+    <details class="prx-item" name="prx">
+      <summary><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt="" width="200" height="200"><span class="prx-t"><small>Reinigung</small><b>Cleansing Lotion</b><span>Zum Reinigen des Gesichts und Entfernen von Make-up.</span></span><i class="prx-plus" aria-hidden="true"></i></summary>
+      <div class="prx-body">
+        <dl class="prx-facts"><div><dt>Was ist das?</dt><dd>Eine milde Reinigungslotion. Sie entfernt Make-up und Schmutz, ohne die Haut auszutrocknen.</dd></div><div><dt>Für wen ist es gedacht?</dt><dd>Für alle Hauttypen, laut Hersteller ideal auch für trockene und sensible Haut.</dd></div><div><dt>Wie wird es angewendet?</dt><dd>Morgens und abends auf Gesicht, Hals und Dekolleté auftragen, sanft einmassieren und mit lauwarmem Wasser abspülen.</dd></div></dl>
+        <button type="button" class="prx-more" data-open="cleansing">Inhaltsstoffe und Details ansehen <span aria-hidden="true">→</span></button>
+      </div>
+    </details>
+    <details class="prx-item" name="prx">
+      <summary><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt="" width="200" height="200"><span class="prx-t"><small>Gesichtswasser</small><b>Tonic</b><span>Der Schritt zwischen Reinigung und Creme.</span></span><i class="prx-plus" aria-hidden="true"></i></summary>
+      <div class="prx-body">
+        <dl class="prx-facts"><div><dt>Was ist das?</dt><dd>Ein erfrischendes Gesichtswasser. Es bereitet die Haut auf die anschließende Pflege vor.</dd></div><div><dt>Für wen ist es gedacht?</dt><dd>Für alle Hauttypen.</dd></div><div><dt>Wie wird es angewendet?</dt><dd>Morgens und abends nach der Reinigung auf ein Wattepad geben und Gesicht, Hals und Dekolleté sanft abreiben.</dd></div></dl>
+        <button type="button" class="prx-more" data-open="tonic">Inhaltsstoffe und Details ansehen <span aria-hidden="true">→</span></button>
+      </div>
+    </details>
+    <details class="prx-item" name="prx">
+      <summary><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt="" width="200" height="200"><span class="prx-t"><small>Tagespflege</small><b>4ever / 4ever enriched</b><span>Zwei Varianten für deine tägliche Gesichtspflege.</span></span><i class="prx-plus" aria-hidden="true"></i></summary>
+      <div class="prx-body">
+        <div class="prx-compare">
+          <div><b>4ever</b><span class="prx-skin">Für normale bis Mischhaut</span><p>Tagespflege, die Feuchtigkeit spendet und die Hautbarriere unterstützt. Für ein glattes, geschmeidiges Hautgefühl.</p></div>
+          <div><b>4ever enriched</b><span class="prx-skin">Für trockene und reife Haut</span><p>Reichhaltigere Tagespflege. Spendet langanhaltende Feuchtigkeit und hinterlässt ein weiches, gepflegtes Hautgefühl.</p></div>
+        </div>
+        <dl class="prx-facts"><div><dt>Wie wird es angewendet?</dt><dd>Morgens nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.</dd></div></dl>
+        <div class="prx-mores"><button type="button" class="prx-more" data-open="4ever">4ever im Detail <span aria-hidden="true">→</span></button><button type="button" class="prx-more" data-open="4ever-enriched">4ever enriched im Detail <span aria-hidden="true">→</span></button></div>
+      </div>
+    </details>
+    <details class="prx-item" name="prx">
+      <summary><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt="" width="200" height="200"><span class="prx-t"><small>Nachtpflege</small><b>4ever overnight enriched</b><span>Deine Gesichtspflege für den Abend.</span></span><i class="prx-plus" aria-hidden="true"></i></summary>
+      <div class="prx-body">
+        <dl class="prx-facts"><div><dt>Was ist das?</dt><dd>Eine reichhaltige Nachtpflege, die laut Hersteller zu beiden Tagespflegen passt.</dd></div><div><dt>Für wen ist es gedacht?</dt><dd>Für alle Hauttypen, laut Produkttext besonders für normale bis trockene Haut.</dd></div><div><dt>Wie wird es angewendet?</dt><dd>Abends nach der Reinigung auf Gesicht, Hals und Dekolleté auftragen und sanft einmassieren.</dd></div></dl>
+        <button type="button" class="prx-more" data-open="overnight">Inhaltsstoffe und Details ansehen <span aria-hidden="true">→</span></button>
+      </div>
+    </details>
+    <details class="prx-item" name="prx">
+      <summary><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt="" width="200" height="200"><span class="prx-t"><small>Beauty-Drink</small><b>Beauty-Drink</b><span>Nahrungsergänzung mit Vitamin&nbsp;C, Biotin und Zink. Mit fruchtigem Beerengeschmack.</span></span><i class="prx-plus" aria-hidden="true"></i></summary>
+      <div class="prx-body">
+        <dl class="prx-facts"><div><dt>Was ist das?</dt><dd>Ein Trinkpulver mit Beerengeschmack. Es enthält Kollagenpeptide vom Rind, Vitamine und Mineralstoffe.</dd></div><div><dt>Gut zu wissen</dt><dd>Ein Nahrungsergänzungsmittel. Es ist kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</dd></div><div><dt>Wie wird es angewendet?</dt><dd>Einmal täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten.</dd></div></dl>
+        <button type="button" class="prx-more" data-open="beauty">Inhaltsstoffe und Details ansehen <span aria-hidden="true">→</span></button>
+      </div>
+    </details>
   </div>
 
-  <div class="pr-rows">
-    <button type="button" class="pr-row" data-open="cleansing"><img loading="lazy" decoding="async" src="assets/produkte/cleansing-lotion.webp" alt=""><span class="t"><b>Reinigen</b><span>Cleansing Lotion · entfernt Make-up und Schmutz, ohne auszutrocknen</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="tonic"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt=""><span class="t"><b>Klären</b><span>Tonic · erfrischt und bereitet die Haut auf die Creme vor</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="4ever"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><span class="t"><b>Tagsüber pflegen</b><span>4ever für normale bis Mischhaut · 4ever enriched für trockene, reifere Haut</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><em>je nach Hauttyp</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="overnight"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><span class="t"><b>Nachts pflegen</b><span>4ever overnight enriched · reichhaltige Pflege für die Nacht</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="beauty"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><span class="t"><b>Von innen ergänzen</b><span>Beauty-Drink · Nahrungsergänzung mit Biotin, Zink und Vitamin C</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.2 16a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8z"/><path d="M6.6 10h10.8"/></svg>1 Glas am Tag</i></span></span><span class="more">+</span></button>
-  </div>
+  <div class="prx-sub"><h3>Noch etwas für deine Pflege?</h3><p>Zusätzliche Produkte, mit denen du deine Routine nach Wunsch erweitern kannst.</p></div>
+  <div class="prx-cards"><button type="button" class="prx-card" data-open="serum"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt=""></span><span class="cap"><small>Serum</small><b>Activize Serum</b><span>Ergänzende Pflege mit Guarana, Vitamin&nbsp;C und B-Vitaminen. Kommt vor die Gesichtscreme.</span></span></button><button type="button" class="prx-card" data-open="augen"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""></span><span class="cap"><small>Augenpflege</small><b>Augencreme</b><span>Feuchtigkeitsspendende Pflege für die Augenpartie.</span></span></button><button type="button" class="prx-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="cap"><small>Gezielte Pflege</small><b>Dark Spot Corrector</b><span>Mit Niacinamid. Kann einen ebenmäßigeren Teint unterstützen.</span></span></button><button type="button" class="prx-card" data-open="ultimate"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""></span><span class="cap"><small>Finish</small><b>Ultimate Young</b><span>Für ein glatteres, ebenmäßigeres Hautbild. Über Tagespflege oder Make-up.</span></span></button></div>
 
-  <div class="pr-sub"><h3>Extras</h3><span>passend zu deinen Wünschen</span></div>
-  <div class="pr-cards">
-    <button type="button" class="pr-card" data-open="serum"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/activize-serum.webp" alt=""></span><span class="chip">vor der Creme</span><span class="cap"><b>Für mehr Glow</b><span>Activize Serum</span></span></button>
-    <button type="button" class="pr-card" data-open="augen"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/augencreme.webp" alt=""></span><span class="chip">morgens &amp; abends</span><span class="cap"><b>Für die Augenpartie</b><span>Augencreme</span></span></button>
-    <button type="button" class="pr-card" data-open="darkspot"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/dark-spot-corrector.webp" alt=""></span><span class="chip">morgens & abends</span><span class="cap"><b>Für einen ebenmäßigeren Teint</b><span>Dark Spot Corrector</span></span></button>
-    <button type="button" class="pr-card" data-open="ultimate"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/ultimate-young.webp" alt=""></span><span class="chip">bei Bedarf</span><span class="cap"><b>Für besondere Anlässe</b><span>Ultimate Young</span></span></button>
-  </div>
-
-  <div class="pr-sub"><h3>Sets zum Starten</h3><span>vom Hersteller zusammengestellt</span></div>
-  <div class="pr-cards three">
-    <button type="button" class="pr-card" data-open="set-young"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt=""></span><span class="chip">3 Produkte</span><span class="cap"><b>Für den Einstieg</b><span>Young Care Set · Reinigung, Tonic, Creme</span></span></button>
-    <button type="button" class="pr-card" data-open="set-4ever"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für normale bis Mischhaut</b><span>Starter Set 4ever</span></span></button>
-    <button type="button" class="pr-card" data-open="set-enriched"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt=""></span><span class="chip">Tag &amp; Nacht</span><span class="cap"><b>Für trockene Haut</b><span>Starter Set 4ever enriched</span></span></button>
-  </div>
+  <div class="prx-sub"><h3>Lieber gleich als Set?</h3><p>Mehrere Produkte in einer Zusammenstellung. Hier siehst du, was jeweils dabei ist.</p></div>
+  <div class="prx-cards three"><button type="button" class="prx-card set" data-open="set-young"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-young-care.webp" alt=""></span><span class="cap"><small>Reinigung, Gesichtswasser und Creme</small><b>Einsteiger-Set Young Care</b><ul><li>Young Care Reinigungsschaum</li><li>Tonic</li><li>Young Care Balancing Cream</li></ul><em>Laut Hersteller für junge Haut und Mischhaut</em></span></button><button type="button" class="prx-card set" data-open="set-4ever"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever.webp" alt=""></span><span class="cap"><small>Tages- und Nachtpflege</small><b>Starter Set 4ever</b><ul><li>4ever (Tagespflege)</li><li>4ever overnight enriched (Nachtpflege)</li></ul><em>Laut Hersteller für normale bis Mischhaut</em></span></button><button type="button" class="prx-card set" data-open="set-enriched"><span class="im"><img loading="lazy" decoding="async" src="assets/produkte/set-4ever-enriched.webp" alt=""></span><span class="cap"><small>Tages- und Nachtpflege, mit 4ever enriched</small><b>Starter Set 4ever enriched</b><ul><li>4ever enriched (Tagespflege)</li><li>4ever overnight enriched (Nachtpflege)</li></ul><em>Laut Hersteller für trockene und reife Haut</em></span></button></div>
 
   <div class="pr-cta reveal">
     <div class="pr-cta-copy">
-      <span class="eye light">Beauty-Check</span>
-      <h3>Welche Produkte passen zu <em>deiner Haut</em>?</h3>
-      <p>{{#if scanner_anzeigen=an}}Das finden wir im Beauty-Check gemeinsam heraus: mit einer KI-Hautanalyse per Selfie und meiner persönlichen Empfehlung. Kostenlos und unverbindlich{{/if}}{{#unless scanner_anzeigen=an}}Das finden wir im Beauty-Check gemeinsam heraus, mit meiner persönlichen Empfehlung. Kostenlos und unverbindlich{{/unless}}</p>
-      <a href="#kontakt" class="btn btn-light">Meine Haut checken lassen <span class="arr">→</span></a>
+      <span class="eye light">Dein Beauty-Check</span>
+      <h3>Du musst dich nicht allein<br>durch die Produkte klicken.</h3>
+      <p>Mit dem Beauty-Check kannst du deine Pflegewünsche angeben und eine persönliche Produktempfehlung anfragen. Kostenlos und unverbindlich.</p>
+      {{#if scanner_anzeigen=an}}<p class="pr-cta-ai">Der Check enthält eine KI-gestützte Auswertung deines Selfies zur kosmetischen Orientierung. <b>Keine medizinische Hautanalyse oder Diagnose.</b></p>{{/if}}
+      <a href="#kontakt" class="btn btn-light">Beauty-Check starten <span class="arr">→</span></a>
     </div>
     <div class="pr-cta-who">
       <img loading="lazy" decoding="async" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
       <b>{{vorname}} {{nachname}}</b>
-      <span>{{#if geschlecht=weiblich}}Deine persönliche Beraterin{{/if}}{{#if geschlecht=maennlich}}Dein persönlicher Berater{{/if}}</span>
+      <span>Dein Kontakt für Produktfragen</span>
     </div>
   </div>
 
-  <p class="foot-note pr-note">Verkauf und Versand nur über den offiziellen Shop des Herstellers (PM-International AG). Dort findest du alle Inhaltsstoffe und die offiziellen Preise. Beauty-Drink: Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. NTC® ist eine eingetragene Marke der PM-International AG. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
+  <div class="prx-shop"><p>Preise, Inhaltsstoffe und Bestellmöglichkeiten findest du im offiziellen Shop von PM-International.</p><a data-shop="" href="#" target="_blank" rel="noopener">Zum offiziellen Shop <span aria-hidden="true">→</span></a></div>
+  <p class="foot-note prx-note">Hinweis zum Beauty-Drink (Nahrungsergänzungsmittel): Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. Die Pflegeprodukte sind kosmetische Mittel. Produktabbildungen sind Symbolbilder; die Originalverpackungen findest du im offiziellen Shop.</p>
 </section>
 
 <!-- Produkt-Fenster -->
@@ -1665,12 +1757,15 @@ body { font-family: var(--font); font-size: 15.5px; }
     <img loading="lazy" decoding="async" src="assets/man.webp" alt="" width="1536" height="1024">
     <div class="men-copy">
       <div class="men-text">
-        <span class="eye light">Für Männer</span>
-        <h2>Einfach <em>pflegen</em>. Morgens und abends</h2>
-        <p>Feuchtigkeit und Pflege in einem Schritt: Men Face. Morgens und abends nach der Reinigung auftragen. Auch für Bartträger geeignet.</p>
-        <button type="button" class="btn btn-light" data-open="men">Details ansehen <span class="arr">→</span></button>
+        <span class="eye light">Gesichtspflege für Männer</span>
+        <h2>Gesichtspflege.<br><em>Ohne großes Programm.</em></h2>
+        <p>Du willst dein Gesicht pflegen, ohne lange im Bad zu stehen? Men Face ist deine Gesichtscreme für die tägliche Pflege. Nach der Reinigung auftragen und weiter geht’s.</p>
       </div>
-      <button type="button" class="men-prod" data-open="men"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt="Men Face"><span><b>Für die Gesichtspflege</b>Men Face</span></button>
+      <div class="men-prod">
+        <span class="men-prod-im"><img loading="lazy" decoding="async" src="assets/produkte/men-face.webp" alt=""><i>Symbolbild</i></span>
+        <span class="men-prod-t"><small>Deine tägliche Gesichtscreme</small><b>Men Face</b></span>
+        <button type="button" class="btn btn-light" data-open="men">Mehr zur Gesichtscreme <span class="arr">→</span></button>
+      </div>
     </div>
   </div>
 </section>
@@ -2139,7 +2234,7 @@ const LBL = {
   desc: { de: 'Was es ist', en: 'What it is' }, use: { de: 'So nutzt du es', en: 'How to use' }, skin: { de: 'Für wen · Hinweise', en: 'Skin type' }, when: { de: 'Wann', en: 'When' }, actives: { de: 'Was drin ist – tipp für Wofür?', en: 'What\'s inside (selection)' },
   pros: { de: 'Laut Hersteller', en: 'According to the manufacturer' }, shop: { de: 'Direkt bestellen', en: 'Order directly' }, price: { de: 'Offizieller Kundenpreis', en: 'Customer price' },
   note: { de: 'Bevor du bestellst: Im Beauty-Check schaue ich mit dir, wie du am günstigsten an deine Produkte kommst – über die Kundenvorteile des Herstellers.', en: 'Before you order: in the beauty check I show you how to get your products at the best price through the manufacturer\'s customer benefits.' },
-  saveT: { de: 'Spar-Tipp', en: 'Saving tip' }, check: { de: 'Beauty-Check sichern', en: 'Book a beauty check' },
+  saveT: { de: 'Spar-Tipp', en: 'Saving tip' }, check: { de: 'Beauty-Check starten', en: 'Book a beauty check' },
   src: { de: 'Ausgewählte Inhaltsstoffe laut Hersteller. Die vollständige Liste findest du im offiziellen Shop.', en: 'Selected ingredients as listed by the manufacturer. The full list is on the official product page.' }
 };
 function fsLang() { return document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'de'; }
