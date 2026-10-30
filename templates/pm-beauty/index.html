@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Schönheit von innen &amp; außen · {{vorname}}</title>
-<meta name="description" content="Die Beauty-Empfehlung von {{vorname}}: Pflege von außen, ein Beauty-Drink von innen. Lass dich kostenlos und unverbindlich im Beauty-Check beraten.">
+<title>Deine Beauty-Routine. Von innen und außen · {{vorname}} {{nachname}}</title>
+<meta name="description" content="Pflege für außen, ein Beauty-Drink für innen: {{vorname}} {{nachname}} zeigt dir die Produkte und findet mit dir heraus, was zu deiner Haut passt.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<meta property="og:title" content="Deine Beauty-Routine. Von innen und außen">
+<meta property="og:description" content="Pflege für außen, ein Beauty-Drink für innen: {{vorname}} {{nachname}} zeigt dir die Produkte und findet mit dir heraus, was zu deiner Haut passt.">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#FDF7EF">
+{{#if farbthema=rose}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23C26A72'/%3E%3Cpath d='M32 13c7 9.5 13 16.5 13 24a13 13 0 0 1-26 0c0-7.5 6-14.5 13-24z' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='4.5' fill='white'/%3E%3C/svg%3E">{{/if}}{{#if farbthema=sand}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23B88A5A'/%3E%3Cpath d='M32 13c7 9.5 13 16.5 13 24a13 13 0 0 1-26 0c0-7.5 6-14.5 13-24z' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='4.5' fill='white'/%3E%3C/svg%3E">{{/if}}{{#if farbthema=salbei}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%237B9A86'/%3E%3Cpath d='M32 13c7 9.5 13 16.5 13 24a13 13 0 0 1-26 0c0-7.5 6-14.5 13-24z' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='4.5' fill='white'/%3E%3C/svg%3E">{{/if}}{{#if farbthema=pflaume}}<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%238A4A72'/%3E%3Cpath d='M32 13c7 9.5 13 16.5 13 24a13 13 0 0 1-26 0c0-7.5 6-14.5 13-24z' fill='none' stroke='white' stroke-width='4.5' stroke-linejoin='round'/%3E%3Ccircle cx='32' cy='38' r='4.5' fill='white'/%3E%3C/svg%3E">{{/if}}
 
 <!-- Sprache früh setzen — verhindert Flackern beim ersten Layout-Paint. -->
 <script>

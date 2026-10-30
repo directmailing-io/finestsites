@@ -64,6 +64,11 @@ export const OG_PROFILES: Record<string, OgProfile> = {
     description: n => `20 kurze Aussagen, dein Ergebnis in 3 Minuten. Kostenlos und ohne Anmeldung, von ${n}.`,
     accent: '#1F9D6B', ink: '#FFFFFF',
   },
+  'beautylove.net': {
+    claim: 'Beauty von innen & außen',
+    description: n => `Pflege für außen, ein Beauty-Drink für innen: ${n} zeigt dir die Produkte und findet mit dir heraus, was zu deiner Haut passt.`,
+    accent: '#C26A72', ink: '#FFFFFF',
+  },
   'womenplus.io': {
     claim: 'Meine Seite',
     claimDuo: 'Unsere Seite',
