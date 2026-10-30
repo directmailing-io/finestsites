@@ -24,22 +24,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<!-- Schriften im Stil von theworldofboudoir.com: dort „Editor's Note“ Light + Light Italic (lizenzpflichtig) für Überschriften,
-     Open Sans für Text, Montserrat Bold für kleine Versal-Kennzeichen. Freier, sehr ähnlicher Ersatz für Editor's Note: Boska Light/Italic (Fontshare).
-     Liegt die lizenzierte Datei unter assets/fonts/EditorsNote-Light.woff2, wird sie automatisch verwendet. -->
-<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-<link href="https://api.fontshare.com/v2/css?f[]=boska@300,301,400&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<!-- Schriften im Stil von theworldofboudoir.com (dort: „Editor's Note“ Regular + Italic für Überschriften/Unterzeilen, Open Sans für Text und
+     versale Kennzeichen/Buttons). Editor's Note ist lizenzpflichtig, deshalb der freie, sehr ähnliche Caslon-Mix:
+     Libre Caslon Display (Überschriften) + Libre Caslon Text Italic (kursive Akzente) + Open Sans.
+     Liegen lizenzierte Dateien unter assets/fonts/EditorsNote-*.woff2, werden sie automatisch verwendet. -->
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital@1&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@font-face { font-family: 'Editors Note'; src: local("Editor's Note Light"), url('assets/fonts/EditorsNote-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Editors Note'; src: local("Editor's Note Light Italic"), url('assets/fonts/EditorsNote-LightItalic.woff2') format('woff2'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Editors Note'; src: local("Editor's Note Regular"), url('assets/fonts/EditorsNote-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Editors Note Italic'; src: local("Editor's Note Italic"), url('assets/fonts/EditorsNote-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
 </style>
 
 <style>
 :root {
   --font: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Editors Note', 'Boska', Georgia, 'Times New Roman', serif;
-  --label: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --display: 'Editors Note', 'Libre Caslon Display', Georgia, 'Times New Roman', serif;
+  --italic: 'Editors Note Italic', 'Libre Caslon Text', Georgia, serif;
+  --label: var(--font);
   --mono: var(--font);
   --serif: var(--display);
   --pad-x: clamp(20px, 4vw, 56px);
@@ -1208,26 +1208,27 @@ footer { background: var(--bg-2); }
   .contact-card-btns { grid-column: 1 / -1; }
 }
 
-/* ============ SCHRIFTEN im Boudoir-Stil: leichte Serif + Kursiv-Akzent, Open Sans, Montserrat-Versalien ============ */
-h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro-card .big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 300; }
-h1 { font-size: clamp(50px, 7vw, 110px); line-height: 1; letter-spacing: -0.02em; }
-h2 { font-size: clamp(38px, 4.6vw, 66px); line-height: 1.05; letter-spacing: -0.015em; }
-h3 { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.12; letter-spacing: -0.01em; }
-h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 1em; line-height: inherit; letter-spacing: inherit; color: var(--green); }
-.split-word b { font-size: clamp(64px, 10.5vw, 180px); letter-spacing: -0.025em; line-height: 0.92; }
-.bento-card .big { font-size: clamp(76px, 7.5vw, 120px); letter-spacing: -0.02em; }
+/* ============ SCHRIFTEN im Boudoir-Stil: enge Caslon-Serif, kursive Caslon-Akzente, Open Sans (auch versal) ============ */
+h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro-card .big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 400; }
+h1 { font-size: clamp(48px, 6.4vw, 100px); line-height: 1; letter-spacing: -0.03em; }
+h2 { font-size: clamp(36px, 4.2vw, 62px); line-height: 1.04; letter-spacing: -0.03em; }
+h3 { font-size: clamp(24px, 2.1vw, 31px); line-height: 1.1; letter-spacing: -0.025em; }
+h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--italic); font-style: italic; font-weight: 400; font-size: 0.94em; line-height: inherit; letter-spacing: -0.02em; color: var(--green); }
+.tagline { font-family: var(--italic); font-style: italic; font-size: clamp(19px, 1.6vw, 24px); letter-spacing: -0.01em; color: var(--ink); line-height: 1.3; }
+.split-word b { font-size: clamp(64px, 10.5vw, 180px); letter-spacing: -0.04em; line-height: 0.92; }
+.bento-card .big { font-size: clamp(76px, 7.5vw, 120px); letter-spacing: -0.03em; }
 .guar-badge b { font-size: 48px; }
-.pr-row .t b { font-size: clamp(23px, 2vw, 30px); letter-spacing: -0.01em; line-height: 1.05; }
-.faq-q { font-size: clamp(21px, 1.8vw, 26px); }
+.pr-row .t b { font-size: clamp(23px, 2vw, 30px); letter-spacing: -0.025em; line-height: 1.05; }
+.faq-q { font-size: clamp(20px, 1.7vw, 25px); letter-spacing: -0.02em; }
 .pm-sheet h3 { font-size: clamp(30px, 3vw, 38px); }
 .pr-cta h3 em, .contact .s-head h2 strong, .men-copy h2 em { color: var(--accent); }
-.contact .s-head h2 strong { font-style: italic; font-weight: 300; }
+.contact .s-head h2 strong { font-family: var(--italic); font-style: italic; font-weight: 400; padding: 0 0.1em; }
 .bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(25px, 2.2vw, 32px); }
 body { font-family: var(--font); font-size: 15.5px; }
-/* Kennzeichen, Eyebrows, Buttons: Montserrat versal mit Laufweite (wie Boudoir) */
-.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4, .rt-time, .footer-col-title { font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; }
-.btn, .nav-cta, .sticky-cta { font-family: var(--label); font-weight: 700; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 16px 26px; }
-.split-col li b { font-family: var(--label); font-weight: 700; font-size: 11px; letter-spacing: .1em; }
+/* Kennzeichen, Eyebrows, Buttons: Open Sans versal mit Laufweite (wie Boudoir) */
+.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4, .rt-time, .footer-col-title { font-family: var(--font); font-weight: 600; font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+.btn, .nav-cta, .sticky-cta { font-family: var(--font); font-weight: 600; font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; padding: 16px 26px; }
+.split-col li b { font-family: var(--font); font-weight: 600; font-size: 11.5px; letter-spacing: .1em; }
 .hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
 .intro-sub { font-size: 14px; color: var(--ink-3); max-width: 46ch; }
 
@@ -1288,6 +1289,92 @@ body { font-family: var(--font); font-size: 15.5px; }
 .footer-made { gap: 8px; font-size: inherit; color: inherit; font-weight: inherit; }
 .footer-made a img { height: 16px; }
 .footer-made .heart { margin: 0; }
+
+/* ============ Runde 12: Hero Familie, Plus, NTC-Siegel, Welt, Social, Tagsüber-Karte ============ */
+.hero-copy { gap: 18px; }
+.hero h1 + .tagline { margin-top: -6px; }
+.hero-familie > img { object-position: 100% 30%; }
+.hero-familie::after { background: linear-gradient(90deg, rgba(253,247,239,0.97) 0%, rgba(253,247,239,0.92) 30%, rgba(253,247,239,0.55) 40%, rgba(253,247,239,0) 50%), linear-gradient(180deg, rgba(253,247,239,0) 60%, rgba(253,247,239,0.5) 100%); }
+.hero-familie .hero-copy { max-width: none; }
+.hero.hero-familie .hero-copy > * { max-width: min(520px, 36vw); }
+.hero-familie h1 { font-size: clamp(44px, 4.8vw, 82px); }
+.hero-familie p.sub { font-size: clamp(15px, 1.15vw, 18px); }
+.hero-familie .hero-ctas .btn { padding: 15px 20px; }
+.nav-links a { color: var(--ink); }
+.hero-familie .hero-facts { flex-direction: column; gap: 8px; }
+
+.split-cols { position: relative; }
+.split-plus { position: absolute; left: 50%; top: calc(50% + clamp(14px, 2vh, 24px)); transform: translate(-50%, -50%); z-index: 3; width: 76px; height: 76px; border-radius: 50%; background: var(--paper); color: var(--innen); display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 34px -12px rgba(60,20,20,0.45); border: 7px solid var(--bg); }
+.split-plus svg { width: 30px; height: 30px; }
+.split-col.l li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; }
+.split-col li strong { font-weight: 700; }
+.split-col.l { padding-right: clamp(36px, 4.5vw, 64px); } .split-col.r { padding-left: clamp(36px, 4.5vw, 64px); }
+
+.pr-stage { padding-top: clamp(40px, 7vw, 100px); }
+.ntc-badge { display: inline-flex; align-items: center; gap: 12px; padding: 10px 18px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--green); box-shadow: 0 8px 24px -14px rgba(60,20,20,0.35); text-align: left; }
+.ntc-badge svg { width: 34px; height: 34px; padding: 7px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); flex: none; }
+.ntc-badge b { display: block; font-family: var(--font); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.ntc-badge small { display: block; font-size: 13px; color: var(--ink-3); }
+
+.world { display: inline-flex; align-items: center; gap: 14px; padding: 10px 18px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); flex-wrap: wrap; justify-content: center; }
+.world .globe { width: 28px; height: 28px; color: var(--green-dark); flex: none; }
+.world .flags { display: inline-flex; }
+.world .flags img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 2px solid var(--paper); margin-left: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.world .flags img:first-child { margin-left: 0; }
+.world b { font-family: var(--font); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+
+.about-social { display: flex; flex-wrap: wrap; gap: 8px; }
+.about-social:empty { display: none; }
+.about-social a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--ink); transition: border-color .15s, transform .15s; }
+.about-social a:hover { border-color: var(--green); transform: translateY(-1px); }
+.about-social svg { width: 17px; height: 17px; color: var(--green-dark); }
+
+.rt-card.accent .rt-body { flex: 1; justify-content: center; gap: 10px; padding-top: 30px; padding-bottom: 30px; }
+.rt-card.accent .rt-body h3 { margin-bottom: 6px; }
+
+@media (max-width: 1024px) {
+  .hero-familie > img { object-position: 78% 25%; }
+  .hero-familie::after { background: linear-gradient(180deg, rgba(253,247,239,0) 30%, rgba(253,247,239,0.92) 62%); }
+  .hero-familie .hero-copy { justify-content: flex-end; min-height: 100vh; min-height: 100svh; }
+  .hero.hero-familie .hero-copy > * { max-width: 640px; }
+  .hero-familie .hero-facts { flex-direction: row; }
+  .split-plus { position: relative; left: auto; top: auto; transform: none; justify-self: center; margin: -42px 0; width: 64px; height: 64px; } .split-plus svg { width: 26px; height: 26px; }
+  .split-col.l, .split-col.r { padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 44px); }
+  .split-col.l { padding-bottom: 48px; } .split-col.r { padding-top: 48px; }
+}
+@media (max-width: 760px) {
+  .hero-familie .hero-copy { min-height: 0; }
+  .hero-familie > img { aspect-ratio: 4 / 3.6; object-position: 72% 30%; }
+  .hero.hero-familie .hero-copy > * { max-width: none; }
+  .ntc-badge, .world { border-radius: 20px; }
+  .pr-stage > img { aspect-ratio: 16 / 9; object-position: 50% 92%; margin-top: -8px; }
+  .world .flags img { width: 22px; height: 22px; }
+}
+/* Tablet hochkant: Bild oben, Text darunter (sonst wird das Gruppenbild zu stark gezoomt) */
+@media (min-width: 761px) and (max-width: 1024px) and (orientation: portrait) {
+  .hero-familie { min-height: 0; align-items: stretch; flex-direction: column; background: var(--bg); }
+  .hero-familie > img { position: relative; height: auto; aspect-ratio: 16 / 10.5; object-position: 70% 30%; margin-top: 72px; }
+  .hero-familie::after { display: none; }
+  .hero.hero-familie .hero-copy { min-height: 0; padding: 36px var(--pad-x) 48px; }
+}
+/* Handy quer und kleine Querformate: Hero nicht höher als nötig, Bild daneben statt darüber */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { min-height: 0; align-items: stretch; }
+  .hero > img { position: absolute; inset: 0; margin: 0; aspect-ratio: auto; height: 100%; }
+  .hero::after { display: block; background: linear-gradient(90deg, rgba(253,247,239,0.96) 0%, rgba(253,247,239,0.86) 40%, rgba(253,247,239,0) 64%) !important; }
+  .hero-copy, .hero-familie .hero-copy { min-height: 0; padding: 84px var(--pad-x) 28px; gap: 12px; justify-content: center; }
+  .hero.hero .hero-copy > * { max-width: 46vw; }
+  .hero h1, .hero-familie h1 { font-size: clamp(30px, 5vw, 46px); }
+  .hero-who { display: none; }
+  .hero .tagline { font-size: 17px; }
+  .hero p.sub { font-size: 14.5px; }
+  .hero-ctas { flex-direction: row; width: auto; }
+  .hero-facts { display: none; }
+  .split-stage { height: auto; aspect-ratio: 16 / 9; }
+  .men-stage > img { aspect-ratio: 16 / 7; }
+  .rt3 { grid-template-columns: repeat(3, 1fr); max-width: none; }
+  .rt-img { aspect-ratio: 4 / 3; }
+}
 </style>
 </head>
 
@@ -1355,11 +1442,12 @@ body { font-family: var(--font); font-size: 15.5px; }
 </div>
 
 <!-- HERO: Vollbild -->
-<section class="hero">
+<section class="hero hero-{{hero_variante}}">
   <img loading="eager" fetchpriority="high" decoding="async" src="assets/hero/{{hero_variante}}.webp" alt="" width="1536" height="1024">
   <div class="hero-copy">
     <span class="hero-who"><img loading="eager" decoding="async" src="{{profilbild}}" alt="">Die Beauty-Empfehlung von {{vorname}}</span>
     <h1 class="reveal">Schönheit von<br><span class="nw"><em>innen</em> &amp; <em>außen</em></span></h1>
+    <p class="tagline reveal">Für jede Haut, für Frau und Mann</p>
     <p class="sub reveal">Du wünschst dir endlich eine Routine, mit der sich deine Haut jeden Tag gepflegt und frisch anfühlt – ohne zehn Produkte und ohne Rätselraten? Hier zeige ich dir mein Beauty-Konzept: Pflege von außen, ein Drink von innen, einfach und auf dich abgestimmt</p>
     <div class="hero-ctas reveal">
       <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
@@ -1387,7 +1475,7 @@ body { font-family: var(--font); font-size: 15.5px; }
   <div class="intro-card reveal">
     <span class="eye">Ganzheitliches Konzept</span>
     <p class="big">Schöne Haut entsteht nicht nur im Badezimmer. Deshalb pflege ich sie von <em>außen</em> und versorge sie von <em>innen</em> mit Nährstoffen, die für die Haut wichtig sind</p>
-    <p class="intro-sub">Vitamin C zum Beispiel trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹</p>
+    <p class="intro-sub">Zum Beispiel trägt Vitamin C zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei</p>
     <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
   </div>
 </section>
@@ -1396,39 +1484,39 @@ body { font-family: var(--font); font-size: 15.5px; }
   <div class="split-stage">
     <img class="cut" loading="lazy" decoding="async" src="assets/split-cut.webp" alt="" width="716" height="885">
     <div class="split-word l"><small>Pflege für die Haut</small><b>Außen</b><span class="pt">Reinigen, mit Tonic klären und eincremen. Morgens und abends.</span></div>
-    <div class="split-word r"><small>Ein Drink am Tag</small><b>Innen</b><span class="pt">Nahrungsergänzung mit Biotin, Zink und Vitamin C. In Wasser angerührt, mit Beerengeschmack.</span></div>
+    <div class="split-word r"><small>Ein Drink am Tag</small><b>Innen</b><span class="pt">Nahrungsergänzung mit Biotin, Zink und Vitamin C. Lecker mit Beerengeschmack.</span></div>
   </div>
 
   <div class="split-cols">
     <div class="split-col l">
       <span class="eye">Außen</span>
-      <h3>Deine Pflege in drei Schritten</h3>
+      <h3>Pflege, die sich jeden Tag gut anfühlt</h3>
       <ul>
-        <li><b>01</b>Reinigen: Make-up und Schmutz sanft entfernen</li>
-        <li><b>02</b>Klären: mit Tonic auf die Pflege vorbereiten</li>
-        <li><b>03</b>Pflegen: morgens Tagescreme, abends Nachtcreme</li>
+        <li><b>01</b><span><strong>Frisch starten:</strong> Make-up und Schmutz sind weg, ohne die Haut auszutrocknen</span></li>
+        <li><b>02</b><span><strong>Bereit machen:</strong> Das Tonic erfrischt und bereitet die Haut auf die Creme vor</span></li>
+        <li><b>03</b><span><strong>Rundum gepflegt:</strong> Tagescreme passend zu deinem Hauttyp, reichhaltige Nachtcreme für die Nacht</span></li>
       </ul>
-      <p>Welche Tagescreme passt zu deiner Haut? Dabei helfe ich dir im Beauty-Check.</p>
+      <p>In wenigen Minuten erledigt, morgens und abends. Welche Tagescreme zu dir passt, finden wir gemeinsam heraus</p>
     </div>
+    <span class="split-plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg></span>
     <div class="split-col r">
       <span class="eye light">Innen</span>
-      <h3>Dazu: ein Beauty-Drink am Tag</h3>
+      <h3>Ein Glas am Tag mit Nährstoffen für deine Haut</h3>
       <ul class="nutri">
-        <li><b>C</b><span><strong>Vitamin C</strong> trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹</span></li>
-        <li><b>B</b><span><strong>Biotin</strong> trägt zur Erhaltung normaler Haut und normaler Haare bei¹</span></li>
-        <li><b>Zn</b><span><strong>Zink</strong> trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei¹</span></li>
+        <li><b>C</b><span><strong>Vitamin C</strong> trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei</span></li>
+        <li><b>B</b><span><strong>Biotin</strong> trägt zur Erhaltung normaler Haut und normaler Haare bei</span></li>
+        <li><b>Zn</b><span><strong>Zink</strong> trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei</span></li>
       </ul>
-      <p class="drink-line">Beerengeschmack · in Wasser angerührt · 1 Glas am Tag</p>
+      <p class="drink-line">Lecker mit Beerengeschmack · 1 Glas am Tag</p>
     </div>
   </div>
 
-  <p class="foot-note split-note">¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren.</p>
+  <p class="foot-note split-note">Hinweis zum Beauty-Drink (Nahrungsergänzungsmittel): Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren.</p>
 </section>
 
 <!-- EMPFOHLENE ROUTINE: Morgens · Tagsüber · Abends -->
 <section class="routine" id="routine">
   <div class="s-head">
-    <span class="eye">So sieht mein Tag aus</span>
     <h2>Empfohlene <em>Routine</em></h2>
     <p>Ein paar Minuten am Morgen, ein Glas zwischendurch, ein paar Minuten am Abend. Die Tagescreme wählen wir passend zu deiner Haut</p>
   </div>
@@ -1446,8 +1534,8 @@ body { font-family: var(--font); font-size: 15.5px; }
       <div class="rt-img"><img loading="lazy" decoding="async" src="assets/drink.webp" alt="" width="1024" height="1024"><span class="rt-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.2 16a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8z"/><path d="M6.6 10h10.8"/></svg>Tagsüber</span></div>
       <div class="rt-body">
         <h3>Ein Glas für zwischendurch</h3>
-        <div class="rt-step"><img src="assets/produkte/beauty-drink.webp" alt=""><div><b>Beauty-Drink</b><small>In Wasser angerührt, mit Beerengeschmack</small></div><i>✓</i></div>
-        <p class="rt-note">Zum Beispiel am Vormittag, als kleine Pause. Mit Vitamin C, Biotin und Zink¹</p>
+        <div class="rt-step"><img src="assets/produkte/beauty-drink.webp" alt=""><div><b>Beauty-Drink</b><small>Lecker mit Beerengeschmack</small></div><i>✓</i></div>
+        <p class="rt-note">z. B. am Vormittag als kleine Pause. Mit Vitamin C, Biotin und Zink</p>
       </div>
     </article>
     <article class="rt-card">
@@ -1460,7 +1548,7 @@ body { font-family: var(--font); font-size: 15.5px; }
       </div>
     </article>
   </div>
-  <p class="foot-note wrap" style="margin-top:16px">¹ Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</p>
+  <p class="foot-note wrap" style="margin-top:16px">Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</p>
 </section>
 
 <!-- PRODUKTE -->
@@ -1468,9 +1556,10 @@ body { font-family: var(--font); font-size: 15.5px; }
   <div class="pr-stage">
     <img loading="lazy" decoding="async" src="assets/lineup.webp" alt="" width="1536" height="1024">
     <div class="s-head">
-      <span class="eye">Meine Empfehlung</span>
+      <span class="eye">Unser Beauty-Konzept</span>
       <h2>Die Produkte, die ich dir <em>empfehle</em></h2>
-      <p>Pflege und Beauty-Drink mit der patentierten NTC®-Technologie des Herstellers² – entwickelt, damit Nährstoffe dorthin kommen, wo sie gebraucht werden. Tipp auf ein Produkt für Details</p>
+      <p>Pflege für außen und ein Drink für innen, die sich ergänzen. Tipp auf ein Produkt für Details</p>
+      <div class="ntc-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8.5-7 10-3.5-1.5-7-5-7-10V6z"/><path d="M8.8 12l2.2 2.2 4.2-4.4"/></svg><span><b>Patentierte NTC®-Technologie</b><small>Laut Hersteller durch über 100 Patente geschützt</small></span></div>
     </div>
   </div>
 
@@ -1479,7 +1568,7 @@ body { font-family: var(--font); font-size: 15.5px; }
     <button type="button" class="pr-row" data-open="tonic"><img loading="lazy" decoding="async" src="assets/produkte/tonic.webp" alt=""><span class="t"><b>Klären</b><span>Tonic · erfrischt und bereitet die Haut auf die Creme vor</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
     <button type="button" class="pr-row" data-open="4ever"><img loading="lazy" decoding="async" src="assets/produkte/4ever.webp" alt=""><span class="t"><b>Tagsüber pflegen</b><span>4ever für normale bis Mischhaut · 4ever enriched für trockene, reifere Haut</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>Morgens</i><em>je nach Hauttyp</em></span></span><span class="more">+</span></button>
     <button type="button" class="pr-row" data-open="overnight"><img loading="lazy" decoding="async" src="assets/produkte/4ever-overnight.webp" alt=""><span class="t"><b>Nachts pflegen</b><span>4ever overnight enriched · reichhaltige Pflege für die Nacht</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>Abends</i><em>alle Hauttypen</em></span></span><span class="more">+</span></button>
-    <button type="button" class="pr-row" data-open="beauty"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><span class="t"><b>Von innen ergänzen</b><span>Beauty-Drink · Nahrungsergänzung mit Biotin, Zink und Vitamin C¹</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.2 16a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8z"/><path d="M6.6 10h10.8"/></svg>1 Glas am Tag</i></span></span><span class="more">+</span></button>
+    <button type="button" class="pr-row" data-open="beauty"><img loading="lazy" decoding="async" src="assets/produkte/beauty-drink.webp" alt=""><span class="t"><b>Von innen ergänzen</b><span>Beauty-Drink · Nahrungsergänzung mit Biotin, Zink und Vitamin C</span><span class="pr-meta"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l-1.2 16a2 2 0 0 1-2 1.8H9.2a2 2 0 0 1-2-1.8z"/><path d="M6.6 10h10.8"/></svg>1 Glas am Tag</i></span></span><span class="more">+</span></button>
   </div>
 
   <div class="pr-sub"><h3>Extras</h3><span>passend zu deinen Wünschen</span></div>
@@ -1502,7 +1591,7 @@ body { font-family: var(--font); font-size: 15.5px; }
       <span class="eye light">Beauty-Check</span>
       <h3>Welche Produkte passen zu <em>deiner Haut</em>?</h3>
       <p>{{#if scanner_anzeigen=an}}Das finden wir im Beauty-Check gemeinsam heraus: mit einer KI-Hautanalyse per Selfie und meiner persönlichen Empfehlung. Kostenlos und unverbindlich{{/if}}{{#unless scanner_anzeigen=an}}Das finden wir im Beauty-Check gemeinsam heraus, mit meiner persönlichen Empfehlung. Kostenlos und unverbindlich{{/unless}}</p>
-      <a href="#kontakt" class="btn btn-light">Beauty-Check sichern <span class="arr">→</span></a>
+      <a href="#kontakt" class="btn btn-light">Meine Haut checken lassen <span class="arr">→</span></a>
     </div>
     <div class="pr-cta-who">
       <img loading="lazy" decoding="async" src="{{profilbild}}" alt="{{vorname}} {{nachname}}">
@@ -1511,7 +1600,7 @@ body { font-family: var(--font); font-size: 15.5px; }
     </div>
   </div>
 
-  <p class="foot-note pr-note">Verkauf und Versand nur über den offiziellen Shop des Herstellers (PM-International AG). Dort findest du alle Inhaltsstoffe und die offiziellen Preise. ¹ Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. ² Laut Hersteller schützen über 100 Patente die NTC®-Technologie; NTC® ist eine eingetragene Marke der PM-International AG. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
+  <p class="foot-note pr-note">Verkauf und Versand nur über den offiziellen Shop des Herstellers (PM-International AG). Dort findest du alle Inhaltsstoffe und die offiziellen Preise. Beauty-Drink: Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. NTC® ist eine eingetragene Marke der PM-International AG. <a class="link-more" data-shop="" href="#" target="_blank" rel="noopener">Zum Shop →</a></p>
 </section>
 
 <!-- Produkt-Fenster -->
@@ -1546,7 +1635,8 @@ body { font-family: var(--font); font-size: 15.5px; }
   <div class="s-head">
     <span class="eye">Weltweit beliebt</span>
     <h2>Was das Konzept so <em>besonders</em> macht</h2>
-    <p>Mehr als 1 Milliarde verkaufte Produkte in über 70 Ländern: Frauen und Männer auf der ganzen Welt vertrauen dem Hersteller³</p>
+    <p>Laut Hersteller mehr als 1 Milliarde verkaufte Produkte in über 70 Ländern: Frauen und Männer auf der ganzen Welt vertrauen darauf</p>
+    <div class="world"><svg class="globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5c2.6 2.8 3.9 6 3.9 9.5s-1.3 6.7-3.9 9.5c-2.6-2.8-3.9-6-3.9-9.5s1.3-6.7 3.9-9.5z"/></svg><span class="flags"><img src="assets/flags/de.svg" alt="Deutschland" title="Deutschland"><img src="assets/flags/at.svg" alt="Österreich" title="Österreich"><img src="assets/flags/ch.svg" alt="Schweiz" title="Schweiz"><img src="assets/flags/it.svg" alt="Italien" title="Italien"><img src="assets/flags/lu.svg" alt="Luxemburg" title="Luxemburg"><img src="assets/flags/us.svg" alt="USA" title="USA"><img src="assets/flags/kr.svg" alt="Südkorea" title="Südkorea"><img src="assets/flags/my.svg" alt="Malaysia" title="Malaysia"><img src="assets/flags/sg.svg" alt="Singapur" title="Singapur"></span><b>70+ Länder</b></div>
   </div>
 
   <div class="bento">
@@ -1555,7 +1645,7 @@ body { font-family: var(--font); font-size: 15.5px; }
       <div class="bento-over">
         <span class="eyebrow">Von innen ergänzen</span>
         <h3>Ein Drink mit Vitaminen und Mineralstoffen</h3>
-        <p>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.¹ Der Beauty-Drink enthält außerdem Biotin und Zink.</p>
+        <p>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Der Beauty-Drink enthält außerdem Biotin und Zink.</p>
       </div>
     </article>
 
@@ -1563,8 +1653,8 @@ body { font-family: var(--font); font-size: 15.5px; }
       <img loading="lazy" decoding="async" src="assets/ntc.webp" alt="" width="1024" height="1024">
       <div class="bento-over">
         <span class="eyebrow">NTC®</span>
-        <h3>So beschreibt der Hersteller sein Konzept</h3>
-        <p>„Das exklusive Nährstoff-Transportkonzept (NTC®) bringt die Nährstoffe, wenn sie gebraucht werden, dorthin, wo sie gebraucht werden – auf die Zellebene von innen und außen.“ Laut Hersteller schützen über 100 Patente die NTC®-Technologie.²</p>
+        <h3>Patentierte Technologie</h3>
+        <p>Hinter Pflege und Drink steckt das Nährstoff-Transportkonzept NTC® des Herstellers. Laut Hersteller schützen es über 100 Patente.</p>
       </div>
     </article>
 
@@ -1600,7 +1690,7 @@ body { font-family: var(--font); font-size: 15.5px; }
       <p>Der Hersteller bietet eine 30-Tage-Geld-zurück-Garantie. Voraussetzungen und Ablauf findest du im offiziellen Shop.</p>
     </article>
   </div>
-  <p class="foot-note wrap" style="margin-top:18px">¹ Zugelassene Angabe nach VO (EU) 432/2012 für den Beauty-Drink. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. ² Markenaussage des Herstellers (PM-International AG); NTC® ist eine eingetragene Marke der PM-International AG. ³ Angaben des Herstellers für alle FitLine-Produkte (Stand Oktober 2026).</p>
+  <p class="foot-note wrap" style="margin-top:18px">Hinweis zum Beauty-Drink (Nahrungsergänzungsmittel): Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. NTC® ist eine eingetragene Marke der PM-International AG. Verkaufszahl und Länder: Angaben des Herstellers für alle FitLine-Produkte (Stand Oktober 2026).</p>
 </section>
 
 <!-- ÜBER MICH -->
@@ -1614,10 +1704,7 @@ body { font-family: var(--font); font-size: 15.5px; }
       <span class="eye">Über mich</span>
       <h2>{{{about_intro_de_html}}}</h2>
       <div class="about-text">{{about_me_html}}</div>
-      <div class="about-pills">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Kostenloser Beauty-Check</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>Per Video, Telefon oder WhatsApp</span>
-        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-11a7 7 0 1 0-14 0c0 4.5 7 11 7 11z"/></svg>Persönliche Empfehlung, keine Kaufpflicht</span>
+      <div class="about-social">{{#if instagram_url}}<a href="{{instagram_url}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg><span>Instagram</span></a>{{/if}}{{#if facebook_url}}<a href="{{facebook_url}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.9 21.8v-8.2h2.8l.4-3.3h-3.2V8.2c0-.9.3-1.6 1.6-1.6h1.7V3.7c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.7v3.3h2.8v8.2z"/></svg><span>Facebook</span></a>{{/if}}{{#if tiktok_url}}<a href="{{tiktok_url}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 3c.3 2.3 1.7 3.9 4 4.1v3.1c-1.5.1-2.8-.4-4-1.2v5.9c0 3.6-2.7 6.1-6 6.1a5.9 5.9 0 0 1-6-6c0-3.6 3-6.3 6.7-5.9v3.2c-1.8-.3-3.4.9-3.4 2.7 0 1.6 1.2 2.8 2.7 2.8 1.6 0 2.8-1.1 2.8-3.2V3z"/></svg><span>TikTok</span></a>{{/if}}{{#if youtube_url}}<a href="{{youtube_url}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 8.2a3 3 0 0 0-2.1-2.1C18 5.6 12 5.6 12 5.6s-6 0-7.9.5A3 3 0 0 0 2 8.2 31 31 0 0 0 1.6 12c0 1.3.1 2.6.4 3.8a3 3 0 0 0 2.1 2.1c1.9.5 7.9.5 7.9.5s6 0 7.9-.5a3 3 0 0 0 2.1-2.1c.3-1.2.4-2.5.4-3.8s-.1-2.6-.4-3.8zM10 15.1V8.9l5.2 3.1z"/></svg><span>YouTube</span></a>{{/if}}{{#if linkedin_url}}<a href="{{linkedin_url}}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.1c.5-1 1.8-1.9 3.7-1.9 4 0 4.7 2.5 4.7 5.8v5.6h-4v-5c0-1.2 0-2.7-1.7-2.7s-1.9 1.3-1.9 2.6v5.1h-4z"/></svg><span>LinkedIn</span></a>{{/if}}</div>
       </div>
     </div>
   </div>
@@ -1682,7 +1769,7 @@ body { font-family: var(--font); font-size: 15.5px; }
 <section class="contact" id="kontakt">
   <div class="s-head">
     <span class="eye light">Kostenlos &amp; unverbindlich</span>
-    <h2><span class="l-de">Beauty-Check mit <strong>{{vorname}}</strong> sichern</span></h2>
+    <h2><span class="l-de">Finde mit <strong>{{vorname}}</strong> die Pflege, die zu deiner Haut passt</span></h2>
     <p><span class="l-de">Beantworte drei kurze Fragen. Ich melde mich persönlich bei dir, um deinen Beauty-Check zu vereinbaren.</span></p>
   </div>
 
@@ -1907,9 +1994,9 @@ const PRODUCTS = {
     skin: { de: 'Für alle Hauttypen, besonders normale bis trockene Haut.', en: 'For all skin types, especially normal to dry skin.' },
     pros: { de: ['Reichhaltige Nachtpflege', 'Unterstützung der Hautbarriere', 'Intensive Pflege'], en: ['Microbiome support', 'Skin barrier support', 'Anti-ageing'] } },
   beauty: { id: '0709028', name: 'Beauty-Drink', tag: { de: 'Von innen · Nahrungsergänzung', en: 'From the inside · food supplement' }, when: { de: "1 × täglich, z. B. morgens", en: "Once a day, e.g. in the morning" }, actives: ["Kollagenpeptide (Rind)", "Vitamin C", "Biotin", "Zink", "Niacin", "Vitamin B2", "Vitamin E", "Kupfer"], price: '47,50 €', size: '30 Portionen',
-    desc: { de: 'Trinkpulver mit Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei¹. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei¹.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
+    desc: { de: 'Trinkpulver mit Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
     use: { de: 'Einmal täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren.', en: 'Once a day, stir 5 level scoops (6.5 g) into 150 ml of still water. Do not exceed the recommended daily intake.' },
-    skin: { de: '¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
+    skin: { de: 'Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
     pros: { de: ['Beerengeschmack', 'Mit Vitaminen und Mineralstoffen', 'Mit Kollagenpeptiden vom Rind'], en: ['Berry flavour, no added sugar, with stevia', 'Vitamin C, biotin, zinc, niacin, vitamin B2, vitamin E', 'With the NTC® nutrient transport concept'] } },
   serum: { id: '0116116', name: 'Activize Serum', tag: { de: 'Ergänzung · Frische & Glow', en: 'Extra · freshness & glow' }, when: { de: "Morgens & abends, vor der Creme", en: "Morning & night, before the cream" }, actives: ["Guarana", "Vitamin C (Ascorbyl Glucoside)", "Niacinamid (B3)", "Panthenol (B5)", "Biotin", "Koffein", "Hyaluron", "Q10"], price: '48,90 €', size: '30 ml',
     desc: { de: 'Ergänzende Pflege mit Guarana, Vitamin C und B-Vitaminen. Für natürlichen Glow und ein verfeinertes, ebenmäßigeres Hautbild.', en: 'The serum brings the active complex of guarana, vitamin C and B vitamins into skin care. For a natural glow, refined pores and an even skin tone.' },
@@ -1979,11 +2066,11 @@ const ING = {
   'Spilanthes-Extrakt': 'Pflanzenextrakt für ein glatteres Hautgefühl.',
   'Jojobaöl': 'Leichtes Pflegeöl, zieht gut ein und macht die Haut geschmeidig.',
   'Kollagenpeptide (Rind)': 'Eiweißbausteine aus Kollagen vom Rind. Fester Bestandteil des Beauty-Drinks.',
-  'Vitamin C': 'Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.¹',
-  'Biotin': 'Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei.¹',
-  'Zink': 'Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.¹',
-  'Niacin': 'Niacin trägt zur Erhaltung normaler Haut bei.¹',
-  'Vitamin B2': 'Riboflavin (Vitamin B2) trägt zur Erhaltung normaler Haut bei.¹',
+  'Vitamin C': 'Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.',
+  'Biotin': 'Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei.',
+  'Zink': 'Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.',
+  'Niacin': 'Niacin trägt zur Erhaltung normaler Haut bei.',
+  'Vitamin B2': 'Riboflavin (Vitamin B2) trägt zur Erhaltung normaler Haut bei.',
   'Guarana': 'Pflanzenextrakt mit natürlichem Koffein. Für ein frisches, wach wirkendes Hautbild.',
   'Vitamin C (Ascorbyl Glucoside)': 'Stabile Form von Vitamin C für die Hautpflege. Für einen strahlenden Teint.',
   'Niacinamid (B3)': 'Vitamin B3 für die Haut. Für ein ebenmäßigeres, verfeinertes Hautbild.',
@@ -2020,7 +2107,7 @@ document.addEventListener('click', function (e) {
   const same = b.classList.contains('on');
   document.querySelectorAll('.pm-ing.on').forEach(x => x.classList.remove('on'));
   if (same) { box.hidden = true; return; }
-  b.classList.add('on'); box.innerHTML = '<b>' + esc(name) + '</b><p>' + esc(ING[name]) + '</p>' + (/¹/.test(ING[name]) ? '<small>¹ Zugelassene Angabe nach VO (EU) 432/2012.</small>' : ''); box.hidden = false;
+  b.classList.add('on'); box.innerHTML = '<b>' + esc(name) + '</b><p>' + esc(ING[name]) + '</p>' + (/ trägt zu| trägt zur/.test(ING[name]) ? '<small>Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</small>' : ''); box.hidden = false;
 });
 let pmCurrent = null;
 function renderModal() {

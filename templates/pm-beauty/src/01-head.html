@@ -24,22 +24,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="image" href="assets/hero/{{hero_variante}}.webp" fetchpriority="high" type="image/webp">
-<!-- Schriften im Stil von theworldofboudoir.com: dort „Editor's Note“ Light + Light Italic (lizenzpflichtig) für Überschriften,
-     Open Sans für Text, Montserrat Bold für kleine Versal-Kennzeichen. Freier, sehr ähnlicher Ersatz für Editor's Note: Boska Light/Italic (Fontshare).
-     Liegt die lizenzierte Datei unter assets/fonts/EditorsNote-Light.woff2, wird sie automatisch verwendet. -->
-<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
-<link href="https://api.fontshare.com/v2/css?f[]=boska@300,301,400&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Montserrat:wght@600;700&display=swap" rel="stylesheet">
+<!-- Schriften im Stil von theworldofboudoir.com (dort: „Editor's Note“ Regular + Italic für Überschriften/Unterzeilen, Open Sans für Text und
+     versale Kennzeichen/Buttons). Editor's Note ist lizenzpflichtig, deshalb der freie, sehr ähnliche Caslon-Mix:
+     Libre Caslon Display (Überschriften) + Libre Caslon Text Italic (kursive Akzente) + Open Sans.
+     Liegen lizenzierte Dateien unter assets/fonts/EditorsNote-*.woff2, werden sie automatisch verwendet. -->
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital@1&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-@font-face { font-family: 'Editors Note'; src: local("Editor's Note Light"), url('assets/fonts/EditorsNote-Light.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
-@font-face { font-family: 'Editors Note'; src: local("Editor's Note Light Italic"), url('assets/fonts/EditorsNote-LightItalic.woff2') format('woff2'); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Editors Note'; src: local("Editor's Note Regular"), url('assets/fonts/EditorsNote-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Editors Note Italic'; src: local("Editor's Note Italic"), url('assets/fonts/EditorsNote-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
 </style>
 
 <style>
 :root {
   --font: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --display: 'Editors Note', 'Boska', Georgia, 'Times New Roman', serif;
-  --label: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+  --display: 'Editors Note', 'Libre Caslon Display', Georgia, 'Times New Roman', serif;
+  --italic: 'Editors Note Italic', 'Libre Caslon Text', Georgia, serif;
+  --label: var(--font);
   --mono: var(--font);
   --serif: var(--display);
   --pad-x: clamp(20px, 4vw, 56px);
@@ -509,26 +509,27 @@ footer { background: var(--bg-2); }
   .contact-card-btns { grid-column: 1 / -1; }
 }
 
-/* ============ SCHRIFTEN im Boudoir-Stil: leichte Serif + Kursiv-Akzent, Open Sans, Montserrat-Versalien ============ */
-h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro-card .big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 300; }
-h1 { font-size: clamp(50px, 7vw, 110px); line-height: 1; letter-spacing: -0.02em; }
-h2 { font-size: clamp(38px, 4.6vw, 66px); line-height: 1.05; letter-spacing: -0.015em; }
-h3 { font-size: clamp(24px, 2.2vw, 32px); line-height: 1.12; letter-spacing: -0.01em; }
-h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--display); font-style: italic; font-weight: 300; font-size: 1em; line-height: inherit; letter-spacing: inherit; color: var(--green); }
-.split-word b { font-size: clamp(64px, 10.5vw, 180px); letter-spacing: -0.025em; line-height: 0.92; }
-.bento-card .big { font-size: clamp(76px, 7.5vw, 120px); letter-spacing: -0.02em; }
+/* ============ SCHRIFTEN im Boudoir-Stil: enge Caslon-Serif, kursive Caslon-Akzente, Open Sans (auch versal) ============ */
+h1, h2, h3, .faq-q, .pr-row .t b, .split-word b, .intro-card .big, .bento-card .big, .guar-badge b, .pm-sheet h3 { font-family: var(--display); font-weight: 400; }
+h1 { font-size: clamp(48px, 6.4vw, 100px); line-height: 1; letter-spacing: -0.03em; }
+h2 { font-size: clamp(36px, 4.2vw, 62px); line-height: 1.04; letter-spacing: -0.03em; }
+h3 { font-size: clamp(24px, 2.1vw, 31px); line-height: 1.1; letter-spacing: -0.025em; }
+h1 em, h2 em, h3 em, .intro-card .big em { font-family: var(--italic); font-style: italic; font-weight: 400; font-size: 0.94em; line-height: inherit; letter-spacing: -0.02em; color: var(--green); }
+.tagline { font-family: var(--italic); font-style: italic; font-size: clamp(19px, 1.6vw, 24px); letter-spacing: -0.01em; color: var(--ink); line-height: 1.3; }
+.split-word b { font-size: clamp(64px, 10.5vw, 180px); letter-spacing: -0.04em; line-height: 0.92; }
+.bento-card .big { font-size: clamp(76px, 7.5vw, 120px); letter-spacing: -0.03em; }
 .guar-badge b { font-size: 48px; }
-.pr-row .t b { font-size: clamp(23px, 2vw, 30px); letter-spacing: -0.01em; line-height: 1.05; }
-.faq-q { font-size: clamp(21px, 1.8vw, 26px); }
+.pr-row .t b { font-size: clamp(23px, 2vw, 30px); letter-spacing: -0.025em; line-height: 1.05; }
+.faq-q { font-size: clamp(20px, 1.7vw, 25px); letter-spacing: -0.02em; }
 .pm-sheet h3 { font-size: clamp(30px, 3vw, 38px); }
 .pr-cta h3 em, .contact .s-head h2 strong, .men-copy h2 em { color: var(--accent); }
-.contact .s-head h2 strong { font-style: italic; font-weight: 300; }
+.contact .s-head h2 strong { font-family: var(--italic); font-style: italic; font-weight: 400; padding: 0 0.1em; }
 .bento-card.photo h3, .bento-card.faces h3 { font-size: clamp(25px, 2.2vw, 32px); }
 body { font-family: var(--font); font-size: 15.5px; }
-/* Kennzeichen, Eyebrows, Buttons: Montserrat versal mit Laufweite (wie Boudoir) */
-.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4, .rt-time, .footer-col-title { font-family: var(--label); font-weight: 700; font-size: 10.5px; letter-spacing: 0.2em; text-transform: uppercase; }
-.btn, .nav-cta, .sticky-cta { font-family: var(--label); font-weight: 700; font-size: 11.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 16px 26px; }
-.split-col li b { font-family: var(--label); font-weight: 700; font-size: 11px; letter-spacing: .1em; }
+/* Kennzeichen, Eyebrows, Buttons: Open Sans versal mit Laufweite (wie Boudoir) */
+.eye, .bento-card .eyebrow, .split-word small, .pm-tag, .pm-fact small, .pm-block h4, .rt-time, .footer-col-title { font-family: var(--font); font-weight: 600; font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase; }
+.btn, .nav-cta, .sticky-cta { font-family: var(--font); font-weight: 600; font-size: 12.5px; letter-spacing: 0.12em; text-transform: uppercase; padding: 16px 26px; }
+.split-col li b { font-family: var(--font); font-weight: 600; font-size: 11.5px; letter-spacing: .1em; }
 .hero h1 { max-width: none; } .hero h1 .nw { white-space: nowrap; }
 .intro-sub { font-size: 14px; color: var(--ink-3); max-width: 46ch; }
 
@@ -589,5 +590,91 @@ body { font-family: var(--font); font-size: 15.5px; }
 .footer-made { gap: 8px; font-size: inherit; color: inherit; font-weight: inherit; }
 .footer-made a img { height: 16px; }
 .footer-made .heart { margin: 0; }
+
+/* ============ Runde 12: Hero Familie, Plus, NTC-Siegel, Welt, Social, Tagsüber-Karte ============ */
+.hero-copy { gap: 18px; }
+.hero h1 + .tagline { margin-top: -6px; }
+.hero-familie > img { object-position: 100% 30%; }
+.hero-familie::after { background: linear-gradient(90deg, rgba(253,247,239,0.97) 0%, rgba(253,247,239,0.92) 30%, rgba(253,247,239,0.55) 40%, rgba(253,247,239,0) 50%), linear-gradient(180deg, rgba(253,247,239,0) 60%, rgba(253,247,239,0.5) 100%); }
+.hero-familie .hero-copy { max-width: none; }
+.hero.hero-familie .hero-copy > * { max-width: min(520px, 36vw); }
+.hero-familie h1 { font-size: clamp(44px, 4.8vw, 82px); }
+.hero-familie p.sub { font-size: clamp(15px, 1.15vw, 18px); }
+.hero-familie .hero-ctas .btn { padding: 15px 20px; }
+.nav-links a { color: var(--ink); }
+.hero-familie .hero-facts { flex-direction: column; gap: 8px; }
+
+.split-cols { position: relative; }
+.split-plus { position: absolute; left: 50%; top: calc(50% + clamp(14px, 2vh, 24px)); transform: translate(-50%, -50%); z-index: 3; width: 76px; height: 76px; border-radius: 50%; background: var(--paper); color: var(--innen); display: flex; align-items: center; justify-content: center; box-shadow: 0 14px 34px -12px rgba(60,20,20,0.45); border: 7px solid var(--bg); }
+.split-plus svg { width: 30px; height: 30px; }
+.split-col.l li { display: grid; grid-template-columns: 26px 1fr; gap: 10px; }
+.split-col li strong { font-weight: 700; }
+.split-col.l { padding-right: clamp(36px, 4.5vw, 64px); } .split-col.r { padding-left: clamp(36px, 4.5vw, 64px); }
+
+.pr-stage { padding-top: clamp(40px, 7vw, 100px); }
+.ntc-badge { display: inline-flex; align-items: center; gap: 12px; padding: 10px 18px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--green); box-shadow: 0 8px 24px -14px rgba(60,20,20,0.35); text-align: left; }
+.ntc-badge svg { width: 34px; height: 34px; padding: 7px; border-radius: 50%; background: var(--green-soft); color: var(--green-dark); flex: none; }
+.ntc-badge b { display: block; font-family: var(--font); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); }
+.ntc-badge small { display: block; font-size: 13px; color: var(--ink-3); }
+
+.world { display: inline-flex; align-items: center; gap: 14px; padding: 10px 18px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); flex-wrap: wrap; justify-content: center; }
+.world .globe { width: 28px; height: 28px; color: var(--green-dark); flex: none; }
+.world .flags { display: inline-flex; }
+.world .flags img { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; border: 2px solid var(--paper); margin-left: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
+.world .flags img:first-child { margin-left: 0; }
+.world b { font-family: var(--font); font-size: 12.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); white-space: nowrap; }
+
+.about-social { display: flex; flex-wrap: wrap; gap: 8px; }
+.about-social:empty { display: none; }
+.about-social a { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px 10px 12px; border-radius: 100px; background: var(--paper); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--ink); transition: border-color .15s, transform .15s; }
+.about-social a:hover { border-color: var(--green); transform: translateY(-1px); }
+.about-social svg { width: 17px; height: 17px; color: var(--green-dark); }
+
+.rt-card.accent .rt-body { flex: 1; justify-content: center; gap: 10px; padding-top: 30px; padding-bottom: 30px; }
+.rt-card.accent .rt-body h3 { margin-bottom: 6px; }
+
+@media (max-width: 1024px) {
+  .hero-familie > img { object-position: 78% 25%; }
+  .hero-familie::after { background: linear-gradient(180deg, rgba(253,247,239,0) 30%, rgba(253,247,239,0.92) 62%); }
+  .hero-familie .hero-copy { justify-content: flex-end; min-height: 100vh; min-height: 100svh; }
+  .hero.hero-familie .hero-copy > * { max-width: 640px; }
+  .hero-familie .hero-facts { flex-direction: row; }
+  .split-plus { position: relative; left: auto; top: auto; transform: none; justify-self: center; margin: -42px 0; width: 64px; height: 64px; } .split-plus svg { width: 26px; height: 26px; }
+  .split-col.l, .split-col.r { padding: clamp(28px, 4vw, 44px) clamp(22px, 4vw, 44px); }
+  .split-col.l { padding-bottom: 48px; } .split-col.r { padding-top: 48px; }
+}
+@media (max-width: 760px) {
+  .hero-familie .hero-copy { min-height: 0; }
+  .hero-familie > img { aspect-ratio: 4 / 3.6; object-position: 72% 30%; }
+  .hero.hero-familie .hero-copy > * { max-width: none; }
+  .ntc-badge, .world { border-radius: 20px; }
+  .pr-stage > img { aspect-ratio: 16 / 9; object-position: 50% 92%; margin-top: -8px; }
+  .world .flags img { width: 22px; height: 22px; }
+}
+/* Tablet hochkant: Bild oben, Text darunter (sonst wird das Gruppenbild zu stark gezoomt) */
+@media (min-width: 761px) and (max-width: 1024px) and (orientation: portrait) {
+  .hero-familie { min-height: 0; align-items: stretch; flex-direction: column; background: var(--bg); }
+  .hero-familie > img { position: relative; height: auto; aspect-ratio: 16 / 10.5; object-position: 70% 30%; margin-top: 72px; }
+  .hero-familie::after { display: none; }
+  .hero.hero-familie .hero-copy { min-height: 0; padding: 36px var(--pad-x) 48px; }
+}
+/* Handy quer und kleine Querformate: Hero nicht höher als nötig, Bild daneben statt darüber */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero { min-height: 0; align-items: stretch; }
+  .hero > img { position: absolute; inset: 0; margin: 0; aspect-ratio: auto; height: 100%; }
+  .hero::after { display: block; background: linear-gradient(90deg, rgba(253,247,239,0.96) 0%, rgba(253,247,239,0.86) 40%, rgba(253,247,239,0) 64%) !important; }
+  .hero-copy, .hero-familie .hero-copy { min-height: 0; padding: 84px var(--pad-x) 28px; gap: 12px; justify-content: center; }
+  .hero.hero .hero-copy > * { max-width: 46vw; }
+  .hero h1, .hero-familie h1 { font-size: clamp(30px, 5vw, 46px); }
+  .hero-who { display: none; }
+  .hero .tagline { font-size: 17px; }
+  .hero p.sub { font-size: 14.5px; }
+  .hero-ctas { flex-direction: row; width: auto; }
+  .hero-facts { display: none; }
+  .split-stage { height: auto; aspect-ratio: 16 / 9; }
+  .men-stage > img { aspect-ratio: 16 / 7; }
+  .rt3 { grid-template-columns: repeat(3, 1fr); max-width: none; }
+  .rt-img { aspect-ratio: 4 / 3; }
+}
 </style>
 </head>

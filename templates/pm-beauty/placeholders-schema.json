@@ -120,7 +120,7 @@
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "deinname oder https://instagram.com/deinname",
-      "placeholder_text": "Dein Instagram-Profil. Erscheint im Kontakt-Fenster und im Footer.",
+      "placeholder_text": "Dein Instagram-Profil. Erscheint im Kontakt-Fenster, bei „Über mich“ und im Footer.",
       "contact": true
     },
     {
@@ -133,8 +133,47 @@
       "default_value": "",
       "preview_value": "",
       "input_placeholder": "deinname oder https://facebook.com/deinname",
-      "placeholder_text": "Dein Facebook-Profil. Erscheint im Kontakt-Fenster und im Footer.",
+      "placeholder_text": "Dein Facebook-Profil. Erscheint im Kontakt-Fenster, bei „Über mich“ und im Footer.",
       "contact": true
+    },
+    {
+      "key": "tiktok_url",
+      "type": "url",
+      "label": "TikTok (optional)",
+      "section": "Kontakt",
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "https://tiktok.com/@deinname",
+      "placeholder_text": "Dein TikTok-Profil. Erscheint bei „Über mich“.",
+      "contact": false,
+      "order": 13
+    },
+    {
+      "key": "youtube_url",
+      "type": "url",
+      "label": "YouTube (optional)",
+      "section": "Kontakt",
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "https://youtube.com/@deinname",
+      "placeholder_text": "Dein YouTube-Profil. Erscheint bei „Über mich“.",
+      "contact": false,
+      "order": 14
+    },
+    {
+      "key": "linkedin_url",
+      "type": "url",
+      "label": "LinkedIn (optional)",
+      "section": "Kontakt",
+      "required": false,
+      "default_value": "",
+      "preview_value": "",
+      "input_placeholder": "https://linkedin.com/in/deinname",
+      "placeholder_text": "Dein LinkedIn-Profil. Erscheint bei „Über mich“.",
+      "contact": false,
+      "order": 15
     },
     {
       "key": "farbthema",
@@ -187,6 +226,13 @@
       "required": true,
       "card_options": [
         {
+          "label": "Drei Generationen",
+          "value": "familie",
+          "card_type": "image",
+          "image_url": "/templates/pm-beauty/hero-previews/familie.webp",
+          "description": "Mann, Frau und reife Frau im Morgenlicht."
+        },
+        {
           "label": "Frau, natürlich",
           "value": "frau",
           "card_type": "image",
@@ -215,7 +261,7 @@
           "description": "Creme, Glas und Beeren im Licht."
         }
       ],
-      "default_value": "frau",
+      "default_value": "familie",
       "preview_value": "frau",
       "placeholder_text": "Das große Bild ganz oben auf deiner Seite."
     },
@@ -331,8 +377,11 @@
     "team_partner_number": "40237198",
     "whatsapp_nummer": "491761234567",
     "farbthema": "rose",
-    "hero_variante": "frau",
+    "hero_variante": "familie",
     "scanner_anzeigen": "an",
-    "maenner_anzeigen": "an"
+    "maenner_anzeigen": "an",
+    "tiktok_url": "",
+    "youtube_url": "",
+    "linkedin_url": ""
   }
 }

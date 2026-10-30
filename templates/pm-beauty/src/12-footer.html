@@ -136,9 +136,9 @@ const PRODUCTS = {
     skin: { de: 'Für alle Hauttypen, besonders normale bis trockene Haut.', en: 'For all skin types, especially normal to dry skin.' },
     pros: { de: ['Reichhaltige Nachtpflege', 'Unterstützung der Hautbarriere', 'Intensive Pflege'], en: ['Microbiome support', 'Skin barrier support', 'Anti-ageing'] } },
   beauty: { id: '0709028', name: 'Beauty-Drink', tag: { de: 'Von innen · Nahrungsergänzung', en: 'From the inside · food supplement' }, when: { de: "1 × täglich, z. B. morgens", en: "Once a day, e.g. in the morning" }, actives: ["Kollagenpeptide (Rind)", "Vitamin C", "Biotin", "Zink", "Niacin", "Vitamin B2", "Vitamin E", "Kupfer"], price: '47,50 €', size: '30 Portionen',
-    desc: { de: 'Trinkpulver mit Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei¹. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei¹. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei¹.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
+    desc: { de: 'Trinkpulver mit Beerengeschmack, Kollagenpeptiden, Vitaminen und Mineralstoffen. Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei. Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.', en: 'Drink powder with fruity berry flavour, collagen peptides, vitamins and minerals. Vitamin C contributes to normal collagen formation for the normal function of the skin. Biotin and zinc contribute to the maintenance of normal skin and hair, zinc to the maintenance of normal nails.' },
     use: { de: 'Einmal täglich 5 gestrichene Messlöffel (6,5 g) in 150 ml stilles Wasser einrühren. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren.', en: 'Once a day, stir 5 level scoops (6.5 g) into 150 ml of still water. Do not exceed the recommended daily intake.' },
-    skin: { de: '¹ Zugelassene Angaben nach VO (EU) 432/2012. Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
+    skin: { de: 'Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Enthält Kollagenpeptide vom Rind.', en: 'Food supplements are not a substitute for a balanced, varied diet and a healthy lifestyle. Contains bovine collagen peptides.' },
     pros: { de: ['Beerengeschmack', 'Mit Vitaminen und Mineralstoffen', 'Mit Kollagenpeptiden vom Rind'], en: ['Berry flavour, no added sugar, with stevia', 'Vitamin C, biotin, zinc, niacin, vitamin B2, vitamin E', 'With the NTC® nutrient transport concept'] } },
   serum: { id: '0116116', name: 'Activize Serum', tag: { de: 'Ergänzung · Frische & Glow', en: 'Extra · freshness & glow' }, when: { de: "Morgens & abends, vor der Creme", en: "Morning & night, before the cream" }, actives: ["Guarana", "Vitamin C (Ascorbyl Glucoside)", "Niacinamid (B3)", "Panthenol (B5)", "Biotin", "Koffein", "Hyaluron", "Q10"], price: '48,90 €', size: '30 ml',
     desc: { de: 'Ergänzende Pflege mit Guarana, Vitamin C und B-Vitaminen. Für natürlichen Glow und ein verfeinertes, ebenmäßigeres Hautbild.', en: 'The serum brings the active complex of guarana, vitamin C and B vitamins into skin care. For a natural glow, refined pores and an even skin tone.' },
@@ -208,11 +208,11 @@ const ING = {
   'Spilanthes-Extrakt': 'Pflanzenextrakt für ein glatteres Hautgefühl.',
   'Jojobaöl': 'Leichtes Pflegeöl, zieht gut ein und macht die Haut geschmeidig.',
   'Kollagenpeptide (Rind)': 'Eiweißbausteine aus Kollagen vom Rind. Fester Bestandteil des Beauty-Drinks.',
-  'Vitamin C': 'Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.¹',
-  'Biotin': 'Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei.¹',
-  'Zink': 'Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.¹',
-  'Niacin': 'Niacin trägt zur Erhaltung normaler Haut bei.¹',
-  'Vitamin B2': 'Riboflavin (Vitamin B2) trägt zur Erhaltung normaler Haut bei.¹',
+  'Vitamin C': 'Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei.',
+  'Biotin': 'Biotin trägt zur Erhaltung normaler Haut und normaler Haare bei.',
+  'Zink': 'Zink trägt zur Erhaltung normaler Haut, normaler Haare und normaler Nägel bei.',
+  'Niacin': 'Niacin trägt zur Erhaltung normaler Haut bei.',
+  'Vitamin B2': 'Riboflavin (Vitamin B2) trägt zur Erhaltung normaler Haut bei.',
   'Guarana': 'Pflanzenextrakt mit natürlichem Koffein. Für ein frisches, wach wirkendes Hautbild.',
   'Vitamin C (Ascorbyl Glucoside)': 'Stabile Form von Vitamin C für die Hautpflege. Für einen strahlenden Teint.',
   'Niacinamid (B3)': 'Vitamin B3 für die Haut. Für ein ebenmäßigeres, verfeinertes Hautbild.',
@@ -249,7 +249,7 @@ document.addEventListener('click', function (e) {
   const same = b.classList.contains('on');
   document.querySelectorAll('.pm-ing.on').forEach(x => x.classList.remove('on'));
   if (same) { box.hidden = true; return; }
-  b.classList.add('on'); box.innerHTML = '<b>' + esc(name) + '</b><p>' + esc(ING[name]) + '</p>' + (/¹/.test(ING[name]) ? '<small>¹ Zugelassene Angabe nach VO (EU) 432/2012.</small>' : ''); box.hidden = false;
+  b.classList.add('on'); box.innerHTML = '<b>' + esc(name) + '</b><p>' + esc(ING[name]) + '</p>' + (/ trägt zu| trägt zur/.test(ING[name]) ? '<small>Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise.</small>' : ''); box.hidden = false;
 });
 let pmCurrent = null;
 function renderModal() {
