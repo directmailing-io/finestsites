@@ -28,9 +28,6 @@ for (const f of schema.fields) {
 }
 Object.assign(data, schema.preview_values ?? {})
 if (opt('--theme')) data.farbthema = opt('--theme')!
-// Beliebige Werte setzen: --set about_position=oben --set team_modus=team (mehrfach möglich)
-const sets: string[] = []
-argv.forEach((a, i) => { if (a === '--set' && argv[i + 1]) { const [k, ...v] = argv[i + 1].split('='); data[k] = v.join('='); sets.push(k + '-' + v.join('=')) } })
 if (flag('--nolinks')) delete data.links
 if (flag('--duo')) Object.assign(data, {
   partner_modus: 'duo', team_modus: 'team',
@@ -43,6 +40,9 @@ if (flag('--duo')) Object.assign(data, {
 })
 // Partner-Modus mit getrennten Kontaktdaten (ohne Flag: gemeinsam = Standard)
 if (flag('--split')) data.kontakt_modus = 'getrennt'
+// Beliebige Werte setzen: --set about_position=oben --set team_modus=team (mehrfach möglich, gilt nach --duo/--split)
+const sets: string[] = []
+argv.forEach((a, i) => { if (a === '--set' && argv[i + 1]) { const [k, ...v] = argv[i + 1].split('='); data[k] = v.join('='); sets.push(k + '-' + v.join('=')) } })
 if (flag('--intro')) data.intro ='Hi, ich bin Daniel. Ich hab vor zwei Jahren angefangen, meine Gewohnheiten umzukrempeln, und seitdem hat sich mein Alltag komplett verändert. Mach den Check, dann weißt du, wo du stehst.'
 
 let out = renderTemplate(html, data, { rawKeys: rawKeysFromSchema(schema) })
@@ -59,6 +59,7 @@ if (flag('--result')) {
 
 const outDir = path.join(dir, 'preview-lokal')
 fs.mkdirSync(outDir, { recursive: true })
-const name = `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--split') ? '-split' : ''}${flag('--intro') ? '-intro' : ''}${sets.length ? '-' + sets.join('-').replace(/[^\w-]/g, '') : ''}.html`
+const outName = opt('--out')
+const name = outName ? `${outName}.html` : `${slug}-${data.farbthema ?? 'default'}${flag('--result') ? '-' + (opt('--step') ?? 'result').replace(':', '') : ''}${flag('--nolinks') ? '-nolinks' : ''}${flag('--duo') ? '-duo' : ''}${flag('--split') ? '-split' : ''}${flag('--intro') ? '-intro' : ''}${sets.length ? '-' + sets.join('-').replace(/[^\w-]/g, '') : ''}.html`
 fs.writeFileSync(path.join(outDir, name), out)
 console.log('wrote', path.relative(process.cwd(), path.join(outDir, name)))

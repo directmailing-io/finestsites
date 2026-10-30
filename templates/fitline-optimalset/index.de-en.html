@@ -488,6 +488,22 @@ html[data-lang="en"] .nav.scrolled .lang-opt[data-lang="en"] {
   .nav-hamburger { display: none; }
 }
 
+/* Lange Namen (30.10.2026): in der Leiste bricht nichts mehr um. Name am Handy max. 2 Zeilen, am Desktop
+   1 Zeile; passt er neben die Links nicht ganz, übernimmt der Menü-Knopf (Klasse nav-compact, Skript navFit). */
+.nav-links a, .nav-chip, .nav-cta, .nav-contact-btn { white-space: nowrap; }
+.nav-name { min-width: 0; }
+.nav-name-text { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow-wrap: break-word; }
+@media (min-width: 880px) {
+  .nav-name-text { display: block; white-space: nowrap; text-overflow: ellipsis; }
+  .nav-inner > :not(.nav-name) { flex-shrink: 0; }
+  .nav.nav-compact .nav-links { display: none !important; }
+  .nav.nav-compact .nav-hamburger { display: flex; }
+  .nav.nav-compact .lang-switch-desktop { margin-left: auto; }
+  .nav.nav-compact.contacts-open .lang-switch-desktop, .nav.nav-compact.contacts-open .nav-cta { display: none; }
+  .nav.nav-compact:has(.nav-contacts .nc-ch:only-of-type):not(.contacts-open) .nav-contacts { margin-left: auto; }
+  .nav.nav-compact:has(.nav-contacts .nc-ch:only-of-type):not(.contacts-open) .lang-switch-desktop { margin-left: 0; }
+}
+
 /* Handy (bis 879 px): helle Leiste über dem Bild, Kanäle unter den Hero-Knöpfen und im Menü */
 @media (max-width: 879px) {
   header.nav, header.nav.scrolled { padding: 12px 0; background-color: var(--bg); border-bottom-color: var(--border-soft); }
@@ -6352,7 +6368,7 @@ section.section.reviews {
   <div class="container nav-inner">
     <div class="nav-name">
       {{#unless team_modus=team}}<img src="{{profilbild}}" alt="{{vorname}}" class="nav-avatar">{{/unless}}{{#if team_modus=team}}<div style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;"><img src="{{profilbild}}" alt="{{vorname}}" style="width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(255,255,255,0.35);">{{#if partner_profilbild}}<img src="{{partner_profilbild}}" alt="{{partner_vorname}}" style="width:34px;height:34px;min-width:34px;max-width:34px;min-height:34px;max-height:34px;border-radius:50%;object-fit:cover;display:block;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);margin-left:-10px;">{{/if}}{{#unless partner_profilbild}}<div style="width:34px;height:34px;min-width:34px;max-width:34px;border-radius:50%;flex-shrink:0;border:2px solid rgba(255,255,255,0.25);margin-left:-10px;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;letter-spacing:0.5px;">{{partner_vorname}}</div>{{/unless}}</div>{{/if}}
-      {{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}{{/if}}
+      <span class="nav-name-text">{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}}{{#if partner_vorname}} & {{partner_vorname}}{{/if}}{{/if}}</span>
     </div>
     <nav class="nav-links">
       <a href="#warum"><span class="l-de">Wofür?</span><span class="l-en">What for?</span></a>
@@ -9743,6 +9759,28 @@ function switchKontaktTab(tab) {
   btn.addEventListener('click', () => setOpen(!nav.classList.contains('contacts-open')));
   document.addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
   document.addEventListener('click', e => { if (!e.target.closest('.nav')) setOpen(false); });
+})();
+
+/* ---- navFit: passt der Name neben die Links nicht ganz, Links ins Menü (30.10.2026) ---- */
+(function() {
+  const nav = document.querySelector('header.nav');
+  const links = nav && nav.querySelector('.nav-links');
+  const name = nav && nav.querySelector('.nav-name-text');
+  if (!nav || !links || !name) return;
+  let raf = 0;
+  const fit = () => {
+    raf = 0;
+    if (nav.classList.contains('contacts-open')) return;
+    nav.classList.remove('nav-compact');
+    if (window.innerWidth < 880 || getComputedStyle(links).display === 'none') return;
+    const inner = nav.querySelector('.nav-inner');
+    if (name.scrollWidth > name.clientWidth + 1 || inner.scrollWidth > inner.clientWidth + 1) nav.classList.add('nav-compact');
+  };
+  const queue = () => { if (!raf) raf = requestAnimationFrame(fit); };
+  fit();
+  window.addEventListener('resize', queue);
+  window.addEventListener('load', queue);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queue);
 })();
 
 /* ---- Mobile Menu ---- */

@@ -440,6 +440,23 @@ h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: var(--in
   .hero-contacts:has(.kc-ch) { display: block; width: 100%; align-self: stretch; margin: 26px 0 14px; text-align: left; }
 }
 .menu-contacts:has(.kc-ch) { display: block; margin: 8px 0 18px; }
+
+/* Lange Namen (30.10.2026): in der Leiste bricht nichts mehr um. Name am Handy max. 2 Zeilen, am Desktop
+   1 Zeile; passt er neben die Links nicht ganz, übernimmt der Menü-Knopf (html.nav-compact, Skript navFit). */
+.nav-links a, .nav-cta { white-space: nowrap; }
+.nav .brand { min-width: 0; }
+.nav .brand-text { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow-wrap: break-word; }
+.nav-inner > :not(.brand) { flex-shrink: 0; }
+@media (min-width: 901px) {
+  .nav .brand-text { display: block; white-space: nowrap; text-overflow: ellipsis; }
+}
+@media (min-width: 1200px) {
+  html.nav-compact .nav-links { display: none; }
+  html.nav-compact .nav-burger { display: flex; }
+  html.nav-compact .kc-wrap { margin-left: auto; position: static; }
+  html.nav-compact .nav-inner { position: relative; }
+  html.nav-compact .kc-drop { right: auto; left: var(--pad-x); top: calc(100% - 4px); }
+}
 .mc-title { margin: 0 0 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
 .mc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .mc-wa { grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 13px 16px; border-radius: 100px; background: var(--wa); color: #fff; font-size: 15px; font-weight: 600; transition: background .2s; }
@@ -5783,6 +5800,26 @@ if (stickyCta && conversionSection) {
 }
 
 // ============ Mobile Menu ============
+/* navFit: passt der Name neben die Links nicht ganz, Links ins Menü (30.10.2026) */
+(function() {
+  var nav = document.querySelector('nav.nav');
+  var links = nav && nav.querySelector('.nav-links');
+  var name = nav && nav.querySelector('.brand-text');
+  if (!nav || !links || !name) return;
+  var root = document.documentElement, raf = 0;
+  function fit() {
+    raf = 0;
+    root.classList.remove('nav-compact');
+    if (window.innerWidth < 1200 || getComputedStyle(links).display === 'none') return;
+    var inner = nav.querySelector('.nav-inner');
+    if (name.scrollWidth > name.clientWidth + 1 || inner.scrollWidth > inner.clientWidth + 1) root.classList.add('nav-compact');
+  }
+  function queue() { if (!raf) raf = requestAnimationFrame(fit); }
+  fit();
+  window.addEventListener('resize', queue);
+  window.addEventListener('load', queue);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queue);
+})();
 const navBurger = document.getElementById('navBurger');
 const navMobile = document.getElementById('navMobile');
 const navMobileClose = document.getElementById('navMobileClose');

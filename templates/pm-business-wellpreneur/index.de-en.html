@@ -697,6 +697,20 @@
   .hs-grid .nk-ic { width: 30px; height: 30px; }
   @media (prefers-reduced-motion: reduce) { .nk-drop, .nk-chev { transition: none; } }
 
+  /* Lange Namen (30.10.2026): in der Leiste bricht nichts mehr um. Name am Handy max. 2 Zeilen, am Desktop
+     1 Zeile; passt er neben die Links nicht ganz, übernimmt der Menü-Knopf (html.nav-compact, Skript navFit). */
+  .nav-link, .nk-link, .nk-btn, .nav-cta { white-space: nowrap; }
+  .nav .brand { min-width: 0; }
+  .nav .brand-name { min-width: 0; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow-wrap: break-word; line-height: 1.3; }
+  @media (min-width: 1025px) {
+    .nav .brand-name { display: block; white-space: nowrap; text-overflow: ellipsis; }
+    .nav > :not(.brand) { flex-shrink: 0; }
+    html.nav-compact .nav-links { display: none !important; }
+    html.nav-compact .burger-btn { display: flex; order: 4; }
+    html.nav-compact .nav-overlay { display: flex; }
+    html.nav-compact .nav-actions { margin-left: auto; }
+  }
+
   .hero-split {
     display: grid;
     grid-template-columns: 1.35fr 1fr;
@@ -5018,6 +5032,27 @@
   </div>
 </footer>
 
+<script>
+/* navFit: passt der Name neben die Links nicht ganz, Links ins Menü (30.10.2026) */
+(function() {
+  var nav = document.querySelector('nav.nav');
+  var links = nav && nav.querySelector('.nav-links');
+  var name = nav && nav.querySelector('.brand-name');
+  if (!nav || !links || !name) return;
+  var root = document.documentElement, raf = 0;
+  function fit() {
+    raf = 0;
+    root.classList.remove('nav-compact');
+    if (window.innerWidth <= 1024 || getComputedStyle(links).display === 'none') return;
+    if (name.scrollWidth > name.clientWidth + 1 || nav.scrollWidth > nav.clientWidth + 1) root.classList.add('nav-compact');
+  }
+  function queue() { if (!raf) raf = requestAnimationFrame(fit); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fit); else fit();
+  window.addEventListener('resize', queue);
+  window.addEventListener('load', queue);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(queue);
+})();
+</script>
 <script>
   // PM-Registrierung: Link-Sprache der aktiven Seitensprache angleichen (PM kennt nur de/en).
   // Der Link selbst (Sponsor-Nummer, Land) kommt fertig vom Server und wird hier nicht angefasst.
