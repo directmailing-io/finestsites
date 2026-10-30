@@ -1,7 +1,7 @@
 -- Echte Vorschaubilder je Webseite (30.10.2026, Daniel): Statt des statischen Vorlagen-Bildes zeigt die
 -- Karte im Dashboard (Web + App) ein Bildschirmfoto der veröffentlichten Seite des Nutzers.
 --
---  * thumb_url:          aktuelles Bild (…/api/media/site-thumbs/<userId>/<siteId>-<ms>.webp, unveränderlich)
+--  * thumb_url:          aktuelles Bild (…/api/media/site-thumbs/<userId>/<siteId>.webp?v=<ms>; eine Datei je Seite, wird überschrieben)
 --  * thumb_at:           wann es aufgenommen wurde
 --  * thumb_requested_at: beim Veröffentlichen gesetzt → scripts/site-thumbnails.ts nimmt neu auf
 --  * thumb_error_at:     letzter Fehlversuch (Pause, damit kaputte Seiten nicht dauernd geladen werden)

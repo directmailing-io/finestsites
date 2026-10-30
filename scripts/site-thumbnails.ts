@@ -1,7 +1,7 @@
 /**
  * Echte Vorschaubilder für die Karten im Dashboard (Web + App): öffnet die veröffentlichte Seite wie ein
  * Besucher (Chromium, 1280×800), macht ein Bildschirmfoto des sichtbaren Bereichs, legt es als WebP in R2 ab
- * (site-thumbs/<userId>/<siteId>-<ms>.webp) und trägt die Adresse in user_sites.thumb_url ein.
+ * (site-thumbs/<userId>/<siteId>.webp – eine Datei je Seite, jede Neuaufnahme überschreibt sie) und trägt die Adresse in user_sites.thumb_url ein.
  *
  * Reihenfolge je Lauf:
  *   1. gerade veröffentlicht (thumb_requested_at neuer als thumb_at, frühestens 20 s danach → KV ist befüllt)
@@ -25,7 +25,7 @@ import { chromium, type Browser } from 'playwright-core'
 import sharp from 'sharp'
 import { db } from '@/lib/db'
 import { uploadToR2 } from '@/lib/r2/client'
-import { deleteSiteThumb, siteThumbKey } from '@/lib/sites/thumbnail'
+import { siteThumbKey } from '@/lib/sites/thumbnail'
 
 const arg = (name: string) => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : undefined }
 const LIMIT = Number(arg('--limit') ?? 25)
@@ -118,12 +118,11 @@ async function main() {
           writeFileSync(file, webp)
           console.log(`✓ ${url} → ${file} (${Math.round(webp.length / 1024)} KB)`)
         } else {
-          const key = siteThumbKey(s.user_id, s.id, at)
-          await uploadToR2(key, webp, 'image/webp')
-          const thumbUrl = `${APP_URL}/api/media/${key}`
+          const key = siteThumbKey(s.user_id, s.id)
+          await uploadToR2(key, webp, 'image/webp') // überschreibt das alte Bild
+          const thumbUrl = `${APP_URL}/api/media/${key}?v=${at}` // neue Version → Caches holen das neue Bild
           // thumb_at = Beginn der Aufnahme: wird währenddessen neu veröffentlicht, kommt die Seite gleich wieder dran
           await db.execute(sql`update user_sites set thumb_url = ${thumbUrl}, thumb_at = ${new Date(at)}, thumb_error_at = null where id = ${s.id}`)
-          if (s.thumb_url && s.thumb_url !== thumbUrl) await deleteSiteThumb(s.thumb_url)
           console.log(`✓ ${url} (${Math.round(webp.length / 1024)} KB)`)
         }
         ok++

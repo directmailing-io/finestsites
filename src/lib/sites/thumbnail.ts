@@ -1,21 +1,22 @@
 /**
  * Echte Vorschaubilder der Webseiten (Karte im Dashboard, Web + App).
- * Aufgenommen von scripts/site-thumbnails.ts, abgelegt in R2 unter site-thumbs/<userId>/<siteId>-<ms>.webp
- * und ausgeliefert über /api/media/… (Adresse ändert sich mit jedem Bild → darf dauerhaft gecacht werden).
+ * Aufgenommen von scripts/site-thumbnails.ts. Je Seite genau EINE Datei in R2 (site-thumbs/<userId>/<siteId>.webp),
+ * jede Neuaufnahme überschreibt sie – keine alten Dateien. Ausgeliefert über /api/media/…?v=<ms>: die Version in
+ * der Adresse ändert sich mit jedem Bild, darum darf jede Fassung dauerhaft gecacht werden.
  */
 import { deleteFromR2 } from '@/lib/r2/client'
 
 export const SITE_THUMB_PREFIX = 'site-thumbs/'
 
-export function siteThumbKey(userId: string, siteId: string, at: number): string {
-  return `${SITE_THUMB_PREFIX}${userId}/${siteId}-${at}.webp`
+export function siteThumbKey(userId: string, siteId: string): string {
+  return `${SITE_THUMB_PREFIX}${userId}/${siteId}.webp`
 }
 
 /** R2-Schlüssel aus der gespeicherten Adresse (…/api/media/site-thumbs/…); fremde Adressen → null. */
 export function siteThumbKeyFromUrl(url: string | null | undefined): string | null {
   if (!url) return null
   const i = url.indexOf(`/api/media/${SITE_THUMB_PREFIX}`)
-  return i < 0 ? null : url.slice(i + '/api/media/'.length)
+  return i < 0 ? null : url.slice(i + '/api/media/'.length).split('?')[0]
 }
 
 /** Bild einer gelöschten Seite entfernen; Fehler sind egal (Kontolöschung räumt den Ordner ohnehin). */
