@@ -38,5 +38,8 @@ async function main() {
     } catch (e) { failed.push(`${host} (${(e as Error).name})`) }
   }
   console.log(`geleert: ${ok}/${hosts.size}` + (failed.length ? `\nfehlgeschlagen: ${failed.join(', ')}` : ''))
+  // Neue Vorlagen-Fassung → Vorschaubilder der Karten neu aufnehmen (scripts/site-thumbnails.ts)
+  await db.update(userSites).set({ thumbRequestedAt: new Date() })
+    .where(and(eq(userSites.templateId, templateId), eq(userSites.status, 'published')))
 }
 main().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1) })

@@ -206,6 +206,12 @@ export const userSites = pgTable('user_sites', {
   /** Besucher-Chat auf dieser Seite (Editor-Schalter); wirkt nur, wenn das Konto freigeschaltet ist.
    *  Standard aus seit Migration 20261029120000 – Einschalten nur mit Zustimmung (chat_avv_consents). */
   visitorChatEnabled: boolean('visitor_chat_enabled').notNull().default(false),
+  /** Bildschirmfoto der veröffentlichten Seite für die Karte im Dashboard (scripts/site-thumbnails.ts).
+   *  thumb_requested_at setzt das Veröffentlichen; ohne thumb_url zeigt die Karte das Vorlagen-Bild. */
+  thumbUrl: text('thumb_url'),
+  thumbAt: timestamp('thumb_at', { withTimezone: true }),
+  thumbRequestedAt: timestamp('thumb_requested_at', { withTimezone: true }),
+  thumbErrorAt: timestamp('thumb_error_at', { withTimezone: true }),
   // @deprecated — per-site consent fields (replaced by users.content_consent_at onboarding step)
   // Kept for historical data; no longer written by the publish flow. Admin panel still reads them.
   contentConsentGivenAt: timestamp('content_consent_given_at', { withTimezone: true }),

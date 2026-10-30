@@ -49,7 +49,7 @@ function overview(): Overview {
       status: status(s),
       url: domain?.status === 'active' ? `https://${domain.name}` : db.me.user.username && s.templates ? `https://${db.me.user.username}.${s.templates.domain}` : null,
       domain,
-      thumbnailUrl: s.templates?.preview_images?.[0] ?? null,
+      thumbnailUrl: s.thumbnail_url ?? s.templates?.preview_images?.[0] ?? null,
       unreadSubmissions: db.submissions.filter(x => x.user_site_id === s.id && !x.read_at && !x.archived_at).length,
       visitors7d: db.visitors[s.id] ?? 0,
       hasUnpublishedChanges: !!s.has_unpublished_changes,

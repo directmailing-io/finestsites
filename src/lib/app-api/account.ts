@@ -43,6 +43,7 @@ export async function loadSites(userId: string) {
     templateDomain: templates.domain,
     templateIsFree: templates.isFree,
     previewImages: templates.previewImages,
+    thumbUrl: userSites.thumbUrl,
   })
     .from(userSites)
     .innerJoin(templates, eq(templates.id, userSites.templateId))
@@ -74,6 +75,7 @@ export function domainInfo(site: AppSiteRow): { name: string; status: 'active' |
 }
 
 export function thumbnailOf(site: AppSiteRow): string | null {
+  if (site.thumbUrl) return site.thumbUrl // echtes Bild der veröffentlichten Seite (scripts/site-thumbnails.ts)
   const imgs = Array.isArray(site.previewImages) ? site.previewImages : []
   const first = imgs.find((x): x is string => typeof x === 'string' && x.length > 0)
   if (!first) return null

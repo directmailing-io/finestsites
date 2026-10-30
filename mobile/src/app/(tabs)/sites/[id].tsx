@@ -49,7 +49,7 @@ export default function SiteDetailScreen() {
   return (
     <Screen readable refreshing={site.isRefetching} onRefresh={() => void site.refetch()}>
       <Stack.Screen options={{ title: '' }} />
-      <SiteCard site={{ ...s, templates: s.templates ? { ...s.templates, preview_images: s.templates.preview_images ?? cached?.templates?.preview_images ?? null } : null, unread_submissions: unread }} />
+      <SiteCard site={{ ...s, thumbnail_url: s.thumbnail_url ?? cached?.thumbnail_url ?? null, templates: s.templates ? { ...s.templates, preview_images: s.templates.preview_images ?? cached?.templates?.preview_images ?? null } : null, unread_submissions: unread }} />
 
       <ListSection>
         <ListRow

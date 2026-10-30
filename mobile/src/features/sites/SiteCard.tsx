@@ -35,8 +35,8 @@ export function SiteCard({ site, highlight }: { site: Site; highlight?: boolean 
   const { width } = useWindowDimensions();
   const meta = STATUS_META[site.status];
   const { display, hasCustom, url } = siteUrlOf(site);
-  // wie im Web: Vorschaubild der Vorlage, sonst Bildschirmfoto der Live-Seite
-  const preview = assetUrl(site.templates?.preview_images?.[0]) ?? (url ? `https://image.thum.io/get/width/800/crop/500/${url}` : null);
+  // wie im Web: echtes Bild der eigenen Seite, sonst Vorschaubild der Vorlage, sonst Bildschirmfoto der Live-Seite
+  const preview = assetUrl(site.thumbnail_url ?? site.templates?.preview_images?.[0]) ?? (url ? `https://image.thum.io/get/width/800/crop/500/${url}` : null);
   const title = site.templates?.title ?? 'Meine Webseite';
   const isDraft = site.status === 'draft';
   const unread = site.unread_submissions ?? 0;

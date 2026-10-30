@@ -15,7 +15,8 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ path: 
   const key = path.join('/')
 
   // Only allow specific prefixes
-  if (!key.startsWith('user-images/') && !key.startsWith('template-images/') && !key.startsWith('profile-images/')) {
+  // site-thumbs/: Bildschirmfotos veröffentlichter Seiten (nur was die Seite ohnehin öffentlich zeigt)
+  if (!key.startsWith('user-images/') && !key.startsWith('template-images/') && !key.startsWith('profile-images/') && !key.startsWith('site-thumbs/')) {
     return new NextResponse('Not found', { status: 404 })
   }
 

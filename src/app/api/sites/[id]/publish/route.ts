@@ -222,7 +222,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   // ── Publish ────────────────────────────────────────────────────────────────
   await db.update(userSites)
-    .set({ status: 'published', publishedAt: new Date() })
+    // thumbRequestedAt: neues Vorschaubild für die Karte im Dashboard (scripts/site-thumbnails.ts)
+    .set({ status: 'published', publishedAt: new Date(), thumbRequestedAt: new Date() })
     .where(eq(userSites.id, id))
 
   // Purge KV cache so the Worker picks up the new status immediately

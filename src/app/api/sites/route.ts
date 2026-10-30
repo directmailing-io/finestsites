@@ -97,6 +97,7 @@ export async function GET(req: NextRequest) {
           customDomain: userSites.customDomain,
           customDomainStatus: userSites.customDomainStatus,
           publishedData: userSites.publishedData,
+          thumbUrl: userSites.thumbUrl,
           createdAt: userSites.createdAt,
           updatedAt: userSites.updatedAt,
           template: {
@@ -157,9 +158,13 @@ export async function GET(req: NextRequest) {
             domain: s.template.domain,
             placeholder_schema: s.template.placeholderSchema,
             r2_bundle_path: s.template.r2BundlePath,
-            preview_images: s.template.previewImages,
+            // Echtes Bild der Seite vorne, damit auch ältere App-Versionen (lesen preview_images[0]) es zeigen
+            preview_images: s.thumbUrl
+              ? [s.thumbUrl, ...((s.template.previewImages as string[] | null) ?? [])]
+              : s.template.previewImages,
           }
         : null,
+      thumbnail_url: s.thumbUrl ?? null,
       username: profile?.username ?? null,
       unread_submissions: unreadMap[s.id] ?? 0,
     }))

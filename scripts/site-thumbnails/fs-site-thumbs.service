@@ -1,0 +1,19 @@
+# Vorschaubilder der Webseiten (scripts/site-thumbnails.ts). Installation auf dem App-Server:
+#   cp scripts/site-thumbnails/fs-site-thumbs.* /etc/systemd/system/ && systemctl daemon-reload
+#   systemctl enable --now fs-site-thumbs.timer
+# Chromium: PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright npx playwright-core install --with-deps chromium
+[Unit]
+Description=FinestSites – Vorschaubilder der veröffentlichten Seiten
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=finestsites
+WorkingDirectory=/var/www/finestsites
+Environment=PLAYWRIGHT_BROWSERS_PATH=/opt/ms-playwright
+ExecStart=/usr/bin/node --env-file=.env.production --import tsx scripts/site-thumbnails.ts --limit 25 --budget 100
+TimeoutStartSec=300
+Nice=10
+MemoryMax=1500M
+StandardOutput=append:/var/log/fs-site-thumbs.log
+StandardError=append:/var/log/fs-site-thumbs.log

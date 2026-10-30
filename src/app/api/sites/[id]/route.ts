@@ -7,6 +7,7 @@ import { db } from '@/lib/db'
 import { users, userSites, templates, siteData } from '@/lib/db/schema'
 import { eq, and, sql, inArray } from 'drizzle-orm'
 import { markSiteOffline } from '@/lib/cloudflare/kv'
+import { deleteSiteThumb } from '@/lib/sites/thumbnail'
 import { FITLINE_SHOP_PRODUCTS, FITLINE_AUTO_LINK_RE, buildFitlineShopLink, ensureSponsorParam } from '@/lib/utils/fitline-shop-links'
 
 async function getSiteForUser(siteId: string, userId: string) {
@@ -22,6 +23,7 @@ async function getSiteForUser(siteId: string, userId: string) {
       customDomainStatus: userSites.customDomainStatus,
       publishedData: userSites.publishedData,
       publishedDataAt: userSites.publishedDataAt,
+      thumbUrl: userSites.thumbUrl,
       contentConsentGivenAt: userSites.contentConsentGivenAt,
       createdAt: userSites.createdAt,
       updatedAt: userSites.updatedAt,
@@ -88,6 +90,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
       : null,
     data: dataMap,
     username: profile?.username ?? null,
+    thumbnail_url: site.thumbUrl ?? null,
   })
 }
 
@@ -228,6 +231,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   // Hard delete — site_data + form_submissions cascade away
   try {
     await db.delete(userSites).where(and(eq(userSites.id, id), eq(userSites.userId, user.id)))
+    await deleteSiteThumb(site.thumbUrl)
     return NextResponse.json({ success: true })
   } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

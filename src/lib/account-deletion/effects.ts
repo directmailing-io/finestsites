@@ -62,7 +62,7 @@ export const effects = {
 
 /** R2-Ordner, die ausschließlich Dateien genau eines Nutzers enthalten (Upload-Routen). */
 export function userR2Prefixes(userId: string): string[] {
-  return [`user-images/${userId}/`, `profile-images/${userId}/`, `support-media/${userId}/`]
+  return [`user-images/${userId}/`, `profile-images/${userId}/`, `support-media/${userId}/`, `site-thumbs/${userId}/`]
 }
 
 /**

@@ -95,6 +95,8 @@ export interface Site {
   /** nur Liste (/api/sites) */
   unread_submissions?: number;
   has_unpublished_changes?: boolean;
+  /** Bildschirmfoto der veröffentlichten Seite (Liste + Detail; fehlt, solange keins aufgenommen ist) */
+  thumbnail_url?: string | null;
   /** Liste: mit preview_images; Detail (/api/sites/[id]): ohne */
   templates: { id: string; title: string; domain: string; preview_images?: string[] | null } | null;
 }

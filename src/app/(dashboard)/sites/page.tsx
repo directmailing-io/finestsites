@@ -21,6 +21,8 @@ interface Site {
   custom_domain_status: string | null
   unread_submissions?: number
   has_unpublished_changes?: boolean
+  /** Bildschirmfoto der veröffentlichten Seite (fehlt, bis die Seite einmal aufgenommen wurde) */
+  thumbnail_url?: string | null
   templates: {
     title: string
     domain: string
@@ -49,7 +51,9 @@ function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: 
     ? site.custom_domain!
     : (domain && username ? `${username}.${domain}` : null)
   const siteUrl = isPublished && displayUrl ? `https://${displayUrl}` : null
-  const preview = site.templates?.preview_images?.[0]
+  // echtes Bild der eigenen Seite, sonst Vorlagen-Bild (/api/sites stellt das echte Bild auch dort nach vorne)
+  const preview = site.thumbnail_url
+    ?? site.templates?.preview_images?.[0]
     ?? (siteUrl ? `https://image.thum.io/get/width/800/crop/500/${siteUrl}` : null)
   const editHref = `/sites/${site.id}/edit`
   const title = site.templates?.title ?? 'Meine Webseite'
