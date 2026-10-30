@@ -1394,41 +1394,6 @@ body { font-family: var(--font); font-size: 15.5px; }
 .rt-card.accent .rt-img img { object-position: 50% 22%; }
 
 .pr-row .t small.pr-cat { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green-dark); }
-
-/* ============ VERTRAUEN (Runde 17) ============ */
-.trust { padding-top: clamp(56px, 8vh, 88px); padding-bottom: clamp(56px, 8vh, 88px); }
-.trust-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.trust-card { position: relative; overflow: hidden; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(22px, 2.4vw, 32px); display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-.trust-card .eyebrow { font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green-dark); }
-.trust-card h3 { font-size: clamp(23px, 2vw, 28px); }
-.trust-card p { font-size: 15px; line-height: 1.6; color: var(--ink-2); }
-.trust-card.year { background: var(--green-soft); border-color: transparent; }
-.trust-year { font-family: var(--display); font-weight: 400; font-size: clamp(56px, 5.6vw, 84px); line-height: .9; letter-spacing: -0.04em; color: var(--green); margin-bottom: 4px; }
-.tr-ic { width: 46px; height: 46px; border-radius: 14px; background: var(--green-soft); color: var(--green-dark); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-.tr-ic svg { width: 22px; height: 22px; }
-.trust-link { margin-top: auto; padding-top: 6px; font-size: 14.5px; font-weight: 700; color: var(--green-dark); border-bottom: 1px solid currentColor; }
-@media (max-width: 900px) { .trust-grid { grid-template-columns: 1fr; max-width: 620px; } }
-
-/* ============ BEAUTY-CHECK (Runde 17) ============ */
-.check { padding-top: clamp(48px, 7vh, 80px); padding-bottom: clamp(48px, 7vh, 80px); }
-.ck2 { grid-template-columns: minmax(300px, 460px) 1fr; grid-template-areas: "visual head" "visual body"; align-items: start; row-gap: 22px; }
-.ck2 .check-visual { grid-area: visual; align-self: stretch; min-height: 520px; }
-.ck-head { grid-area: head; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; align-self: end; }
-.ck-head h2 { max-width: 18ch; }
-.ck-head .lead { max-width: 560px; }
-.ck-body { grid-area: body; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
-.ck2 .ck-steps { padding: 4px 20px; }
-.ck2 .ck-steps li { align-items: start; padding: 14px 0; }
-.ck2 .ck-steps b { font-size: 15.5px; line-height: 1.35; }
-.ck2 .ck-steps span { font-size: 14px; line-height: 1.5; margin-top: 3px; }
-.ck-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.ck-cta .ck-free { font-size: 14px; font-weight: 600; color: var(--ink-2); }
-.ck2 .ck-note { font-size: 13px; line-height: 1.55; color: var(--ink-2); max-width: 560px; }
-@media (max-width: 1024px) {
-  .ck2 { grid-template-columns: 1fr; grid-template-areas: "head" "visual" "body"; }
-  .ck2 .check-visual { min-height: 0; max-width: none; height: clamp(260px, 52vw, 420px); }
-  .ck2 .check-visual img.hand { width: auto; height: 108%; }
-}
 </style>
 </head>
 
@@ -1688,39 +1653,66 @@ body { font-family: var(--font); font-size: 15.5px; }
 </section>
 {{/if}}
 
-<!-- VERTRAUEN: Wer steckt dahinter? -->
-<section class="why trust" id="vorteile">
+<!-- USPs · Bento -->
+<section class="why" id="vorteile">
   <div class="s-head">
-    <span class="eye">Ein Blick hinter die Produkte</span>
-    <h2>Du willst wissen,<br>was <em>dahintersteckt</em>?</h2>
-    <p>Verständlich. Bei Produkten, die du täglich verwendest, zählen auch der Hersteller, die Inhaltsstoffe und die Bedingungen beim Kauf.</p>
+    <span class="eye">Weltweit beliebt</span>
+    <h2>Was das Konzept so <em>besonders</em> macht</h2>
+    <p>Laut Hersteller mehr als 1 Milliarde verkaufte Produkte: Frauen und Männer auf der ganzen Welt vertrauen darauf</p>
   </div>
 
-  <div class="trust-grid">
-    <article class="trust-card year reveal">
-      <b class="trust-year" aria-hidden="true">1993</b>
-      <span class="eyebrow">Der Hersteller</span>
-      <h3>Seit 1993 am Markt.</h3>
-      <p>Hinter den Produkten steht PM-International. Das Unternehmen wurde 1993 gegründet und bietet unter der Marke FitLine Nahrungsergänzung und Kosmetik an.</p>
-      <a class="trust-link" href="https://www.fitline.com/de/de-de/about-fitline" target="_blank" rel="noopener">Über das Unternehmen <span aria-hidden="true">→</span></a>
+  <div class="bento">
+    <article class="bento-card photo tall reveal">
+      <img loading="lazy" decoding="async" src="assets/drink.webp" alt="" width="1024" height="1024">
+      <div class="bento-over">
+        <span class="eyebrow">Von innen ergänzen</span>
+        <h3>Ein Drink mit Vitaminen und Mineralstoffen</h3>
+        <p>Vitamin C trägt zu einer normalen Kollagenbildung für eine normale Funktion der Haut bei. Der Beauty-Drink enthält außerdem Biotin und Zink.</p>
+      </div>
     </article>
 
-    <article class="trust-card reveal">
-      <span class="tr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v6L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-9V3"/><path d="M7.5 14h9"/></svg></span>
-      <span class="eyebrow">Die Inhaltsstoffe</span>
-      <h3>Was drin ist? Kannst du nachlesen.</h3>
-      <p>Jedes Produkt hat seine eigene Rezeptur. Die vollständigen Inhaltsstoffe findest du beim jeweiligen Produkt im offiziellen Shop.</p>
-      <a class="trust-link" data-shop="" href="#" target="_blank" rel="noopener">Zu den Produktinformationen <span aria-hidden="true">→</span></a>
+    <article class="bento-card photo wide reveal">
+      <img loading="lazy" decoding="async" src="assets/ntc.webp" alt="" width="1024" height="1024">
+      <div class="bento-over">
+        <span class="eyebrow">NTC®</span>
+        <h3>Patentierte Technologie</h3>
+        <p>Hinter Pflege und Drink steckt das Nährstoff-Transportkonzept NTC® des Herstellers. Laut Hersteller schützen es über 100 Patente.</p>
+      </div>
     </article>
 
-    <article class="trust-card reveal">
-      <span class="tr-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></span>
-      <span class="eyebrow">Rückgabe</span>
-      <h3>Und wenn es nicht passt?</h3>
-      <p>Für diese Produkte bietet die PM-International AG eine 30-Tage-Geld-zurück-Garantie, gerechnet ab Rechnungsdatum. Wie die Rückgabe funktioniert und welche Bedingungen gelten, erfährst du in den Garantiebedingungen.</p>
-      <a class="trust-link" href="https://cdn.pm-international.com/shops/de/PM_GeneralTermsConditions_OTHR_2926_DE_P2_ONLINE.pdf" target="_blank" rel="noopener">Garantiebedingungen ansehen (AGB, Ziffer 12) <span aria-hidden="true">→</span></a>
+    <article class="bento-card stat reveal">
+      <b class="big">1993</b>
+      <h3>Seit über 30 Jahren</h3>
+      <p>Laut Hersteller: Produktion nach GMP-Standard und regelmäßige unabhängige Prüfungen durch ELAB Analytik. Prüfinformationen sind per QR-Code auf den Produkten abrufbar.</p>
+    </article>
+
+    <article class="bento-card reveal">
+      <span class="eyebrow">Was drin ist</span>
+      <h3>Bekannte Inhaltsstoffe</h3>
+      <div class="bento-chips"><span>Hyaluron</span><span>Ceramid</span><span>Peptid</span><span>Bakuchiol</span><span>Ectoin</span><span>Niacinamid</span><span>Q10</span></div>
+    </article>
+
+    <article class="bento-card faces wide reveal">
+      <div class="faces-grid">
+        <img loading="lazy" decoding="async" src="assets/skin-young.webp" alt="" width="1024" height="1024">
+        <img loading="lazy" decoding="async" src="assets/skin-mature.webp" alt="" width="1024" height="1024">
+        <img loading="lazy" decoding="async" src="assets/skin-man.webp" alt="" width="1024" height="1024">
+        <img loading="lazy" decoding="async" src="assets/skin-asian.webp" alt="" width="1024" height="1024">
+      </div>
+      <div class="bento-over">
+        <span class="eyebrow">Passend zu deiner Haut</span>
+        <h3>Dein Hauttyp gibt die Richtung vor</h3>
+        <p>Tagespflege für normale bis Mischhaut oder trockene Haut, dazu Nachtpflege. Im Beauty-Check helfe ich dir bei der Auswahl.</p>
+      </div>
+    </article>
+
+    <article class="bento-card sand reveal">
+      <div class="guar-badge"><b>30</b><span>Tage</span></div>
+      <h3>Geld-zurück-Garantie des Herstellers</h3>
+      <p>Der Hersteller bietet eine 30-Tage-Geld-zurück-Garantie. Voraussetzungen und Ablauf findest du im offiziellen Shop.</p>
     </article>
   </div>
+  <p class="foot-note wrap" style="margin-top:18px">Hinweis zum Beauty-Drink (Nahrungsergänzungsmittel): Nahrungsergänzungsmittel sind kein Ersatz für eine ausgewogene, abwechslungsreiche Ernährung und eine gesunde Lebensweise. Die empfohlene tägliche Verzehrmenge nicht überschreiten. Außerhalb der Reichweite von kleinen Kindern aufbewahren. NTC® ist eine eingetragene Marke der PM-International AG. Verkaufszahl: Angabe des Herstellers für alle FitLine-Produkte (Stand Oktober 2026).</p>
 </section>
 
 <!-- ÜBER MICH -->
@@ -1742,27 +1734,26 @@ body { font-family: var(--font); font-size: 15.5px; }
 
 <!-- BEAUTY-CHECK -->
 <section class="check" id="check">
-  <div class="check-grid ck2">
-    <div class="ck-head">
-      <span class="eye">Dein persönlicher Beauty-Check</span>
-      <h2>Weniger Rätselraten.<br>Mehr <em>Überblick</em> bei deiner Pflege.</h2>
-      <p class="lead">Welche Creme wofür? Was brauchst du für deine Routine, und was ist eher ein Extra? Im Beauty-Check bekommst du die Produkte verständlich erklärt und eine Empfehlung, die deine Pflegewünsche berücksichtigt.</p>
-    </div>
+  <div class="check-grid">
     <div class="check-visual reveal">
-      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="" width="528" height="1029">{{/if}}
-      {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
+      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Gemeinsam im Beauty-Check</span>{{/if}}
+      {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
     </div>
-    <div class="ck-body">
+    <div class="check-copy">
+      <span class="eye">So läuft es ab</span>
+      <h2>Welche Pflege passt zu <em>dir</em>?</h2>
+      <p class="lead">{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir uns deine Haut anhand eines Selfies gemeinsam an. Die App nutze ich. Du brauchst keine eigene App und keine Vorbereitung.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check sprechen wir über deine Haut, deine bisherige Pflege und deine Wünsche. Du brauchst nichts vorzubereiten.{{/unless}}</p>
       <ol class="ck-steps">
-        <li><i>1</i><div><b>Du fragst deinen Beauty-Check an.</b><span>Anschließend besprechen wir, wie und wann der Check stattfindet.</span></div></li>
-        <li><i>2</i><div><b>Es geht um deine bisherige Pflege und deine Wünsche.</b><span>{{#if scanner_anzeigen=an}}Ein Selfie kann zusätzlich mit einer KI-gestützten Auswertung zur kosmetischen Orientierung einbezogen werden. Dafür brauchst du selbst keine App.{{/if}}{{#unless scanner_anzeigen=an}}Wir sprechen darüber, was du bisher verwendest und was du dir wünschst.{{/unless}}</span></div></li>
-        <li><i>3</i><div><b>Du bekommst einen konkreten Pflegevorschlag.</b><span>Ich erkläre dir die empfohlenen Produkte und ihre Anwendung. Ob du etwas davon kaufen möchtest, entscheidest du anschließend in Ruhe.</span></div></li>
+        <li><i>1</i><div><b>Du meldest dich bei mir</b><span>Ganz entspannt per Video, Telefon oder WhatsApp</span></div></li>
+        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Wir schauen gemeinsam hin{{/if}}{{#unless scanner_anzeigen=an}}Wir sprechen gemeinsam{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Ein Selfie, und wir reden über deine Haut und deine Wünsche{{/if}}{{#unless scanner_anzeigen=an}}Über deine Haut, deine Pflege und was du dir wünschst{{/unless}}</span></div></li>
+        <li><i>3</i><div><b>Du bekommst meine Empfehlung</b><span>Nur das, was zu dir passt. Du entscheidest in Ruhe</span></div></li>
       </ol>
-      <div class="ck-cta">
-        <a href="#kontakt" class="btn btn-primary">Beauty-Check anfragen <span class="arr">→</span></a>
-        <span class="ck-free">Kostenlos und unverbindlich. Kein Kauf nötig.</span>
+      <div class="ck-then">Wir starten mit der Basis: Reinigung, Tonic, Tages- und Nachtpflege plus Beauty-Drink. Extras empfehle ich nur passend zu deinen Wünschen. <a href="#produkte">Alle Produkte ansehen</a></div>
+      <div class="ck-ctas">
+        <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
+        <span class="ck-free">Kostenlos und unverbindlich</span>
       </div>
-      <p class="ck-note">{{#if scanner_anzeigen=an}}Der Beauty-Check dient der kosmetischen Orientierung. Die KI-Auswertung eines Selfies kann ungenau sein und ersetzt keine medizinische Untersuchung oder Diagnose.{{/if}}{{#unless scanner_anzeigen=an}}Der Beauty-Check dient der kosmetischen Orientierung und ersetzt keine medizinische Untersuchung oder Diagnose.{{/unless}}</p>
+      {{#if scanner_anzeigen=an}}<p class="ck-note">Der Beauty-Check ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
     </div>
   </div>
 </section>

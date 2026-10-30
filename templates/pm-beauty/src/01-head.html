@@ -695,40 +695,5 @@ body { font-family: var(--font); font-size: 15.5px; }
 .rt-card.accent .rt-img img { object-position: 50% 22%; }
 
 .pr-row .t small.pr-cat { display: block; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--green-dark); }
-
-/* ============ VERTRAUEN (Runde 17) ============ */
-.trust { padding-top: clamp(56px, 8vh, 88px); padding-bottom: clamp(56px, 8vh, 88px); }
-.trust-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.trust-card { position: relative; overflow: hidden; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(22px, 2.4vw, 32px); display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
-.trust-card .eyebrow { font-family: var(--font); font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green-dark); }
-.trust-card h3 { font-size: clamp(23px, 2vw, 28px); }
-.trust-card p { font-size: 15px; line-height: 1.6; color: var(--ink-2); }
-.trust-card.year { background: var(--green-soft); border-color: transparent; }
-.trust-year { font-family: var(--display); font-weight: 400; font-size: clamp(56px, 5.6vw, 84px); line-height: .9; letter-spacing: -0.04em; color: var(--green); margin-bottom: 4px; }
-.tr-ic { width: 46px; height: 46px; border-radius: 14px; background: var(--green-soft); color: var(--green-dark); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-.tr-ic svg { width: 22px; height: 22px; }
-.trust-link { margin-top: auto; padding-top: 6px; font-size: 14.5px; font-weight: 700; color: var(--green-dark); border-bottom: 1px solid currentColor; }
-@media (max-width: 900px) { .trust-grid { grid-template-columns: 1fr; max-width: 620px; } }
-
-/* ============ BEAUTY-CHECK (Runde 17) ============ */
-.check { padding-top: clamp(48px, 7vh, 80px); padding-bottom: clamp(48px, 7vh, 80px); }
-.ck2 { grid-template-columns: minmax(300px, 460px) 1fr; grid-template-areas: "visual head" "visual body"; align-items: start; row-gap: 22px; }
-.ck2 .check-visual { grid-area: visual; align-self: stretch; min-height: 520px; }
-.ck-head { grid-area: head; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; align-self: end; }
-.ck-head h2 { max-width: 18ch; }
-.ck-head .lead { max-width: 560px; }
-.ck-body { grid-area: body; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
-.ck2 .ck-steps { padding: 4px 20px; }
-.ck2 .ck-steps li { align-items: start; padding: 14px 0; }
-.ck2 .ck-steps b { font-size: 15.5px; line-height: 1.35; }
-.ck2 .ck-steps span { font-size: 14px; line-height: 1.5; margin-top: 3px; }
-.ck-cta { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-.ck-cta .ck-free { font-size: 14px; font-weight: 600; color: var(--ink-2); }
-.ck2 .ck-note { font-size: 13px; line-height: 1.55; color: var(--ink-2); max-width: 560px; }
-@media (max-width: 1024px) {
-  .ck2 { grid-template-columns: 1fr; grid-template-areas: "head" "visual" "body"; }
-  .ck2 .check-visual { min-height: 0; max-width: none; height: clamp(260px, 52vw, 420px); }
-  .ck2 .check-visual img.hand { width: auto; height: 108%; }
-}
 </style>
 </head>

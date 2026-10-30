@@ -1,26 +1,25 @@
 <!-- BEAUTY-CHECK -->
 <section class="check" id="check">
-  <div class="check-grid ck2">
-    <div class="ck-head">
-      <span class="eye">Dein persönlicher Beauty-Check</span>
-      <h2>Weniger Rätselraten.<br>Mehr <em>Überblick</em> bei deiner Pflege.</h2>
-      <p class="lead">Welche Creme wofür? Was brauchst du für deine Routine, und was ist eher ein Extra? Im Beauty-Check bekommst du die Produkte verständlich erklärt und eine Empfehlung, die deine Pflegewünsche berücksichtigt.</p>
-    </div>
+  <div class="check-grid">
     <div class="check-visual reveal">
-      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="" width="528" height="1029">{{/if}}
-      {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024">{{/unless}}
+      {{#if scanner_anzeigen=an}}<img class="hand" loading="lazy" decoding="async" src="assets/scan-hand.webp" alt="Hautanalyse auf dem Handy" width="528" height="1029"><span class="eye light tag" style="background:rgba(60,30,20,0.55);border-color:transparent">Gemeinsam im Beauty-Check</span>{{/if}}
+      {{#unless scanner_anzeigen=an}}<img class="selfie" loading="lazy" decoding="async" src="assets/scan-selfie.webp" alt="" width="1024" height="1024"><span class="eye light tag">Beauty-Check</span>{{/unless}}
     </div>
-    <div class="ck-body">
+    <div class="check-copy">
+      <span class="eye">So läuft es ab</span>
+      <h2>Welche Pflege passt zu <em>dir</em>?</h2>
+      <p class="lead">{{#if scanner_anzeigen=an}}Im Beauty-Check schauen wir uns deine Haut anhand eines Selfies gemeinsam an. Die App nutze ich. Du brauchst keine eigene App und keine Vorbereitung.{{/if}}{{#unless scanner_anzeigen=an}}Im Beauty-Check sprechen wir über deine Haut, deine bisherige Pflege und deine Wünsche. Du brauchst nichts vorzubereiten.{{/unless}}</p>
       <ol class="ck-steps">
-        <li><i>1</i><div><b>Du fragst deinen Beauty-Check an.</b><span>Anschließend besprechen wir, wie und wann der Check stattfindet.</span></div></li>
-        <li><i>2</i><div><b>Es geht um deine bisherige Pflege und deine Wünsche.</b><span>{{#if scanner_anzeigen=an}}Ein Selfie kann zusätzlich mit einer KI-gestützten Auswertung zur kosmetischen Orientierung einbezogen werden. Dafür brauchst du selbst keine App.{{/if}}{{#unless scanner_anzeigen=an}}Wir sprechen darüber, was du bisher verwendest und was du dir wünschst.{{/unless}}</span></div></li>
-        <li><i>3</i><div><b>Du bekommst einen konkreten Pflegevorschlag.</b><span>Ich erkläre dir die empfohlenen Produkte und ihre Anwendung. Ob du etwas davon kaufen möchtest, entscheidest du anschließend in Ruhe.</span></div></li>
+        <li><i>1</i><div><b>Du meldest dich bei mir</b><span>Ganz entspannt per Video, Telefon oder WhatsApp</span></div></li>
+        <li><i>2</i><div><b>{{#if scanner_anzeigen=an}}Wir schauen gemeinsam hin{{/if}}{{#unless scanner_anzeigen=an}}Wir sprechen gemeinsam{{/unless}}</b><span>{{#if scanner_anzeigen=an}}Ein Selfie, und wir reden über deine Haut und deine Wünsche{{/if}}{{#unless scanner_anzeigen=an}}Über deine Haut, deine Pflege und was du dir wünschst{{/unless}}</span></div></li>
+        <li><i>3</i><div><b>Du bekommst meine Empfehlung</b><span>Nur das, was zu dir passt. Du entscheidest in Ruhe</span></div></li>
       </ol>
-      <div class="ck-cta">
-        <a href="#kontakt" class="btn btn-primary">Beauty-Check anfragen <span class="arr">→</span></a>
-        <span class="ck-free">Kostenlos und unverbindlich. Kein Kauf nötig.</span>
+      <div class="ck-then">Wir starten mit der Basis: Reinigung, Tonic, Tages- und Nachtpflege plus Beauty-Drink. Extras empfehle ich nur passend zu deinen Wünschen. <a href="#produkte">Alle Produkte ansehen</a></div>
+      <div class="ck-ctas">
+        <a href="#kontakt" class="btn btn-primary">Beauty-Check sichern <span class="arr">→</span></a>
+        <span class="ck-free">Kostenlos und unverbindlich</span>
       </div>
-      <p class="ck-note">{{#if scanner_anzeigen=an}}Der Beauty-Check dient der kosmetischen Orientierung. Die KI-Auswertung eines Selfies kann ungenau sein und ersetzt keine medizinische Untersuchung oder Diagnose.{{/if}}{{#unless scanner_anzeigen=an}}Der Beauty-Check dient der kosmetischen Orientierung und ersetzt keine medizinische Untersuchung oder Diagnose.{{/unless}}</p>
+      {{#if scanner_anzeigen=an}}<p class="ck-note">Der Beauty-Check ist eine kosmetische Einschätzung, keine medizinische Untersuchung.</p>{{/if}}
     </div>
   </div>
 </section>
