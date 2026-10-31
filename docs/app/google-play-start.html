@@ -93,7 +93,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>FinestSites in Google Play</h1>
-  <p class="sub">Was noch fehlt und jeder Schritt zum Abhaken. Stand 30.10.2026. Deine Häkchen merkt sich diese Seite im Browser.</p>
+  <p class="sub">Was noch fehlt und jeder Schritt zum Abhaken. Stand 31.10.2026, 13:00 Uhr. Deine Häkchen merkt sich diese Seite im Browser.</p>
 
   <nav class="toc">
     <a href="#stand">Stand</a><a href="#fehlt">Was fehlt</a><a href="#schritte">Deine Schritte</a><a href="#texte">Texte</a><a href="#formulare">Formulare</a><a href="#zeitplan">Zeitplan</a>
@@ -103,7 +103,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
     <h2><span class="n">1</span>Wo wir stehen</h2>
     <div class="status">
       <div class="card"><span class="pill ok">Apple</span><div class="big ok">Live</div><div class="small">Version 1.0.0 (Build 9), seit 29.10. im App Store, in allen 175 Ländern. Updates kommen per EAS Update ohne neuen Build.</div></div>
-      <div class="card"><span class="pill warn">Google</span><div class="big warn">Noch nicht angefangen</div><div class="small">Die App ist für Android vorbereitet (Paketname <code>io.finestsites.app</code>, Icon, Links), aber noch nie für Android gebaut. Es gibt noch kein Play-Konto.</div></div>
+      <div class="card"><span class="pill warn">Google</span><div class="big warn">Konto in Prüfung, App fertig gebaut</div><div class="small">Play-Konto angelegt (Ausweisprüfung läuft), Firebase steht, Push-Schlüssel bei Expo hinterlegt. Die Android-Fassung ist gebaut und im Emulator (Pixel 7, Android 15) durchgetestet: Login, Dashboard, Anfragen, Support-Chat, Editor, Links aus E-Mails, Zurück-Taste, Tastatur, Mitteilungs-Erlaubnis. Die <code>finestsites.aab</code> für deinen ersten Upload liegt in <code>~/Downloads/app-store</code>.</div></div>
     </div>
     <div class="note"><b>Der große Unterschied zu Apple:</b> Google verlangt bei neuen persönlichen Konten vor dem Start einen <b>geschlossenen Test mit mindestens 12 Testern über 14 Tage am Stück</b>. Deshalb dauert es von heute an realistisch 4 bis 5 Wochen, auch wenn alles glatt läuft.</div>
   </section>
@@ -127,12 +127,12 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
       <div class="card">
         <h3><span class="pill me">Ich</span></h3>
         <ul>
-          <li>Android-Mitteilungskanäle (Anfragen, Support, Konto …), damit Push sauber ankommt</li>
-          <li>Links aus E-Mails öffnen direkt die App (Android und iPhone, die Dateien fehlen noch)</li>
-          <li>Android-Feinschliff: Tastatur, Zurück-Taste, Vollbild, Fingerabdruck statt Face ID</li>
-          <li>Push-Schlüssel sicher bei Expo hinterlegen, Android-Build bauen und auf dem Emulator testen</li>
+          <li><span class="pill ok">erledigt</span> Mitteilungskanäle, Push-Schlüssel bei Expo, Links aus E-Mails (Android bestätigt), Tastatur, Zurück-Taste, Fingerabdruck-Texte, Editor-Absturz behoben, Android-Build im Emulator getestet</li>
+          <li>Nach deinem ersten Upload: den Signatur-Fingerabdruck von Google (Schritt 6, Punkt 4) in die Link-Bestätigung eintragen</li>
+          <li>Echten Push-Test auf einem Android-Handy (im Emulator nicht möglich)</li>
           <li>Store-Grafiken mit Android-Rahmen statt iPhone, Icon 512 px</li>
           <li>Antworten für den Produktionszugriff und eine Einladung für Tester vorformulieren (Versand nur mit deinem Ja)</li>
+          <li>Später: Links aus E-Mails auch auf dem iPhone direkt in der App (braucht ein kleines App-Update)</li>
         </ul>
       </div>
     </div>
@@ -179,11 +179,11 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
           <li>Auf der Projektseite das <b>Android-Symbol</b> → Paketname <code>io.finestsites.app</code> → App-Name <code>FinestSites</code> → App registrieren → <b>google-services.json</b> herunterladen. Die restlichen Assistenten-Schritte überspringen.</li>
           <li>Zahnrad → <b>Projekteinstellungen</b> → Reiter <b>Dienstkonten</b> → <b>Neuen privaten Schlüssel generieren</b> → eine zweite JSON-Datei wird geladen.</li>
         </ol>
-        <div class="give"><b>An mich:</b> Beide Dateien einfach in <code>~/Downloads</code> liegen lassen und mir Bescheid sagen. Ich hinterlege sie verschlüsselt bei Expo und baue dann die Android-Fassung (2–3 Tage). Bitte nirgends hochladen oder per Mail verschicken.</div></div></details></li>
+        <div class="give"><span class="pill ok">erledigt am 31.10.</span> Beide Dateien sind verschlüsselt bei Expo hinterlegt, die Android-Fassung ist gebaut. Den privaten Schlüssel (<code>finestsites-firebase-adminsdk-…json</code>) kannst du aus <code>~/Downloads</code> löschen oder sicher ablegen.</div></div></details></li>
 
       <li><details class="step" data-id="upload"><summary><span class="box" role="checkbox" aria-label="erledigt"></span><span class="ttl">Ersten Build von Hand hochladen</span><span class="meta">15 Min · wenn ich ihn geliefert habe</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
         <div class="body"><ol>
-          <li>Ich lege dir <code>finestsites.aab</code> in <code>~/Downloads/app-store</code>. Den allerersten Build lässt Google nur von Hand hochladen.</li>
+          <li><code>finestsites.aab</code> liegt in <code>~/Downloads/app-store</code> (Version 1.0.0, Build 4). Den allerersten Build lässt Google nur von Hand hochladen.</li>
           <li>Console → <b>Testen und veröffentlichen</b> → <b>Geschlossener Test</b> → <b>Track erstellen</b> (Name „Kundentest“) → <b>Neuen Release erstellen</b>.</li>
           <li><b>App-Signatur durch Google Play</b> akzeptieren → Datei hineinziehen → Versionshinweis „Erste Version“ → Weiter → <b>Speichern</b> (noch nicht senden).</li>
           <li>Unter <b>Test und Release → App-Integrität → App-Signatur</b> steht ein <b>SHA-256-Fingerabdruck</b>. Den brauche ich, damit Links aus Mails direkt die App öffnen: einfach kopieren und mir schicken (er ist nicht geheim).</li>
