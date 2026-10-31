@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { signOut } from '@/lib/auth/client'
+import { navItems } from './AdminSidebar'
+
+const TAB_HREFS = ['/admin', '/admin/users', '/admin/support']
 
 export function AdminMobileNav() {
   const pathname = usePathname()
@@ -28,7 +31,8 @@ export function AdminMobileNav() {
 
   const activeOverview  = isActive('/admin')
   const activeUsers     = isActive('/admin/users')
-  const activeTemplates = isActive('/admin/templates')
+  const activeSupport   = isActive('/admin/support')
+  const activeMore      = showMore || (!activeOverview && !activeUsers && !activeSupport)
 
   return (
     <>
@@ -56,63 +60,40 @@ export function AdminMobileNav() {
           <div className="w-10 h-1 rounded-full" style={{ background: '#E5E7EB' }} />
         </div>
 
-        <div className="px-3 pb-3">
-          {[
-            {
-              href: '/admin/finanzen',
-              label: 'Finanzen',
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
-            },
-            {
-              href: '/admin/affiliate',
-              label: 'Affiliate',
-              icon: <DrawerAffiliateIcon />,
-            },
-            {
-              href: '/admin/gutschriften',
-              label: 'Gutschriften',
-              icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>,
-            },
-            {
-              href: '/admin/newsletter',
-              label: 'Newsletter',
-              icon: <DrawerNewsletterIcon />,
-            },
-            {
-              href: '/admin/neuigkeiten',
-              label: 'Neuigkeiten',
-              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M11 6l8-3v18l-8-3"/><path d="M6 14v4a1 1 0 0 0 1 1h1"/></svg>,
-            },
-            {
-              href: '/admin/besucher-chat',
-              label: 'Besucher-Chat',
-              icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z"/><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1"/></svg>,
-            },
-            {
-              href: '/sites',
-              label: 'Zur Webseite',
-              icon: <DrawerBackIcon />,
-            },
-          ].map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setShowMore(false)}
-              className="flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-gray-50"
-            >
-              <span style={{ color: '#6B7280' }}>{item.icon}</span>
-              <span className="text-base font-medium text-gray-800 flex-1">{item.label}</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2.5">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </Link>
-          ))}
+        <div className="px-3 pb-3 overflow-y-auto overscroll-contain" style={{ maxHeight: 'calc(78dvh - 56px)' }}>
+          {/* Alle Admin-Bereiche außer den vier Tabs – gleiche Liste wie die Seitenleiste am Desktop */}
+          <div className="grid grid-cols-2 gap-1">
+            {navItems.filter(i => !TAB_HREFS.includes(i.href)).map(item => {
+              const active = isActive(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setShowMore(false)}
+                  className="flex items-center gap-3 px-3.5 py-3.5 rounded-2xl active:bg-gray-50"
+                  style={{ background: active ? '#F3F4F6' : undefined }}
+                >
+                  <span style={{ color: active ? '#1a1a1a' : '#6B7280' }}>{item.icon(active)}</span>
+                  <span className="text-[15px] font-medium text-gray-800 truncate">{item.label}</span>
+                </Link>
+              )
+            })}
+          </div>
 
-          <div className="h-px mx-4 my-1" style={{ background: '#F3F4F6' }} />
+          <div className="h-px mx-4 my-2" style={{ background: '#F3F4F6' }} />
+
+          <Link
+            href="/sites"
+            onClick={() => setShowMore(false)}
+            className="flex items-center gap-4 px-4 py-3.5 rounded-2xl active:bg-gray-50"
+          >
+            <span style={{ color: '#6B7280' }}><DrawerBackIcon /></span>
+            <span className="text-[15px] font-medium text-gray-800 flex-1">Zur Webseite</span>
+          </Link>
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-red-50"
+            className="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl active:bg-red-50"
           >
             <span style={{ color: '#DC2626' }}><DrawerLogoutIcon /></span>
             <span className="text-base font-medium text-red-600">Abmelden</span>
@@ -155,13 +136,13 @@ export function AdminMobileNav() {
         </Link>
 
         <Link
-          href="/admin/templates"
+          href="/admin/support"
           onClick={() => setShowMore(false)}
           className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
         >
-          <TabTemplatesIcon active={activeTemplates} />
-          <span className="text-[10px] font-medium" style={{ color: activeTemplates ? '#1a1a1a' : '#9CA3AF' }}>
-            Templates
+          <TabSupportIcon active={activeSupport} />
+          <span className="text-[10px] font-medium" style={{ color: activeSupport ? '#1a1a1a' : '#9CA3AF' }}>
+            Support
           </span>
         </Link>
 
@@ -169,8 +150,8 @@ export function AdminMobileNav() {
           onClick={() => setShowMore(s => !s)}
           className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
         >
-          <TabMoreIcon active={showMore} />
-          <span className="text-[10px] font-medium" style={{ color: showMore ? '#1a1a1a' : '#9CA3AF' }}>
+          <TabMoreIcon active={activeMore} />
+          <span className="text-[10px] font-medium" style={{ color: activeMore ? '#1a1a1a' : '#9CA3AF' }}>
             Mehr
           </span>
         </button>
@@ -202,11 +183,10 @@ function TabUsersIcon({ active }: { active: boolean }) {
   )
 }
 
-function TabTemplatesIcon({ active }: { active: boolean }) {
+function TabSupportIcon({ active }: { active: boolean }) {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75}>
-      <rect x="3" y="3" width="18" height="18" rx="2"/>
-      <path d="M3 9h18M9 21V9"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
     </svg>
   )
 }
@@ -222,23 +202,6 @@ function TabMoreIcon({ active }: { active: boolean }) {
 }
 
 // ── Drawer Icons ──────────────────────────────────────────────────────────────
-
-function DrawerAffiliateIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-    </svg>
-  )
-}
-
-function DrawerNewsletterIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-      <polyline points="22,6 12,13 2,6"/>
-    </svg>
-  )
-}
 
 function DrawerBackIcon() {
   return (

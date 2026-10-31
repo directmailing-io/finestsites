@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
       <AdminSidebar />
-      <main className="flex-1 min-w-0 p-6 lg:p-8 pb-28 lg:pb-8">
+      <main className="flex-1 min-w-0 px-4 pt-5 pb-28 sm:p-6 sm:pb-28 lg:p-8 lg:pb-8">
         {children}
       </main>
       <AdminMobileNav />

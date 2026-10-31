@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Logo } from '@/components/shared/Logo'
 
-const navItems = [
+export const navItems = [
   {
     href: '/admin',
     label: 'Übersicht',

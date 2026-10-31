@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
-import { users, userSites } from '@/lib/db/schema'
-import { desc, inArray } from 'drizzle-orm'
+import { users, userSites, templates, sessions } from '@/lib/db/schema'
+import { desc, inArray, max, eq } from 'drizzle-orm'
 import { getStripe } from '@/lib/stripe/client'
 import type { BillingInterval } from '@/lib/plans'
 import { getAppUsageByUser, NO_APP_USAGE } from '@/lib/admin/app-usage'
@@ -17,7 +17,7 @@ function monthlyEquiv(cents: number, interval: string): number {
 }
 
 export default async function AdminUsersPage() {
-  const [allUsers, allSites, appUsageByUser] = await Promise.all([
+  const [allUsers, allSites, appUsageByUser, lastActiveRows] = await Promise.all([
     db
       .select({
         id: users.id,
@@ -35,17 +35,26 @@ export default async function AdminUsersPage() {
         emailVerified: users.emailVerified,
         deletionScheduledFor: users.deletionScheduledFor,
         deletedAt: users.deletedAt,
+        referredByUsername: users.referredByUsername,
+        teamPartnerNumber: users.teamPartnerNumber,
       })
       .from(users)
       .orderBy(desc(users.createdAt)),
 
     db
-      .select({ userId: userSites.userId, status: userSites.status })
+      .select({ userId: userSites.userId, status: userSites.status, customDomain: userSites.customDomain, templateTitle: templates.title })
       .from(userSites)
+      .leftJoin(templates, eq(templates.id, userSites.templateId))
       .where(inArray(userSites.status, ['draft', 'published'])),
 
     // Native App: push_devices + App-Sitzungen, je Nutzer aggregiert (2 Abfragen)
     getAppUsageByUser(),
+
+    // Letzte Aktivität = jüngste Sitzung (Web oder App)
+    db
+      .select({ userId: sessions.userId, lastActiveAt: max(sessions.updatedAt) })
+      .from(sessions)
+      .groupBy(sessions.userId),
   ])
 
   // Per-user data fetched live from Stripe (single source of truth).
@@ -121,11 +130,19 @@ export default async function AdminUsersPage() {
   }
 
   const siteCountByUser: Record<string, number> = {}
+  const draftCountByUser: Record<string, number> = {}
+  const customDomainByUser: Record<string, boolean> = {}
+  const templatesByUser: Record<string, string[]> = {}
   for (const site of allSites) {
     if (site.status === 'published') {
       siteCountByUser[site.userId] = (siteCountByUser[site.userId] ?? 0) + 1
+    } else {
+      draftCountByUser[site.userId] = (draftCountByUser[site.userId] ?? 0) + 1
     }
+    if (site.customDomain) customDomainByUser[site.userId] = true
+    if (site.templateTitle) (templatesByUser[site.userId] ??= []).push(site.templateTitle)
   }
+  const lastActiveByUser = new Map(lastActiveRows.map(r => [r.userId, r.lastActiveAt]))
 
   const rows: UserRow[] = allUsers.map(u => ({
     id: u.id,
@@ -140,6 +157,12 @@ export default async function AdminUsersPage() {
     pendingPlanAt: u.pendingPlanAt,
     createdAt: u.createdAt,
     siteCount: siteCountByUser[u.id] ?? 0,
+    draftCount: draftCountByUser[u.id] ?? 0,
+    templateTitles: templatesByUser[u.id] ?? [],
+    hasCustomDomain: customDomainByUser[u.id] ?? false,
+    lastActiveAt: lastActiveByUser.get(u.id) ?? null,
+    referredBy: u.referredByUsername,
+    hasTeamPartnerNumber: !!u.teamPartnerNumber?.trim(),
     // Catalog monthly price — what this plan costs without discounts (direct from Stripe)
     planPriceCents: stripePlanPriceByUser[u.id] ?? 0,
     // Effective monthly charge after active permanent discounts (0 for 100% forever coupons)
@@ -157,9 +180,9 @@ export default async function AdminUsersPage() {
 
   return (
     <div style={{ maxWidth: 1200 }}>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900 tracking-tight">Nutzer</h1>
-        <p className="text-sm mt-1" style={{ color: '#94A3B8' }}>
+      <div className="mb-5 sm:mb-6">
+        <h1 className="text-[22px] sm:text-2xl font-semibold text-gray-900 tracking-tight">Nutzer</h1>
+        <p className="text-[13px] sm:text-sm mt-1" style={{ color: '#94A3B8' }}>
           Tarif, Status und Umsatz auf einen Blick · Alle Zahlen direkt aus Stripe
         </p>
       </div>

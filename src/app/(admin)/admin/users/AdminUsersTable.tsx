@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { AppUsage } from '@/lib/admin/app-usage'
+import UserFilterBar, { type SortOption } from './UserFilterBar'
+import { buildFilterGroups, matches, parseFilters, serializeFilters, type FilterState } from './user-filters'
 
 const PLAN_META: Record<string, { label: string; bg: string; text: string }> = {
   starter:   { label: 'Starter',   bg: '#EFF6FF', text: '#1D4ED8' },
@@ -32,6 +34,15 @@ export interface UserRow {
   pendingPlanAt: Date | null
   createdAt: Date
   siteCount: number
+  /** Seiten im Entwurf (nicht online) */
+  draftCount: number
+  /** Titel der Vorlagen, mit denen der Nutzer Seiten hat */
+  templateTitles: string[]
+  hasCustomDomain: boolean
+  /** Jüngste Sitzung (Web oder App) */
+  lastActiveAt: Date | null
+  referredBy: string | null
+  hasTeamPartnerNumber: boolean
   planPriceCents: number
   billedPriceCents: number
   totalRevenueCents: number
@@ -46,8 +57,18 @@ export interface UserRow {
   app: AppUsage
 }
 
-type SortKey = 'email' | 'createdAt' | 'planPrice' | 'billed' | 'revenue' | 'plan' | 'status' | 'app'
+type SortKey = 'email' | 'createdAt' | 'planPrice' | 'billed' | 'revenue' | 'plan' | 'status' | 'app' | 'lastActive'
 type SortDir = 'asc' | 'desc'
+
+/** Sortierung als eine Auswahl (Handy-Blatt + Desktop-Auswahl); Spaltenköpfe am Desktop bleiben klickbar. */
+const SORT_OPTIONS: (SortOption & { key: SortKey; dir: SortDir })[] = [
+  { value: 'createdAt.desc',  label: 'Neueste zuerst',     key: 'createdAt',  dir: 'desc' },
+  { value: 'createdAt.asc',   label: 'Älteste zuerst',     key: 'createdAt',  dir: 'asc' },
+  { value: 'lastActive.desc', label: 'Zuletzt aktiv',      key: 'lastActive', dir: 'desc' },
+  { value: 'revenue.desc',    label: 'Höchster Umsatz',    key: 'revenue',    dir: 'desc' },
+  { value: 'billed.desc',     label: 'Höchster Betrag/Mon', key: 'billed',    dir: 'desc' },
+  { value: 'email.asc',       label: 'E-Mail A–Z',         key: 'email',      dir: 'asc' },
+]
 
 function fmtEur(cents: number, showZero = false): string {
   if (cents === 0) return showZero ? '0 €' : '—'
@@ -283,12 +304,27 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
   const router = useRouter()
 
   const [search, setSearch]         = useState('')
-  const [planFilter, setPlanFilter] = useState('all')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [verifiedFilter, setVerifiedFilter] = useState<'all' | 'verified' | 'unverified'>('all')
-  const [appOnly, setAppOnly]       = useState(false)
+  const [filters, setFilters]       = useState<FilterState>({})
   const [sortKey, setSortKey]       = useState<SortKey>('createdAt')
   const [sortDir, setSortDir]       = useState<SortDir>('desc')
+  const groups = useMemo(() => buildFilterGroups(users), [users])
+
+  // Filter + Suche stehen in der Adresse (teilbar, „Zurück“ aus dem Nutzerprofil behält sie).
+  // history.replaceState statt router.replace: kein neues Laden der Seite (Stripe-Abfragen).
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFilters(parseFilters(p.get('f')))
+    setSearch(p.get('q') ?? '')
+  }, [])
+  useEffect(() => {
+    const p = new URLSearchParams(window.location.search)
+    const f = serializeFilters(filters)
+    if (f) p.set('f', f); else p.delete('f')
+    if (search.trim()) p.set('q', search.trim()); else p.delete('q')
+    const qs = p.toString()
+    window.history.replaceState(window.history.state, '', qs ? `?${qs}` : window.location.pathname)
+  }, [filters, search])
 
   // Selection state
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -303,15 +339,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
     const q = search.toLowerCase().trim()
     let rows = users.filter(u => {
       if (q && !u.email.toLowerCase().includes(q) && !(u.username ?? '').toLowerCase().includes(q)) return false
-      if (planFilter !== 'all' && u.plan !== planFilter) return false
-      if (statusFilter !== 'all') {
-        const s = u.subscriptionStatus ?? 'none'
-        if (statusFilter === 'none' ? s !== 'none' : s !== statusFilter) return false
-      }
-      if (verifiedFilter === 'verified' && !u.emailVerified) return false
-      if (verifiedFilter === 'unverified' && u.emailVerified) return false
-      if (appOnly && !u.app.installed) return false
-      return true
+      return matches(u, groups, filters)
     })
     rows = [...rows].sort((a, b) => {
       let v = 0
@@ -322,6 +350,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       if (sortKey === 'revenue')   v = a.totalRevenueCents - b.totalRevenueCents
       if (sortKey === 'plan')      v = a.plan.localeCompare(b.plan)
       if (sortKey === 'status')    v = (a.subscriptionStatus ?? '').localeCompare(b.subscriptionStatus ?? '')
+      if (sortKey === 'lastActive') v = (a.lastActiveAt ? new Date(a.lastActiveAt).getTime() : 0) - (b.lastActiveAt ? new Date(b.lastActiveAt).getTime() : 0)
       if (sortKey === 'app') {
         // Installiert vor nicht installiert, darin nach „zuletzt gesehen“
         v = Number(a.app.installed) - Number(b.app.installed)
@@ -330,7 +359,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       return sortDir === 'asc' ? v : -v
     })
     return rows
-  }, [users, search, planFilter, statusFilter, verifiedFilter, appOnly, sortKey, sortDir])
+  }, [users, search, groups, filters, sortKey, sortDir])
 
   const filteredIds = useMemo(() => new Set(filtered.map(u => u.id)), [filtered])
   const allFilteredSelected = filtered.length > 0 && filtered.every(u => selectedIds.has(u.id))
@@ -357,6 +386,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
   const activeCount     = users.filter(u => u.subscriptionStatus === 'active').length
   const unverifiedCount = users.filter(u => !u.emailVerified).length
   const appUserCount    = users.filter(u => u.app.installed).length
+  const filteredBilled  = filtered.filter(u => ['active', 'trialing', 'past_due'].includes(u.subscriptionStatus ?? '')).reduce((s, u) => s + u.billedPriceCents, 0)
+  const filteredRevenue = filtered.reduce((s, u) => s + u.totalRevenueCents, 0)
 
   const thStyle = (key: SortKey): React.CSSProperties => ({
     cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
@@ -367,8 +398,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
 
   return (
     <>
-      {/* ── KPI strip ── */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+      {/* ── Kennzahlen (Handy: wischbar) ── */}
+      <div className="fs-kpis -mx-4 mb-5 flex snap-x gap-2.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:gap-3 sm:overflow-visible sm:px-0">
         {[
           { label: 'Registriert',    value: String(users.length) },
           { label: 'Aktive Abos',    value: String(activeCount) },
@@ -377,86 +408,53 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
           { label: 'Unbestätigt',    value: String(unverifiedCount) },
           { label: 'App-Nutzer',     value: String(appUserCount),   note: 'Native App installiert' },
         ].map(kpi => (
-          <div key={kpi.label} style={{
-            flex: '1 1 130px', background: '#fff', borderRadius: 14, padding: '14px 18px',
-            border: '1px solid #F1F5F9', boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
+          <div key={kpi.label} className="min-w-[136px] flex-shrink-0 snap-start sm:min-w-0 sm:flex-[1_1_130px]" style={{
+            background: '#fff', borderRadius: 16, padding: '13px 16px',
+            border: '1px solid #ECEEF2',
           }}>
-            <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4 }}>{kpi.label}</div>
+            <div style={{ fontSize: 11, color: '#8A94A6', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 4, whiteSpace: 'nowrap' }}>{kpi.label}</div>
             <div style={{ fontSize: 20, fontWeight: 700, color: '#111827', letterSpacing: '-0.02em' }}>{kpi.value}</div>
-            {kpi.note && <div style={{ fontSize: 10, color: '#CBD5E1', marginTop: 2 }}>{kpi.note}</div>}
+            {kpi.note && <div style={{ fontSize: 10, color: '#B6BDC9', marginTop: 2, whiteSpace: 'nowrap' }}>{kpi.note}</div>}
           </div>
         ))}
       </div>
+      <style>{`.fs-kpis { scrollbar-width: none; } .fs-kpis::-webkit-scrollbar { display: none; }`}</style>
 
-      {/* ── Filters / Search ── */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: '1 1 220px', minWidth: 180 }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" strokeWidth="2"
-            style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input
-            type="text" placeholder="E-Mail oder Username..." value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{
-              width: '100%', paddingLeft: 32, paddingRight: 32, height: 36,
-              borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13,
-              outline: 'none', background: '#fff', color: '#111', boxSizing: 'border-box',
-            }}
-          />
-          {search && (
-            <button onClick={() => setSearch('')} style={{
-              position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)',
-              background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', fontSize: 14, lineHeight: 1, padding: 0,
-            }}>✕</button>
-          )}
-        </div>
+      {/* ── Suche, Szenarien, Filter ── */}
+      <UserFilterBar
+        users={users}
+        groups={groups}
+        filters={filters}
+        setFilters={setFilters}
+        search={search}
+        setSearch={setSearch}
+        resultCount={filtered.length}
+        sortValue={`${sortKey}.${sortDir}`}
+        sortOptions={SORT_OPTIONS}
+        onSort={v => { const o = SORT_OPTIONS.find(x => x.value === v); if (o) { setSortKey(o.key); setSortDir(o.dir) } }}
+      />
 
-        <select value={planFilter} onChange={e => setPlanFilter(e.target.value)}
-          style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
-          <option value="all">Alle Tarife</option>
-          <option value="starter">Starter</option>
-          <option value="pro">Pro</option>
-          <option value="unlimited">Unlimited</option>
-        </select>
-
-        <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-          style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
-          <option value="all">Alle Status</option>
-          <option value="active">Aktiv</option>
-          <option value="trialing">Trial</option>
-          <option value="past_due">Überfällig</option>
-          <option value="canceled">Gekündigt</option>
-          <option value="none">Kein Abo</option>
-        </select>
-
-        <select value={verifiedFilter} onChange={e => setVerifiedFilter(e.target.value as 'all' | 'verified' | 'unverified')}
-          style={{ height: 36, borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, padding: '0 10px', background: '#fff', color: '#374151', cursor: 'pointer' }}>
-          <option value="all">Alle E-Mails</option>
-          <option value="verified">Bestätigt</option>
-          <option value="unverified">Unbestätigt</option>
-        </select>
-
-        <label
-          title="Nur Nutzer mit installierter FinestSites-App anzeigen"
-          style={{
-            display: 'flex', alignItems: 'center', gap: 8, height: 36, padding: '0 12px',
-            borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13,
-            background: appOnly ? '#F0F9FF' : '#fff', color: appOnly ? '#0369A1' : '#374151',
-            cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap',
-          }}>
-          <input
-            type="checkbox"
-            checked={appOnly}
-            onChange={e => setAppOnly(e.target.checked)}
-            style={{ width: 14, height: 14, cursor: 'pointer', accentColor: '#0369A1', margin: 0 }}
-          />
-          Nur App-Nutzer
-        </label>
-
-        <span style={{ marginLeft: 'auto', fontSize: 12, color: '#94A3B8', whiteSpace: 'nowrap' }}>
-          {filtered.length} von {users.length}
+      {/* ── Ergebnis: was die Auswahl wert ist ── */}
+      <div className="mb-4 flex flex-wrap items-baseline gap-x-4 gap-y-1 px-1">
+        <span className="text-[15px] font-semibold text-gray-900 tabular-nums">
+          {filtered.length === users.length ? `${users.length} Nutzer` : `${filtered.length} von ${users.length} Nutzern`}
         </span>
+        {filtered.length !== users.length && filtered.length > 0 && (
+          <>
+            <span className="text-[13px] tabular-nums" style={{ color: '#8A94A6' }}>
+              Abgerechnet <b className="font-semibold text-gray-700">{fmtEur(filteredBilled, true)}</b>/Mon
+            </span>
+            <span className="text-[13px] tabular-nums" style={{ color: '#8A94A6' }}>
+              Eingenommen <b className="font-semibold text-gray-700">{fmtEur(filteredRevenue, true)}</b>
+            </span>
+          </>
+        )}
+        {filtered.length > 0 && (
+          <button type="button" onClick={() => downloadCsv(filtered)}
+            className="ml-auto text-[13px] font-semibold" style={{ color: '#111827' }}>
+            Als CSV laden
+          </button>
+        )}
       </div>
 
       {/* ── Mobile Cards ── */}
@@ -766,8 +764,8 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
 
       {/* ── Sticky Selection Action Bar ── */}
       {selectedIds.size > 0 && (
-        <div style={{
-          position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
+        <div className="fs-selbar" style={{
+          position: 'fixed', left: '50%', transform: 'translateX(-50%)',
           zIndex: 100, display: 'flex', alignItems: 'center', gap: 12,
           background: '#111827', color: '#fff', borderRadius: 16,
           padding: '12px 20px', boxShadow: '0 8px 32px rgba(0,0,0,0.28)',
@@ -791,6 +789,7 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
             </svg>
             Newsletter senden
           </button>
+          <style>{`.fs-selbar { bottom: calc(72px + env(safe-area-inset-bottom, 0px)); } @media (min-width: 1024px) { .fs-selbar { bottom: 24px; } }`}</style>
           <button
             onClick={() => setSelectedIds(new Set())}
             style={{
@@ -813,6 +812,29 @@ export default function AdminUsersTable({ users }: { users: UserRow[] }) {
       )}
     </>
   )
+}
+
+/** Gefilterte Liste als CSV (Excel-tauglich: Semikolon, BOM). */
+function downloadCsv(rows: UserRow[]) {
+  const head = ['E-Mail', 'Benutzername', 'Tarif', 'Status', 'Zahlweise', 'Abgerechnet/Mon (€)', 'Rabatt', 'Eingenommen (€)', 'Seiten online', 'Entwürfe', 'Vorlagen', 'App', 'Registriert', 'Zuletzt aktiv']
+  const cell = (v: string | number) => {
+    const t = String(v)
+    return /[";\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t
+  }
+  const lines = rows.map(u => [
+    u.email, u.username ?? '', PLAN_META[u.plan]?.label ?? u.plan, u.subscriptionStatus ?? '',
+    u.billingInterval === 'yearly' ? 'jährlich' : 'monatlich',
+    (u.billedPriceCents / 100).toFixed(2).replace('.', ','), u.activePromoCode ?? '',
+    (u.totalRevenueCents / 100).toFixed(2).replace('.', ','), u.siteCount, u.draftCount, u.templateTitles.join(', '),
+    u.app.installed ? (u.app.platforms.join('/') || 'ja') : '', fmtDate(u.createdAt), fmtDate(u.lastActiveAt),
+  ].map(cell).join(';'))
+  const blob = new Blob(['\uFEFF' + [head.join(';'), ...lines].join('\r\n')], { type: 'text/csv;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `nutzer-${new Date().toISOString().slice(0, 10)}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 /** „Löschung angefragt“ (mit Datum) bzw. „Gelöscht“ – in Liste und Karten gleich. */

@@ -11,6 +11,8 @@ import SupportChat from '@/components/support/SupportChat'
 import ImpersonationBanner from '@/components/dashboard/ImpersonationBanner'
 import CancellationBanner from '@/components/dashboard/CancellationBanner'
 import DashboardNotice from '@/components/dashboard/DashboardNotice'
+import AppTeaser from '@/components/dashboard/AppTeaser'
+import { getAppUsageForUser } from '@/lib/admin/app-usage'
 import type { Viewport } from 'next'
 import { isAppModeRequest } from '@/lib/app-mode/server'
 import { AppModeProvider } from '@/components/app-mode/AppMode'
@@ -44,7 +46,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   if (!user) redirect('/login')
 
-  const [profile, notice, visitorChat] = await Promise.all([
+  const [profile, notice, visitorChat, hasApp] = await Promise.all([
     db.query.users.findFirst({
       where: eq(users.id, user.id),
       columns: { username: true, subscriptionStatus: true, cancelAtPeriodEnd: true, currentPeriodEnd: true, deletionScheduledFor: true, deletionMode: true, deletedAt: true },
@@ -52,6 +54,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     loadDashboardNotice(),
     // Besucher-Chat freigeschaltet? Fehler = aus (darf das Dashboard nie blockieren).
     isVisitorChatEnabledForUser(user.id).catch(() => false),
+    // App schon in Nutzung? Dann kein App-Hinweis. Fehler = Hinweis zeigen (unkritisch).
+    getAppUsageForUser(user.id).then(a => a.installed).catch(() => false),
   ])
 
   const ADMIN_EMAIL = 'info@daniel-kurzeja.de'
@@ -150,6 +154,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             </div>
           )}
           <main className="flex-1 px-5 pt-6 pb-32 sm:px-8 sm:pt-8 sm:pb-32 lg:px-12 lg:py-10">
+            <AppTeaser hasApp={hasApp} />
             <GettingStartedSteps />
             {children}
           </main>
