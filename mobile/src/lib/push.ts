@@ -85,8 +85,12 @@ export async function ensureAndroidChannel() {
 export type PushPermission = 'granted' | 'denied' | 'undetermined';
 
 export async function getPushPermission(): Promise<PushPermission> {
-  const { status } = await Notifications.getPermissionsAsync();
-  return status === 'granted' ? 'granted' : status === 'denied' ? 'denied' : 'undetermined';
+  const { status, canAskAgain } = await Notifications.getPermissionsAsync();
+  if (status === 'granted') return 'granted';
+  // Android 13+: vor der ersten Frage meldet das System „denied“ mit canAskAgain – das ist „noch nicht gefragt“,
+  // sonst zeigte die App statt „Mitteilungen erlauben“ gleich „Einstellungen öffnen“ (Emulator 31.10.2026).
+  if (status === 'denied' && !canAskAgain) return 'denied';
+  return 'undetermined';
 }
 
 export async function requestPushPermission(): Promise<boolean> {
