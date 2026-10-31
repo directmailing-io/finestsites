@@ -52,14 +52,34 @@ Notifications.setNotificationHandler({
       : { shouldShowBanner: true, shouldShowList: true, shouldPlaySound: true, shouldSetBadge: true },
 });
 
+/**
+ * Android-Kanäle (Einstellungen → Apps → FinestSites → Benachrichtigungen). Der Server schickt als
+ * channelId die Kategorie (src/lib/push/drain.ts); ohne passenden Kanal zeigt Android die Mitteilung
+ * nicht an. Namen wie in Mehr → Einstellungen → Mitteilungen. „default“ bleibt als Rückfallebene.
+ */
+const ANDROID_CHANNELS: { id: string; name: string; description: string }[] = [
+  { id: 'leads', name: 'Anfragen', description: 'Neue Anfragen über deine Webseiten' },
+  { id: 'support', name: 'Support', description: 'Antworten vom FinestSites-Team' },
+  { id: 'account', name: 'Konto und Webseiten', description: 'Domains, Veröffentlichungen und Hinweise zu deinem Konto' },
+  { id: 'partner', name: 'Partnerprogramm', description: 'Neuigkeiten zu deinen Empfehlungen' },
+  { id: 'chat', name: 'Besucher-Chat', description: 'Nachrichten von Besuchern deiner Webseiten' },
+  { id: 'news', name: 'Neuigkeiten', description: 'Neue Funktionen und Vorlagen' },
+  { id: 'default', name: 'Mitteilungen', description: 'Sonstige Mitteilungen' },
+];
+
 export async function ensureAndroidChannel() {
   if (Platform.OS !== 'android') return;
-  await Notifications.setNotificationChannelAsync('default', {
-    name: 'Mitteilungen',
-    importance: Notifications.AndroidImportance.HIGH,
-    vibrationPattern: [0, 250, 250, 250],
-    lightColor: '#7C3AED',
-  });
+  await Promise.all(
+    ANDROID_CHANNELS.map(c =>
+      Notifications.setNotificationChannelAsync(c.id, {
+        name: c.name,
+        description: c.description,
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#7C3AED',
+      }).catch(() => null),
+    ),
+  );
 }
 
 export type PushPermission = 'granted' | 'denied' | 'undetermined';

@@ -12,8 +12,9 @@ import { Keyboard, LayoutAnimation, Platform, type KeyboardEvent, type ViewInsta
  * gesetzt – mit derselben Animation (Dauer/Kurve aus dem Event) wie KeyboardAvoidingView.
  *
  * Nutzung: `ref` auf den äußersten View des Bildschirms (ohne eigenes Padding), `inset` als
- * paddingBottom des Inhalts, `visible` = Tastatur offen (iOS: Überlappung > 0, Android: did show/hide).
- * Android bleibt bei adjustResize, dort ist `inset` immer 0.
+ * paddingBottom des Inhalts, `visible` = Tastatur offen.
+ * Android: gleiche Messung über keyboardDidShow/DidHide. Mit Edge-to-Edge (Pflicht ab Android 15) verkleinert
+ * adjustResize das Fenster nicht mehr zuverlässig; verkleinert es doch, ist die Überlappung 0 und nichts doppelt.
  */
 export function useKeyboardInset() {
   const ref = useRef<ViewInstance>(null);
@@ -22,15 +23,6 @@ export function useKeyboardInset() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (Platform.OS !== 'ios') {
-      const show = Keyboard.addListener('keyboardDidShow', () => setVisible(true));
-      const hide = Keyboard.addListener('keyboardDidHide', () => setVisible(false));
-      return () => {
-        show.remove();
-        hide.remove();
-      };
-    }
-
     const apply = (value: number, e: KeyboardEvent) => {
       setVisible(value > 0);
       if (Math.abs(current.current - value) < 0.5) return;
@@ -55,7 +47,10 @@ export function useKeyboardInset() {
       });
     };
     const hide = (e: KeyboardEvent) => apply(0, e);
-    const subs = [Keyboard.addListener('keyboardWillChangeFrame', change), Keyboard.addListener('keyboardWillHide', hide)];
+    const subs =
+      Platform.OS === 'ios'
+        ? [Keyboard.addListener('keyboardWillChangeFrame', change), Keyboard.addListener('keyboardWillHide', hide)]
+        : [Keyboard.addListener('keyboardDidShow', change), Keyboard.addListener('keyboardDidHide', hide)];
     return () => subs.forEach(s => s.remove());
   }, []);
 

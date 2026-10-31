@@ -68,6 +68,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   android: {
     package: 'io.finestsites.app',
+    // Firebase (Push über FCM): lokal mobile/google-services.json (gitignoriert), in EAS-Builds die
+    // Datei-Variable GOOGLE_SERVICES_JSON (eas env, Umgebung production/preview).
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? './google-services.json',
     adaptiveIcon: {
       backgroundColor: ICON_BG,
       foregroundImage: './assets/brand/adaptive-foreground.png',
@@ -78,6 +81,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       {
         action: 'VIEW',
         autoVerify: true,
+        // Bewusst alle Pfade: eine Pfadliste hier ändert den Fingerabdruck der iPhone-App (expoConfig) und würde
+        // EAS-Updates für Build 9 abschneiden. Welche Links in der App bleiben und welche im Browser-Fenster
+        // aufgehen, entscheidet src/lib/web-links.ts (+native-intent). Bestätigung über /.well-known/assetlinks.json.
         data: [{ scheme: 'https', host: 'app.finestsites.io', pathPrefix: '/' }],
         category: ['BROWSABLE', 'DEFAULT'],
       },

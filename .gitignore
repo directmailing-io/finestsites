@@ -63,3 +63,6 @@ mobile/dist
 *.apk
 docs/beauty/quellen/html/
 docs/beauty/scanner/video-frames/
+
+# Firebase-Konfiguration Android (EAS-Build bekommt sie als Datei-Variable GOOGLE_SERVICES_JSON)
+mobile/google-services.json

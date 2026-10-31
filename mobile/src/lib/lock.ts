@@ -4,7 +4,7 @@
  * - an  = beim Kaltstart und nach mehr als 5 Minuten im Hintergrund sperren
  */
 import * as LocalAuthentication from 'expo-local-authentication';
-import { AppState, type AppStateStatus } from 'react-native';
+import { AppState, Platform, type AppStateStatus } from 'react-native';
 import { create } from 'zustand';
 
 import { LOCK_GRACE_MS } from './config';
@@ -26,6 +26,8 @@ export async function biometricKind(): Promise<BiometricKind> {
 }
 
 export function biometricLabel(kind: BiometricKind) {
+  // Android: keine Apple-Namen (Face ID/Touch ID gibt es dort nicht)
+  if (Platform.OS === 'android') return kind === 'faceid' ? 'Gesichtserkennung' : kind === 'touchid' ? 'Fingerabdruck' : 'Displaysperre';
   return kind === 'faceid' ? 'Face ID' : kind === 'touchid' ? 'Touch ID' : 'Entsperren mit Biometrie';
 }
 
@@ -62,7 +64,7 @@ export const useLock = create<LockState>((set, get) => ({
   },
   setEnabled: async v => {
     if (v) {
-      const ok = await authenticate('Face ID für FinestSites einschalten');
+      const ok = await authenticate(`${biometricLabel(await biometricKind())} für FinestSites einschalten`);
       if (!ok) return;
       await setSecure(KEYS.biometricEnabled, '1');
     } else {
