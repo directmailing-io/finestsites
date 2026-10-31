@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebViewBase, { type WebViewMessageEvent, type WebViewNavigation } from 'react-native-webview';
 import type { ShouldStartLoadRequest } from 'react-native-webview/lib/WebViewTypes';
@@ -136,7 +136,9 @@ export const AppWebView = forwardRef<
         javaScriptCanOpenWindowsAutomatically={false}
         allowFileAccess={false}
         originWhitelist={ORIGIN_WHITELIST}
-        decelerationRate="normal"
+        // iOS: Scroll-Trägheit wie Safari. Android erwartet hier eine Zahl – der String stürzt die App beim
+        // Öffnen des Editors ab (ClassCastException String→Double, Emulator 31.10.2026).
+        decelerationRate={Platform.OS === 'ios' ? 'normal' : undefined}
         // Ränder (Statusleiste, Home-Leiste) regelt die Seite selbst per env(safe-area-inset-*) (viewport-fit=cover)
         contentInsetAdjustmentBehavior="never"
         automaticallyAdjustContentInsets={false}
