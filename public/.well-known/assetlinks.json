@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.finestsites.app",
+      "sha256_cert_fingerprints": [
+        "9B:63:F2:34:E4:83:E8:D4:9D:6E:79:3E:89:A0:B7:B7:F5:D9:60:00:E4:93:0D:1F:DD:95:46:95:CE:B4:CA:B7"
+      ]
+    }
+  }
+]
