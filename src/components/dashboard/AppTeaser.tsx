@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
  * „Psst …“-Hinweis auf die native App (Daniel 31.10.2026): dunkles Blatt, echtes App-Icon,
  * eine Pastell-Verlaufslinie unten. Nur auf den Übersichtsseiten, nicht im App-Modus (Layout),
  * nicht für Konten, die die App schon nutzen (`hasApp`). Schließen merkt sich der Browser.
+ * Vorschau für Daniel: /sites?psst=1 zeigt ihn immer.
  */
 const APP_STORE_URL = 'https://apps.apple.com/de/app/finestsites/id6825371773'
 const STORAGE_KEY = 'fs_app_teaser_closed'
@@ -14,17 +15,21 @@ const STORAGE_KEY = 'fs_app_teaser_closed'
 export default function AppTeaser({ hasApp }: { hasApp: boolean }) {
   const pathname = usePathname()
   const [closed, setClosed] = useState(true)
+  // Vorschau: ?psst=1 zeigt den Hinweis immer (auch mit App oder nach dem Schließen)
+  const [preview, setPreview] = useState(false)
 
   useEffect(() => {
+    const forced = new URLSearchParams(window.location.search).get('psst') === '1'
+    setPreview(forced)
     try {
-      setClosed(localStorage.getItem(STORAGE_KEY) === '1')
+      setClosed(!forced && localStorage.getItem(STORAGE_KEY) === '1')
     } catch {
       setClosed(false)
     }
   }, [])
 
   const onOverview = pathname === '/dashboard' || pathname === '/sites'
-  if (hasApp || closed || !onOverview) return null
+  if ((hasApp && !preview) || closed || !onOverview) return null
 
   const close = () => {
     setClosed(true)
