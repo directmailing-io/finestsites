@@ -28,7 +28,7 @@ export default function SupportScreen() {
   const qc = useQueryClient();
   const toast = useToast();
   const insets = useSafeAreaInsets();
-  const { regular, gutter, top, listWidth } = useLayout();
+  const { regular, gutter, listTop, listWidth } = useLayout();
   const q = useConversations(regular);
   const convs = q.data?.conversations ?? [];
   const [selected, setSelected] = useState<string | 'new' | null>(null);
@@ -124,7 +124,7 @@ export default function SupportScreen() {
       // iPad (Liste neben dem Chat): feste Abstände unter der Tab-Leiste oben, gleich hoch wie der Chat
       contentInsetAdjustmentBehavior={regular ? 'never' : 'automatic'}
       refreshControl={<RefreshControl refreshing={q.isRefetching} onRefresh={() => void q.refetch()} tintColor={colors.faint} />}
-      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: regular ? padTop + 16 : top, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: regular ? padTop + 16 : listTop, paddingBottom: 40 }}
       style={{ backgroundColor: colors.background }}
     />
   );

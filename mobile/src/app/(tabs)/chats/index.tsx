@@ -19,7 +19,7 @@ import { colors } from '@/theme/tokens';
 export default function ChatsScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { regular, gutter, top, listWidth } = useLayout();
+  const { regular, gutter, listTop, listWidth } = useLayout();
   const me = useMe();
   const enabled = me.data?.features.visitorChat === true;
   const [status, setStatus] = useState<ChatConversationStatus>('open');
@@ -160,7 +160,7 @@ export default function ChatsScreen() {
           tintColor={colors.faint}
         />
       }
-      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: top, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: listTop, paddingBottom: 40 }}
       style={{ backgroundColor: colors.background }}
     />
   );

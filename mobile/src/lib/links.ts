@@ -1,4 +1,5 @@
 import * as Linking from 'expo-linking';
+import { Platform } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 
 import { colors } from '@/theme/tokens';
@@ -10,6 +11,28 @@ export function assetUrl(path: string | null | undefined): string | null {
   if (!path) return null;
   if (/^https?:\/\//.test(path)) return path;
   return path.startsWith('/') ? `${API_BASE}${path}` : null;
+}
+
+/**
+ * app.finestsites.io-Link, für den es keinen App-Bildschirm gibt (z. B. Passwort zurücksetzen): im Browser-Fenster
+ * öffnen. Android: Der normale Custom Tab schickt einen VIEW-Intent, und den fängt wieder unsere App (bestätigter
+ * App-Link für app.finestsites.io) → Endlosschleife (Emulator 31.10.2026, weißer Bildschirm). Deshalb den Browser
+ * ausdrücklich per Paketname ansprechen; ohne Custom-Tab-Browser lieber gar nicht öffnen als im Kreis laufen.
+ */
+export async function openOutsideApp(url: string): Promise<boolean> {
+  if (Platform.OS !== 'android') {
+    await openInBrowser(url);
+    return true;
+  }
+  try {
+    const b = await WebBrowser.getCustomTabsSupportingBrowsersAsync();
+    const browserPackage = b.preferredBrowserPackage ?? b.defaultBrowserPackage ?? b.browserPackages[0];
+    if (!browserPackage) return false;
+    await WebBrowser.openBrowserAsync(url, { browserPackage, controlsColor: colors.ink, enableBarCollapsing: true });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**

@@ -19,7 +19,7 @@ export default function InboxScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ site?: string }>();
   const insets = useSafeAreaInsets();
-  const { regular, gutter, top, listWidth } = useLayout();
+  const { regular, gutter, listTop, listWidth } = useLayout();
   const pickerRef = useRef<HostInstance>(null);
   const [status, setStatus] = useState<SubmissionStatus>('all');
   const [search, setSearch] = useState('');
@@ -163,7 +163,7 @@ export default function InboxScreen() {
       keyboardDismissMode="on-drag"
       keyboardShouldPersistTaps="handled"
       refreshControl={<RefreshControl refreshing={pulling && q.isRefetching} onRefresh={() => { setPulling(true); void q.refetch().finally(() => setPulling(false)); }} tintColor={colors.faint} />}
-      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: top, paddingBottom: 40 }}
+      contentContainerStyle={{ paddingHorizontal: regular ? 20 : gutter, paddingTop: listTop, paddingBottom: 40 }}
       style={{ backgroundColor: colors.background }}
     />
   );

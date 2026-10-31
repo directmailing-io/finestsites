@@ -1,4 +1,5 @@
-import { useWindowDimensions } from 'react-native';
+import { Platform, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { gutter, readableWidth } from '@/theme/tokens';
 
@@ -17,6 +18,11 @@ export function useLayout() {
   const pad = width >= 1024 ? gutter.wide : width >= 640 ? gutter.regular : gutter.compact;
   // Abstand oben wie <main>: pt-6 (24) · sm:pt-8 (32) · lg:pt-10 (40)
   const top = width >= 1024 ? 40 : width >= 640 ? 32 : 24;
+  // Listen ohne native Kopfzeile: iOS rückt den Inhalt per contentInsetAdjustmentBehavior selbst unter die
+  // Statusleiste, Android (Edge-to-Edge) nicht → dort den Statusleisten-Abstand dazurechnen (Emulator 31.10.2026:
+  // „Anfragen“/„Support“ klebten in der Statusleiste).
+  const insets = useSafeAreaInsets();
+  const listTop = top + (Platform.OS === 'android' ? insets.top : 0);
   return {
     width,
     height,
@@ -24,6 +30,8 @@ export function useLayout() {
     columns,
     gutter: pad,
     top,
+    /** Abstand oben für Listen ohne native Kopfzeile (inkl. Statusleiste auf Android) */
+    listTop,
     /** Breite der Liste in geteilten Ansichten */
     listWidth: Math.min(400, Math.max(320, Math.round(width * 0.36))),
     readableWidth,

@@ -3,10 +3,10 @@
  *
  * Nur diese Bereiche zeigt die App selbst (iPhone: dieselbe Liste in apple-app-site-association auf dem Server).
  * Alles andere auf app.finestsites.io (Login, Passwort, Zahlung, Einstellungen, Onboarding) öffnet die App im
- * Browser-Fenster (Custom Tab / Safari-Fenster) und bleibt auf dem Startbildschirm – Android leitet wegen
+ * Browser-Fenster (openOutsideApp) und bleibt selbst auf dem Startbildschirm – Android leitet wegen
  * pathPrefix '/' (app.config.ts) alle Pfade an die App.
  */
-import { openInBrowser } from './links';
+import { openOutsideApp } from './links';
 
 export const APP_LINK_HOST = 'app.finestsites.io';
 export const APP_LINK_PREFIXES = ['/dashboard', '/sites', '/submissions', '/support', '/chats', '/neuigkeiten'] as const;
@@ -54,6 +54,8 @@ export function appPathForWebPath(pathname: string, search = ''): string | null 
  * Für expo-router (+native-intent): volle https-Adresse von app.finestsites.io → App-Pfad (unbekannt → Start).
  * Alles andere (finestsites://…, schon interne Pfade) bleibt unverändert.
  */
+let lastOutside = { url: '', at: 0 };
+
 export function redirectWebLink(path: string): string {
   if (!/^https?:\/\//i.test(path)) {
     // Manche Android-Versionen reichen nur den Pfad weiter: Web-Pfade, die es in der App so nicht gibt, umbiegen
@@ -68,9 +70,13 @@ export function redirectWebLink(path: string): string {
     if (u.hostname !== APP_LINK_HOST) return path;
     const mapped = appPathForWebPath(u.pathname, u.search);
     if (mapped) return mapped;
-    // Kein App-Bildschirm dafür (z. B. Passwort zurücksetzen): im Browser-Fenster öffnen. Ein Custom Tab
-    // läuft nicht über die App-Links, es entsteht also keine Schleife.
-    void openInBrowser(u.toString()).catch(() => {});
+    // Kein App-Bildschirm dafür (z. B. Passwort zurücksetzen): im Browser-Fenster öffnen – denselben Link
+    // höchstens einmal je 3 s (Schutz, falls der Browser den Link doch wieder an die App gibt).
+    const now = Date.now();
+    if (lastOutside.url !== path || now - lastOutside.at > 3000) {
+      lastOutside = { url: path, at: now };
+      void openOutsideApp(u.toString()).catch(() => {});
+    }
     return '/';
   } catch {
     return '/';
