@@ -81,6 +81,16 @@ export const navItems = [
     ),
   },
   {
+    href: '/admin/belege',
+    label: 'Belege',
+    icon: (_active: boolean) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16v16H4z"/>
+        <path d="M4 9h16M9 13h6M9 16h4"/>
+      </svg>
+    ),
+  },
+  {
     href: '/admin/affiliate',
     label: 'Affiliate',
     icon: (_active: boolean) => (
