@@ -121,6 +121,22 @@ export default function HeroSection({ registerHref }: { registerHref: string }) 
                 <a href="#templates" className="fs-hero-cta-ghost">Vorlagen anschauen</a>
               </div>
               <p className="fs-hero-trust">Kostenlos ausprobieren. Bezahlt wird erst, wenn deine Seite online geht.</p>
+
+              {/* App-Hinweis (Daniel 01.11.2026): offizielle Store-Badges, unverändert. Android noch nicht im Store → kein Link, nur „bald“. */}
+              <div className="fs-hero-stores">
+                <span className="fs-hero-stores-label">Auch als App</span>
+                <div className="fs-hero-stores-row">
+                  <a href="https://apps.apple.com/de/app/finestsites/id6825371773" target="_blank" rel="noopener noreferrer" aria-label="FinestSites im App Store laden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/badge-app-store.svg" alt="Download on the App Store" width={132} height={44} className="fs-hero-store-badge" />
+                  </a>
+                  <span className="fs-hero-store-soon" aria-label="Google Play: bald verfügbar">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src="/badge-google-play.png" alt="Google Play" width={147} height={44} className="fs-hero-store-badge fs-hero-store-badge-soon" />
+                    <span className="fs-hero-store-soon-tag">bald</span>
+                  </span>
+                </div>
+              </div>
             </div>
 
             <div className="fs-hero-visual">
@@ -200,6 +216,15 @@ const heroCss = `
   .fs-hero-cta-ghost { display: inline-flex; align-items: center; color: var(--h-ghost); padding: 17px 28px; border-radius: 100px; font-size: 15px; font-weight: 600; border: 1.5px solid var(--h-ghost-border); text-decoration: none; transition: background 0.15s ease; }
   .fs-hero-cta-ghost:hover { background: rgba(127,127,127,0.1); }
   .fs-hero-trust { font-size: 13px; color: var(--h-trust); margin-top: 16px; font-weight: 500; }
+  .fs-hero-stores { margin-top: 26px; display: flex; flex-direction: column; gap: 10px; }
+  .fs-hero-stores-label { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--h-trust); }
+  .fs-hero-stores-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .fs-hero-stores-row a { display: inline-flex; border-radius: 9px; transition: transform 0.15s ease, opacity 0.15s ease; }
+  .fs-hero-stores-row a:hover { transform: translateY(-1px); opacity: 0.9; }
+  .fs-hero-store-badge { display: block; height: 44px; width: auto; }
+  .fs-hero-store-soon { position: relative; display: inline-flex; }
+  .fs-hero-store-badge-soon { cursor: default; }
+  .fs-hero-store-soon-tag { position: absolute; top: -8px; right: -8px; background: var(--h-eyebrow-bg); color: var(--h-eyebrow); font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 99px; box-shadow: 0 0 0 2px #fff; }
   .fs-hero-visual { position: relative; width: 122%; max-width: none; transform: translateY(110px); }
   .fs-hero-glow { position: absolute; left: 8%; right: 8%; top: 12%; bottom: 14%; border-radius: 50%; background: var(--h-glow); filter: blur(46px); }
   .fs-hero-phones { position: relative; width: 100%; height: auto; display: block; filter: drop-shadow(0 40px 70px var(--h-phone-shadow)); }
@@ -224,6 +249,8 @@ const heroCss = `
     .fs-hero-sub, .fs-hero-benefits { margin-left: auto; margin-right: auto; }
     .fs-hero-benefits { text-align: left; }
     .fs-hero-buttons { justify-content: center; }
+    .fs-hero-stores { align-items: center; }
+    .fs-hero-stores-row { justify-content: center; }
     .fs-hero-visual { width: 100%; max-width: 560px; margin: 32px auto -90px; transform: none; }
     .fs-hero-spacer { height: 56px; }
   }
