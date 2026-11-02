@@ -11,7 +11,7 @@ const AppModeContext = createContext(false)
 
 export function AppModeProvider({ value, children }: { value: boolean; children: React.ReactNode }) {
   // Im App-WebView gibt es keine sichtbare Konsole: JS-Fehler ans Server-Log melden (max. 5 je Seite) und bei
-  // veraltetem Android System WebView (< Chrome 111, Mindestversion von Next.js) einen Hinweis zeigen, statt
+  // veraltetem Android System WebView (< Chrome 90; mit Polyfills im Root-Layout läuft es ab 90) einen Hinweis zeigen, statt
   // dass die Seite leer bleibt oder „Etwas ist schiefgelaufen“ erscheint (Daniels Samsung, 02.11.2026).
   useEffect(() => {
     if (!value || typeof window === 'undefined') return
@@ -33,7 +33,7 @@ export function AppModeProvider({ value, children }: { value: boolean; children:
     window.addEventListener('error', onError)
     window.addEventListener('unhandledrejection', onRejection)
     const m = /Chrome\/(\d+)/.exec(navigator.userAgent)
-    if (m && Number(m[1]) < 111 && !document.getElementById('fs-old-webview')) {
+    if (m && Number(m[1]) < 90 && !document.getElementById('fs-old-webview')) {
       const box = document.createElement('div')
       box.id = 'fs-old-webview'
       box.setAttribute('style', 'position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#111;color:#fff;padding:14px 16px calc(14px + env(safe-area-inset-bottom));font:14px/1.5 -apple-system,Roboto,sans-serif')

@@ -56,6 +56,19 @@ export const metadata: Metadata = {
   },
 };
 
+// Ältere Android-WebViews (Chrome < 97/110, z. B. Samsung ohne WebView-Update) kennen findLast/at/toSorted noch nicht;
+// der Richtext-Editor (ProseMirror) nutzt findLast → „Etwas ist schiefgelaufen“ (Daniels Samsung, 02.11.2026).
+// Reines ES5, läuft vor allen Bündeln.
+const POLYFILLS = `(function(){var A=Array.prototype,d=Object.defineProperty,o={configurable:true,writable:true};
+if(!A.findLast)d(A,'findLast',Object.assign({value:function(f,t){for(var i=this.length-1;i>=0;i--)if(f.call(t,this[i],i,this))return this[i]}},o));
+if(!A.findLastIndex)d(A,'findLastIndex',Object.assign({value:function(f,t){for(var i=this.length-1;i>=0;i--)if(f.call(t,this[i],i,this))return i;return -1}},o));
+if(!A.at)d(A,'at',Object.assign({value:function(n){n=Math.trunc(n)||0;if(n<0)n+=this.length;return n<0||n>=this.length?undefined:this[n]}},o));
+if(!String.prototype.at)d(String.prototype,'at',Object.assign({value:function(n){n=Math.trunc(n)||0;if(n<0)n+=this.length;return n<0||n>=this.length?undefined:this.charAt(n)}},o));
+if(!A.toSorted)d(A,'toSorted',Object.assign({value:function(c){return this.slice().sort(c)}},o));
+if(!A.toReversed)d(A,'toReversed',Object.assign({value:function(){return this.slice().reverse()}},o));
+if(!Object.hasOwn)d(Object,'hasOwn',Object.assign({value:function(a,b){return Object.prototype.hasOwnProperty.call(a,b)}},o));
+})();`
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +80,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: POLYFILLS }} />
         <ChunkErrorHandler />
         <UrlParamPersistence />
         <RefCookieSetter />
