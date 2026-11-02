@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play Store To-dos</title>
+<style>
+:root{--bg:#f6f6f4;--card:#fff;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e7e5e1;--soft:#f1f0ed;--accent:#7c3aed;--accent-soft:#f3edff;--ok:#16794c;--ok-soft:#e8f6ee;--warn:#9a5b00;--warn-soft:#fff4e0;--you:#0b62d6;--you-soft:#e8f1ff;--r:16px;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;--accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;--you:#60a5fa;--you-soft:#132338;--shadow:none}}
+:root[data-theme="dark"]{--bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;--accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;--you:#60a5fa;--you-soft:#132338;--shadow:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:880px;margin:0 auto;padding:32px 16px 110px}
+h1{font-size:28px;line-height:1.2;margin:0;letter-spacing:-.015em}
+.sub{color:var(--muted);margin:6px 0 0}
+h2{font-size:19px;margin:36px 0 6px;letter-spacing:-.01em}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:13px;margin-right:8px;vertical-align:2px}
+.lead{color:var(--muted);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow)}
+.card ul{margin:0;padding-left:18px}.card li{margin:6px 0}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;vertical-align:1px}
+.pill.you{background:var(--you-soft);color:var(--you)}.pill.me{background:var(--accent-soft);color:var(--accent)}.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}.pill.wait{background:var(--soft);color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.step summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:16px}
+.step summary::-webkit-details-marker{display:none}
+.step .box{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;cursor:pointer;background:var(--card)}
+.step.done .box{background:var(--ok);border-color:var(--ok)}
+.step.done .box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.step.done .ttl{text-decoration:line-through;color:var(--muted)}
+.step .ttl{font-weight:600;flex:1}.step .meta{font-size:12px;color:var(--muted);white-space:nowrap}
+.step .chev{width:18px;height:18px;color:var(--muted);transition:transform .2s;flex:none}.step[open] .chev{transform:rotate(90deg)}
+.step .body{padding:0 16px 18px 52px;font-size:14.5px}
+@media (max-width:560px){.step .body{padding-left:16px}.step .meta{display:none}}
+.step ol{margin:4px 0 0;padding-left:20px}.step ol li{margin:6px 0}
+a{color:var(--accent)}
+code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px;word-break:break-word}
+.give{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--you-soft);font-size:14px}.give b{color:var(--you)}
+.note{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--warn-soft);font-size:14px}
+.okbox{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--ok-soft);font-size:14px}
+.copy{position:relative;margin-top:8px}.copy pre{margin:0;white-space:pre-wrap;font:14px/1.55 inherit;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;padding-right:96px}
+.copy button{position:absolute;top:8px;right:8px}
+.btn{appearance:none;border:0;background:var(--ink);color:var(--bg);font:600 13px/1 inherit;padding:9px 12px;border-radius:12px;cursor:pointer}.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.tl{display:flex;margin-top:6px;font-size:13px}.tl div{flex:1;padding:10px;border-top:3px solid var(--line)}.tl div.a{border-color:var(--you)}.tl div.b{border-color:var(--accent)}.tl div.c{border-color:var(--warn)}.tl div.d{border-color:var(--ok)}.tl b{display:block}
+@media (max-width:620px){.tl{flex-direction:column}.tl div{border-top:0;border-left:3px solid var(--line)}.tl div.a{border-color:var(--you)}.tl div.b{border-color:var(--accent)}.tl div.c{border-color:var(--warn)}.tl div.d{border-color:var(--ok)}}
+.sumbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1px solid var(--line);padding:12px 16px}.sumbar .in{max-width:880px;margin:0 auto}
+.bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.small{font-size:13px;color:var(--muted)}
+footer{margin-top:40px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bis zur Veröffentlichung: deine To-dos</h1>
+  <p class="sub">Stand 02.11.2026, nachmittags. Nur noch das, was wirklich dich braucht. Alles andere erledige ich.</p>
+
+  <div class="card" style="margin-top:16px">
+    <ul>
+      <li><span class="pill ok">erledigt</span> Play-Konto bestätigt, App angelegt (<code>io.finestsites.app</code>), alle Fragebögen, Store-Eintrag, interner Test installiert, 14 Änderungen inkl. geschlossenem Test bei Google eingereicht (<b>„Wird überprüft“</b>).</li>
+      <li><span class="pill wait">läuft</span> Googles erste Prüfung, meist 1–7 Tage. Ergebnis kommt per E-Mail an info@daniel-kurzeja.de.</li>
+      <li><span class="pill warn">dein Engpass</span> 12 Tester, die 14 Tage am Stück dabei bleiben. Alles andere ist Formsache.</li>
+    </ul>
+  </div>
+
+  <h2><span class="n">1</span>Diese Woche</h2>
+  <ol class="steps">
+    <li><details class="step" data-id="push"><summary><span class="box" role="checkbox"></span><span class="ttl">Test-Mitteilung auf dem Handy prüfen</span><span class="meta">1 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body"><ol>
+        <li>Ich habe dir gerade eine Mitteilung „Test-Mitteilung“ auf das Samsung geschickt.</li>
+        <li>Ist sie angekommen? Dann ist Push auf Android komplett geprüft. Wenn nicht: In der App unter <b>Mehr → Einstellungen → Konto → Push-Mitteilungen</b> nachsehen, ob „Erlauben“ an ist, und mir kurz schreiben.</li>
+        <li>Nebenbei alles einmal antippen: Webseite bearbeiten, Anfragen, Support, Chats. Was komisch wirkt, einfach an mich.</li>
+      </ol></div></details></li>
+
+    <li><details class="step" data-id="tester"><summary><span class="box" role="checkbox"></span><span class="ttl">18–20 Tester finden und mir die Google-Adressen schicken</span><span class="meta">dein wichtigster Punkt</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body"><ol>
+        <li><b>Wen fragen:</b> Kunden mit Android-Handy, Teampartner, Familie, Freunde. Jeder braucht nur ein Android-Handy und die Google-Adresse, mit der er im Play Store angemeldet ist (meist @gmail.com). Ein FinestSites-Konto ist nicht nötig.</li>
+        <li><b>Kunden mit Android:</b> Sag mir Bescheid, dann ziehe ich dir aus unserer Datenbank die Nutzer, die sich zuletzt mit einem Android-Gerät angemeldet haben. Dann fragst du gezielt.</li>
+        <li><b>Was du ihnen sagst:</b> den Text unten per WhatsApp oder E-Mail. Noch ohne Link, der kommt nach Googles Freigabe.</li>
+        <li><b>An mich:</b> die Adressen als Liste (eine pro Zeile oder mit Komma). Ich trage sie in der Console ein.</li>
+      </ol>
+      <div class="note">Google zählt nur Tester, die <b>14 Tage am Stück</b> angemeldet bleiben. Deshalb mehr als 12 einladen und allen sagen: nicht deinstallieren.</div></div></details></li>
+  </ol>
+
+  <h2><span class="n">2</span>Wenn Google die Prüfung freigibt</h2>
+  <p class="lead">Du bekommst eine E-Mail von Google Play. Dann:</p>
+  <ol class="steps">
+    <li><details class="step" data-id="invite"><summary><span class="box" role="checkbox"></span><span class="ttl">Einladungslink an die Tester schicken</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body"><ol>
+        <li>Ich hole den Link aus der Console und schicke ihn dir (oder du findest ihn unter <b>Testen und veröffentlichen → Test → Geschlossener Test → Alpha → Tester → Link kopieren</b>).</li>
+        <li>Du schickst ihn mit dem Text unten an alle Tester. Verschickt wird nur von dir.</li>
+        <li>Jeder Tester: Link auf dem Android-Handy öffnen → „Tester werden“ → installieren. Fertig.</li>
+      </ol></div></details></li>
+
+    <li><details class="step" data-id="count"><summary><span class="box" role="checkbox"></span><span class="ttl">Nach 2–3 Tagen nachhaken, wer noch fehlt</span><span class="meta">5 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body"><ol>
+        <li>Im Dashboard der App steht unter „Produktion“: „Momentan sind X Tester angemeldet“. Die 14 Tage laufen erst ab dem Tag, an dem dort <b>mindestens 12</b> steht.</li>
+        <li>Ich schaue dort ebenfalls regelmäßig nach und sage dir, wenn jemand abgesprungen ist.</li>
+      </ol></div></details></li>
+  </ol>
+
+  <h2><span class="n">3</span>Nach den 14 Tagen</h2>
+  <ol class="steps">
+    <li><details class="step" data-id="answers"><summary><span class="box" role="checkbox"></span><span class="ttl">Mir 3 Antworten für den Produktionszugriff geben</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body"><ol>
+        <li>Wie viele Tester waren es am Ende und wie hast du sie gefunden?</li>
+        <li>Welche Rückmeldungen kamen (auch „keine“ ist eine Antwort)?</li>
+        <li>Wie viele Installationen erwartest du im ersten Jahr (grobe Zahl)?</li>
+      </ol>
+      <div class="give"><b>Dann mache ich:</b> den Antrag auf Produktionszugriff in der Console ausfüllen und absenden. Google antwortet meist in bis zu 7 Tagen.</div></div></details></li>
+
+    <li><details class="step" data-id="go"><summary><span class="box" role="checkbox"></span><span class="ttl">Mir das letzte „Ja“ geben</span><span class="meta">1 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+      <div class="body"><ol>
+        <li>Sobald Google den Produktionszugriff freigibt, frage ich dich einmal: „Veröffentlichen?“</li>
+        <li>Mit deinem Ja stelle ich den Release in die Produktion, alle Länder, und schicke ihn zur letzten Prüfung. Danach ist FinestSites im Play Store.</li>
+      </ol></div></details></li>
+  </ol>
+
+  <h2><span class="n">4</span>Was ich in der Zwischenzeit mache</h2>
+  <div class="card"><ul>
+    <li><span class="pill me">ich</span> Store-Bilder mit Android-Rahmen (Handy und Tablet) und in der Console austauschen.</li>
+    <li><span class="pill me">ich</span> Tester-Adressen eintragen, Tester-Zahl im Blick behalten, Einladungslink nach der Freigabe besorgen.</li>
+    <li><span class="pill me">ich</span> Antworten für den Produktionszugriff vorbereiten und einreichen, Produktions-Release anlegen.</li>
+    <li><span class="pill me">ich</span> Nach dem Start: <code>finestsites.io/app</code> mit Play-Store-Link, Ankündigung an die Kunden nur mit deinem Ja.</li>
+  </ul></div>
+
+  <h2><span class="n">5</span>Text für die Tester</h2>
+  <div class="card">
+    <p class="small" style="margin:0 0 8px">Jetzt schon zum Vorwarnen, der Link kommt nach Googles Freigabe hinterher.</p>
+    <div class="copy"><pre>Hallo [Name],
+
+kurze Bitte: Die FinestSites-App kommt jetzt auch für Android, und Google verlangt vor dem Start einen Test mit echten Nutzern. Hast du ein Android-Handy und 2 Minuten?
+
+So geht's: Du bekommst von mir in den nächsten Tagen einen Link. Den öffnest du auf dem Handy, tippst auf „Tester werden“ und installierst die App aus dem Play Store. Danach einfach installiert lassen und ab und zu öffnen, mindestens 14 Tage. Bitte in der Zeit nicht deinstallieren.
+
+Wenn du ein FinestSites-Konto hast, kannst du dich ganz normal anmelden. Wenn nicht, reicht das Installieren.
+
+Schick mir einfach kurz die E-Mail-Adresse, mit der du im Play Store angemeldet bist (meist deine Gmail-Adresse). Danke dir!
+
+Daniel</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+  </div>
+
+  <h2><span class="n">6</span>Zeitplan</h2>
+  <div class="tl">
+    <div class="a"><b>Jetzt</b>Google prüft · du sammelst Tester</div>
+    <div class="b"><b>ca. 4.–9.11.</b>Freigabe · Einladungslink raus · 12+ Tester drin</div>
+    <div class="c"><b>14 Tage</b>Test läuft (ca. bis 23.11.)</div>
+    <div class="d"><b>ca. 24.11.–1.12.</b>Produktionszugriff · Veröffentlichung · <b>live</b></div>
+  </div>
+  <p class="small" style="margin-top:10px">Jeder Tag, den die 12 Tester früher komplett sind, verschiebt alles nach vorn.</p>
+
+  <footer>Console: play.google.com/console → FinestSites (io.finestsites.app). Interner Test: <a href="https://play.google.com/apps/internaltest/4701533069088336803">play.google.com/apps/internaltest/4701533069088336803</a>. Frühere Anleitungen: google-play-veroeffentlichen.html, google-play-start.html.</footer>
+</div>
+<div class="sumbar"><div class="in"><div class="small"><span id="done">0</span> von <span id="total">0</span> To-dos erledigt</div><div class="bar"><i id="bar"></i></div></div></div>
+<script>
+(function(){var KEY='fs-google-play-todo',state={};try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+var steps=[].slice.call(document.querySelectorAll('.step'));function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function render(){var n=0;steps.forEach(function(s){var d=!!state[s.dataset.id];s.classList.toggle('done',d);if(d)n++});document.getElementById('done').textContent=n;document.getElementById('total').textContent=steps.length;document.getElementById('bar').style.width=(steps.length?n/steps.length*100:0)+'%'}
+steps.forEach(function(s){s.querySelector('.box').addEventListener('click',function(e){e.preventDefault();e.stopPropagation();state[s.dataset.id]=!state[s.dataset.id];save();render()})});render();
+document.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){var t=b.parentNode.querySelector('pre').innerText;var done=function(){b.textContent='Kopiert';setTimeout(function(){b.textContent='Kopieren'},1800)};if(navigator.clipboard)navigator.clipboard.writeText(t).then(done,function(){})})});})();
+</script>
+</body>
+</html>
