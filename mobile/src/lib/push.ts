@@ -163,7 +163,7 @@ export async function setBadge(count: number) {
   await Notifications.setBadgeCountAsync(Math.max(0, count)).catch(() => false);
 }
 
-const ALLOWED_ROUTES = ['/inbox', '/help', '/chats', '/sites', '/account', '/account/news'];
+const ALLOWED_ROUTES = ['/inbox', '/help', '/chats', '/sites', '/account', '/account/news', '/partner'];
 const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
 
 /**
@@ -189,7 +189,7 @@ export function routeFromNotification(data: unknown): string | null {
         // Tipp auf die Push-Mitteilung „Neuigkeit“ → direkt ins Detail (ohne id: die Liste)
         return withId('/account/news');
       case 'affiliate':
-        return '/account/partner';
+        return '/partner';
       case 'account':
         return '/account';
       default:

@@ -15,11 +15,6 @@ export default function AccountStack() {
       <Stack.Screen name="emails" options={{ title: 'E-Mails' }} />
       <Stack.Screen name="password" options={{ title: 'Passwort ändern' }} />
       <Stack.Screen name="delete" options={{ title: 'Konto löschen' }} />
-      <Stack.Screen name="partner/index" options={{ title: 'Partnerprogramm' }} />
-      <Stack.Screen name="partner/tax" options={{ title: 'Angaben für die Abrechnung' }} />
-      <Stack.Screen name="partner/credit-notes" options={{ title: 'Gutschriften' }} />
-      <Stack.Screen name="partner/history" options={{ title: 'Verlauf' }} />
-      <Stack.Screen name="partner/referrals" options={{ title: 'Deine Empfehlungen' }} />
     </Stack>
   );
 }

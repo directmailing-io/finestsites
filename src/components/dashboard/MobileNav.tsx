@@ -65,6 +65,7 @@ export function MobileNav() {
   const activeSites = isActive('/sites')
   const activeSubmissions = isActive('/submissions')
   const activeChats = isActive('/chats')
+  const activePartner = isActive('/affiliate')
 
   return (
     <>
@@ -93,27 +94,23 @@ export function MobileNav() {
         </div>
 
         <div className="px-3 pb-3">
-          {/* Partnerbereich — locked for free users */}
-          {quota.plan !== null ? (
-            <Link
-              href="/affiliate"
-              className="flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-gray-50"
-            >
-              <span style={{ color: '#6B7280' }}><DrawerPartnerIcon /></span>
-              <span className="text-base font-medium text-gray-800 flex-1">Partnerbereich</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2.5">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </Link>
-          ) : (
-            <div className="flex items-center gap-4 px-4 py-4 rounded-2xl" style={{ opacity: 0.45 }}>
-              <span style={{ color: '#6B7280' }}><DrawerPartnerIcon /></span>
-              <span className="text-base font-medium text-gray-500 flex-1">Partnerbereich</span>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2">
-                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
-              </svg>
-            </div>
-          )}
+          {/* Support — seit 02.11.2026 hier statt in der Leiste (dort jetzt Partnerbereich), wie in der App */}
+          <Link
+            href="/support"
+            className="flex items-center gap-4 px-4 py-4 rounded-2xl active:bg-gray-50"
+          >
+            <span style={{ color: '#6B7280' }}><TabChatIcon active={false} /></span>
+            <span className="text-base font-medium text-gray-800 flex-1">Support</span>
+            {chatUnread > 0 && (
+              <span className="min-w-[22px] h-[22px] px-1.5 rounded-full text-[11px] font-bold flex items-center justify-center"
+                style={{ background: '#DC2626', color: '#fff' }}>
+                {chatUnread > 99 ? '99+' : chatUnread}
+              </span>
+            )}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="2.5">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </Link>
 
           <Link
             href="/neuigkeiten"
@@ -223,13 +220,31 @@ export function MobileNav() {
           </Link>
         )}
 
-        <Link
-          href="/support"
-          onClick={() => setShowMore(false)}
-          className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity relative"
+        {/* Partnerbereich in der Leiste (Daniel 02.11.2026); ohne Tarif gesperrt wie früher im Mehr-Fenster */}
+        {quota.plan !== null ? (
+          <Link
+            href="/affiliate"
+            onClick={() => setShowMore(false)}
+            className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
+          >
+            <span style={{ color: activePartner ? '#1a1a1a' : '#9CA3AF' }}><TabPartnerIcon active={activePartner} /></span>
+            <span className="text-[10px] font-medium" style={{ color: activePartner ? '#1a1a1a' : '#9CA3AF' }}>
+              Partner
+            </span>
+          </Link>
+        ) : (
+          <div className="flex-1 flex flex-col items-center justify-center gap-0.5" style={{ opacity: 0.45 }} aria-label="Partnerbereich, gesperrt">
+            <span style={{ color: '#9CA3AF' }}><TabPartnerIcon active={false} /></span>
+            <span className="text-[10px] font-medium" style={{ color: '#9CA3AF' }}>Partner</span>
+          </div>
+        )}
+
+        <button
+          onClick={() => setShowMore(s => !s)}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
         >
           <span className="relative">
-            <TabChatIcon active={pathname === '/support'} />
+            <TabMoreIcon active={showMore} />
             {chatUnread > 0 && (
               <span
                 className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full text-[10px] font-bold flex items-center justify-center"
@@ -238,19 +253,7 @@ export function MobileNav() {
                 {chatUnread > 99 ? '99+' : chatUnread}
               </span>
             )}
-          </span>
-          <span className="text-[10px] font-medium" style={{ color: pathname === '/support' ? '#1a1a1a' : '#9CA3AF' }}>
-            Support
-          </span>
-        </Link>
-
-        <button
-          onClick={() => setShowMore(s => !s)}
-          className="flex-1 flex flex-col items-center justify-center gap-0.5 active:opacity-60 transition-opacity"
-        >
-          <span className="relative">
-            <TabMoreIcon active={showMore} />
-            {newsUnread > 0 && (
+            {newsUnread > 0 && chatUnread === 0 && (
               /* ungelesene Neuigkeiten: lila Punkt am „Mehr“-Reiter */
               <span className="absolute -top-0.5 -right-1.5 w-2 h-2 rounded-full" style={{ background: '#7C3AED', boxShadow: '0 0 0 2px rgba(250,250,250,0.94)' }} />
             )}
@@ -294,6 +297,15 @@ function TabChatsIcon({ active }: { active: boolean }) {
   )
 }
 
+function TabPartnerIcon({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2 : 1.75} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  )
+}
+
 function TabChatIcon({ active }: { active: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={active ? '#1a1a1a' : '#9CA3AF'} strokeWidth={active ? 2 : 1.75}>
@@ -314,14 +326,6 @@ function TabMoreIcon({ active }: { active: boolean }) {
 
 // ── Drawer Icons ──────────────────────────────────────────────────────────────
 
-function DrawerPartnerIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-      <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-    </svg>
-  )
-}
 
 function DrawerNewsIcon() {
   return <Megaphone size={20} strokeWidth={1.75} aria-hidden />

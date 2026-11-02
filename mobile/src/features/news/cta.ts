@@ -9,7 +9,7 @@ const INTERNAL: Record<Exclude<NewsCtaKind, 'url'>, Href> = {
   sites: '/',
   submissions: '/inbox',
   chats: '/chats',
-  affiliate: '/account/partner',
+  affiliate: '/partner',
   settings: '/account/settings',
 };
 

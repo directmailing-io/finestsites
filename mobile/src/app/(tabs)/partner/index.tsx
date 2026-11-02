@@ -108,7 +108,7 @@ export default function PartnerScreen() {
       {!a.taxProfileComplete && (
         <Notice
           tone="warning"
-          action={<Button title="Angaben ausfüllen" size="sm" style={{ alignSelf: 'flex-start', marginTop: 8 }} onPress={() => router.push('/account/partner/tax')} />}>
+          action={<Button title="Angaben ausfüllen" size="sm" style={{ alignSelf: 'flex-start', marginTop: 8 }} onPress={() => router.push('/partner/tax')} />}>
           Damit wir deine Provision verrechnen oder auszahlen können, brauchen wir noch kurz deine Angaben für die Abrechnung.
         </Notice>
       )}
@@ -212,15 +212,15 @@ export default function PartnerScreen() {
           icon={FileText}
           title="Angaben für die Abrechnung"
           right={<Pill label={a.taxProfileComplete ? 'Vollständig' : 'Fehlt noch'} tone={a.taxProfileComplete ? 'online' : 'changes'} dot={false} />}
-          onPress={() => router.push('/account/partner/tax')}
+          onPress={() => router.push('/partner/tax')}
         />
-        <ListRow icon={FileText} title="Gutschriften" onPress={() => router.push('/account/partner/credit-notes')} />
-        <ListRow icon={History} title="Verlauf" onPress={() => router.push('/account/partner/history')} />
+        <ListRow icon={FileText} title="Gutschriften" onPress={() => router.push('/partner/credit-notes')} />
+        <ListRow icon={History} title="Verlauf" onPress={() => router.push('/partner/history')} />
         <ListRow
           icon={Users}
           title="Deine Empfehlungen"
           value={`${a.referrals.active} aktiv · ${a.referrals.paused} pausiert`}
-          onPress={() => router.push('/account/partner/referrals')}
+          onPress={() => router.push('/partner/referrals')}
         />
       </ListSection>
 

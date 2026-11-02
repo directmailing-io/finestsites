@@ -1,15 +1,15 @@
 import { useRouter, type Href } from 'expo-router';
-import { Bell, ChevronRight, Lock, LogOut, Settings, Megaphone, Users, type LucideIcon } from 'lucide-react-native';
+import { Bell, ChevronRight, LogOut, MessageCircle, Settings, Megaphone, type LucideIcon } from 'lucide-react-native';
 import { Alert, Pressable, StyleSheet, View } from 'react-native';
 
-import { useConfig, useDeletionStatus, useMe, useOverview } from '@/api/queries';
+import { useDeletionStatus, useMe, useOverview } from '@/api/queries';
 import { fmtDate } from '@/lib/format';
 import { Notice, Screen, Text } from '@/components/ui';
 import { useAuth } from '@/lib/auth';
 import { colors, fonts, radius, shadows } from '@/theme/tokens';
 
 /**
- * „Mehr“ wie das Mehr-Fenster der Handy-Navigation im Web (MobileNav.tsx): Partnerbereich,
+ * „Mehr“ wie das Mehr-Fenster der Handy-Navigation im Web (MobileNav.tsx): Support,
  * Einstellungen, Trennlinie, Abmelden – gleiche Namen, Symbole und Reihenfolge. Dazu (nur App)
  * „Mitteilungen“, die Liste der Push-Mitteilungen, und „Neuigkeiten“ (im Web in der Seitenleiste)
  * mit Zähler für Ungelesenes.
@@ -17,13 +17,11 @@ import { colors, fonts, radius, shadows } from '@/theme/tokens';
 export default function MoreScreen() {
   const router = useRouter();
   const me = useMe();
-  const config = useConfig();
   const overview = useOverview();
   const deletion = useDeletionStatus();
   const signOut = useAuth(s => s.signOut);
   const u = me.data;
-  // Partnerbereich nur, wenn das Konto teilnehmen darf UND der Bereich nicht per Notschalter aus ist
-  const partnerVisible = !!u?.features.partnerProgram && config.data?.features.partnerProgram !== false;
+  const unreadSupport = overview.data?.unread.support ?? 0;
   const unreadNotifications = overview.data?.unread.notifications ?? 0;
   const unreadNews = overview.data?.news.unread ?? 0;
 
@@ -48,15 +46,7 @@ export default function MoreScreen() {
       ) : null}
 
       <View style={styles.card}>
-        {partnerVisible ? (
-          <Row icon={Users} label="Partnerbereich" href="/account/partner" />
-        ) : (
-          <View style={[styles.row, { opacity: 0.45 }]} accessibilityLabel="Partnerbereich, gesperrt">
-            <Users size={20} color={colors.mutedForeground} strokeWidth={1.75} />
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>Partnerbereich</Text>
-            <Lock size={13} color={colors.faint} strokeWidth={2} />
-          </View>
-        )}
+        <Row icon={MessageCircle} label="Support" href="/help" badge={unreadSupport} />
         <Row icon={Settings} label="Einstellungen" href="/account/settings" />
         <Row icon={Megaphone} label="Neuigkeiten" href="/account/news" badge={unreadNews} tone="accent" />
         <Row icon={Bell} label="Mitteilungen" href="/account/messages" badge={unreadNotifications} />
