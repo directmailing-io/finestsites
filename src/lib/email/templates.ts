@@ -1234,38 +1234,46 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
 const APP_LAUNCH_ASSETS = 'https://app.finestsites.io/mail/app-2026-11'
 const APP_STORE_URL = 'https://apps.apple.com/de/app/finestsites/id6825371773'
 
-export const APP_LAUNCH_2026_11_SUBJECT = 'Die FinestSites-App ist da, und dein Chat gleich mit'
+export const APP_LAUNCH_2026_11_SUBJECT = 'Unser bisher größtes Update: Die FinestSites-App ist da'
 
 /**
  * Dunkles Premium-Layout, nur für diese Ankündigung (Daniels Wunsch 02.11.2026, Ausnahme von layout()).
- * Kurz gehalten: zwei Neuigkeiten, je eine Zeile Nutzen. Alles Wichtige ist Text, der Chat ist in HTML
- * nachgebaut; das einzige Bild (App-Icon) ist Beiwerk, falls ein Postfach Bilder blockiert.
+ * Eine durchgehende Geschichte statt zweier Blöcke: persönliche Anrede, „größtes Update“, sofort sichtbar
+ * welche Geräte schon können (iPhone/iPad) und welche noch warten (Android). Alles Wichtige ist Text, der
+ * Chat ist in HTML nachgebaut; das einzige Bild (App-Icon) ist Beiwerk, falls ein Postfach Bilder blockiert.
  * Schrift Plus Jakarta Sans per @font-face (Apple Mail/iOS), sonst Helvetica/Arial.
  */
 export function appLaunch202611Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
   const name = firstName?.trim() || ''
-  const C = { bg: '#000000', card: '#141416', line: '#26262B', white: '#F5F5F7', body: '#A1A1A6', muted: '#6E6E73', accent: '#B79CFF', violet: '#7C4DFF' }
+  const C = { bg: '#000000', card: '#141416', line: '#26262B', white: '#F5F5F7', body: '#A1A1A6', muted: '#6E6E73', accent: '#B79CFF', violet: '#7C4DFF', green: '#30D158', amber: '#FFB340' }
   const font = `'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif`
   const row = (html: string, pad = '0 28px') => `<tr><td style="padding:${pad};">${html}</td></tr>`
   const space = (h: number) => `<tr><td height="${h}" style="height:${h}px;font-size:0;line-height:0;">&nbsp;</td></tr>`
-  const kicker = (t: string) =>
-    `<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:0.08em;text-transform:uppercase;">${t}</p>`
-  const headline = (t: string, size: number) =>
-    `<h1 style="margin:12px 0 0;font-family:${font};font-size:${size}px;line-height:1.12;font-weight:700;color:${C.white};text-align:center;letter-spacing:-0.03em;">${t}</h1>`
-  const lead = (t: string) =>
-    `<p style="margin:14px 0 0;font-family:${font};font-size:17px;line-height:1.5;color:${C.body};text-align:center;">${t}</p>`
-  const small = (t: string, top = 14) =>
-    `<p style="margin:${top}px 0 0;font-family:${font};font-size:13px;line-height:1.5;color:${C.muted};text-align:center;">${t}</p>`
+  const p = (html: string, style = '') =>
+    `<p style="margin:0;font-family:${font};font-size:16px;line-height:1.6;color:${C.body};${style}">${html}</p>`
   const pillButton = (url: string, label: string) => `
-    <table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:28px auto 0;">
+    <table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:0 auto;">
       <tr><td bgcolor="${C.white}" style="background:${C.white};border-radius:999px;">
-        <a href="${url}" style="display:inline-block;padding:14px 30px;font-family:${font};font-size:16px;font-weight:700;color:#000000;text-decoration:none;border-radius:999px;">${label}</a>
+        <a href="${url}" style="display:inline-block;padding:15px 32px;font-family:${font};font-size:16px;font-weight:700;color:#000000;text-decoration:none;border-radius:999px;">${label}</a>
       </td></tr>
     </table>`
   const bubble = (text: string, mine: boolean) => `
     <table cellpadding="0" cellspacing="0" role="presentation" align="${mine ? 'right' : 'left'}" style="margin:0;">
       <tr><td bgcolor="${mine ? C.violet : '#2A2A2E'}" style="background:${mine ? C.violet : '#2A2A2E'};border-radius:18px;${mine ? 'border-bottom-right-radius:6px;' : 'border-bottom-left-radius:6px;'}padding:11px 16px;font-family:${font};font-size:15px;line-height:1.4;color:#FFFFFF;">${text}</td></tr>
     </table>`
+  // Gerätezeile: links Gerät, rechts Status mit farbigem Punkt
+  const device = (label: string, status: string, color: string, last = false) => `
+    <tr>
+      <td style="padding:16px 0 16px 22px;${last ? '' : `border-bottom:1px solid ${C.line};`}font-family:${font};font-size:16px;font-weight:700;color:${C.white};">${label}</td>
+      <td align="right" style="padding:16px 22px 16px 0;${last ? '' : `border-bottom:1px solid ${C.line};`}font-family:${font};font-size:14px;font-weight:700;color:${color};white-space:nowrap;">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${color};margin-right:7px;vertical-align:1px;"></span>${status}
+      </td>
+    </tr>`
+  const benefit = (text: string) => `
+    <tr>
+      <td width="30" valign="top" style="padding:0 0 12px;font-family:${font};font-size:16px;font-weight:700;color:${C.accent};">✓</td>
+      <td valign="top" style="padding:0 0 12px;font-family:${font};font-size:16px;line-height:1.45;color:${C.white};">${text}</td>
+    </tr>`
 
   const footer = prefs
     ? `Du bekommst diese Mail, weil du ein FinestSites-Konto hast und „${prefs.categoryLabel}“ erhalten möchtest.<br />
@@ -1282,7 +1290,7 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="color-scheme" content="dark" />
   <meta name="supported-color-schemes" content="dark" />
-  <title>Die FinestSites-App ist da</title>
+  <title>Unser bisher größtes Update</title>
   <style>
     @font-face { font-family: 'Plus Jakarta Sans'; font-weight: 400 700; font-style: normal;
       src: url('${APP_URL}/fonts/PlusJakartaSans-latin.woff2') format('woff2'); }
@@ -1294,40 +1302,51 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
   </style>
 </head>
 <body bgcolor="${C.bg}" style="margin:0;padding:0;background:${C.bg};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${C.bg};">FinestSites gibt es jetzt als App. Und neu: Besucher chatten direkt auf deiner Seite mit dir.</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${C.bg};">FinestSites gibt es jetzt als App, und deine Webseite bekommt einen Chat. Auf dem iPhone ab sofort.</div>
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.bg}" style="background:${C.bg};">
     <tr><td align="center" style="padding:40px 0 48px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:560px;width:100%;">
 
         ${row(`<img src="${APP_LAUNCH_ASSETS}/logo-white.png" alt="FinestSites" width="130" style="display:block;margin:0 auto;width:130px;height:auto;border:0;color:${C.white};font-family:${font};font-size:20px;font-weight:700;text-align:center;" />`)}
-        ${space(36)}
+        ${space(28)}
+        ${row(`<img src="${APP_LAUNCH_ASSETS}/app-icon.jpg" alt="" width="180" height="180" style="display:block;margin:0 auto;width:180px;height:180px;border:0;" />`)}
+        ${space(4)}
 
-        ${row(`<img src="${APP_LAUNCH_ASSETS}/app-icon.jpg" alt="" width="200" height="200" style="display:block;margin:0 auto;width:200px;height:200px;border:0;" />`)}
-        ${space(8)}
-        ${row(`${kicker('Neu')}
-               ${headline('FinestSites gibt&#8217;s<br />jetzt als App.', 38)}
-               ${lead('Anfragen sehen und sofort antworten.<br />Egal, wo du gerade bist.')}
-               ${pillButton(APP_STORE_URL, 'Im App Store laden')}
-               ${small('iPhone und iPad · Android folgt bald')}`)}
-        ${space(64)}
-        ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr><td style="border-top:1px solid ${C.line};font-size:0;line-height:0;">&nbsp;</td></tr></table>`)}
-        ${space(56)}
+        ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:0.08em;text-transform:uppercase;">Das größte Update seit dem Start</p>
+               <h1 style="margin:14px 0 0;font-family:${font};font-size:36px;line-height:1.12;font-weight:700;color:${C.white};text-align:center;letter-spacing:-0.03em;">
+                 ${name ? `${name}, FinestSites` : 'FinestSites'}<br />gibt&#8217;s jetzt als App.
+               </h1>
+               ${p('Und deine Webseite kann ab sofort chatten.<br />Jetzt ist es endlich da.', 'margin-top:16px;font-size:17px;text-align:center;')}`)}
+        ${space(32)}
+
+        ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;">
+                 ${device('iPhone und iPad', 'Jetzt verfügbar', C.green)}
+                 ${device('Android', 'Kommt in Kürze', C.amber, true)}
+               </table>`)}
+        ${space(28)}
+        ${row(pillButton(APP_STORE_URL, 'Jetzt im App Store laden'))}
+        ${space(14)}
+        ${row(p('Du hast Android? Gedulde dich noch ein kleines bisschen.<br />Wir sagen dir Bescheid, sobald die App im Play Store ist.', `font-size:13px;line-height:1.55;color:${C.muted};text-align:center;`))}
+        ${space(48)}
 
         ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:22px;">
                  <tr><td style="padding:24px 22px 8px;">${bubble('Hallo! Hast du kurz Zeit?', false)}</td></tr>
-                 <tr><td style="padding:8px 22px 24px;">${bubble('Klar, schreib mir gern!', true)}</td></tr>
+                 <tr><td style="padding:8px 22px 22px;">${bubble('Klar, schreib mir gern!', true)}</td></tr>
+                 <tr><td style="padding:4px 22px 12px;border-top:1px solid ${C.line};">
+                   <p style="margin:18px 0 14px;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};letter-spacing:0.08em;text-transform:uppercase;">Das kannst du jetzt</p>
+                   <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                     ${benefit('Besucher chatten direkt auf deiner Seite mit dir')}
+                     ${benefit('Jede neue Anfrage kommt als Mitteilung aufs Handy')}
+                     ${benefit('Antworten und Seiten bearbeiten, egal wo du bist')}
+                   </table>
+                 </td></tr>
                </table>`)}
-        ${space(28)}
-        ${row(`${kicker('Ebenfalls neu')}
-               ${headline('Chat auf deiner Webseite.', 32)}
-               ${lead('Besucher schreiben dir direkt auf deiner Seite.<br />Du antwortest in der App.')}
-               ${small('Einschalten im Editor: Kontakt → „Besucher-Chat“', 16)}`)}
-        ${space(56)}
+        ${space(16)}
+        ${row(p('Chat einschalten: App öffnen, dann im Editor unter Kontakt → „Besucher-Chat“.', `font-size:13px;line-height:1.55;color:${C.muted};text-align:center;`))}
+        ${space(48)}
 
-        ${row(`<p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:${C.body};text-align:center;">
-                 ${name ? `Viel Spaß damit, ${name}!` : 'Viel Spaß damit!'}<br />
-                 <span style="color:${C.white};font-weight:700;">Daniel von FinestSites</span>
-               </p>`)}
+        ${row(`${p(`${name ? `${name}, ich` : 'Ich'} freu mich riesig, dass es endlich so weit ist. Lad dir die App runter und schreib mir, wie du sie findest. Ich lese alles selbst.`, 'text-align:center;')}
+               ${p('Daniel von FinestSites', `margin-top:12px;color:${C.white};font-weight:700;text-align:center;`)}`)}
         ${space(40)}
         ${row(`<p style="margin:0;padding-top:24px;border-top:1px solid ${C.line};font-family:${font};font-size:12px;line-height:1.7;color:${C.muted};text-align:center;">${footer}</p>`)}
 
