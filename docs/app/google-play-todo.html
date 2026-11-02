@@ -52,12 +52,12 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <body>
 <div class="wrap">
   <h1>Bis zur Veröffentlichung: deine To-dos</h1>
-  <p class="sub">Stand 02.11.2026, nachmittags. Nur noch das, was wirklich dich braucht. Alles andere erledige ich.</p>
+  <p class="sub">Stand 02.11.2026, 15:00 Uhr. Google hat die Prüfung schon durch. Jetzt zählt nur noch: 12 Tester, 14 Tage.</p>
 
   <div class="card" style="margin-top:16px">
     <ul>
       <li><span class="pill ok">erledigt</span> Play-Konto bestätigt, App angelegt (<code>io.finestsites.app</code>), alle Fragebögen, Store-Eintrag, interner Test installiert, 14 Änderungen inkl. geschlossenem Test bei Google eingereicht (<b>„Wird überprüft“</b>).</li>
-      <li><span class="pill wait">läuft</span> Googles erste Prüfung, meist 1–7 Tage. Ergebnis kommt per E-Mail an info@daniel-kurzeja.de.</li>
+      <li><span class="pill ok">erledigt</span> Googles erste Prüfung: <b>genehmigt am 2.11. um 13:37</b>. Der geschlossene Test ist aktiv, der Einladungslink steht: <a href="https://play.google.com/apps/testing/io.finestsites.app">play.google.com/apps/testing/io.finestsites.app</a></li>
       <li><span class="pill warn">dein Engpass</span> 12 Tester, die 14 Tage am Stück dabei bleiben. Alles andere ist Formsache.</li>
     </ul>
   </div>
@@ -75,18 +75,18 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
       <div class="body"><ol>
         <li><b>Wen fragen:</b> Kunden mit Android-Handy, Teampartner, Familie, Freunde. Jeder braucht nur ein Android-Handy und die Google-Adresse, mit der er im Play Store angemeldet ist (meist @gmail.com). Ein FinestSites-Konto ist nicht nötig.</li>
         <li><b>Kunden mit Android:</b> Sag mir Bescheid, dann ziehe ich dir aus unserer Datenbank die Nutzer, die sich zuletzt mit einem Android-Gerät angemeldet haben. Dann fragst du gezielt.</li>
-        <li><b>Was du ihnen sagst:</b> den Text unten per WhatsApp oder E-Mail. Noch ohne Link, der kommt nach Googles Freigabe.</li>
+        <li><b>Was du ihnen sagst:</b> den WhatsApp-Text unten, der Link ist schon drin.</li>
         <li><b>An mich:</b> die Adressen als Liste (eine pro Zeile oder mit Komma). Ich trage sie in der Console ein.</li>
       </ol>
       <div class="note">Google zählt nur Tester, die <b>14 Tage am Stück</b> angemeldet bleiben. Deshalb mehr als 12 einladen und allen sagen: nicht deinstallieren.</div></div></details></li>
   </ol>
 
-  <h2><span class="n">2</span>Wenn Google die Prüfung freigibt</h2>
-  <p class="lead">Du bekommst eine E-Mail von Google Play. Dann:</p>
+  <h2><span class="n">2</span>Sobald du Adressen hast</h2>
+  <p class="lead">Google hat schon freigegeben. Deshalb geht es direkt weiter:</p>
   <ol class="steps">
     <li><details class="step" data-id="invite"><summary><span class="box" role="checkbox"></span><span class="ttl">Einladungslink an die Tester schicken</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
       <div class="body"><ol>
-        <li>Ich hole den Link aus der Console und schicke ihn dir (oder du findest ihn unter <b>Testen und veröffentlichen → Test → Geschlossener Test → Alpha → Tester → Link kopieren</b>).</li>
+        <li>Der Link lautet <code>https://play.google.com/apps/testing/io.finestsites.app</code>. Er funktioniert für jeden Tester erst, wenn seine Adresse in der Liste steht. Darum: Adressen an mich, ich trage sie ein, dann Link raus.</li>
         <li>Du schickst ihn mit dem Text unten an alle Tester. Verschickt wird nur von dir.</li>
         <li>Jeder Tester: Link auf dem Android-Handy öffnen → „Tester werden“ → installieren. Fertig.</li>
       </ol></div></details></li>
@@ -125,18 +125,21 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
   <h2><span class="n">5</span>Text für die Tester</h2>
   <div class="card">
-    <p class="small" style="margin:0 0 8px">Jetzt schon zum Vorwarnen, der Link kommt nach Googles Freigabe hinterher.</p>
-    <div class="copy"><pre>Hallo [Name],
+    <p class="small" style="margin:0 0 8px">Erst die Gmail-Adresse einsammeln (Text 1), nach dem Eintragen den Link schicken (Text 2).</p>
+    <h3 style="margin:0 0 4px;font-size:15px">Text 1: Anfrage</h3>
+    <div class="copy"><pre>Hey [Name] 👋
+kurze Bitte an dich: Die FinestSites-App gibt's bald auch für Android. Bevor Google uns in den Play Store lässt, wollen die, dass ein paar echte Leute die App vorher ausprobieren. Da hab ich an dich gedacht 😊
 
-kurze Bitte: Die FinestSites-App kommt jetzt auch für Android, und Google verlangt vor dem Start einen Test mit echten Nutzern. Hast du ein Android-Handy und 2 Minuten?
+Was ich bräuchte: Du hast ein Android-Handy, ich schick dir einen Link. Den tippst du an, drückst auf „Tester werden“ und installierst die App aus dem Play Store. Das war's. Du musst nichts testen oder berichten, nur installiert lassen und ab und zu mal reinschauen, so 2 Wochen lang. Bitte in der Zeit nicht löschen, sonst zählt's für Google nicht.
 
-So geht's: Du bekommst von mir in den nächsten Tagen einen Link. Den öffnest du auf dem Handy, tippst auf „Tester werden“ und installierst die App aus dem Play Store. Danach einfach installiert lassen und ab und zu öffnen, mindestens 14 Tage. Bitte in der Zeit nicht deinstallieren.
+Wenn du ein FinestSites-Konto hast, kannst du dich ganz normal anmelden und deine Anfragen aufs Handy bekommen. Wenn nicht, auch egal, installieren reicht.
 
-Wenn du ein FinestSites-Konto hast, kannst du dich ganz normal anmelden. Wenn nicht, reicht das Installieren.
+Wärst du dabei? Dann schick mir einfach kurz die Gmail-Adresse, mit der du im Play Store angemeldet bist. Dann trag ich dich ein. Danke dir! 🙏</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+    <h3 style="margin:18px 0 4px;font-size:15px">Text 2: Link (nachdem ich die Adresse eingetragen habe)</h3>
+    <div class="copy"><pre>Du bist eingetragen 🎉 Hier der Link, bitte auf dem Android-Handy öffnen (mit der Gmail-Adresse, die du mir geschickt hast):
+https://play.google.com/apps/testing/io.finestsites.app
 
-Schick mir einfach kurz die E-Mail-Adresse, mit der du im Play Store angemeldet bist (meist deine Gmail-Adresse). Danke dir!
-
-Daniel</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+Dann auf „Tester werden“ tippen und über den Play-Store-Link installieren. Installiert lassen, ab und zu reinschauen, nicht löschen. Mehr ist nicht zu tun. Danke dir! 🙏</pre><button class="btn ghost" data-copy>Kopieren</button></div>
   </div>
 
   <h2><span class="n">6</span>Zeitplan</h2>
