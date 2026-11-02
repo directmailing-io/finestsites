@@ -22,7 +22,17 @@ export default function DashboardError({
   useEffect(() => {
     if (isStaleDeploymentError(error)) {
       window.location.reload()
+      return
     }
+    // Fehler ans Server-Log melden (App-WebView auf Android/iOS hat sonst keine sichtbare Konsole)
+    try {
+      void fetch('/api/client-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: `${error.name}: ${error.message}`, stack: error.stack, digest: error.digest, url: window.location.href }),
+        keepalive: true,
+      }).catch(() => {})
+    } catch { /* egal */ }
   }, [error])
 
   // Show nothing while reloading (stale deployment errors)
