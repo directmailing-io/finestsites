@@ -9,12 +9,17 @@
  */
 import { db } from '@/lib/db'
 import { sql } from 'drizzle-orm'
+import { users } from '@/lib/db/schema'
 import { loadAllRecipients, sendCategoryMail, type BulkRecipient } from '@/lib/email/bulk'
-import { appLaunch202611Email, APP_LAUNCH_2026_11_SUBJECT } from '@/lib/email/templates'
+import { appLaunch202611Email, appLaunch202611Text, APP_LAUNCH_2026_11_SUBJECT } from '@/lib/email/templates'
 
 const argv = process.argv.slice(2)
 const opt = (k: string) => { const i = argv.indexOf(k); return i > -1 ? argv[i + 1] : undefined }
 const SEND = argv.includes('--send')
+
+// „in deinem Tarif inklusive“ nur für Konten mit Abo, sonst „in jedem Tarif inklusive“
+const WITH_SUB = new Set(['active', 'past_due', 'trialing'])
+let withPlan = new Set<string>()
 
 async function send(recipients: BulkRecipient[], isTest: boolean) {
   console.log(`\n== ${recipients.length} Empfänger vor Opt-out-Filter · ${SEND ? 'VERSAND' : 'Trockenlauf'}`)
@@ -23,7 +28,9 @@ async function send(recipients: BulkRecipient[], isTest: boolean) {
     category: 'updates',
     type: 'product_update',
     subject: APP_LAUNCH_2026_11_SUBJECT,
-    buildHtml: (u, prefs) => appLaunch202611Email({ firstName: u.firstName ?? undefined, prefs }),
+    buildHtml: (u, prefs) => appLaunch202611Email({ firstName: u.firstName ?? undefined, hasPlan: withPlan.has(u.id), prefs }),
+    buildText: (u, prefs) => appLaunch202611Text({ firstName: u.firstName ?? undefined, hasPlan: withPlan.has(u.id), prefs }),
+    replyTo: 'info@finestsites.io',
     recipients,
     dryRun: !SEND,
     onProgress: m => console.log('  ' + m),
@@ -40,6 +47,9 @@ async function send(recipients: BulkRecipient[], isTest: boolean) {
 
 async function main() {
   const all = await loadAllRecipients()
+  const subs = await db.select({ id: users.id, status: users.subscriptionStatus }).from(users)
+  withPlan = new Set(subs.filter(r => WITH_SUB.has(r.status ?? '')).map(r => r.id))
+  console.log(`Mit Abo: ${all.filter(u => withPlan.has(u.id)).length} · ohne Abo: ${all.filter(u => !withPlan.has(u.id)).length}`)
   const to = opt('--to')
   if (to) {
     const r = all.filter(u => u.email.toLowerCase() === to.toLowerCase())

@@ -89,6 +89,7 @@ export async function sendCategoryMail({
   subject,
   body,
   buildHtml,
+  buildText,
   recipients,
   dryRun = false,
   onProgress,
@@ -105,6 +106,8 @@ export async function sendCategoryMail({
   body?: string
   /** Fertige Vorlage aus templates.ts (bekommt den Footer über `prefs`), statt `body` */
   buildHtml?: (u: BulkRecipient, prefs?: PrefsFooter) => string
+  /** Reine Textfassung zur Vorlage (hilft gegen Spam-Filter, für Mailprogramme ohne HTML) */
+  buildText?: (u: BulkRecipient, prefs?: PrefsFooter) => string
   recipients: BulkRecipient[]
   /** true = nur zählen und filtern, nichts senden, nichts loggen */
   dryRun?: boolean
@@ -144,7 +147,9 @@ export async function sendCategoryMail({
         : personal
           ? personalEmail({ body: interpolate(body!, u), prefs })
           : newsletterEmail({ subject: personalSubject, bodyHtml: markupToHtml(interpolate(body!, u)), prefs })
-      const text = !buildHtml && personal ? personalEmailText({ body: interpolate(body!, u), prefs }) : undefined
+      const text = buildText
+        ? buildText(u, prefs)
+        : !buildHtml && personal ? personalEmailText({ body: interpolate(body!, u), prefs }) : undefined
       return { u, personalSubject, html, text, headers: unsub ? listUnsubscribeHeaders(unsub) : undefined }
     })
     try {
