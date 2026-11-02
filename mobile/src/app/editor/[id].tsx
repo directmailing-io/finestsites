@@ -86,7 +86,7 @@ export default function EditorScreen() {
             text: 'Hilfe öffnen',
             onPress: () => {
               router.back();
-              router.navigate('/help');
+              router.navigate('/account/help');
             },
           },
         ]);

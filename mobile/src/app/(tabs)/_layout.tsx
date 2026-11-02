@@ -10,7 +10,7 @@ import { colors, fonts } from '@/theme/tokens';
  * Tab-Leiste exakt wie die Handy-Navigation der Webapp (src/components/dashboard/MobileNav.tsx):
  * Webseite · Anfragen · (Chats) · Partner · Mehr – gleiche Reihenfolge, gleiche Namen, gleiche Symbole.
  * „Mehr“ enthält wie im Web Support, Einstellungen und Abmelden (dazu Neuigkeiten und die App-Mitteilungen).
- * Der Support-Tab bleibt als versteckte Route erreichbar (/help), damit Links und Mitteilungen weiter funktionieren.
+ * Support liegt als Bildschirm im „Mehr“-Stapel (/account/help), Mitteilungen und Links zeigen dorthin.
  * Dazwischen „Chats“ (Besucher-Chat) – nur für freigeschaltete Konten (me.features.visitorChat).
  * Auf dem iPad je nach Fenster oben bzw. als Seitenleiste (native Tab-Leiste).
  */
@@ -73,10 +73,6 @@ export default function TabsLayout() {
       <NativeTabs.Trigger name="partner" hidden={!partnerVisible}>
         <NativeTabs.Trigger.Label>Partner</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon sf={{ default: 'person.2', selected: 'person.2.fill' }} md="group" />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="help" hidden>
-        <NativeTabs.Trigger.Label>Support</NativeTabs.Trigger.Label>
-        <NativeTabs.Trigger.Icon sf={{ default: 'bubble.left', selected: 'bubble.left.fill' }} md="chat_bubble" />
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="account">
         <NativeTabs.Trigger.Label>Mehr</NativeTabs.Trigger.Label>

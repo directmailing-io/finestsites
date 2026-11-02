@@ -35,7 +35,7 @@ export function appPathForWebPath(pathname: string, search = ''): string | null 
     }
     case 'support': {
       const s = id(seg[1]);
-      return s ? `/help/${s}` : '/help';
+      return s ? `/account/help/${s}` : '/account/help';
     }
     case 'chats': {
       const s = id(seg[1]);

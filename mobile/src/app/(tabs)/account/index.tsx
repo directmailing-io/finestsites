@@ -46,7 +46,7 @@ export default function MoreScreen() {
       ) : null}
 
       <View style={styles.card}>
-        <Row icon={MessageCircle} label="Support" href="/help" badge={unreadSupport} />
+        <Row icon={MessageCircle} label="Support" href="/account/help" badge={unreadSupport} />
         <Row icon={Settings} label="Einstellungen" href="/account/settings" />
         <Row icon={Megaphone} label="Neuigkeiten" href="/account/news" badge={unreadNews} tone="accent" />
         <Row icon={Bell} label="Mitteilungen" href="/account/messages" badge={unreadNotifications} />

@@ -15,7 +15,7 @@ export default function ChatScreen() {
       <Stack.Screen options={{ title: isNew ? 'Neues Gespräch' : conv ? chatTitle(conv.subject, conv.createdAt) : 'Support' }} />
       <ChatThread
         conversationId={isNew ? null : id}
-        onCreated={newId => router.replace({ pathname: '/help/[id]', params: { id: newId } })}
+        onCreated={newId => router.replace({ pathname: '/account/help/[id]', params: { id: newId } })}
       />
     </>
   );

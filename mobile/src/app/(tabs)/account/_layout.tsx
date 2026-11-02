@@ -15,6 +15,9 @@ export default function AccountStack() {
       <Stack.Screen name="emails" options={{ title: 'E-Mails' }} />
       <Stack.Screen name="password" options={{ title: 'Passwort ändern' }} />
       <Stack.Screen name="delete" options={{ title: 'Konto löschen' }} />
+      {/* Support seit 02.11.2026 unter „Mehr“ (Daniel), eigene Kopfzeile mit Zurück-Pfeil */}
+      <Stack.Screen name="help/index" options={{ headerShown: false }} />
+      <Stack.Screen name="help/[id]" options={{ title: 'Support' }} />
     </Stack>
   );
 }

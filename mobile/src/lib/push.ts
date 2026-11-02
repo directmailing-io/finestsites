@@ -163,7 +163,7 @@ export async function setBadge(count: number) {
   await Notifications.setBadgeCountAsync(Math.max(0, count)).catch(() => false);
 }
 
-const ALLOWED_ROUTES = ['/inbox', '/help', '/chats', '/sites', '/account', '/account/news', '/partner'];
+const ALLOWED_ROUTES = ['/inbox', '/account/help', '/chats', '/sites', '/account', '/account/news', '/partner'];
 const ID_RE = /^[A-Za-z0-9-]{1,64}$/;
 
 /**
@@ -180,7 +180,7 @@ export function routeFromNotification(data: unknown): string | null {
       case 'submissions':
         return withId('/inbox');
       case 'support':
-        return withId('/help');
+        return withId('/account/help');
       case 'chats':
         return withId('/chats');
       case 'sites':

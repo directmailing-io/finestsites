@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { MessageCircle } from 'lucide-react-native';
+import { ChevronLeft, MessageCircle } from 'lucide-react-native';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, RefreshControl, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -41,7 +41,7 @@ export default function SupportScreen() {
 
   const open = (id: string | 'new') => {
     if (regular) setSelected(id);
-    else router.push({ pathname: '/help/[id]', params: { id } });
+    else router.push({ pathname: '/account/help/[id]', params: { id } });
   };
 
   const remove = async (id: string) => {
@@ -63,6 +63,11 @@ export default function SupportScreen() {
   const header = (
     <View style={{ marginBottom: 20 }}>
       <View style={styles.head}>
+        {router.canGoBack() ? (
+          <Pressable onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Zurück" hitSlop={10} style={styles.back}>
+            <ChevronLeft size={24} color={colors.ink} strokeWidth={2} />
+          </Pressable>
+        ) : null}
         <SupportAvatar size={36} />
         <View>
           <Text style={styles.h1} accessibilityRole="header">
@@ -148,6 +153,7 @@ export default function SupportScreen() {
 
 const styles = StyleSheet.create({
   head: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  back: { width: 36, height: 36, borderRadius: 12, backgroundColor: colors.muted, alignItems: 'center', justifyContent: 'center', marginRight: 2 },
   // h1 text-xl font-bold leading-tight
   h1: { fontFamily: fonts.bold, fontSize: 20, lineHeight: 25, color: colors.ink },
   status: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
