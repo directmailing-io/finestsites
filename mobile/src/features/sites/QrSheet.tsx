@@ -1,11 +1,11 @@
 import * as Clipboard from 'expo-clipboard';
 import { File, Paths } from 'expo-file-system';
-import { Copy, Share2 } from 'lucide-react-native';
+import { Check, Copy, Share2 } from 'lucide-react-native';
 import { useRef, useState } from 'react';
 import { StyleSheet, View, type HostInstance } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 
-import { Button, Sheet, Text, useToast } from '@/components/ui';
+import { Button, Notice, Sheet, Text } from '@/components/ui';
 import { shareFile } from '@/lib/share';
 import { colors, radius } from '@/theme/tokens';
 
@@ -18,7 +18,10 @@ interface QrRef {
  * (darüber auch „Bild sichern“), Link kopieren.
  */
 export function QrSheet({ visible, onClose, url, title }: { visible: boolean; onClose: () => void; url: string; title: string }) {
-  const toast = useToast();
+  // Rückmeldung direkt im Fenster: Toasts liegen unter dem Modal und sind hier nicht sichtbar
+  // (Android, Daniel 02.11.2026: „Link kopieren – passiert nichts“)
+  const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const qrRef = useRef<QrRef | null>(null);
   const shareRef = useRef<HostInstance>(null);
   const [busy, setBusy] = useState(false);
@@ -32,7 +35,7 @@ export function QrSheet({ visible, onClose, url, title }: { visible: boolean; on
       await file.write(base64, { encoding: 'base64' });
       await shareFile(file.uri, shareRef, { mimeType: 'image/png', UTI: 'public.png', title: 'QR-Code teilen' });
     } catch {
-      toast.show('QR-Code konnte nicht erstellt werden.', 'error');
+      setError('QR-Code konnte nicht erstellt werden. Bitte nochmal versuchen.');
     }
     setBusy(false);
   }
@@ -46,15 +49,22 @@ export function QrSheet({ visible, onClose, url, title }: { visible: boolean; on
         {url.replace(/^https:\/\//, '')}
       </Text>
       <View style={{ gap: 8, marginTop: 8 }}>
+        {error ? <Notice tone="danger">{error}</Notice> : null}
         <Button ref={shareRef} title="Als Bild teilen oder sichern" icon={Share2} onPress={shareImage} loading={busy} fullWidth />
         <Button
-          title="Link kopieren"
-          icon={Copy}
+          title={copied ? 'Link kopiert' : 'Link kopieren'}
+          icon={copied ? Check : Copy}
           variant="secondary"
           fullWidth
           onPress={async () => {
-            await Clipboard.setStringAsync(url);
-            toast.show('Link kopiert', 'success');
+            setError(null);
+            try {
+              await Clipboard.setStringAsync(url);
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2500);
+            } catch {
+              setError('Kopieren hat nicht geklappt.');
+            }
           }}
         />
       </View>
