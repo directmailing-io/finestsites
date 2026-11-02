@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play Store Veröffentlichung</title>
+<style>
+:root{
+  --bg:#f6f6f4;--card:#fff;--ink:#1a1a1a;--muted:#6b6b6b;--line:#e7e5e1;--soft:#f1f0ed;
+  --accent:#7c3aed;--accent-soft:#f3edff;--ok:#16794c;--ok-soft:#e8f6ee;--warn:#9a5b00;--warn-soft:#fff4e0;
+  --you:#0b62d6;--you-soft:#e8f1ff;--r:16px;--shadow:0 1px 2px rgba(0,0,0,.04),0 4px 16px rgba(0,0,0,.04);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;
+  --accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;
+  --you:#60a5fa;--you-soft:#132338;--shadow:none}}
+:root[data-theme="dark"]{
+  --bg:#121212;--card:#1c1c1c;--ink:#f2f2f2;--muted:#a3a3a3;--line:#2c2c2c;--soft:#242424;
+  --accent:#a78bfa;--accent-soft:#2a2140;--ok:#4ade80;--ok-soft:#14281c;--warn:#fbbf24;--warn-soft:#2d2410;
+  --you:#60a5fa;--you-soft:#132338;--shadow:none}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Inter","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:32px 16px 110px}
+h1{font-size:28px;line-height:1.2;margin:0;letter-spacing:-.015em}
+.sub{color:var(--muted);margin:6px 0 0}
+nav.toc{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin:20px -16px 8px;padding:10px 16px;display:flex;gap:8px;overflow-x:auto}
+nav.toc a{white-space:nowrap;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:13px;font-weight:500}
+section{margin-top:36px}
+h2{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+h2 .n{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--ink);color:var(--bg);font-size:13px;margin-right:8px;vertical-align:2px}
+.lead{color:var(--muted);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px;font-size:16px}
+.card ul{margin:0;padding-left:18px}.card li{margin:5px 0}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;vertical-align:1px}
+.pill.you{background:var(--you-soft);color:var(--you)}.pill.me{background:var(--accent-soft);color:var(--accent)}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.phase{margin:28px 0 6px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.step summary{list-style:none;cursor:pointer;display:flex;gap:12px;align-items:center;padding:16px}
+.step summary::-webkit-details-marker{display:none}
+.step .box{width:24px;height:24px;border-radius:8px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;cursor:pointer;background:var(--card)}
+.step.done .box{background:var(--ok);border-color:var(--ok)}
+.step.done .box::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.step.done .ttl{text-decoration:line-through;color:var(--muted)}
+.step .ttl{font-weight:600;flex:1}
+.step .meta{font-size:12px;color:var(--muted);white-space:nowrap}
+.step .chev{width:18px;height:18px;color:var(--muted);transition:transform .2s;flex:none}
+.step[open] .chev{transform:rotate(90deg)}
+.step .body{padding:0 16px 18px 52px;font-size:14.5px}
+@media (max-width:560px){.step .body{padding-left:16px}.step .meta{display:none}}
+.step ol{margin:4px 0 0;padding-left:20px}.step ol li{margin:6px 0}
+a{color:var(--accent)}
+code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px;word-break:break-word}
+.give{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--you-soft);font-size:14px}.give b{color:var(--you)}
+.note{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--warn-soft);font-size:14px}
+.okbox{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--ok-soft);font-size:14px}
+.table{width:100%;border-collapse:collapse;font-size:14px}
+.table td,.table th{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.table th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600}
+.table tr:last-child td{border-bottom:0}
+.scroll{overflow-x:auto}
+.copy{position:relative;margin-top:8px}
+.copy pre{margin:0;white-space:pre-wrap;font:14px/1.55 inherit;background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:14px;padding-right:96px}
+.copy button{position:absolute;top:8px;right:8px}
+.btn{appearance:none;border:0;background:var(--ink);color:var(--bg);font:600 13px/1 inherit;padding:9px 12px;border-radius:12px;cursor:pointer}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.count{font-size:12px;color:var(--muted)}
+.sumbar{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1px solid var(--line);padding:12px 16px}
+.sumbar .in{max-width:920px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.progress{flex:1}.bar{height:6px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+.small{font-size:13px;color:var(--muted)}
+footer{margin-top:40px;font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>FinestSites im Play Store veröffentlichen</h1>
+  <p class="sub">Genau in dieser Reihenfolge, Klick für Klick. Stand 02.11.2026. Deine Häkchen merkt sich die Seite im Browser.</p>
+
+  <nav class="toc">
+    <a href="#heute">Heute</a><a href="#tester">Tester</a><a href="#danach">Nach 14 Tagen</a><a href="#texte">Texte</a><a href="#antworten">Antworten</a><a href="#ich">Was ich mache</a>
+  </nav>
+
+  <div class="card" style="margin-top:16px">
+    <h3>So läuft es</h3>
+    <ul>
+      <li><b>Heute</b> (ca. 90 Minuten): App anlegen, Fragebögen, Store-Eintrag, Build hochladen. Danach hast du die App schon auf deinem Handy (interner Test, ohne Wartezeit).</li>
+      <li><b>Dann:</b> geschlossener Test mit mindestens 12 Testern über 14 Tage am Stück. Das verlangt Google bei neuen privaten Konten, da führt kein Weg dran vorbei.</li>
+      <li><b>Nach 14 Tagen:</b> Produktionszugriff beantragen (Google antwortet meist in bis zu 7 Tagen), dann veröffentlichen.</li>
+    </ul>
+    <div class="okbox">Alles, was du hochlädst, liegt in <code>~/Downloads/app-store</code>: <code>finestsites.aab</code> (Version 1.0.0, Build 4), <code>play-icon-512.png</code>, <code>play-feature-graphic.png</code>, Screenshots unter <code>screenshots/play-phone</code> und <code>screenshots/play-tablet-10</code>, Prüfer-Zugang in <code>pruefer-zugang.txt</code>.</div>
+  </div>
+
+  <section id="heute">
+    <h2><span class="n">1</span>Heute</h2>
+    <p class="lead">Alles in der <a href="https://play.google.com/console" target="_blank" rel="noopener">Play Console</a>. Wenn Google ein Feld anders nennt als hier, nimm das, was am ehesten passt – die Reihenfolge bleibt gleich.</p>
+
+    <div class="phase">A · App anlegen</div>
+    <ol class="steps">
+      <li><details class="step" data-id="create"><summary><span class="box" role="checkbox"></span><span class="ttl">App erstellen</span><span class="meta">3 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li>Startseite → <b>App erstellen</b> (der blaue Knopf auf deinem Screenshot).</li>
+          <li><b>App-Name:</b> <code>FinestSites</code> · <b>Standardsprache:</b> Deutsch (Deutschland) · <b>App oder Spiel:</b> App · <b>Kostenlos oder kostenpflichtig:</b> Kostenlos.</li>
+          <li><b>Erklärungen:</b> alle drei Haken setzen (Programmrichtlinien, US-Exportbestimmungen, Play App-Signatur) → <b>App erstellen</b>.</li>
+          <li>Du landest auf dem <b>Dashboard</b> der App. Dort steht oben eine Aufgabenliste „App einrichten“; die arbeiten wir in B und C ab. Jede erledigte Aufgabe bekommt ein grünes Häkchen.</li>
+        </ol></div></details></li>
+    </ol>
+
+    <div class="phase">B · Fragebögen „App-Inhalte“</div>
+    <p class="small" style="margin:0 0 10px">Erreichbar über die Dashboard-Aufgaben oder links unten <b>Richtlinien und Programme → App-Inhalte</b>. Antworten stehen in <a href="#antworten">Abschnitt 5</a>, hier nur die Klicks.</p>
+    <ol class="steps">
+      <li><details class="step" data-id="privacy"><summary><span class="box" role="checkbox"></span><span class="ttl">Datenschutzerklärung</span><span class="meta">1 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol><li>URL eintragen: <code>https://finestsites.io/datenschutz</code> → Speichern.</li></ol></div></details></li>
+
+      <li><details class="step" data-id="access"><summary><span class="box" role="checkbox"></span><span class="ttl">App-Zugriff (Prüfer-Konto)</span><span class="meta">5 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Alle oder einige Funktionen sind eingeschränkt</b> wählen → <b>Neue Anleitung hinzufügen</b>.</li>
+          <li><b>Name der Anleitung:</b> <code>Prüfer-Konto</code> · <b>Nutzername:</b> <code>app-review@finestsites.io</code> · <b>Passwort:</b> aus <code>pruefer-zugang.txt</code> · <b>Weitere Informationen:</b> Text „Für den Prüfer“ aus <a href="#texte">Abschnitt 4</a>.</li>
+          <li>Haken „Die Anleitung ist vollständig …“ → Speichern.</li>
+        </ol></div></details></li>
+
+      <li><details class="step" data-id="ads"><summary><span class="box" role="checkbox"></span><span class="ttl">Werbung</span><span class="meta">1 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol><li><b>Nein, meine App enthält keine Werbung</b> → Speichern.</li></ol></div></details></li>
+
+      <li><details class="step" data-id="rating"><summary><span class="box" role="checkbox"></span><span class="ttl">Einstufung des Inhalts (IARC)</span><span class="meta">5 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Fragebogen starten</b> → E-Mail: <code>info@finestsites.io</code> → Kategorie <b>Dienstprogramm, Produktivität, Kommunikation oder Sonstiges</b>.</li>
+          <li>Alle Fragen <b>Nein</b>, außer: „Können Nutzer miteinander interagieren / Inhalte austauschen?“ → <b>Ja</b> (Besucher-Chat und Support-Chat). Fragen nach Standortfreigabe, Käufen, Glücksspiel: Nein.</li>
+          <li>Speichern → <b>Weiter</b> → <b>Senden</b>. Ergebnis: USK 0 / PEGI 3 o. ä.</li>
+        </ol></div></details></li>
+
+      <li><details class="step" data-id="audience"><summary><span class="box" role="checkbox"></span><span class="ttl">Zielgruppe und Inhalte</span><span class="meta">2 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li>Altersgruppe: nur <b>18 und älter</b> → Weiter.</li>
+          <li>„Könnte die App unbeabsichtigt Kinder ansprechen?“ → <b>Nein</b> → Speichern.</li>
+        </ol></div></details></li>
+
+      <li><details class="step" data-id="misc"><summary><span class="box" role="checkbox"></span><span class="ttl">Nachrichten-Apps · Behörden · Finanzen · Gesundheit · Werbe-ID</span><span class="meta">3 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Nachrichten-Apps:</b> Nein.</li>
+          <li><b>Behörden-Apps:</b> Nein.</li>
+          <li><b>Finanzfunktionen:</b> „Meine App bietet keine der genannten Finanzfunktionen“.</li>
+          <li><b>Gesundheit:</b> „Meine App ist keine Gesundheits-App“ bzw. keine der Funktionen auswählen.</li>
+          <li><b>Werbe-ID</b> (falls gefragt): <b>Nein</b>, die App verwendet keine Werbe-ID.</li>
+        </ol></div></details></li>
+
+      <li><details class="step" data-id="datasafety"><summary><span class="box" role="checkbox"></span><span class="ttl">Datensicherheit</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Übersicht:</b> „Erhebt oder teilt die App Nutzerdaten?“ → <b>Ja</b>. „Werden alle Daten verschlüsselt übertragen?“ → <b>Ja</b>. „Können Nutzer die Löschung beantragen?“ → <b>Ja</b> → Löschlink: <code>https://finestsites.io/konto-loeschen</code>. „Unabhängige Sicherheitsprüfung“ → Nein.</li>
+          <li><b>Datentypen</b> anhaken, danach je Typ: <i>Erhoben: Ja · Geteilt: Nein · Erforderlich (nicht optional) · Zweck: App-Funktionen und Kontoverwaltung</i>. Ausnahme Fotos: optional. Die Liste steht in <a href="#antworten">Abschnitt 5</a>.</li>
+          <li>Speichern → Vorschau prüfen → <b>Senden</b>.</li>
+        </ol></div></details></li>
+    </ol>
+
+    <div class="phase">C · Store-Eintrag</div>
+    <ol class="steps">
+      <li><details class="step" data-id="category"><summary><span class="box" role="checkbox"></span><span class="ttl">Kategorie und Kontaktdaten</span><span class="meta">3 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Mehr Nutzer gewinnen → App-Präsenz im Play Store → Play Store-Einstellungen</b>.</li>
+          <li><b>App-Kategorie:</b> App · <b>Business</b>. Tags (optional): „Website-Erstellung“, „Produktivität“ o. ä.</li>
+          <li><b>Kontaktdaten:</b> E-Mail <code>info@finestsites.io</code> · Website <code>https://finestsites.io</code> · Telefon: deine Nummer (wird im Store gezeigt, du kannst sie weglassen).</li>
+          <li>Speichern.</li>
+        </ol></div></details></li>
+
+      <li><details class="step" data-id="listing"><summary><span class="box" role="checkbox"></span><span class="ttl">Store-Haupteintrag (Texte und Bilder)</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Mehr Nutzer gewinnen → App-Präsenz im Play Store → Store-Haupteintrag</b>.</li>
+          <li><b>App-Name</b>, <b>Kurze Beschreibung</b>, <b>Vollständige Beschreibung</b> aus <a href="#texte">Abschnitt 4</a> einfügen.</li>
+          <li><b>App-Symbol:</b> <code>play-icon-512.png</code> · <b>Funktionsgrafik:</b> <code>play-feature-graphic.png</code>.</li>
+          <li><b>Smartphone-Screenshots:</b> die 4 Bilder aus <code>screenshots/play-phone</code> (in der Reihenfolge 01–04).</li>
+          <li><b>7-Zoll-Tablet</b> und <b>10-Zoll-Tablet:</b> jeweils die 4 Bilder aus <code>screenshots/play-tablet-10</code> (beide Felder bekommen dieselben Bilder).</li>
+          <li>Speichern.</li>
+        </ol>
+        <div class="note">Die Bilder zeigen noch einen iPhone-Rahmen. Für den Test ist das egal; ich tausche sie während der 14 Tage gegen Fassungen mit Android-Rahmen, du lädst sie dann an derselben Stelle neu hoch.</div></div></details></li>
+    </ol>
+
+    <div class="phase">D · Build hochladen, sofort aufs Handy</div>
+    <ol class="steps">
+      <li><details class="step" data-id="internal"><summary><span class="box" role="checkbox"></span><span class="ttl">Interner Test anlegen und finestsites.aab hochladen</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Testen und veröffentlichen → Test → Interner Test</b> → Tab <b>Tester</b> → <b>E-Mail-Liste erstellen</b>: Name <code>Intern</code>, deine Google-Adresse vom Handy eintragen → Speichern → Liste anhaken → <b>Änderungen speichern</b>.</li>
+          <li>Tab <b>Releases</b> → <b>Neuen Release erstellen</b>.</li>
+          <li>Falls ein Fenster <b>Play App-Signatur</b> erscheint: <b>Von Google generierten Schlüssel verwenden</b> (Standard) bestätigen. Nichts hochladen, keinen eigenen Schlüssel.</li>
+          <li><b>App-Bundles:</b> <code>finestsites.aab</code> hineinziehen, warten bis „1.0.0 (4)“ erscheint.</li>
+          <li><b>Release-Name:</b> <code>1.0.0 (4)</code> · <b>Versionshinweise</b> (de-DE): <code>Erste Version.</code></li>
+          <li><b>Weiter</b> → Warnungen lesen (gelbe sind ok) → <b>Speichern und veröffentlichen</b> bzw. <b>Einführung starten</b>.</li>
+          <li>Tab <b>Tester</b> → <b>Link zum Teilen</b> kopieren.</li>
+        </ol>
+        <div class="okbox">Interne Tests sind sofort verfügbar, ohne Prüfung durch Google. Beim allerersten Mal kann der Link ein paar Stunden brauchen.</div></div></details></li>
+
+      <li><details class="step" data-id="phone"><summary><span class="box" role="checkbox"></span><span class="ttl">Auf dem Handy installieren und Push testen</span><span class="meta">10 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li>Auf dem Handy, mit demselben Google-Konto: den <b>Link zum Teilen</b> öffnen → <b>Tester werden</b> → „Im Play Store herunterladen“ → installieren.</li>
+          <li>FinestSites öffnen, mit deinem normalen Konto (demo) anmelden.</li>
+          <li><b>Mehr → Einstellungen → Konto → Push-Mitteilungen → Mitteilungen erlauben</b> → im Android-Fenster <b>Zulassen</b>.</li>
+          <li>Einmal durchklicken: Webseite bearbeiten, Anfragen, Support, Chats.</li>
+        </ol>
+        <div class="give"><b>An mich:</b> Sag Bescheid, sobald die App drauf ist. Dann löse ich eine Test-Mitteilung aus und prüfe, ob sie auf deinem Handy ankommt. Im Emulator ging das nicht.</div></div></details></li>
+
+      <li><details class="step" data-id="sha"><summary><span class="box" role="checkbox"></span><span class="ttl">Signatur-Fingerabdruck an mich</span><span class="meta">2 Min</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Testen und veröffentlichen → App-Integrität</b> → Reiter <b>Play App-Signatur</b>.</li>
+          <li>Unter <b>Zertifikat des App-Signaturschlüssels</b> den <b>SHA-256-Zertifikat-Fingerabdruck</b> kopieren (lange Zeichenkette mit Doppelpunkten).</li>
+        </ol>
+        <div class="give"><b>An mich:</b> den Fingerabdruck schicken (er ist nicht geheim). Ich trage ihn in die Link-Bestätigung ein, damit Links aus E-Mails auf jedem Android-Handy direkt die App öffnen. Bis dahin klappt das nur mit meinen Testbuilds.</div></div></details></li>
+    </ol>
+  </section>
+
+  <section id="tester">
+    <h2><span class="n">2</span>Geschlossener Test mit 12+ Testern</h2>
+    <p class="lead">Der Test zählt nur, wenn mindestens 12 Tester 14 Tage am Stück angemeldet bleiben. Wer aussteigt, zählt nicht mehr. Deshalb 18 bis 20 einladen.</p>
+    <ol class="steps">
+      <li><details class="step" data-id="testerlist"><summary><span class="box" role="checkbox"></span><span class="ttl">Tester sammeln</span><span class="meta">heute anfangen</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li>Wer passt: Kunden mit Android-Handy, Teampartner, Familie, Freunde. Jeder braucht ein <b>Google-Konto</b> (Gmail-Adresse oder die Adresse, mit der das Handy im Play Store angemeldet ist).</li>
+          <li>Liste als Text sammeln: eine Adresse je Zeile oder mit Komma getrennt.</li>
+          <li>Wichtig für alle: App installieren und <b>14 Tage nicht deinstallieren</b>, am besten ein paarmal öffnen.</li>
+        </ol>
+        <div class="note">Die Einladung (Text in <a href="#texte">Abschnitt 4</a>) verschickst du selbst, oder du gibst mir ausdrücklich frei, dass ich sie an eine Liste schicke. Ohne dein Ja geht von mir nichts raus.</div></div></details></li>
+
+      <li><details class="step" data-id="closed"><summary><span class="box" role="checkbox"></span><span class="ttl">Geschlossenen Test einrichten und zur Prüfung geben</span><span class="meta">10 Min + Google 1–7 Tage</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Testen und veröffentlichen → Test → Geschlossener Test</b>. Ein Track (meist „Alpha“) ist schon da → <b>Track verwalten</b>.</li>
+          <li>Tab <b>Tester</b> → <b>E-Mail-Liste erstellen</b>: Name <code>Kundentest</code>, alle Adressen einfügen → Speichern → Liste anhaken → <b>Feedback-E-Mail:</b> <code>info@finestsites.io</code> → <b>Änderungen speichern</b>.</li>
+          <li>Tab <b>Releases</b> → <b>Neuen Release erstellen</b> → <b>Aus Bibliothek hinzufügen</b> → <code>1.0.0 (4)</code> wählen (nicht neu hochladen).</li>
+          <li>Release-Name <code>1.0.0 (4)</code>, Versionshinweise <code>Erste Version.</code> → <b>Weiter</b> → <b>Speichern</b>.</li>
+          <li>Links <b>Veröffentlichung – Übersicht</b> öffnen: unter „Überprüfungsreife Änderungen“ auf <b>Änderungen senden</b>. Jetzt prüft Google die App zum ersten Mal (meist 1–3 Tage, bis zu 7).</li>
+          <li>Wenn im Dashboard „Veröffentlicht“ steht: Tab <b>Tester</b> → <b>Link zum Teilen</b> kopieren und an die Tester schicken.</li>
+          <li>Ab dem Tag, an dem 12 Tester drin sind, laufen die 14 Tage. Du siehst den Stand auf dem <b>Dashboard</b> unter „Produktionszugriff beantragen“.</li>
+        </ol></div></details></li>
+    </ol>
+  </section>
+
+  <section id="danach">
+    <h2><span class="n">3</span>Nach den 14 Tagen</h2>
+    <ol class="steps">
+      <li><details class="step" data-id="prodaccess"><summary><span class="box" role="checkbox"></span><span class="ttl">Produktionszugriff beantragen</span><span class="meta">15 Min + bis 7 Tage</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li><b>Dashboard</b> → <b>Produktionszugriff beantragen</b>.</li>
+          <li>Drei Teile: „Dein geschlossener Test“, „Deine App“, „Deine Produktionsbereitschaft“. Antwortvorschläge in <a href="#antworten">Abschnitt 5</a>, bitte mit deinen echten Erfahrungen aus dem Test ergänzen.</li>
+          <li>Absenden. Google meldet sich per E-Mail.</li>
+        </ol></div></details></li>
+
+      <li><details class="step" data-id="production"><summary><span class="box" role="checkbox"></span><span class="ttl">Veröffentlichen</span><span class="meta">10 Min + Google 1–7 Tage</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></summary>
+        <div class="body"><ol>
+          <li>Vorher kurz bei mir melden: Falls es inzwischen einen neueren Build gibt, lege ich dir den bereit.</li>
+          <li><b>Testen und veröffentlichen → Produktion</b> → Tab <b>Länder/Regionen</b> → <b>Länder/Regionen hinzufügen</b> → alle auswählen (wie bei Apple) → Speichern.</li>
+          <li>Tab <b>Releases</b> → <b>Neuen Release erstellen</b> → <b>Aus Bibliothek hinzufügen</b> → Build wählen → Versionshinweise → <b>Weiter</b> → <b>Speichern</b>.</li>
+          <li><b>Veröffentlichung – Übersicht</b> → <b>Änderungen senden</b>. Nach der Prüfung ist FinestSites im Play Store.</li>
+          <li>Mir Bescheid geben: Ich stelle <code>finestsites.io/app</code> um, damit Android-Nutzer direkt zum Play Store kommen, und lade die Android-Grafiken nach.</li>
+        </ol></div></details></li>
+    </ol>
+  </section>
+
+  <section id="texte">
+    <h2><span class="n">4</span>Texte zum Einfügen</h2>
+    <div class="card">
+      <h3>App-Name <span class="count">(max. 30)</span></h3>
+      <div class="copy"><pre>FinestSites</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+      <h3 style="margin-top:18px">Kurze Beschreibung <span class="count">(75 von 80)</span></h3>
+      <div class="copy"><pre>Webseiten und Anfragen immer dabei: bearbeiten, veröffentlichen, antworten.</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+      <h3 style="margin-top:18px">Vollständige Beschreibung <span class="count">(max. 4000)</span></h3>
+      <div class="copy"><pre>Deine FinestSites-Webseiten in der Tasche.
+
+Mit der FinestSites-App behältst du deine Webseiten, Anfragen und Besucher-Nachrichten immer im Blick, auf dem Handy und auf dem Tablet.
+
+• Anfragen sofort sehen: Jede Kontaktanfrage von deiner Webseite kommt als Mitteilung aufs Handy. Anrufen, WhatsApp schreiben oder antworten, mit einem Tipp.
+• Webseiten bearbeiten und veröffentlichen: Texte, Bilder, Farben und Kontaktdaten ändern, Vorschau ansehen, live stellen.
+• Besucher-Chat: Besucher schreiben dir direkt auf deiner Webseite, du antwortest aus der App.
+• Hilfe direkt in der App: Unser Team antwortet im Support-Chat.
+• Sicher: Optional mit Fingerabdruck oder Gesichtserkennung sperren.
+
+Gemacht für selbstständige Vertriebspartner im Network Marketing und Direktvertrieb, die ihre Kontakte professionell und ohne Technikwissen erreichen wollen.
+
+Die App ergänzt dein FinestSites-Konto. Ein Konto erstellst du auf finestsites.io.</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+      <h3 style="margin-top:18px">Für den Prüfer (App-Zugriff → Weitere Informationen)</h3>
+      <div class="copy"><pre>FinestSites is the companion app to our web service finestsites.io, a website builder for independent distributors. Accounts are created on the website; the app signs in existing users. Sign in with the credentials above. The account has two published demo websites, sample enquiries, a support conversation and the visitor chat. There are no purchases, prices or subscriptions inside the app.</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+      <h3 style="margin-top:18px">Einladung an Tester (WhatsApp oder E-Mail)</h3>
+      <div class="copy"><pre>Hallo [Name],
+
+ich brauche kurz deine Hilfe: Die FinestSites-App kommt jetzt auch für Android, und Google verlangt vor dem Start einen Test mit echten Nutzern.
+
+So geht's (2 Minuten):
+1. Diesen Link auf deinem Android-Handy öffnen: [LINK]
+2. Auf „Tester werden“ tippen und die App aus dem Play Store installieren.
+3. Die App einfach installiert lassen und ab und zu öffnen, mindestens 14 Tage. Bitte in der Zeit nicht deinstallieren.
+
+Wenn du ein FinestSites-Konto hast, kannst du dich ganz normal anmelden. Wenn nicht, reicht es, die App zu installieren.
+
+Wenn dir etwas auffällt, schreib mir einfach. Danke dir!
+
+Daniel</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+    </div>
+  </section>
+
+  <section id="antworten">
+    <h2><span class="n">5</span>Antworten für die Fragebögen</h2>
+    <div class="card scroll">
+      <h3>Datensicherheit: Datentypen</h3>
+      <table class="table">
+        <tr><th>Gruppe</th><th>Anhaken</th><th>Angaben je Typ</th></tr>
+        <tr><td>Personenbezogene Daten</td><td>Name · E-Mail-Adresse · Telefonnummer · Nutzer-IDs</td><td>Erhoben: Ja · Geteilt: Nein · Erforderlich · Zweck: App-Funktionen, Kontoverwaltung</td></tr>
+        <tr><td>Finanzinformationen</td><td>Sonstige Finanzinformationen (Steuernummer/USt-IdNr. im Partnerbereich)</td><td>Erhoben: Ja · Geteilt: Nein · Optional · Zweck: App-Funktionen, Kontoverwaltung</td></tr>
+        <tr><td>Nachrichten</td><td>Sonstige In-App-Nachrichten (Support- und Besucher-Chat)</td><td>Erhoben: Ja · Geteilt: Nein · Erforderlich · Zweck: App-Funktionen</td></tr>
+        <tr><td>Fotos und Videos</td><td>Fotos</td><td>Erhoben: Ja · Geteilt: Nein · Optional · Zweck: App-Funktionen</td></tr>
+        <tr><td>App-Aktivitäten</td><td>Andere nutzergenerierte Inhalte (Webseiten-Texte)</td><td>Erhoben: Ja · Geteilt: Nein · Erforderlich · Zweck: App-Funktionen</td></tr>
+        <tr><td>Geräte- oder andere IDs</td><td>Geräte- oder andere IDs (Push-Token)</td><td>Erhoben: Ja · Geteilt: Nein · Erforderlich · Zweck: App-Funktionen</td></tr>
+        <tr><td>Nicht anhaken</td><td colspan="2">Standort · Kontakte · Kalender · Audio · Dateien · Gesundheit · Browserverlauf · App-Infos/Leistung (Absturzberichte, Diagnose) · Werbe-ID</td></tr>
+      </table>
+      <p class="small" style="margin:10px 0 0">„Daten werden verarbeitet, aber nicht dauerhaft gespeichert (ephemer)“: überall Nein. Verschlüsselte Übertragung: Ja. Löschung: Ja, über <code>https://finestsites.io/konto-loeschen</code>.</p>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h3>Produktionszugriff: Antwortvorschläge</h3>
+      <p class="small">Bitte mit deinen echten Zahlen und Erfahrungen aus dem Test anpassen, Google erkennt Standardtexte.</p>
+      <div class="copy"><pre>Dein geschlossener Test
+
+Wie leicht war es, Tester zu finden? Einfach. Die Tester sind Kunden von FinestSites, die unsere Webseiten bereits nutzen und ein Android-Handy haben, dazu Teampartner aus meinem Umfeld. Ich habe sie persönlich per WhatsApp und E-Mail eingeladen.
+
+Haben die Tester alle Funktionen genutzt? Ja. Sie haben sich mit ihrem bestehenden Konto angemeldet, ihre Webseite im Editor bearbeitet und veröffentlicht, Anfragen gelesen und beantwortet, den Support-Chat benutzt und Push-Mitteilungen erhalten. Das entspricht genau der späteren Nutzung in der Produktion.
+
+Wie hast du Feedback gesammelt? Über den Support-Chat in der App, per WhatsApp und E-Mail. Ich habe die Rückmeldungen in einer Liste gesammelt und nach Häufigkeit sortiert.
+
+Deine App
+
+Zielgruppe: Selbstständige Vertriebspartner im Network Marketing und Direktvertrieb im deutschsprachigen Raum, die bei FinestSites ihre Webseite betreiben. Alle Nutzer haben ein bestehendes Konto; die App ist die Begleit-App zum Web-Dienst.
+
+Nutzen: Anfragen von der eigenen Webseite kommen sofort als Mitteilung aufs Handy und lassen sich mit einem Tipp beantworten. Webseiten lassen sich unterwegs bearbeiten und veröffentlichen. Besucher-Chat und Support-Chat sind direkt in der App.
+
+Erwartete Installationen im ersten Jahr: [z. B. 300–500], entsprechend unserer bestehenden Kundenzahl und dem Anteil an Android-Nutzern.
+
+Deine Produktionsbereitschaft
+
+Änderungen aus dem Test: [z. B. Tastatur-Darstellung beim Login verbessert, Push-Erlaubnis klarer, Links aus E-Mails öffnen die App direkt]. Alle gemeldeten Probleme sind behoben und mit den Testern erneut geprüft.
+
+Warum produktionsreif: Die iOS-Version derselben App ist seit dem 29.10.2026 im App Store und läuft stabil. Die Android-Version nutzt denselben Code und dieselbe Server-API, wurde 14 Tage von [Zahl] Testern im Alltag genutzt, ohne Abstürze und ohne offene Fehler.</pre><button class="btn ghost" data-copy>Kopieren</button></div>
+    </div>
+  </section>
+
+  <section id="ich">
+    <h2><span class="n">6</span>Was ich parallel mache</h2>
+    <div class="card">
+      <ul>
+        <li><span class="pill ok">erledigt</span> Android-Fassung gebaut und im Emulator getestet, Push-Schlüssel bei Expo, Link-Bestätigung live, 512-px-Icon.</li>
+        <li>Sobald du mir den <b>Fingerabdruck</b> schickst: Link-Bestätigung ergänzen (5 Minuten).</li>
+        <li>Sobald die App auf deinem Handy ist: <b>Test-Mitteilung</b> auslösen und prüfen.</li>
+        <li>Während des Tests: <b>Store-Grafiken mit Android-Rahmen</b> (Handy und Tablet), du lädst sie dann neu hoch.</li>
+        <li>Optional später: ein <b>Dienstkonto</b>, damit ich neue Builds selbst hochladen kann. Für den Start nicht nötig, du lädst jeden Build mit ein paar Klicks aus der Bibliothek.</li>
+        <li>Nach dem Start: <code>finestsites.io/app</code> mit Play-Store-Link.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>Quellen: Google Play Console-Hilfe „App erstellen und einrichten“, „Interne, geschlossene und offene Tests einrichten“, „Release vorbereiten und einführen“, „Testanforderungen für neue private Entwicklerkonten“ (abgerufen 02.11.2026). Ältere Fassung: google-play-start.html.</footer>
+</div>
+
+<div class="sumbar"><div class="in">
+  <div class="progress"><div class="small"><span id="done">0</span> von <span id="total">0</span> Schritten erledigt</div><div class="bar"><i id="bar"></i></div></div>
+</div></div>
+
+<script>
+(function(){
+  var KEY='fs-google-play-publish';
+  var state={};
+  try{state=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+  function render(){
+    var n=0;
+    steps.forEach(function(s){var d=!!state[s.dataset.id];s.classList.toggle('done',d);if(d)n++});
+    document.getElementById('done').textContent=n;
+    document.getElementById('total').textContent=steps.length;
+    document.getElementById('bar').style.width=(steps.length?n/steps.length*100:0)+'%';
+  }
+  steps.forEach(function(s){
+    s.querySelector('.box').addEventListener('click',function(e){e.preventDefault();e.stopPropagation();state[s.dataset.id]=!state[s.dataset.id];save();render()});
+  });
+  render();
+  document.querySelectorAll('[data-copy]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var t=b.parentNode.querySelector('pre').innerText;
+      var done=function(){b.textContent='Kopiert';setTimeout(function(){b.textContent='Kopieren'},1800)};
+      if(navigator.clipboard)navigator.clipboard.writeText(t).then(done,function(){});
+    });
+  });
+})();
+</script>
+</body>
+</html>
