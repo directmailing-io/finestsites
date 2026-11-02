@@ -1234,7 +1234,7 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
 const APP_LAUNCH_ASSETS = 'https://app.finestsites.io/mail/app-2026-11'
 const APP_STORE_URL = 'https://apps.apple.com/de/app/finestsites/id6825371773'
 
-export const APP_LAUNCH_2026_11_SUBJECT = 'Unser größtes Update: die FinestSites-App + Chat für deine Webseite'
+export const APP_LAUNCH_2026_11_SUBJECT = 'Die FinestSites-App ist da. Mit Chat für deine Webseite.'
 
 /**
  * Dunkles Premium-Layout, nur für diese Ankündigung (Daniels Wunsch 02.11.2026, Ausnahme von layout()).
@@ -1295,7 +1295,7 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
   </style>
 </head>
 <body bgcolor="${C.bg}" style="margin:0;padding:0;background:${C.bg};">
-  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${C.bg};">Die FinestSites-App und der Chat für deine Webseite. Auf iPhone und iPad ab sofort.</div>
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${C.bg};">Die FinestSites-App ist da, mit Chat für deine Webseite. Für iPhone und iPad ab sofort.</div>
   <table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.bg}" style="background:${C.bg};">
     <tr><td align="center" style="padding:40px 0 48px;">
       <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="max-width:560px;width:100%;">
@@ -1304,28 +1304,35 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
         ${space(40)}
 
         ${row(`<table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:0 auto;"><tr>
-                 <td width="72" height="72" valign="middle" style="width:72px;height:72px;">
-                   <img src="${APP_LAUNCH_ASSETS}/icon-144.png" alt="App" width="72" height="72" style="display:block;width:72px;height:72px;border:0;border-radius:16px;background:#FFFFFF;color:#000000;font-family:${font};font-size:14px;font-weight:700;text-align:center;line-height:72px;" />
+                 <td width="88" height="88" valign="middle" style="width:88px;height:88px;">
+                   <img src="${APP_LAUNCH_ASSETS}/icon-144.png" alt="App" width="88" height="88" style="display:block;width:88px;height:88px;border:0;border-radius:20px;background:#FFFFFF;box-shadow:0 0 40px rgba(183,156,255,0.45);color:#000000;font-family:${font};font-size:16px;font-weight:700;text-align:center;line-height:88px;" />
                  </td>
-                 <td width="56" align="center" valign="middle" style="font-family:${font};font-size:34px;font-weight:300;color:${C.muted};">+</td>
-                 <td width="72" height="72" align="center" valign="middle" bgcolor="${C.violet}" style="width:72px;height:72px;border-radius:16px;background:${C.violet};">
+                 <td width="64" align="center" valign="middle" style="font-family:${font};font-size:40px;font-weight:700;color:${C.white};">+</td>
+                 <td width="88" height="88" align="center" valign="middle" bgcolor="${C.violet}" style="width:88px;height:88px;border-radius:20px;background:${C.violet};box-shadow:0 0 40px rgba(124,77,255,0.6);">
                    <table cellpadding="0" cellspacing="0" role="presentation" align="center"><tr>
-                     <td bgcolor="#FFFFFF" style="background:#FFFFFF;border-radius:12px;border-bottom-left-radius:3px;padding:5px 9px;font-family:${font};font-size:13px;font-weight:700;color:${C.violet};letter-spacing:2px;line-height:1;">•••</td>
+                     <td bgcolor="#FFFFFF" style="background:#FFFFFF;border-radius:12px;border-bottom-left-radius:3px;padding:6px 11px;font-family:${font};font-size:15px;font-weight:700;color:${C.violet};letter-spacing:2px;line-height:1;">•••</td>
                    </tr></table>
                  </td>
                </tr></table>`)}
         ${space(28)}
 
-        ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:0.08em;text-transform:uppercase;">Unser größtes Update</p>
-               <h1 style="margin:12px 0 0;font-family:${font};font-size:36px;line-height:1.12;font-weight:700;color:${C.white};text-align:center;letter-spacing:-0.03em;">App + Chat.<br />Ab heute für dich.</h1>
-               ${text(`${name ? `Hey ${name}, zwei` : 'Zwei'} Neuheiten auf einmal: FinestSites aufs Handy, und ein Chat für deine Webseite.`, 'margin-top:16px;font-size:17px;')}`)}
+        ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:0.08em;text-transform:uppercase;">Das größte Update bisher</p>
+               <h1 style="margin:14px 0 0;font-family:${font};font-size:40px;line-height:1.08;font-weight:700;color:${C.white};text-align:center;letter-spacing:-0.035em;">Die FinestSites-App<br />ist da. <span style="color:${C.accent};">Mit Chat.</span></h1>
+               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute hast du alles in der FinestSites-App. Und deine Webseite bekommt einen Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}`)}
         ${space(32)}
 
         ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;">
-                 ${update(1, 'Die FinestSites-App', 'Neue Anfragen kommen als Mitteilung aufs Handy. Antworten mit einem Tipp.')}
-                 ${update(2, 'Chat auf deiner Webseite', 'Besucher schreiben dir direkt auf deiner Seite. Du antwortest in der App.', true)}
+                 ${update(1, 'Die FinestSites-App', 'Jede neue Anfrage siehst du sofort in der App. Antworten per WhatsApp, Anruf oder Mail mit einem Tipp.')}
+                 ${update(2, 'Der Chat für deine Webseite', 'Besucher fragen direkt auf deiner Seite. Du antwortest in der App. So geht keine Anfrage mehr verloren.', true)}
                </table>`)}
-        ${space(12)}
+        ${space(28)}
+        ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation"><tr>
+                 <td width="3" bgcolor="${C.violet}" style="width:3px;background:${C.violet};border-radius:3px;font-size:0;line-height:0;">&nbsp;</td>
+                 <td style="padding:2px 0 2px 18px;font-family:${font};font-size:17px;line-height:1.55;color:${C.white};">
+                   Jemand ist abends auf deiner Seite und hat eine Frage. Früher hat er weggeklickt. <span style="color:${C.accent};font-weight:700;">Jetzt schreibt er dir.</span>
+                 </td>
+               </tr></table>`)}
+        ${space(28)}
         ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;">
                  ${device('iPhone und iPad', 'Jetzt verfügbar', C.green)}
                  ${device('Android', 'Kommt bald', C.amber, true)}
@@ -1334,17 +1341,17 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
 
         ${row(`<table cellpadding="0" cellspacing="0" role="presentation" align="center" style="margin:0 auto;">
                  <tr><td bgcolor="${C.white}" style="background:${C.white};border-radius:999px;">
-                   <a href="${APP_STORE_URL}" style="display:inline-block;padding:15px 32px;font-family:${font};font-size:16px;font-weight:700;color:#000000;text-decoration:none;border-radius:999px;">App im App Store laden</a>
+                   <a href="${APP_STORE_URL}" style="display:inline-block;padding:15px 32px;font-family:${font};font-size:16px;font-weight:700;color:#000000;text-decoration:none;border-radius:999px;">Jetzt die App laden</a>
                  </td></tr>
                </table>`)}
         ${space(14)}
-        ${row(text('Android? Die App kommt bald, wir sagen dir Bescheid.', `font-size:13px;color:${C.muted};`))}
+        ${row(text('Android? Wir sagen dir Bescheid, sobald die App da ist.', `font-size:13px;color:${C.muted};`))}
         ${space(40)}
 
-        ${row(`${text('So schaltest du den Chat ein: App öffnen, Seite im Editor öffnen, unter „Kontakt“ den „Besucher-Chat“ anschalten.', 'font-size:15px;')}`)}
+        ${row(text('Chat einschalten: In der App deine Seite öffnen → Kontakt → <span style="white-space:nowrap;">Besucher-Chat</span>.', 'font-size:15px;'))}
         ${space(40)}
 
-        ${row(`${text(`Ich bin gespannt, wie du sie findest${name ? `, ${name}` : ''}. Schreib mir einfach!`)}
+        ${row(`${text(`Ich bin mega gespannt, was du sagst${name ? `, ${name}` : ''}. Antworte einfach auf diese Mail.`)}
                ${text('Daniel von FinestSites', `margin-top:10px;color:${C.white};font-weight:700;`)}`)}
         ${space(40)}
         ${row(`<p style="margin:0;padding-top:24px;border-top:1px solid ${C.line};font-family:${font};font-size:12px;line-height:1.7;color:${C.muted};text-align:center;">${footer}</p>`)}
