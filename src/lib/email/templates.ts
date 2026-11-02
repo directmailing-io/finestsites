@@ -1240,7 +1240,7 @@ export const APP_LAUNCH_2026_11_SUBJECT = 'Die FinestSites-App ist da. Mit Chat 
  * Dunkles Premium-Layout, nur für diese Ankündigung (Daniels Wunsch 02.11.2026, Ausnahme von layout()).
  * Zwei Neuheiten auf einen Blick (App + Chat), persönliche Anrede, sofort sichtbar welche Geräte schon
  * können (iPhone/iPad) und welche noch warten (Android). Bewusst leicht gegen Spam-Filter und Gmail-Kürzung:
- * nur zwei kleine Bilder (Logo, App-Icon, zusammen < 10 KB), der Chat-Kachel ist reines HTML.
+ * nur drei kleine Bilder (Logo, App-Icon, Chat-Icon, zusammen ~14 KB) mit Alt-Text und Hintergrundfarbe.
  * Schrift Plus Jakarta Sans per @font-face (Apple Mail/iOS), sonst Helvetica/Arial.
  */
 export function appLaunch202611Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
@@ -1309,20 +1309,18 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
                  </td>
                  <td width="64" align="center" valign="middle" style="font-family:${font};font-size:40px;font-weight:700;color:${C.white};">+</td>
                  <td width="88" height="88" align="center" valign="middle" bgcolor="${C.violet}" style="width:88px;height:88px;border-radius:20px;background:${C.violet};box-shadow:0 0 40px rgba(124,77,255,0.6);">
-                   <table cellpadding="0" cellspacing="0" role="presentation" align="center"><tr>
-                     <td bgcolor="#FFFFFF" style="background:#FFFFFF;border-radius:12px;border-bottom-left-radius:3px;padding:6px 11px;font-family:${font};font-size:15px;font-weight:700;color:${C.violet};letter-spacing:2px;line-height:1;">•••</td>
-                   </tr></table>
+                   <img src="${APP_LAUNCH_ASSETS}/chat-144.png" alt="Chat" width="88" height="88" style="display:block;width:88px;height:88px;border:0;border-radius:20px;color:#FFFFFF;font-family:${font};font-size:16px;font-weight:700;text-align:center;line-height:88px;" />
                  </td>
                </tr></table>`)}
         ${space(28)}
 
         ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:0.08em;text-transform:uppercase;">Das größte Update bisher</p>
                <h1 style="margin:14px 0 0;font-family:${font};font-size:40px;line-height:1.08;font-weight:700;color:${C.white};text-align:center;letter-spacing:-0.035em;">Die FinestSites-App<br />ist da. <span style="color:${C.accent};">Mit Chat.</span></h1>
-               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute hast du alles in der FinestSites-App. Und deine Webseite bekommt einen Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}`)}
+               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute bearbeitest du deine Webseiten ganz bequem in der FinestSites-App. Dazu kommt ein Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}`)}
         ${space(32)}
 
         ${row(`<table width="100%" cellpadding="0" cellspacing="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;">
-                 ${update(1, 'Die FinestSites-App', 'Jede neue Anfrage siehst du sofort in der App. Antworten per WhatsApp, Anruf oder Mail mit einem Tipp.')}
+                 ${update(1, 'Die FinestSites-App', 'Webseiten bequem vom Handy aus bearbeiten und veröffentlichen. Neue Anfragen siehst du sofort und antwortest mit einem Tipp.')}
                  ${update(2, 'Der Chat für deine Webseite', 'Besucher fragen direkt auf deiner Seite. Du antwortest in der App. So geht keine Anfrage mehr verloren.', true)}
                </table>`)}
         ${space(28)}
@@ -1351,7 +1349,7 @@ export function appLaunch202611Email({ firstName, prefs }: { firstName?: string;
         ${row(text('Chat einschalten: In der App deine Seite öffnen → Kontakt → <span style="white-space:nowrap;">Besucher-Chat</span>.', 'font-size:15px;'))}
         ${space(40)}
 
-        ${row(`${text(`Ich bin mega gespannt, was du sagst${name ? `, ${name}` : ''}. Antworte einfach auf diese Mail.`)}
+        ${row(`${text(`Ich bin mega gespannt, was du sagst${name ? `, ${name}` : ''}. Fragen oder Feedback? Antworte einfach auf diese Mail.`)}
                ${text('Daniel von FinestSites', `margin-top:10px;color:${C.white};font-weight:700;`)}`)}
         ${space(40)}
         ${row(`<p style="margin:0;padding-top:24px;border-top:1px solid ${C.line};font-family:${font};font-size:12px;line-height:1.7;color:${C.muted};text-align:center;">${footer}</p>`)}
