@@ -17,6 +17,9 @@ import { mockEditorHtml } from './mockEditor';
 // Die Typen von react-native-webview 14 setzen P = undefined (=> Props never unter TS 6); explizit mit object instanziieren.
 const WebView = WebViewBase as typeof WebViewBase<object>;
 
+/** Mindest-Chrome-Version des Android System WebView (Next.js 15 + Tailwind 4: 111). */
+const MIN_CHROME = 111;
+
 export interface AppWebViewHandle {
   canGoBack: () => boolean;
   goBack: () => void;
@@ -44,6 +47,7 @@ export const AppWebView = forwardRef<
   const [failed, setFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const canGoBack = useRef(false);
+  const [oldWebView, setOldWebView] = useState<number | null>(null);
 
   useImperativeHandle(ref, () => ({
     canGoBack: () => canGoBack.current,
@@ -78,6 +82,18 @@ export const AppWebView = forwardRef<
   };
 
   const onMessage = (e: WebViewMessageEvent) => {
+    // Browser-Kern zu alt? (Android System WebView < Chrome 111: Tailwind-4-CSS greift nicht, Editor bricht ab.
+    // Daniels Samsung, 02.11.2026.) Die Seite meldet ihren User-Agent gleich beim Laden (siehe injectedJavaScript).
+    if (typeof e.nativeEvent.data === 'string' && e.nativeEvent.data.startsWith('{"type":"fs-ua"')) {
+      try {
+        const ua = String((JSON.parse(e.nativeEvent.data) as { ua?: unknown }).ua ?? '');
+        const m = /Chrome\/(\d+)/.exec(ua);
+        if (Platform.OS === 'android' && m && Number(m[1]) < MIN_CHROME) setOldWebView(Number(m[1]));
+      } catch {
+        /* egal */
+      }
+      return;
+    }
     // Nur Nachrichten von unserer eigenen Seite annehmen
     const from = e.nativeEvent.url;
     if (!MOCK) {
@@ -92,6 +108,21 @@ export const AppWebView = forwardRef<
   };
 
   const back = onClose ? <WebBackButton onPress={onClose} /> : null;
+
+  if (oldWebView) {
+    return (
+      <View style={styles.center}>
+        <EmptyState
+          icon={CloudOff}
+          title="Browser-Komponente veraltet"
+          text={`Auf diesem Gerät ist „Android System WebView“ (Version ${oldWebView}) zu alt für den Editor. Ein Update im Play Store dauert eine Minute, danach läuft alles wie gewohnt.`}
+        />
+        <Button title="Im Play Store aktualisieren" onPress={() => void openExternal('market://details?id=com.google.android.webview')} />
+        <Button title="Nochmal versuchen" variant="secondary" onPress={() => { setOldWebView(null); void start(); }} />
+        {back}
+      </View>
+    );
+  }
 
   if (failed) {
     return (
@@ -118,7 +149,7 @@ export const AppWebView = forwardRef<
         source={uri === 'mock' ? { html: mockEditorHtml(next), baseUrl: API_BASE } : { uri }}
         style={styles.flex}
         applicationNameForUserAgent={WEBVIEW_UA_SUFFIX}
-        injectedJavaScriptBeforeContentLoaded={`window.__FS_APP__ = { client: '${CLIENT}', version: '${APP_VERSION}', caps: ['close'] }; true;`}
+        injectedJavaScriptBeforeContentLoaded={`window.__FS_APP__ = { client: '${CLIENT}', version: '${APP_VERSION}', caps: ['close'] }; try { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'fs-ua', ua: navigator.userAgent })); } catch (e) {} true;`}
         onShouldStartLoadWithRequest={onShouldStart}
         onMessage={onMessage}
         onNavigationStateChange={(n: WebViewNavigation) => (canGoBack.current = n.canGoBack)}
