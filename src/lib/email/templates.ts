@@ -1228,6 +1228,61 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
   ], prefs)
 }
 
+// ─── Ankündigung App + Besucher-Chat (November 2026) ─────────────────────────
+// Kategorie "updates", Versand nur über scripts/send-app-launch-2026-11.ts. Bilder in public/mail/app-2026-11/.
+
+const APP_LAUNCH_ASSETS = 'https://app.finestsites.io/mail/app-2026-11'
+const APP_STORE_URL = 'https://apps.apple.com/de/app/finestsites/id6825371773'
+
+export const APP_LAUNCH_2026_11_SUBJECT = 'Die FinestSites-App ist da, und dein Chat gleich mit'
+
+export function appLaunch202611Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
+  const name = firstName?.trim() || 'du'
+  const p = (html: string, top = 0) =>
+    `<p style="margin:${top}px 0 0;font-size:15px;color:${base.body};line-height:1.65;">${html}</p>`
+  const h2 = (t: string) =>
+    `<h2 style="margin:0;font-size:19px;font-weight:700;color:${base.heading};letter-spacing:-0.01em;line-height:1.3;">${t}</h2>`
+  const img = (file: string, alt: string) =>
+    `<img src="${APP_LAUNCH_ASSETS}/${file}" alt="${alt}" width="488" style="display:block;width:100%;height:auto;border:0;border-radius:16px;margin:18px 0 0;" />`
+  const pill = (t: string) =>
+    `<p style="margin:12px 0 0;font-size:13px;line-height:1.6;"><span style="display:inline-block;background:#F3EEF9;color:#6B4FA0;border-radius:999px;padding:4px 10px;font-weight:600;">${t}</span></p>`
+  const steps = (items: string[]) => `
+    <table cellpadding="0" cellspacing="0" role="presentation" width="100%" style="margin:14px 0 0;">
+      ${items.map((t, i) => `
+      <tr>
+        <td width="30" valign="top" style="padding:0 10px 10px 0;"><div style="width:24px;height:24px;border-radius:50%;background:#F3EEF9;color:#6B4FA0;font-size:13px;font-weight:700;text-align:center;line-height:24px;">${i + 1}</div></td>
+        <td valign="top" style="padding:2px 0 10px;font-size:15px;color:${base.body};line-height:1.5;">${t}</td>
+      </tr>`).join('')}
+    </table>`
+
+  return layoutCards([
+    `<p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#8060b0;">Neu</p>
+     <h1 style="margin:0 0 12px;font-size:26px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;line-height:1.2;">
+       Die FinestSites-App ist da
+     </h1>
+     ${p(`Hey ${name}, ab sofort gibt's FinestSites auch als App für iPhone und iPad. Und dazu eine neue Funktion, die es nur mit der App gibt: einen Chat auf deiner Webseite. Beides kostet nichts extra.`)}`,
+
+    `${h2('Deine Seiten immer dabei')}
+     ${img('app.jpg', 'Die FinestSites-App mit einer Anfrage')}
+     ${p('In der App bearbeitest du deine Seiten, siehst deine Anfragen und antwortest mit einem Tipp per WhatsApp, Anruf oder E-Mail. Kommt eine neue Anfrage rein, bekommst du eine Mitteilung aufs Handy. So geht nichts mehr unter.', 18)}
+     ${pill('iPhone und iPad · Android kommt bald')}
+     ${button(APP_STORE_URL, 'App im App Store laden', VIOLET)}`,
+
+    `${h2('Neu: Besucher schreiben dir direkt auf deiner Seite')}
+     ${img('chat.jpg', 'Chatfenster auf einer FinestSites-Seite')}
+     ${p('Auf deiner Seite erscheint unten dein Profilbild mit einem kleinen Punkt. Tippt jemand drauf, öffnet sich ein Chatfenster, ganz ähnlich wie bei WhatsApp. Du antwortest in der App unter „Chats“ oder am Computer im Dashboard.', 18)}
+     ${p('Der Chat ist erst an, wenn du ihn selbst einschaltest. So geht\'s:', 14)}
+     ${steps([
+       'App laden und dich einmal anmelden.',
+       'Deine Seite im Editor öffnen und im Bereich „Kontakt“ die Karte „Besucher-Chat“ einschalten.',
+       'Einmal kurz zustimmen, fertig.',
+     ])}`,
+
+    `${p('Fragen? Schreib mir einfach, ich lese alles selbst.')}
+     ${p(`Viele Grüße<br /><strong style="color:${base.heading};">Daniel von FinestSites</strong>`, 14)}`,
+  ], prefs)
+}
+
 // ─── Partner-Auszahlungen: Sammelhinweis an den Admin (seit 16.10.2026) ───────
 // Eine Mail pro Lauf (Cron/Admin/Wartung), nie pro Partner. Nur an ADMIN_EMAIL.
 export function affiliatePayoutAdminAlertEmail({ context, paidCount, items }: {
