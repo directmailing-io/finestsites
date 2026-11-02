@@ -41,6 +41,8 @@ async function loadDashboardNotice(): Promise<string> {
   }
 }
 
+const OLD_WEBVIEW_SCRIPT = `(function(){try{var m=/Chrome\\/(\\d+)/.exec(navigator.userAgent);if(!m||Number(m[1])>=111)return;function show(){if(document.getElementById('fs-old-webview'))return;var b=document.createElement('div');b.id='fs-old-webview';b.setAttribute('style','position:fixed;left:0;right:0;bottom:0;z-index:99999;background:#111;color:#fff;padding:14px 16px 28px;font:14px/1.5 Roboto,sans-serif');b.innerHTML='Dein Android-Browser ist veraltet (Chrome '+m[1]+'), darum kann diese Seite hier nicht laufen. Bitte im Play Store <a href="https://play.google.com/store/apps/details?id=com.google.android.webview" target="_blank" rel="noopener" style="color:#a78bfa;font-weight:600">\u201eAndroid System WebView\u201c aktualisieren</a>, dann die App neu \u00f6ffnen.';document.body.appendChild(b)}if(document.body)show();else document.addEventListener('DOMContentLoaded',show);try{var x=new XMLHttpRequest();x.open('POST','/api/client-error');x.setRequestHeader('Content-Type','application/json');x.send(JSON.stringify({message:'alter WebView: Chrome '+m[1],url:location.href,extra:'inline'}))}catch(e){}}catch(e){}})();`
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [user, impersonation] = await Promise.all([getServerUser(), getImpersonationState()])
 
@@ -84,6 +86,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
   if (appMode) {
     return (
       <AppModeProvider value>
+        {/* Reines ES5, läuft auch wenn das React-Bündel (braucht Chrome 111+) gar nicht startet: alter Android
+            System WebView → Hinweis statt leerer Seite, dazu eine Meldung ans Server-Log (02.11.2026, Samsung). */}
+        <script dangerouslySetInnerHTML={{ __html: OLD_WEBVIEW_SCRIPT }} />
         <PlanQuotaProvider>
           <VisitorChatProvider enabled={visitorChat}>
             <div className="flex min-h-screen" style={{ background: 'var(--background)' }}>
