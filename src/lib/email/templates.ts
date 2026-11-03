@@ -1349,7 +1349,7 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
 
         ${row(card(`
           ${device('iPhone und iPad', 'Jetzt verfügbar', C.green)}
-          ${device('Android', 'Kommt bald', C.amber, true)}
+          ${device('Android', 'Tester gesucht', C.amber, true)}
         `))}
         ${space(28)}
 
@@ -1359,7 +1359,12 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
                  </td></tr>
                </table>`)}
         ${space(14)}
-        ${row(text('Android? Wir sagen dir Bescheid, sobald die App da ist.', `font-size:13px;color:${C.muted};`))}
+        ${row(`<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;border:1px solid ${C.amber};">
+                 <tr><td style="padding:22px 24px;">
+                   <p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.amber};text-align:center;letter-spacing:1px;">ANDROID-TESTER GESUCHT</p>
+                   ${text('Du hast ein Android-Handy? Dann teste die App, bevor sie für alle kommt. Antworte einfach auf diese Mail mit <strong style="color:#F5F5F7;">deiner Google-Mailadresse, die du im Play Store nutzt</strong>. Ich schalte dich dann frei.', 'margin-top:10px;font-size:15px;')}
+                 </td></tr>
+               </table>`)}
         ${space(40)}
 
         ${row(text('Chat einschalten: In der App deine Seite öffnen → Kontakt → <span style="white-space:nowrap;">Besucher-Chat</span>.', 'font-size:15px;'))}
@@ -1396,9 +1401,12 @@ export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firs
     `Ohne Aufpreis: App und Chat sind ${hasPlan ? 'in deinem Tarif inklusive' : 'in jedem Tarif inklusive'}.`,
     '',
     'iPhone und iPad: jetzt verfügbar',
-    'Android: kommt bald, wir sagen dir Bescheid.',
+    'Android: Tester gesucht',
     '',
-    `Jetzt die App laden: ${APP_STORE_URL}`,
+    `Jetzt die App laden (iPhone und iPad): ${APP_STORE_URL}`,
+    '',
+    'ANDROID-TESTER GESUCHT',
+    'Du hast ein Android-Handy? Dann teste die App, bevor sie für alle kommt. Antworte einfach auf diese Mail mit deiner Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.',
     '',
     'Chat einschalten: In der App deine Seite öffnen → Kontakt → Besucher-Chat.',
     '',
