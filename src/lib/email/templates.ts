@@ -1234,6 +1234,7 @@ export function productUpdate202610Email({ firstName, segment = 'pro', prefs }: 
 const APP_LAUNCH_ASSETS = 'https://app.finestsites.io/mail/app-2026-11'
 const APP_STORE_URL = 'https://apps.apple.com/de/app/finestsites/id6825371773'
 
+const ANDROID_TESTER_MAILTO = `mailto:info@finestsites.io?subject=${encodeURIComponent('Android-Tester')}&body=${encodeURIComponent('Hallo Daniel, ich möchte die Android-App testen.\n\nMeine Google-Mailadresse (Play Store): ')}`
 export const APP_LAUNCH_2026_11_SUBJECT = 'Update: Die FinestSites-App ist da, mit Chat für deine Webseite'
 
 /** Vorname für die Anrede: erstes Wort, erster Buchstabe groß; leer/unbrauchbar → keine Anrede */
@@ -1275,11 +1276,21 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
         <p style="margin:4px 0 0;font-family:${font};font-size:15px;line-height:1.5;color:${C.body};">${benefit}</p>
       </td>
     </tr>`
-  const device = (label: string, status: string, color: string, last = false) => `
-    <tr>
-      <td style="padding:15px 0 15px 22px;${last ? '' : line}font-family:${font};font-size:15px;font-weight:700;color:${C.white};">${label}</td>
-      <td align="right" style="padding:15px 22px 15px 0;${last ? '' : line}font-family:${font};font-size:14px;font-weight:700;color:${color};white-space:nowrap;">&#9679;&nbsp;${status}</td>
-    </tr>`
+  const platform = (o: { label: string; status: string; color: string; border: string; body: string; cta: string; href: string; btnBg: string; btnColor: string }) => `
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;border:1px solid ${o.border};">
+      <tr>
+        <td style="padding:20px 22px 0;font-family:${font};font-size:18px;font-weight:700;color:${C.white};">${o.label}</td>
+        <td align="right" style="padding:20px 22px 0;font-family:${font};font-size:14px;font-weight:700;color:${o.color};white-space:nowrap;">&#9679;&nbsp;${o.status}</td>
+      </tr>
+      <tr><td colspan="2" style="padding:8px 22px 0;font-family:${font};font-size:15px;line-height:1.5;color:${C.body};">${o.body}</td></tr>
+      <tr><td colspan="2" align="center" style="padding:18px 22px 22px;">
+        <table cellpadding="0" cellspacing="0" border="0" role="presentation" align="center" style="margin:0 auto;">
+          <tr><td align="center" bgcolor="${o.btnBg}" style="background:${o.btnBg};border-radius:999px;mso-padding-alt:14px 28px;">
+            <a href="${o.href}" target="_blank" style="display:inline-block;padding:14px 28px;font-family:${font};font-size:16px;font-weight:700;color:${o.btnColor};text-decoration:none;border-radius:999px;mso-padding-alt:0;">${o.cta}</a>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table>`
   const tile = (file: string, alt: string, bg: string, glow: string) => `
     <td width="88" height="88" align="center" valign="middle" bgcolor="${bg}" style="width:88px;height:88px;border-radius:20px;background:${bg};box-shadow:0 0 40px ${glow};">
       <img src="${APP_LAUNCH_ASSETS}/${file}" alt="${alt}" width="88" height="88" style="display:block;width:88px;height:88px;border:0;outline:none;border-radius:20px;color:${bg === '#FFFFFF' ? '#000000' : '#FFFFFF'};font-family:${font};font-size:16px;font-weight:700;text-align:center;line-height:88px;" />
@@ -1318,7 +1329,7 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
   </style>
 </head>
 <body id="body" bgcolor="${C.bg}" style="margin:0;padding:0;background:${C.bg};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:${C.bg};">Webseiten bequem in der App bearbeiten, und Besucher chatten direkt mit dir. Ohne Aufpreis.${'&#847;&zwnj;&nbsp;'.repeat(60)}</div>
+  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:${C.bg};">Webseiten bequem in der App bearbeiten, und Besucher chatten direkt mit dir. Android-Tester gesucht!${'&#847;&zwnj;&nbsp;'.repeat(60)}</div>
   <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${C.bg}" style="background:${C.bg};">
     <tr><td align="center" style="padding:40px 0 48px;">
       <!--[if mso]><table width="560" cellpadding="0" cellspacing="0" border="0" role="presentation" align="center"><tr><td><![endif]-->
@@ -1336,7 +1347,8 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
 
         ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:1px;">DAS GRÖSSTE UPDATE BISHER</p>
                <h1 style="margin:14px 0 0;font-family:${font};font-size:40px;line-height:1.1;font-weight:700;color:${C.white};text-align:center;letter-spacing:-1px;">Die FinestSites-App<br />ist da. <span style="color:${C.accent};">Mit Chat.</span></h1>
-               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute bearbeitest du deine Webseiten ganz bequem in der FinestSites-App. Dazu kommt ein Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}`)}
+               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute bearbeitest du deine Webseiten ganz bequem in der FinestSites-App. Dazu kommt ein Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}
+               ${text(`<span style="color:${C.green};">&#9679;</span>&nbsp;<span style="color:${C.white};font-weight:700;">iPhone/iPad:</span> jetzt verfügbar &nbsp;&nbsp; <span style="color:${C.amber};">&#9679;</span>&nbsp;<span style="color:${C.white};font-weight:700;">Android:</span> Tester gesucht`, 'margin-top:16px;font-size:14px;')}`)}
         ${space(32)}
 
         ${row(card(`
@@ -1347,24 +1359,19 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
         ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp; Ohne Aufpreis: App und Chat sind ${included}.`, 'font-size:14px;'))}
         ${space(32)}
 
-        ${row(card(`
-          ${device('iPhone und iPad', 'Jetzt verfügbar', C.green)}
-          ${device('Android', 'Tester gesucht', C.amber, true)}
-        `))}
-        ${space(28)}
-
-        ${row(`<table cellpadding="0" cellspacing="0" border="0" role="presentation" align="center" style="margin:0 auto;">
-                 <tr><td align="center" bgcolor="${C.white}" style="background:${C.white};border-radius:999px;mso-padding-alt:15px 32px;">
-                   <a href="${APP_STORE_URL}" target="_blank" style="display:inline-block;padding:15px 32px;font-family:${font};font-size:16px;font-weight:700;color:#000000;text-decoration:none;border-radius:999px;mso-padding-alt:0;">Jetzt die App laden</a>
-                 </td></tr>
-               </table>`)}
-        ${space(14)}
-        ${row(`<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${C.card}" style="background:${C.card};border-radius:20px;border:1px solid ${C.amber};">
-                 <tr><td style="padding:22px 24px;">
-                   <p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.amber};text-align:center;letter-spacing:1px;">ANDROID-TESTER GESUCHT</p>
-                   ${text('Du hast ein Android-Handy? Dann teste die App, bevor sie für alle kommt. Antworte einfach auf diese Mail mit <strong style="color:#F5F5F7;">deiner Google-Mailadresse, die du im Play Store nutzt</strong>. Ich schalte dich dann frei.', 'margin-top:10px;font-size:15px;')}
-                 </td></tr>
-               </table>`)}
+        ${row(platform({
+          label: 'iPhone und iPad', status: 'Jetzt verfügbar', color: C.green, border: C.line,
+          body: 'Lade dir die App und leg direkt los.',
+          cta: 'Jetzt die App laden', href: APP_STORE_URL, btnBg: C.white, btnColor: '#000000',
+        }))}
+        ${space(16)}
+        ${row(platform({
+          label: 'Android', status: 'Tester gesucht', color: C.amber, border: C.amber,
+          body: `Du hast ein Android-Handy? <strong style="color:${C.white};">Teste die App vor allen anderen!</strong> Schick mir deine Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.`,
+          cta: 'Als Android-Tester melden', href: ANDROID_TESTER_MAILTO, btnBg: C.amber, btnColor: '#000000',
+        }))}
+        ${space(12)}
+        ${row(text('Oder einfach auf diese Mail antworten.', `font-size:13px;color:${C.muted};`))}
         ${space(40)}
 
         ${row(text('Chat einschalten: In der App deine Seite öffnen → Kontakt → <span style="white-space:nowrap;">Besucher-Chat</span>.', 'font-size:15px;'))}
@@ -1400,13 +1407,11 @@ export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firs
     '',
     `Ohne Aufpreis: App und Chat sind ${hasPlan ? 'in deinem Tarif inklusive' : 'in jedem Tarif inklusive'}.`,
     '',
-    'iPhone und iPad: jetzt verfügbar',
-    'Android: Tester gesucht',
+    'IPHONE UND IPAD: JETZT VERFÜGBAR',
+    `Jetzt die App laden: ${APP_STORE_URL}`,
     '',
-    `Jetzt die App laden (iPhone und iPad): ${APP_STORE_URL}`,
-    '',
-    'ANDROID-TESTER GESUCHT',
-    'Du hast ein Android-Handy? Dann teste die App, bevor sie für alle kommt. Antworte einfach auf diese Mail mit deiner Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.',
+    'ANDROID: TESTER GESUCHT',
+    'Du hast ein Android-Handy? Teste die App vor allen anderen! Antworte einfach auf diese Mail mit deiner Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.',
     '',
     'Chat einschalten: In der App deine Seite öffnen → Kontakt → Besucher-Chat.',
     '',
