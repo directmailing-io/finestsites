@@ -1345,26 +1345,17 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
                </tr></table>`)}
         ${space(28)}
 
-        ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:1px;">DAS GRÖSSTE UPDATE BISHER</p>
+        ${row(`<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${C.accent};text-align:center;letter-spacing:1px;">EIN GIGAAAAANTISCHES UPDATE!</p>
                <h1 style="margin:14px 0 0;font-family:${font};font-size:40px;line-height:1.1;font-weight:700;color:${C.white};text-align:center;letter-spacing:-1px;">Die FinestSites-App<br />ist da. <span style="color:${C.accent};">Mit Chat.</span></h1>
-               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute bearbeitest du deine Webseiten ganz bequem in der FinestSites-App. Dazu kommt ein Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}
-               ${text(`<span style="color:${C.green};">&#9679;</span>&nbsp;<span style="color:${C.white};font-weight:700;">iPhone/iPad:</span> jetzt verfügbar &nbsp;&nbsp; <span style="color:${C.amber};">&#9679;</span>&nbsp;<span style="color:${C.white};font-weight:700;">Android:</span> Tester gesucht`, 'margin-top:16px;font-size:14px;')}`)}
+               ${text(`${name ? `Hey ${name}, ab` : 'Ab'} heute bearbeitest du deine Webseiten ganz bequem in der FinestSites-App. Dazu kommt ein Chat, über den Besucher dir sofort schreiben.`, 'margin-top:18px;font-size:17px;')}`)}
         ${space(32)}
 
         ${row(card(`
           ${update(1, 'Die FinestSites-App', 'Webseiten bequem vom Handy aus bearbeiten und veröffentlichen. Neue Anfragen siehst du sofort und antwortest mit einem Tipp.')}
           ${update(2, 'Der Chat für deine Webseite', 'Besucher fragen direkt auf deiner Seite, du antwortest in der App. Wer früher weggeklickt hat, schreibt dir jetzt.', true)}
         `))}
-        ${space(14)}
-        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp; Ohne Aufpreis: App und Chat sind ${included}.`, 'font-size:14px;'))}
         ${space(32)}
 
-        ${row(platform({
-          label: 'iPhone und iPad', status: 'Jetzt verfügbar', color: C.green, border: C.line,
-          body: 'Lade dir die App und leg direkt los.',
-          cta: 'Jetzt die App laden', href: APP_STORE_URL, btnBg: C.white, btnColor: '#000000',
-        }))}
-        ${space(16)}
         ${row(platform({
           label: 'Android', status: 'Tester gesucht', color: C.amber, border: C.amber,
           body: `Du hast ein Android-Handy? <strong style="color:${C.white};">Teste die App vor allen anderen!</strong> Schick mir deine Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.`,
@@ -1372,6 +1363,14 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
         }))}
         ${space(12)}
         ${row(text('Oder einfach auf diese Mail antworten.', `font-size:13px;color:${C.muted};`))}
+        ${space(24)}
+        ${row(platform({
+          label: 'iPhone und iPad', status: 'Jetzt verfügbar', color: C.green, border: C.line,
+          body: 'Lade dir die App und leg direkt los.',
+          cta: 'Jetzt die App laden', href: APP_STORE_URL, btnBg: C.white, btnColor: '#000000',
+        }))}
+        ${space(18)}
+        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp; Ohne Aufpreis: App und Chat sind ${included}.`, 'font-size:14px;'))}
         ${space(40)}
 
         ${row(text('Chat einschalten: In der App deine Seite öffnen → Kontakt → <span style="white-space:nowrap;">Besucher-Chat</span>.', 'font-size:15px;'))}
@@ -1394,7 +1393,7 @@ export function appLaunch202611Email({ firstName, hasPlan = true, prefs }: { fir
 export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firstName?: string; hasPlan?: boolean; prefs?: PrefsFooter }): string {
   const name = launchFirstName(firstName)
   return [
-    'DAS GRÖSSTE UPDATE BISHER',
+    'EIN GIGAAAAANTISCHES UPDATE!',
     'Die FinestSites-App ist da. Mit Chat.',
     '',
     `${name ? `Hey ${name}, ab` : 'Ab'} heute bearbeitest du deine Webseiten ganz bequem in der FinestSites-App. Dazu kommt ein Chat, über den Besucher dir sofort schreiben.`,
@@ -1405,13 +1404,13 @@ export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firs
     '2. Der Chat für deine Webseite',
     'Besucher fragen direkt auf deiner Seite, du antwortest in der App. Wer früher weggeklickt hat, schreibt dir jetzt.',
     '',
-    `Ohne Aufpreis: App und Chat sind ${hasPlan ? 'in deinem Tarif inklusive' : 'in jedem Tarif inklusive'}.`,
+    'ANDROID: TESTER GESUCHT',
+    'Du hast ein Android-Handy? Teste die App vor allen anderen! Antworte einfach auf diese Mail mit deiner Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.',
     '',
     'IPHONE UND IPAD: JETZT VERFÜGBAR',
     `Jetzt die App laden: ${APP_STORE_URL}`,
     '',
-    'ANDROID: TESTER GESUCHT',
-    'Du hast ein Android-Handy? Teste die App vor allen anderen! Antworte einfach auf diese Mail mit deiner Google-Mailadresse, die du im Play Store nutzt. Ich schalte dich dann frei.',
+    `Ohne Aufpreis: App und Chat sind ${hasPlan ? 'in deinem Tarif inklusive' : 'in jedem Tarif inklusive'}.`,
     '',
     'Chat einschalten: In der App deine Seite öffnen → Kontakt → Besucher-Chat.',
     '',
