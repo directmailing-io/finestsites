@@ -149,7 +149,31 @@ interface UserDetail {
   deletion?: DeletionInfo | null
   /** Nutzung der nativen FinestSites-App */
   app?: AppUsage | null
+  /** Kündigungsflow (03.11.2026): Grund, Kommentar, Angebot, Ergebnis */
+  cancellations?: CancellationRow[]
 }
+
+interface CancellationRow {
+  id: string
+  createdAt: string
+  reason: string
+  comment: string | null
+  plan: string | null
+  billingInterval: string | null
+  discountAtTime: string | null
+  offerShown: string
+  offerResult: string | null
+  outcome: string
+  periodEnd: string | null
+}
+
+const CANCEL_REASON_TEXT: Record<string, string> = {
+  too_expensive: 'Zu teuer, lohnt sich gerade nicht', not_needed_now: 'Braucht die Webseite gerade nicht', business_ended: 'Macht das Geschäft nicht mehr',
+  missing_features: 'Fehlt etwas / Vorlage passt nicht', too_complex: 'Zu kompliziert / technische Probleme', switching: 'Wechselt zu einem anderen Anbieter', other: 'Anderer Grund / nicht gesagt',
+}
+const CANCEL_OFFER_TEXT: Record<string, string> = { none: 'keins', discount: '10 % Rabatt', discount_followup: 'Rabatt-Anschluss', pause: 'Pause', 'pause+discount': 'Pause + Rabatt', downgrade: 'Kleinerer Tarif', reminder: 'Erinnerung', talk: 'Gespräch' }
+const CANCEL_RESULT_TEXT: Record<string, string> = { accepted: 'angenommen', declined: 'abgelehnt', dismissed: 'weggeklickt' }
+const CANCEL_OUTCOME_TEXT: Record<string, string> = { started: 'offen', canceled: 'gekündigt', paused: 'pausiert', kept: 'geblieben', abandoned: 'abgebrochen' }
 
 const APP_PLATFORM_LABEL: Record<string, string> = { ios: 'iOS', android: 'Android' }
 
@@ -419,6 +443,25 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
       </Link>
 
       <div className="flex flex-col gap-5">
+
+        {/* Kündigungsflow: Grund, Kommentar, Angebot, Ergebnis (03.11.2026) */}
+        {(data.cancellations?.length ?? 0) > 0 && (
+          <div className="px-5 py-4 rounded-[20px]" style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-2" style={{ color: '#9A3412' }}>Kündigung</p>
+            <div className="flex flex-col gap-2">
+              {data.cancellations!.map(c => (
+                <div key={c.id} className="text-sm" style={{ color: '#374151' }}>
+                  <span className="font-medium text-gray-900">{new Date(c.createdAt).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
+                  {' · '}{CANCEL_REASON_TEXT[c.reason] ?? c.reason}
+                  {' · Angebot: '}{CANCEL_OFFER_TEXT[c.offerShown] ?? c.offerShown}{c.offerResult ? ` (${CANCEL_RESULT_TEXT[c.offerResult] ?? c.offerResult})` : ''}
+                  {' · '}<span className="font-semibold" style={{ color: c.outcome === 'canceled' ? '#B91C1C' : c.outcome === 'kept' || c.outcome === 'paused' ? '#15803D' : '#92400E' }}>{CANCEL_OUTCOME_TEXT[c.outcome] ?? c.outcome}</span>
+                  {c.discountAtTime ? <span style={{ color: '#6B7280' }}>{` · Rabatt ${c.discountAtTime}`}</span> : null}
+                  {c.comment && <div className="italic mt-0.5" style={{ color: '#6B7280' }}>„{c.comment}“</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Profile card */}
         <div className="p-6 rounded-[24px] bg-white flex flex-col gap-3"

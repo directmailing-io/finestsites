@@ -135,6 +135,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       }, { status: 402 })
     }
 
+    // Abo pausiert (src/lib/billing/pause.ts): Entwürfe bearbeiten ja, veröffentlichen erst nach der Pause
+    if (userRow.pauseStartedAt) {
+      return NextResponse.json({
+        error: forApp ? appMessage('PAUSED') : 'Dein Abo macht gerade Pause. Beende die Pause unter Einstellungen → Zahlung & Plan, dann kannst du veröffentlichen.',
+        code: 'PAUSED',
+      }, { status: 403 })
+    }
+
     const plan = userRow.plan ?? 'starter'
     const limit = PLAN_LIMITS[plan] ?? 1
 

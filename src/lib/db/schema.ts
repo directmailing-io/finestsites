@@ -76,6 +76,27 @@ export const users = pgTable('users', {
   pendingPlanAt: timestamp('pending_plan_at', { withTimezone: true }),
   pendingPlanScheduleId: text('pending_plan_schedule_id'),
   pendingKeepSiteIds: uuid('pending_keep_site_ids').array().notNull().default(sql`'{}'::uuid[]`),
+  // Kündigungsprozess (Migration 20261103120000, docs/kuendigung/konzept.html):
+  // Treue-Rabatt 10 % dauerhaft – einmal pro Konto (markiert beim ANZEIGEN), bei laufendem Rabatt
+  // vorgemerkt und vom Webhook (customer.discount.deleted) angewendet, sobald der alte endet.
+  retentionOfferShownAt: timestamp('retention_offer_shown_at', { withTimezone: true }),
+  retentionCouponPending: boolean('retention_coupon_pending').notNull().default(false),
+  retentionCouponAppliedAt: timestamp('retention_coupon_applied_at', { withTimezone: true }),
+  // Jahresabo: „Erinnerung statt Kündigung“ (Opt-in aus dem Kündigungsflow), Mail 14 Tage vor der Verlängerung
+  renewalReminderOptIn: boolean('renewal_reminder_opt_in').notNull().default(false),
+  renewalReminderSentAt: timestamp('renewal_reminder_sent_at', { withTimezone: true }),
+  // Pause 1–3 Monate ab Laufzeitende (src/lib/billing/pause.ts): Zeitraum, Stripe-Zeitplan, Beginn (vom Webhook
+  // gesetzt, sobald der Pause-Preis aktiv ist), Marker für die „endet in 7 Tagen“-Mail, letzte Pause (eine je 12 Monate)
+  pauseFrom: timestamp('pause_from', { withTimezone: true }),
+  pauseUntil: timestamp('pause_until', { withTimezone: true }),
+  pauseMonths: integer('pause_months'),
+  pauseScheduleId: text('pause_schedule_id'),
+  pauseStartedAt: timestamp('pause_started_at', { withTimezone: true }),
+  pauseEndNoticeSentAt: timestamp('pause_end_notice_sent_at', { withTimezone: true }),
+  lastPauseAt: timestamp('last_pause_at', { withTimezone: true }),
+  // Lifecycle-Mails genau einmal: 3 Tage vor dem Laufzeitende nach Kündigung, 14 Tage vor der endgültigen Löschung
+  cancelEndNoticeSentAt: timestamp('cancel_end_notice_sent_at', { withTimezone: true }),
+  deletionNoticeSentAt: timestamp('deletion_notice_sent_at', { withTimezone: true }),
   paymentFailedAt: timestamp('payment_failed_at', { withTimezone: true }),
   // Payment recovery (see src/lib/billing/payment-recovery.ts):
   // the open invoice behind paymentFailedAt, how long the sites stay online
@@ -656,6 +677,34 @@ export const supportAiSuggestions = pgTable('support_ai_suggestions', {
 }, (t) => [
   index('idx_support_ai_suggestions_conv').on(t.conversationId),
   index('idx_support_ai_suggestions_created').on(t.createdAt),
+])
+
+/**
+ * Kündigungsprozess (Migration 20261103120000): eine Zeile je gestartetem Flow – Grund (ein Tipp), Kommentar,
+ * Lage zum Zeitpunkt (Tarif, Intervall, Rabatt, Monate dabei), gezeigtes Angebot und was daraus wurde.
+ *   offer_shown:  none | discount | discount_followup | pause | downgrade | reminder | talk
+ *   offer_result: accepted | declined | dismissed | null (noch offen)
+ *   outcome:      started | canceled | paused | kept | abandoned
+ */
+export const cancellationFeedback = pgTable('cancellation_feedback', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  reason: text('reason').notNull(),
+  comment: text('comment'),
+  plan: text('plan'),
+  billingInterval: text('billing_interval'),
+  discountAtTime: text('discount_at_time'),
+  tenureDays: integer('tenure_days'),
+  offerShown: text('offer_shown').notNull().default('none'),
+  offerResult: text('offer_result'),
+  outcome: text('outcome').notNull().default('started'),
+  stripeSubscriptionId: text('stripe_subscription_id'),
+  periodEnd: timestamp('period_end', { withTimezone: true }),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index('idx_cancellation_feedback_user').on(t.userId),
+  index('idx_cancellation_feedback_created').on(t.createdAt),
 ])
 
 /** Kleiner Schlüssel/Wert-Speicher für Admin-Einstellungen (z. B. 'support_ai_notes'). */

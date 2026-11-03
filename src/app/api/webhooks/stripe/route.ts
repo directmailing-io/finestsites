@@ -16,6 +16,8 @@ import {
 } from '@/lib/email/templates'
 import { suspendSites, restoreSites, reconcileSiteAccess } from '@/lib/billing/site-access'
 import { applyPendingPlanIfDue } from '@/lib/billing/plan-change'
+import { isPausePrice, onPausePriceActive, onPauseEnded, clearPauseState } from '@/lib/billing/pause'
+import { applyPendingRetentionIfDue } from '@/lib/billing/retention'
 import {
   recoveryCleared,
   recordPaymentFailure,
@@ -632,8 +634,6 @@ export async function POST(req: NextRequest) {
       const sub = event.data.object as Stripe.Subscription
       const prevSub = event.data.previous_attributes as Partial<Stripe.Subscription> | undefined
       const priceId = sub.items.data[0]?.price.id ?? ''
-      const plan = getPlanByPriceId()[priceId] ?? 'starter'
-      const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
       const userId = await getUserIdByCustomer(sub.customer as string)
       if (!userId) break
 
@@ -643,9 +643,17 @@ export async function POST(req: NextRequest) {
       // including sites that already had a deletion timer.
       const userBeforeUpdate = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { deactivatedAt: true },
+        columns: { deactivatedAt: true, plan: true, billingInterval: true, pauseStartedAt: true },
       })
       const fullReactivation = !!userBeforeUpdate?.deactivatedAt && sub.status === 'active'
+
+      // Pause (src/lib/billing/pause.ts): der 0-€-Preis „Pause“ ist kein Tarif – Tarif und Intervall bleiben,
+      // wie sie waren. Phase 2 (Pause-Preis aktiv) → Seiten pausieren; zurück auf einen normalen Preis → fortsetzen.
+      const pausePriceActive = isPausePrice(priceId)
+      const plan = pausePriceActive ? (userBeforeUpdate?.plan ?? 'starter') : (getPlanByPriceId()[priceId] ?? 'starter')
+      const interval = pausePriceActive
+        ? (userBeforeUpdate?.billingInterval === 'yearly' ? 'yearly' : 'monthly')
+        : (sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly')
 
       await db.update(users).set({
         plan,
@@ -659,6 +667,12 @@ export async function POST(req: NextRequest) {
 
       if (fullReactivation) {
         await restoreSites(userId, { includeScheduledDeletion: true })
+      }
+
+      if (pausePriceActive && sub.status !== 'canceled') {
+        await onPausePriceActive(userId).catch(err => console.error('[webhook] pause start failed:', userId, err))
+      } else if (!pausePriceActive && userBeforeUpdate?.pauseStartedAt && sub.status !== 'canceled') {
+        await onPauseEnded(userId, getPeriodEnd(sub)).catch(err => console.error('[webhook] pause end failed:', userId, err))
       }
 
       // Geplanter Wechsel nach unten (src/lib/billing/plan-change.ts): ist der Zieltarif jetzt aktiv,
@@ -721,8 +735,10 @@ export async function POST(req: NextRequest) {
 
       const userRow = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true, deletionRequestedAt: true, deletionMode: true, deletedAt: true },
+        columns: { email: true, deactivatedAt: true, subscriptionStatus: true, paymentFailedAt: true, deletionRequestedAt: true, deletionMode: true, deletedAt: true, cancelAtPeriodEnd: true, pauseScheduleId: true },
       })
+      // Pause-Merker haben ohne Abo keinen Sinn mehr (Kündigung während/vor der Pause)
+      if (userRow?.pauseScheduleId) await clearPauseState(userId).catch(() => {})
 
       // Kontolöschung: Abo wurde von uns sofort beendet, Seiten sind schon offline. Kein 90-Tage-Timer,
       // keine „Abo ausgelaufen/pausiert“-Mail (der Nutzer hat die Lösch-Bestätigung bekommen).
@@ -747,7 +763,10 @@ export async function POST(req: NextRequest) {
       // Was this a voluntary cancellation or a payment-failure termination?
       // past_due/unpaid → Stripe gave up on retries → payment failure email
       // active/trialing → period ended after cancel_at_period_end → expired email
-      const wasPaymentFailure = ['past_due', 'unpaid'].includes(userRow?.subscriptionStatus ?? '') || !!userRow?.paymentFailedAt
+      // Hat der Nutzer selbst gekündigt (cancel_at_period_end), ist es IMMER die „ausgelaufen“-Mail – auch wenn
+      // die letzte SEPA-Rechnung noch offen war (sonst käme fälschlich „Konto pausiert“, Konzept 03.11.2026).
+      const wasPaymentFailure = !userRow?.cancelAtPeriodEnd && !sub.cancel_at_period_end
+        && (['past_due', 'unpaid'].includes(userRow?.subscriptionStatus ?? '') || !!userRow?.paymentFailedAt)
 
       // Deactivate user account; the arrears episode ends with the subscription
       await db.update(users).set({
@@ -765,7 +784,7 @@ export async function POST(req: NextRequest) {
       // Send correct email based on why the subscription ended
       // (only if not already deactivated by cron — cron sets deactivatedAt)
       if (!userRow?.deactivatedAt && userRow?.email) {
-        const emailHtml = wasPaymentFailure ? accountDeactivatedEmail() : accountExpiredEmail()
+        const emailHtml = wasPaymentFailure ? accountDeactivatedEmail() : accountExpiredEmail({ deleteDate: deletionDate.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'Europe/Berlin' }) })
         const emailSubject = wasPaymentFailure
           ? 'Dein Konto wurde pausiert'
           : 'Dein Abo ist ausgelaufen'
@@ -1039,7 +1058,7 @@ export async function POST(req: NextRequest) {
 
       const userBefore = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, deactivatedAt: true, paymentFailedAt: true, paymentFailedInvoiceId: true },
+        columns: { email: true, deactivatedAt: true, paymentFailedAt: true, paymentFailedInvoiceId: true, plan: true, billingInterval: true },
       })
 
       // Does this payment close an open arrears episode? Only if it pays the
@@ -1071,8 +1090,9 @@ export async function POST(req: NextRequest) {
 
       const sub = await stripe.subscriptions.retrieve(subId)
       const priceId = sub.items.data[0]?.price.id ?? ''
-      const plan = getPlanByPriceId()[priceId] ?? 'starter'
-      const interval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
+      const paused = isPausePrice(priceId)
+      const plan = paused ? (userBefore?.plan ?? 'starter') : (getPlanByPriceId()[priceId] ?? 'starter')
+      const interval = paused ? (userBefore?.billingInterval === 'yearly' ? 'yearly' : 'monthly') : (sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly')
 
       await db.update(users).set({
         subscriptionStatus: sub.status,
@@ -1119,6 +1139,17 @@ export async function POST(req: NextRequest) {
     // Partner-Mail über logEventOnce dedupliziert); Verlängerung/Status/Seiten macht weiter
     // invoice.payment_succeeded bzw. customer.subscription.updated.
     // „Außerhalb von Stripe bezahlt“ markierte Rechnungen sind keine tatsächliche Zahlung.
+    // ── Rabatt abgelaufen/entfernt → vorgemerkten Treue-Rabatt anwenden (Rabatt-Anschluss, 03.11.2026) ──
+    case 'customer.discount.deleted': {
+      const discount = event.data.object as Stripe.Discount
+      const customerId = typeof discount.customer === 'string' ? discount.customer : discount.customer?.id
+      if (!customerId) break
+      const userId = await getUserIdByCustomer(customerId)
+      if (!userId) break
+      await applyPendingRetentionIfDue(userId).catch(err => console.error('[webhook] retention follow-up failed:', userId, err))
+      break
+    }
+
     case 'invoice.paid': {
       const invoice = event.data.object as Stripe.Invoice
       if ((invoice as any).paid_out_of_band) break

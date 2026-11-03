@@ -7,6 +7,7 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe/client'
 import { purgeUsernameKV, setCustomDomainKV } from '@/lib/cloudflare/kv-api'
 import { getAppUsageForUser } from '@/lib/admin/app-usage'
+import { loadFeedbackForUser } from '@/lib/admin/cancellations'
 
 async function checkAdmin(req: Request) {
   const user = await getRealUserFromRequest(req)
@@ -90,7 +91,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     },
   }).catch(() => null)
 
-  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount, deletion: deletion ?? null, app })
+  const cancellations = await loadFeedbackForUser(id).catch(() => [])
+  return NextResponse.json({ profile, sites, invoices, events, subscriptionDiscount, deletion: deletion ?? null, app, cancellations })
 }
 
 // ── Username change ───────────────────────────────────────────────────────────

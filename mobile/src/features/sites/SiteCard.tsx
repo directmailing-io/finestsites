@@ -16,6 +16,14 @@ import { colors, fonts, radius } from '@/theme/tokens';
 
 import { QrSheet } from './QrSheet';
 
+/** „ bis 12. März 2027“ – leer, wenn das Datum fehlt oder unlesbar ist */
+function pausedUntilLabel(iso: string | null | undefined): string {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return '';
+  return ` bis ${d.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}`;
+}
+
 export const STATUS_META = {
   published: { label: 'Online', tone: 'online' },
   draft: { label: 'Entwurf', tone: 'draft' },
@@ -100,7 +108,9 @@ export function SiteCard({ site, highlight }: { site: Site; highlight?: boolean 
             </Text>
           )}
           {isDraft && <Text style={styles.note}>Noch nicht online. Nur du siehst diese Seite.</Text>}
-          {site.status === 'deactivated' && <Text style={[styles.note, { color: colors.danger }]}>Diese Seite ist gerade nicht erreichbar.</Text>}
+          {site.status === 'deactivated' && (site.paused_until
+            ? <Text style={styles.note}>Dein Konto macht gerade Pause{pausedUntilLabel(site.paused_until)}. Danach geht die Seite automatisch wieder online.</Text>
+            : <Text style={[styles.note, { color: colors.danger }]}>Diese Seite ist gerade nicht erreichbar.</Text>)}
         </View>
 
         {/* Hauptaktion – immer gleich, immer ein echter Knopf */}

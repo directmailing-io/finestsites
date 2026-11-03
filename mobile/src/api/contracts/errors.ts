@@ -23,6 +23,7 @@ export const AppErrorCode = z.enum([
   // Veröffentlichen (POST /api/sites/[id]/publish)
   'SUBSCRIPTION_REQUIRED',
   'PLAN_LIMIT_REACHED',
+  'PAUSED',
   'PAYMENT_PENDING',
   'CONSENT_REQUIRED',
   'IMPRESSUM_REQUIRED',
@@ -64,6 +65,7 @@ export const AppPurchaseDisabledBody = z.object({
 export const PublishErrorCode = z.enum([
   'SUBSCRIPTION_REQUIRED',
   'PLAN_LIMIT_REACHED',
+  'PAUSED',
   'PAYMENT_PENDING',
   'CONSENT_REQUIRED',
   'IMPRESSUM_REQUIRED',

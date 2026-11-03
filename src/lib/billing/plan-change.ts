@@ -94,7 +94,7 @@ export async function paidPublishedSites(userId: string): Promise<{ id: string; 
     }))
 }
 
-function periodEndOf(sub: Stripe.Subscription): number | null {
+export function periodEndOf(sub: Stripe.Subscription): number | null {
   const itemTs = (sub.items.data[0] as unknown as { current_period_end?: number })?.current_period_end
   const rootTs = (sub as unknown as { current_period_end?: number }).current_period_end
   return itemTs ?? rootTs ?? null
@@ -108,7 +108,7 @@ function periodEndOf(sub: Stripe.Subscription): number | null {
  * Wechsel, wie noch vor ihrem ursprünglichen Ende liegen (Daniel 28.10.2026: 3-Monats-Rabatt, ein
  * Monat genutzt → nach dem Wechsel genau 2 Monate, nicht 3). `once` ist mit der ersten Rechnung verbraucht.
  */
-function splitCarryOverDiscounts(sub: Stripe.Subscription, switchAt: number, interval: BillingInterval): {
+export function splitCarryOverDiscounts(sub: Stripe.Subscription, switchAt: number, interval: BillingInterval): {
   forever: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[]
   limited: { discounts: Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[]; cycles: number }
 } {
@@ -132,10 +132,10 @@ function splitCarryOverDiscounts(sub: Stripe.Subscription, switchAt: number, int
   return { forever, limited: { discounts: limited, cycles: limited.length ? cycles : 0 } }
 }
 
-type OriginalDiscount = { coupon: string; end: number | null; duration: string }
+export type OriginalDiscount = { coupon: string; end: number | null; duration: string }
 
 /** Rabatte des Abos in kompakter Form (für die Zeitplan-Metadaten). */
-function originalDiscountsOf(sub: Stripe.Subscription): OriginalDiscount[] {
+export function originalDiscountsOf(sub: Stripe.Subscription): OriginalDiscount[] {
   const list = (sub as unknown as { discounts?: unknown[] }).discounts ?? []
   const out: OriginalDiscount[] = []
   for (const d of list) {
@@ -154,7 +154,7 @@ function originalDiscountsOf(sub: Stripe.Subscription): OriginalDiscount[] {
  * wären: dauerhafte Gutscheine unverändert, befristete mit genau der Restlaufzeit (abgeleiteter Gutschein
  * mit gleichem Namen/Prozent, `duration_in_months` = verbleibende Abrechnungen). `once` ist verbraucht.
  */
-async function restoreOriginalDiscounts(stripe: Stripe, sub: Stripe.Subscription, originals: OriginalDiscount[]): Promise<void> {
+export async function restoreOriginalDiscounts(stripe: Stripe, sub: Stripe.Subscription, originals: OriginalDiscount[]): Promise<void> {
   const interval: BillingInterval = sub.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
   const nextInvoice = periodEndOf(sub)
   const discounts: { coupon: string }[] = []
@@ -190,7 +190,7 @@ export function billingCyclesBefore(fromSec: number, endSec: number, interval: B
 }
 
 /** Phase-1-Discounts aus dem per `from_subscription` erzeugten Zeitplan (nur gesetzte Felder). */
-function phaseDiscountsAsParams(phase: Stripe.SubscriptionSchedule.Phase): Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] {
+export function phaseDiscountsAsParams(phase: Stripe.SubscriptionSchedule.Phase): Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] {
   return (phase.discounts ?? []).flatMap((d): Stripe.SubscriptionScheduleUpdateParams.Phase.Discount[] => {
     const id = (v: unknown) => (typeof v === 'string' ? v : v && typeof v === 'object' && 'id' in v ? String((v as { id: string }).id) : null)
     const discount = id(d.discount)
@@ -208,6 +208,7 @@ async function loadUser(userId: string) {
     columns: {
       id: true, email: true, plan: true, billingInterval: true, stripeCustomerId: true, stripeSubscriptionId: true,
       cancelAtPeriodEnd: true, deletionRequestedAt: true, deletedAt: true, deactivatedAt: true,
+      pauseScheduleId: true, pauseMonths: true, pauseStartedAt: true,
       ...PENDING_PLAN_COLUMNS, ...recoveryColumns,
     },
   })
@@ -215,7 +216,7 @@ async function loadUser(userId: string) {
   return u
 }
 
-async function activeSubscription(stripe: Stripe, customerId: string): Promise<Stripe.Subscription | null> {
+export async function activeSubscription(stripe: Stripe, customerId: string): Promise<Stripe.Subscription | null> {
   const subs = await stripe.subscriptions.list({ customer: customerId, status: 'active', limit: 1, expand: ['data.discounts', 'data.discounts.source.coupon', 'data.schedule'] })
   return subs.data[0] ?? null
 }
@@ -223,15 +224,30 @@ async function activeSubscription(stripe: Stripe, customerId: string): Promise<S
 /**
  * Wechsel einplanen. Liefert den gespeicherten Merker. Wirft PlanChangeError mit deutscher Meldung.
  */
-export async function schedulePlanChange(userId: string, targetPlan: string, keepSiteIds: string[]): Promise<PendingPlanChange> {
+export async function schedulePlanChange(
+  userId: string,
+  targetPlan: string,
+  keepSiteIds: string[],
+  opts: {
+    /** Nur aus dem Kündigungsflow (03.11.2026): Jahr → Monat zur Verlängerung, gleicher oder kleinerer Tarif */
+    targetInterval?: BillingInterval
+  } = {},
+): Promise<PendingPlanChange> {
   const u = await loadUser(userId)
   if (u.deletionRequestedAt || u.deletedAt || u.deactivatedAt) throw new PlanChangeError('ACCOUNT_STATE', 409, 'Für dieses Konto ist gerade kein Tarifwechsel möglich.')
   if (!u.stripeCustomerId) throw new PlanChangeError('NO_SUBSCRIPTION', 400, 'Kein aktives Abonnement gefunden.')
   if (!PLAN_ORDER.includes(targetPlan as PlanKey)) throw new PlanChangeError('BAD_PLAN', 400, 'Unbekannter Tarif.')
   const target = targetPlan as PlanKey
   const currentIdx = PLAN_ORDER.indexOf(u.plan as PlanKey)
-  if (currentIdx < 0 || PLAN_ORDER.indexOf(target) >= currentIdx) throw new PlanChangeError('NOT_LOWER', 400, 'Zum Laufzeitende kannst du nur in einen kleineren Tarif wechseln. Upgrades gehen sofort.')
+  const currentInterval: BillingInterval = u.billingInterval === 'yearly' ? 'yearly' : 'monthly'
+  const targetInterval: BillingInterval = opts.targetInterval ?? currentInterval
+  const intervalSwitch = targetInterval !== currentInterval
+  if (intervalSwitch && !(currentInterval === 'yearly' && targetInterval === 'monthly')) throw new PlanChangeError('BAD_INTERVAL', 400, 'Zum Laufzeitende geht nur der Wechsel vom Jahres- ins Monatsabo.')
+  if (currentIdx < 0 || PLAN_ORDER.indexOf(target) > currentIdx || (!intervalSwitch && PLAN_ORDER.indexOf(target) === currentIdx)) {
+    throw new PlanChangeError('NOT_LOWER', 400, 'Zum Laufzeitende kannst du nur in einen kleineren Tarif wechseln. Upgrades gehen sofort.')
+  }
   if (shouldBeOffline(u) || u.paymentFailedAt) throw new PlanChangeError('PAYMENT_OPEN', 409, 'Bitte zuerst die offene Zahlung begleichen, dann kannst du den Tarif wechseln.')
+  if (u.pauseScheduleId) throw new PlanChangeError('PAUSED', 409, 'Während einer Pause ist kein Tarifwechsel möglich. Beende oder brich die Pause ab, dann kannst du wechseln.')
 
   const stripe = getStripe()
   const sub = await activeSubscription(stripe, u.stripeCustomerId)
@@ -239,7 +255,9 @@ export async function schedulePlanChange(userId: string, targetPlan: string, kee
   if (sub.cancel_at_period_end) throw new PlanChangeError('CANCELED', 409, 'Dein Abo ist gekündigt. Zieh die Kündigung zurück, dann kannst du den Tarif wechseln.')
   const item = sub.items.data[0]
   if (!item) throw new PlanChangeError('NO_ITEM', 400, 'Abonnement hat keine aktiven Positionen.')
-  const interval: BillingInterval = item.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
+  const stripeInterval: BillingInterval = item.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
+  if (intervalSwitch && stripeInterval !== 'yearly') throw new PlanChangeError('BAD_INTERVAL', 400, 'Zum Laufzeitende geht nur der Wechsel vom Jahres- ins Monatsabo.')
+  const interval: BillingInterval = targetInterval
   const newPriceId = getPriceIdByPlan(target, interval)
   if (!newPriceId) throw new PlanChangeError('NO_PRICE', 500, 'Der Tarif ist gerade nicht buchbar.')
   const switchAt = periodEndOf(sub)
@@ -288,7 +306,7 @@ export async function schedulePlanChange(userId: string, targetPlan: string, kee
         ]
     await stripe.subscriptionSchedules.update(created.id, {
       end_behavior: 'release',
-      metadata: { finestsites_user_id: userId, finestsites_plan_change: `${u.plan}->${target}`, fs_discounts: originals },
+      metadata: { finestsites_user_id: userId, finestsites_plan_change: `${u.plan}/${currentInterval}->${target}/${interval}`, fs_discounts: originals },
       phases: [
         {
           // laufender Zeitraum 1:1 (Preis, Menge, Rabatte), nichts wird neu berechnet
@@ -331,6 +349,17 @@ export async function cancelPlanChange(userId: string): Promise<void> {
   const u = await loadUser(userId)
   if (!u.pendingPlan && !u.pendingPlanScheduleId) return
   const stripe = getStripe()
+  const sharedWithPause = !!u.pendingPlanScheduleId && u.pendingPlanScheduleId === u.pauseScheduleId
+  if (sharedWithPause) {
+    // Pause und Wechsel teilen sich den Zeitplan: ohne Wechsel läuft die Pause im bisherigen Tarif weiter → neu einplanen
+    const months = u.pauseMonths ?? 1
+    await releaseScheduleById(stripe, u.pendingPlanScheduleId!)
+    await db.update(users).set({ ...PENDING_CLEARED, pauseFrom: null, pauseUntil: null, pauseMonths: null, pauseScheduleId: null, pauseStartedAt: null, pauseEndNoticeSentAt: null }).where(eq(users.id, userId))
+    const { schedulePause } = await import('@/lib/billing/pause')
+    await schedulePause(userId, months).catch(err => console.error('[plan-change] re-pause after undo failed:', userId, err instanceof Error ? err.message : err))
+    console.info('[plan-change] cancelled (pause re-planned):', userId)
+    return
+  }
   if (u.pendingPlanScheduleId) await releaseScheduleById(stripe, u.pendingPlanScheduleId)
   await db.update(users).set(PENDING_CLEARED).where(eq(users.id, userId))
   console.info('[plan-change] cancelled:', userId)
@@ -341,13 +370,20 @@ export async function cancelPlanChange(userId: string): Promise<void> {
  * Änderungen am Abo ab (Positionen/cancel_at_period_end werden vom Zeitplan verwaltet).
  */
 export async function releasePendingPlanChange(stripe: Stripe, userId: string, sub?: Stripe.Subscription | null): Promise<boolean> {
-  const u = await db.query.users.findFirst({ where: eq(users.id, userId), columns: { ...PENDING_PLAN_COLUMNS } })
+  const u = await db.query.users.findFirst({ where: eq(users.id, userId), columns: { ...PENDING_PLAN_COLUMNS, pauseScheduleId: true, pauseStartedAt: true } })
   let released = false
   if (u?.pendingPlanScheduleId) released = await releaseScheduleById(stripe, u.pendingPlanScheduleId)
+  if (u?.pauseScheduleId && u.pauseScheduleId !== u.pendingPlanScheduleId) released = (await releaseScheduleById(stripe, u.pauseScheduleId)) || released
   if (sub) released = (await releaseScheduleOf(stripe, sub)) || released
   if (u?.pendingPlan || u?.pendingPlanScheduleId) {
     await db.update(users).set(PENDING_CLEARED).where(eq(users.id, userId))
     console.info('[plan-change] pending change released:', userId)
+  }
+  // Eine eingeplante Pause hängt am selben Mechanismus (Zeitplan) – ohne Zeitplan gibt es keine Pause mehr.
+  // Eine laufende Pause (0-€-Preis aktiv) beendet der Webhook, sobald wieder ein normaler Preis abrechnet.
+  if (u?.pauseScheduleId && !u.pauseStartedAt) {
+    await db.update(users).set({ pauseFrom: null, pauseUntil: null, pauseMonths: null, pauseScheduleId: null, pauseStartedAt: null, pauseEndNoticeSentAt: null }).where(eq(users.id, userId))
+    console.info('[plan-change] pending pause released:', userId)
   }
   return released
 }
@@ -360,7 +396,7 @@ export async function releaseScheduleOf(stripe: Stripe, sub: Stripe.Subscription
   return releaseScheduleById(stripe, id)
 }
 
-async function releaseScheduleById(stripe: Stripe, id: string): Promise<boolean> {
+export async function releaseScheduleById(stripe: Stripe, id: string): Promise<boolean> {
   try {
     const sched = await stripe.subscriptionSchedules.retrieve(id)
     if (sched.status === 'active' || sched.status === 'not_started') {
@@ -411,6 +447,6 @@ export async function applyPendingPlanIfDue(userId: string, newPlan: string): Pr
   return true
 }
 
-function formatDate(d: Date): string {
+export function formatDate(d: Date): string {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'Europe/Berlin' })
 }

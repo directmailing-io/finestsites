@@ -97,6 +97,8 @@ export interface Site {
   has_unpublished_changes?: boolean;
   /** Bildschirmfoto der veröffentlichten Seite (Liste + Detail; fehlt, solange keins aufgenommen ist) */
   thumbnail_url?: string | null;
+  /** Konto-Pause (seit 03.11.2026): die Seite ist bis zu diesem Zeitpunkt nicht erreichbar (Status kommt als deactivated) */
+  paused_until?: string | null;
   /** Liste: mit preview_images; Detail (/api/sites/[id]): ohne */
   templates: { id: string; title: string; domain: string; preview_images?: string[] | null } | null;
 }

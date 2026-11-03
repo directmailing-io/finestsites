@@ -593,14 +593,14 @@ export function accountDeactivatedEmail(): string {
 }
 
 /** Sent when a voluntarily canceled subscription period ends (sites go offline) */
-export function accountExpiredEmail(): string {
+export function accountExpiredEmail({ deleteDate }: { deleteDate?: string | null } = {}): string {
   const billingUrl = `${APP_URL}/billing`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
       Dein Abo ist ausgelaufen
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Deine Abonnementlaufzeit ist jetzt abgelaufen. Deine Webseiten sind offline, aber alle deine Inhalte sind noch <strong>90 Tage</strong> bei uns gespeichert.
+      Deine Abonnementlaufzeit ist jetzt abgelaufen. Deine Premium-Webseiten sind offline, deine kostenlose Linkseite bleibt online. Alle deine Inhalte sind noch <strong>90 Tage</strong> bei uns gespeichert${deleteDate ? ` (bis zum <strong>${deleteDate}</strong>)` : ''}.
     </p>
     <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
       Falls du es dir anders überlegst: Ein Klick und alles ist sofort wieder da. Kein Neuanfang, keine Datenverluste.
@@ -613,8 +613,9 @@ export function accountExpiredEmail(): string {
 }
 
 /** Sent when user schedules cancellation (cancel_at_period_end = true), sites still running */
-export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): string {
-  const billingUrl = `${APP_URL}/billing`
+export function accountCanceledEmail({ periodEnd, pauseAvailable = true }: { periodEnd: string; pauseAvailable?: boolean }): string {
+  const billingUrl = `${APP_URL}/settings?tab=zahlung`
+  const pauseUrl = `${APP_URL}/settings?tab=zahlung&pause=1`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
       Dein Abo wurde gekündigt
@@ -622,12 +623,168 @@ export function accountCanceledEmail({ periodEnd }: { periodEnd: string }): stri
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
       Du hast dein FinestSites-Abo gekündigt. Bis zum <strong>${periodEnd}</strong> läuft aber alles ganz normal weiter. Deine Seiten sind online und du hast vollen Zugriff.
     </p>
-    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
-      Danach gehen deine Seiten offline. Deine Daten bleiben noch 90 Tage gespeichert, falls du es dir doch anders überlegst.
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Danach gehen deine Premium-Webseiten offline. Deine kostenlose Linkseite bleibt online, und deine Inhalte bleiben noch 90 Tage gespeichert, falls du es dir doch anders überlegst.
     </p>
-    ${button(billingUrl, 'Abo weiter nutzen')}
-    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
-      Schade, dass du gehst. Falls du Feedback hast oder wir was besser machen koennen: <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
+    ${pauseAvailable ? `<p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Du brauchst nur eine Auszeit? Dann <a href="${pauseUrl}" style="color:#111827;font-weight:600;">pausiere dein Abo</a> für 1 bis 3 Monate statt zu kündigen. Du zahlst in der Zeit nichts, und danach geht es automatisch weiter.
+    </p>` : ''}
+    ${button(billingUrl, 'Abo weiterlaufen lassen')}
+    <p style="margin:24px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Übrigens: Für jede Empfehlung bekommst du dauerhaft 10 % der Rechnung des Geworbenen als Guthaben auf dein Abo. Ein Pro-Kunde sind rund 2,30 € im Monat.
+    </p>
+    <p style="margin:12px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Schade, dass du gehst. Falls du Feedback hast oder wir etwas besser machen können: <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
+    </p>
+  `)
+}
+
+// ─── Kündigungsprozess (03.11.2026, docs/kuendigung/konzept.html) ─────────────
+// Alles Systemmails (Vertragsinformation, nicht abbestellbar). Keine Mail an Daniel (Admin sieht es im Dashboard),
+// keine „Rabatt endet“-Erinnerung (Daniels Entscheidung).
+
+function euro(n: number): string {
+  return n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+}
+
+/** 3 Tage vor dem Laufzeitende nach einer Kündigung – die einzige Erinnerung, nur an Gekündigte. */
+export function cancelEndingSoonEmail({ periodEnd, pauseAvailable }: { periodEnd: string; pauseAvailable: boolean }): string {
+  const billingUrl = `${APP_URL}/settings?tab=zahlung`
+  const pauseUrl = `${APP_URL}/settings?tab=zahlung&pause=1`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      In 3 Tagen gehen deine Seiten offline
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Am <strong>${periodEnd}</strong> endet dein gekündigtes FinestSites-Abo. Ab dann sind deine Premium-Webseiten nicht mehr erreichbar. Deine kostenlose Linkseite bleibt online, deine Inhalte bleiben 90 Tage gespeichert.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Wenn du es dir anders überlegt hast: Ein Klick, und alles läuft weiter wie bisher. Nichts muss neu eingerichtet werden.
+    </p>
+    ${button(billingUrl, 'Abo weiterlaufen lassen')}
+    ${pauseAvailable ? `<p style="margin:20px 0 0;font-size:14px;color:${base.body};line-height:1.6;">
+      Oder <a href="${pauseUrl}" style="color:#111827;font-weight:600;">stattdessen pausieren</a>: 1 bis 3 Monate nichts zahlen, danach geht es automatisch weiter.
+    </p>` : ''}
+    <p style="margin:24px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Wenn du bei der Kündigung bleibst, musst du nichts tun. Diese Mail kommt nur einmal.
+    </p>
+  `)
+}
+
+/** 14 Tage vor der endgültigen Löschung (90 Tage nach dem Abo-Ende) – eine Pflichtinformation, kein Angebot. */
+export function deletionWarningEmail({ deleteDate }: { deleteDate: string }): string {
+  const billingUrl = `${APP_URL}/settings?tab=zahlung`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Deine Inhalte werden am ${deleteDate} gelöscht
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Dein FinestSites-Abo ist seit gut 2 Monaten beendet. Deine Webseiten mit allen Texten, Bildern und Einstellungen sind noch gespeichert, werden aber am <strong>${deleteDate}</strong> endgültig gelöscht.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Falls du zurückkommen möchtest: Buch einfach wieder einen Tarif, dann ist alles sofort wieder online, genau so, wie du es verlassen hast.
+    </p>
+    ${button(billingUrl, 'Jetzt wieder loslegen')}
+    <p style="margin:24px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Wenn du nichts tust, löschen wir deine Inhalte wie angekündigt. Dein Konto und deine kostenlose Linkseite bleiben bestehen.
+    </p>
+  `)
+}
+
+/** Pause eingeplant: von wann bis wann, was offline geht, Preis danach, wie man sie beendet. */
+export function pauseScheduledEmail({ from, until, months, planName, price, unit }: {
+  from: string; until: string; months: number; planName: string; price: number; unit: 'Monat' | 'Jahr'
+}): string {
+  const settingsUrl = `${APP_URL}/settings?tab=zahlung`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Deine Pause ist eingeplant
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Vom <strong>${from}</strong> bis zum <strong>${until}</strong> macht dein FinestSites-Abo Pause (${months === 1 ? '1 Monat' : `${months} Monate`}). Bis zum ${from} bleibt alles wie bisher.
+    </p>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      In der Pause zahlst du nichts. Deine Premium-Webseiten sind in der Zeit offline, deine kostenlose Linkseite bleibt online. Alle Inhalte, Einstellungen und deine Domain bleiben genau so gespeichert. Bearbeiten kannst du weiterhin.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Ab dem <strong>${until}</strong> geht es automatisch weiter mit <strong>${planName}</strong> für <strong>${euro(price)} pro ${unit}</strong>. Eine Woche vorher erinnern wir dich.
+    </p>
+    ${button(settingsUrl, 'Zu den Einstellungen')}
+    <p style="margin:24px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Du kannst die Pause in den Einstellungen jederzeit beenden oder, falls du dich anders entscheidest, dein Abo auch während der Pause kündigen.
+    </p>
+  `)
+}
+
+/** 7 Tage vor dem Pausenende: Datum, Preis, Zahlungsmethode – niemand wird überrascht abgebucht. */
+export function pauseEndingSoonEmail({ until, planName, price, unit, paymentMethod }: {
+  until: string; planName: string; price: number; unit: 'Monat' | 'Jahr'; paymentMethod: string | null
+}): string {
+  const settingsUrl = `${APP_URL}/settings?tab=zahlung`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Deine Pause endet in 7 Tagen
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Am <strong>${until}</strong> geht es mit deiner FinestSites-Seite weiter. Deine Premium-Webseiten gehen automatisch wieder online, und wir buchen wie vorher <strong>${euro(price)} pro ${unit}</strong> für ${planName}${paymentMethod ? ` über ${paymentMethod}` : ''} ab.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Du musst nichts tun. Falls du noch nicht so weit bist, kannst du in den Einstellungen die Pause beenden, verlängern oder dein Abo kündigen.
+    </p>
+    ${button(settingsUrl, 'Zu den Einstellungen')}
+  `)
+}
+
+/** Pause vorbei: alles wieder online. */
+export function pauseResumedEmail({ nextBilling }: { nextBilling: string | null }): string {
+  const dashboardUrl = `${APP_URL}/sites`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#15803D;letter-spacing:-0.02em;">
+      Willkommen zurück, alles ist wieder online!
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Deine Pause ist vorbei. Deine Webseiten sind ab sofort wieder erreichbar, genau so, wie du sie verlassen hast.${nextBilling ? ` Die nächste Abrechnung kommt am <strong>${nextBilling}</strong>.` : ''}
+    </p>
+    ${button(dashboardUrl, 'Zu meinen Webseiten')}
+  `)
+}
+
+/** Treue-Rabatt angenommen: sofort oder vorgemerkt ab dem Ende des laufenden Rabatts. */
+export function retentionDiscountEmail({ priceAfter, unit, startsAfter }: { priceAfter: number; unit: 'Monat' | 'Jahr'; startsAfter: string | null }): string {
+  const settingsUrl = `${APP_URL}/settings?tab=zahlung`
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      ${startsAfter ? 'Dein Treue-Rabatt ist vorgemerkt' : 'Dein Treue-Rabatt ist aktiv'}
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Schön, dass du bleibst! ${startsAfter
+        ? `Dein aktueller Rabatt läuft noch bis zum <strong>${startsAfter}</strong>. Direkt danach gelten dauerhaft 10 % Treue-Rabatt: Du zahlst dann <strong>${euro(priceAfter)} pro ${unit}</strong>, ohne Ende, ohne Bedingungen.`
+        : `Ab deiner nächsten Rechnung zahlst du dauerhaft <strong>${euro(priceAfter)} pro ${unit}</strong>, 10 % weniger, ohne Ende, ohne Bedingungen.`}
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      An deinem Abo ändert sich sonst nichts. Du kannst weiterhin jederzeit kündigen.
+    </p>
+    ${button(settingsUrl, 'Zu den Einstellungen')}
+  `)
+}
+
+/** Jahresabo: bestellte Erinnerung 14 Tage vor der Verlängerung, mit Ein-Klick-Kündigung (Variante E). */
+export function renewalReminderEmail({ date, amount, planName, paymentMethod, cancelUrl }: {
+  date: string; amount: number; planName: string; paymentMethod: string | null; cancelUrl: string
+}): string {
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Deine Verlängerung am ${date}
+    </h1>
+    <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
+      Wie versprochen die Erinnerung: Am <strong>${date}</strong> verlängert sich dein Jahresabo <strong>${planName}</strong> für <strong>${euro(amount)}</strong>${paymentMethod ? ` über ${paymentMethod}` : ''}. Deine Seiten bleiben online, du musst nichts tun.
+    </p>
+    <p style="margin:0 0 24px;font-size:15px;color:${base.body};line-height:1.65;">
+      Falls du nicht weitermachen möchtest, kündigst du hier mit einem Klick zum ${date}. Bis dahin bleibt alles online.
+    </p>
+    ${button(cancelUrl, `Zum ${date} kündigen`)}
+    <p style="margin:24px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      Der Link gilt nur für dein Konto und nur bis zur Verlängerung. Wenn du weitermachen willst, ignoriere diese Mail einfach.
     </p>
   `)
 }

@@ -45,17 +45,20 @@ type SiteRow = {
   id: string
   customDomain: string | null
   publishedAt: Date | null
-  template: { domain: string } | null
+  template: { domain: string; isFree: boolean | null } | null
   user: { username: string | null } | null
 }
 
 const siteSelect = {
   columns: { id: true, customDomain: true, publishedAt: true },
   with: {
-    template: { columns: { domain: true } },
+    template: { columns: { domain: true, isFree: true } },
     user: { columns: { username: true } },
   },
 } as const
+
+/** Seitenstatus, in denen eine Seite für Besucher nicht erreichbar ist, aber nichts gelöscht wird. */
+export const PAUSED_STATUS = 'paused'
 
 function logKvError(what: string, siteId: string) {
   return (err: unknown) => console.error(`[site-access] KV ${what} failed for site ${siteId}:`, err)
@@ -64,7 +67,9 @@ function logKvError(what: string, siteId: string) {
 /**
  * Take every live site of the user offline.
  *
- * - `published` → `deactivated` (drafts are left alone — they're not online)
+ * - `published` (und `paused`) → `deactivated` (drafts are left alone — they're not online)
+ * - Kostenlose Vorlagen (Linkseite) bleiben online: „immer kostenlos dabei“ gilt auch ohne Abo
+ *   (Daniel, 03.11.2026 – vorher ging bei jeder Kündigung auch die Linkseite offline)
  * - offline marker pushed to KV (TTL-bound), custom-domain mapping removed
  * - `scheduleDeletionAt` is only set for permanent cancellations
  *   (subscription.deleted); billing suspensions leave it null so restore()
@@ -90,10 +95,11 @@ export async function suspendSites(
       ))
   }
 
-  const live = await db.query.userSites.findMany({
-    where: and(eq(userSites.userId, userId), eq(userSites.status, 'published')),
+  const liveAll = await db.query.userSites.findMany({
+    where: and(eq(userSites.userId, userId), inArray(userSites.status, ['published', PAUSED_STATUS])),
     ...siteSelect,
   }) as SiteRow[]
+  const live = liveAll.filter(s => !s.template?.isFree)
   if (live.length === 0) return 0
 
   await db.update(userSites)
@@ -164,6 +170,52 @@ export async function restoreSites(
     }
   }
   return suspended.length
+}
+
+/**
+ * Pause (src/lib/billing/pause.ts): veröffentlichte Premium-Seiten → `paused`. Nichts wird gelöscht,
+ * kein Löschtimer, die eigene Domain bleibt verbunden (nur die KV-Zuordnung wird entfernt, der
+ * Worker liefert die Pausenseite). Kostenlose Vorlagen bleiben online. Idempotent.
+ */
+export async function pauseSites(userId: string): Promise<number> {
+  const live = (await db.query.userSites.findMany({
+    where: and(eq(userSites.userId, userId), eq(userSites.status, 'published')),
+    ...siteSelect,
+  }) as SiteRow[]).filter(s => !s.template?.isFree)
+  if (live.length === 0) return 0
+  await db.update(userSites)
+    .set({ status: PAUSED_STATUS, deactivatedAt: null, updatedAt: new Date() })
+    .where(inArray(userSites.id, live.map(s => s.id)))
+  for (const site of live) {
+    const username = site.user?.username
+    const domain = site.template?.domain
+    if (username && domain) await setSiteOfflineKV(username, domain).catch(logKvError('offline (pause)', site.id))
+    if (site.customDomain) await deleteCustomDomainKV(site.customDomain).catch(logKvError('custom-domain delete (pause)', site.id))
+  }
+  console.info('[site-access] paused:', userId, live.map(s => s.id))
+  return live.length
+}
+
+/** Pause vorbei: `paused` → `published`, KV-Marker weg, eigene Domain wieder zugeordnet. Idempotent. */
+export async function resumePausedSites(userId: string): Promise<number> {
+  const paused = await db.query.userSites.findMany({
+    where: and(eq(userSites.userId, userId), eq(userSites.status, PAUSED_STATUS)),
+    ...siteSelect,
+  }) as SiteRow[]
+  if (paused.length === 0) return 0
+  await db.update(userSites)
+    .set({ status: 'published', deactivatedAt: null, updatedAt: new Date() })
+    .where(inArray(userSites.id, paused.map(s => s.id)))
+  for (const site of paused) {
+    const username = site.user?.username
+    const domain = site.template?.domain
+    if (username && domain) {
+      await clearSiteMetaKV(username, domain).catch(logKvError('meta clear (resume)', site.id))
+      if (site.customDomain) await setCustomDomainKV(site.customDomain, username, domain).catch(logKvError('custom-domain restore (resume)', site.id))
+    }
+  }
+  console.info('[site-access] resumed:', userId, paused.map(s => s.id))
+  return paused.length
 }
 
 /**

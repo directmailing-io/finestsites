@@ -17,6 +17,7 @@ export const APP_MESSAGES: Record<AppErrorCode, string> = {
   APP_PURCHASE_DISABLED: 'In der App nicht verfügbar.',
   SUBSCRIPTION_REQUIRED: 'Diese Vorlage ist in deinem Konto noch nicht freigeschaltet. Dein Entwurf ist gespeichert.',
   PLAN_LIMIT_REACHED: 'In deinem Konto sind alle Webseiten schon online.',
+  PAUSED: 'Dein Konto macht gerade Pause. Deine Inhalte sind gespeichert.',
   PAYMENT_PENDING: 'Deine Webseiten sind gerade offline. Sobald alles geklärt ist, gehen sie automatisch wieder online.',
   CONSENT_REQUIRED: 'Bitte bestätige zuerst die Nutzungsbedingungen.',
   IMPRESSUM_REQUIRED: 'Bitte fülle zuerst dein Impressum aus.',

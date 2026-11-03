@@ -111,7 +111,7 @@
 
 <section class="hero">
   <div class="wrap">
-    <span class="kicker">Konzept · Stand 3. November 2026</span>
+    <span class="kicker">Konzept · Stand 3. November 2026 · umgesetzt am 3. November 2026</span>
     <h1>Kündigen bleibt leicht.<br>Wir lernen nur dazu.</h1>
     <div class="accent-line"></div>
     <p class="lead">Wer kündigen will, soll das in zwei Schritten können. Dazwischen stellen wir genau eine Frage (warum?) und machen genau ein passendes Angebot: Pause, 10 % Rabatt oder ein kurzes Gespräch. Wer trotzdem geht, sieht den Kündigen-Knopf die ganze Zeit. Drumherum: Auswertung im Admin statt Mails an dich, eine Antwort für alle, die schon einen Rabatt haben, die Jahresabo-Fälle, Pause-Mechanik in Stripe, Schutz vor Missbrauch und Fehlern, AGB und App.</p>
@@ -127,6 +127,12 @@
 </section>
 
 <section style="padding:28px 0;">
+  <div class="wrap">
+    <div class="card ok" style="margin-bottom:22px;">
+      <h3>Stand der Umsetzung (3. November 2026)</h3>
+      <p class="note">Alle drei Stufen sind gebaut und live: Grund-Abfrage mit Angebot (<code>src/lib/billing/cancellation.ts</code>, Entscheidungslogik <code>cancellation-offer.ts</code> mit 40 Tests in <code>scripts/cancellation-offer-test.ts</code>), Treue-Rabatt inkl. Rabatt-Anschluss (<code>retention.ts</code>, Coupon <code>BLEIB10</code>, Webhook <code>customer.discount.deleted</code>), Pause per Subscription Schedule mit 0-€-Preis (<code>pause.ts</code>, Seitenstatus <code>paused</code>, Worker-Pausenseite), Jahr → Monat zur Verlängerung, Erinnerung statt Kündigung mit Ein-Klick-Seite <code>/abo/kuendigen</code>, Lifecycle-Mails im täglichen Cron (<code>lifecycle-notifications.ts</code>), Admin-Seite aus der Datenbank mit Zähler in der Navigation, Block im Nutzerprofil, AGB § 10 Abs. 6, Datenschutz Ziffer 5, Changelog. Behoben: Linkseite bleibt online, Admin-Liste ohne 100er-Grenze, richtige Mail bei Kündigung mit offener Rechnung, Links auf „Zahlung &amp; Plan“. App: pausierte Seiten als „Pause bis …“, Veröffentlichen-Hinweis, Konto-Hinweis (nächster Build).</p>
+    </div>
+  </div>
   <div class="wrap toc">
     <a href="#ziele"><span>01</span>Ziele und Leitplanken</a>
     <a href="#ist"><span>02</span>So läuft es heute</a>

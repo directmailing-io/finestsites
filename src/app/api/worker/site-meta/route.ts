@@ -79,17 +79,18 @@ export async function GET(req: NextRequest) {
       // payment)? Tell the Worker so it shows the offline page instead of 404.
       // KV offline markers are only a TTL cache — THIS is the source of truth.
       const [offlineRow] = await db
-        .select({ id: userSites.id })
+        .select({ id: userSites.id, status: userSites.status })
         .from(userSites)
         .innerJoin(users, eq(userSites.userId, users.id))
         .innerJoin(templates, eq(userSites.templateId, templates.id))
         .where(and(
           eq(users.username, username),
           eq(templates.domain, domain),
-          inArray(userSites.status, ['draft', 'deactivated']),
+          inArray(userSites.status, ['draft', 'deactivated', 'paused']),
         ))
         .limit(1)
-      if (offlineRow) return NextResponse.json({ offline: true })
+      // paused (Abo-Pause, 03.11.2026): der Worker zeigt dafür eine ruhige Pausenseite statt „offline“
+      if (offlineRow) return NextResponse.json({ offline: true, ...(offlineRow.status === 'paused' ? { paused: true } : {}) })
       return NextResponse.json({ error: 'not found' }, { status: 404 })
     }
 

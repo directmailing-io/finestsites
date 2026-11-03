@@ -35,6 +35,7 @@ import { accountDeactivatedEmail } from '@/lib/email/templates'
 import { reconcileAllSiteAccess } from '@/lib/billing/site-access'
 import { HARD_DEADLINE_DAYS, cancelForNonPayment } from '@/lib/billing/payment-recovery'
 import { runRecoveryNotifications } from '@/lib/billing/recovery-notifications'
+import { runLifecycleNotifications, type LifecycleStats } from '@/lib/billing/lifecycle-notifications'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -51,6 +52,7 @@ export async function GET(request: NextRequest) {
   const stats = {
     reconciled: { restored: 0, suspended: 0, errors: 0 },
     notified: { notice: 0, reminder: 0, offline: 0, errors: 0 },
+    lifecycle: null as LifecycleStats | null,
     deactivated: 0,
     deleted: 0,
     errors: 0,
@@ -65,6 +67,9 @@ export async function GET(request: NextRequest) {
   if (request.nextUrl.searchParams.get('only') === 'reconcile') {
     return NextResponse.json(stats)
   }
+
+  // ── 1b. Lifecycle-Mails Kündigung/Pause + Sicherheitsnetze (Konzept 03.11.2026) ──
+  stats.lifecycle = await runLifecycleNotifications(now).catch(err => { console.error('[billing-enforcement] lifecycle', err); return null })
 
   // ── 2. Hard deadline: deactivate + cancel in Stripe ────────────────────────
   const deadlineCutoff = new Date(now.getTime() - HARD_DEADLINE_DAYS * 24 * 60 * 60 * 1000)
@@ -105,17 +110,18 @@ export async function GET(request: NextRequest) {
         .set({ deactivatedAt: now })
         .where(eq(users.id, user.id))
 
-      const sites = await db.query.userSites.findMany({
+      // Kostenlose Vorlagen (Linkseite) bleiben online – „immer kostenlos dabei“ gilt auch ohne Abo
+      const sites = (await db.query.userSites.findMany({
         where: and(
           eq(userSites.userId, user.id),
           eq(userSites.status, 'published'),
         ),
         columns: { id: true, customDomain: true },
         with: {
-          template: { columns: { domain: true } },
+          template: { columns: { domain: true, isFree: true } },
           user:     { columns: { username: true } },
         },
-      })
+      })).filter(s => !(s as any).template?.isFree)
 
       for (const site of sites) {
         await db.update(userSites)

@@ -139,12 +139,18 @@ export async function GET(req: NextRequest) {
     // Attach username + unread_submissions to each site, return snake_case for API compat
     const { unpublishedChangesFor } = await import('@/lib/sites/published-data')
     const changes = await unpublishedChangesFor(sites.map(s => ({ id: s.id, status: s.status, publishedData: s.publishedData ?? null })))
+    // Pause (03.11.2026): ältere App-Versionen kennen nur draft/published/deactivated → für die App „deactivated“
+    // plus paused_until (neue App-Versionen zeigen damit „Pausiert bis …“); das Web bekommt den echten Status.
+    const { isAppRequest } = await import('@/lib/app-mode')
+    const forApp = isAppRequest(req)
+    const pausedUntil = profile?.pauseUntil ? profile.pauseUntil.toISOString() : null
     const result = sites.map(s => ({
       id: s.id,
       has_unpublished_changes: changes[s.id] ?? false,
       user_id: s.userId,
       template_id: s.templateId,
-      status: s.status,
+      status: forApp && s.status === 'paused' ? 'deactivated' : s.status,
+      paused_until: s.status === 'paused' ? pausedUntil : null,
       published_at: s.publishedAt,
       deactivated_at: s.deactivatedAt,
       custom_domain: s.customDomain,

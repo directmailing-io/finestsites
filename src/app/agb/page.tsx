@@ -301,6 +301,16 @@ export default function AgbPage() {
             (5) Kündigungen können per E-Mail an info@finestsites.io oder über die Plattform selbst
             erklärt werden. Die Kündigung ist wirksam, sobald sie dem Anbieter zugegangen ist.
           </p>
+          <p style={{ marginTop: 12 }}>
+            (6) <strong>Pause:</strong> Der Nutzer kann das Abonnement über die Einstellungen im Nutzerkonto
+            für einen bis drei Monate ruhen lassen (Pause), höchstens einmal innerhalb von zwölf Monaten. Die
+            Pause beginnt mit Ablauf des bezahlten Abrechnungszeitraums. Während der Pause fallen keine Entgelte
+            an; kostenpflichtige Webseiten sind in dieser Zeit nicht öffentlich erreichbar, Inhalte und
+            Einstellungen bleiben gespeichert. Mit Ablauf der Pause läuft das Abonnement zu den bisherigen
+            Konditionen automatisch weiter; der Nutzer wird sieben Tage vorher per E-Mail erinnert. Eine Kündigung
+            ist auch während der Pause jederzeit möglich; sie wird dann sofort wirksam. Der Nutzer kann die Pause
+            jederzeit vorzeitig beenden; in diesem Fall beginnt ein neuer Abrechnungszeitraum.
+          </p>
         </Section>
 
         <Section title="§ 11 Folgen der Vertragsbeendigung und Datenlöschung">

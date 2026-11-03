@@ -58,6 +58,11 @@ export default function MoreScreen() {
           <Text style={[styles.label, { color: colors.dangerStrong }]}>Abmelden</Text>
         </Pressable>
       </View>
+
+      {/* Neutraler Hinweis (Apple 3.1.1: kein Link-Knopf, keine Zahlungs-Aufforderung): Konto-Verwaltung ist im Browser */}
+      <Text style={{ marginTop: 16, fontSize: 13, lineHeight: 18, color: colors.mutedForeground, textAlign: 'center' }}>
+        Dein Konto verwaltest du im Browser unter app.finestsites.io.
+      </Text>
     </Screen>
   );
 }

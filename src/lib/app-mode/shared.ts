@@ -86,4 +86,5 @@ export const APP_PUBLISH_BLOCKED_TEXT: Record<string, string> = {
   SUBSCRIPTION_REQUIRED: 'Diese Seite kann mit deinem Konto gerade nicht veröffentlicht werden. Deine Inhalte sind gespeichert.',
   PLAN_LIMIT_REACHED: 'Mit deinem Konto sind schon so viele Seiten online wie möglich. Nimm eine andere Seite offline, dann kannst du diese veröffentlichen. Deine Inhalte sind gespeichert.',
   PAYMENT_PENDING: 'Bei deinem Konto ist gerade etwas offen. Sobald das geklärt ist, gehen deine Seiten automatisch wieder online. Deine Inhalte sind gespeichert.',
+  PAUSED: 'Dein Konto macht gerade Pause. Diese Seite geht wieder online, sobald die Pause vorbei ist. Deine Inhalte sind gespeichert.',
 }

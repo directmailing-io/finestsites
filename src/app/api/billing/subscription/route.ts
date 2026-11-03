@@ -8,6 +8,8 @@ import { getUserFromRequest } from '@/lib/auth/server'
 import { getStripe } from '@/lib/stripe/client'
 import { shouldBeOffline, hardDeadlineFor, trackedInvoiceInfo, recoveryColumns } from '@/lib/billing/payment-recovery'
 import { PENDING_PLAN_COLUMNS, pendingChangeOf, releasePendingPlanChange, type PendingPlanChange } from '@/lib/billing/plan-change'
+import { PAUSE_COLUMNS, pauseInfoOf, pauseAllowedFor, type PauseInfo } from '@/lib/billing/pause'
+import { RETENTION_COLUMNS, retentionInfoOf, type RetentionInfo } from '@/lib/billing/retention'
 
 type RecoveryProfile = {
   subscriptionStatus: string | null
@@ -37,13 +39,18 @@ async function getRecoveryInfo(profile: RecoveryProfile) {
   }
 }
 
-function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string; duration?: string | null } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>, pendingChange: PendingPlanChange | null = null) {
+type Extras = { pause: PauseInfo | null; pause_allowed: boolean; retention: RetentionInfo; renewal_reminder_opt_in: boolean }
+
+function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: string | null, couponObj: { percent_off?: number | null; name?: string | null; id?: string; duration?: string | null } | null | undefined, recovery: Awaited<ReturnType<typeof getRecoveryInfo>>, pendingChange: PendingPlanChange | null = null, extras?: Extras) {
   // In Stripe v22+, current_period_end is per subscription item
   const item = sub.items?.data?.[0]
   const currentPeriodEnd = (item as any)?.current_period_end ?? null
 
   const discountPercent: number | null = couponObj?.percent_off ?? null
   const discountName: string | null = couponObj?.name ?? couponObj?.id ?? null
+  // Ende eines befristeten Rabatts (für die stille Anzeige „bis …“ in der Abo-Karte; keine Erinnerungsmail)
+  const disc0 = ((sub as any).discounts?.[0] ?? (sub as any).discount ?? null) as { end?: number | null } | null
+  const discountEnd: number | null = disc0 && typeof disc0 === 'object' && disc0.end ? disc0.end : null
 
   // An open arrears episode shows as past_due; a Stripe past_due without a
   // recorded failure (SEPA still processing) shows as active
@@ -63,6 +70,12 @@ function getSubInfo(sub: Stripe.Subscription, plan: string, billingInterval: str
     recovery,
     // Geplanter Wechsel nach unten zum Laufzeitende (null = keiner)
     pending_change: pendingChange,
+    discount_end: discountEnd,
+    // Kündigungsprozess 03.11.2026: Pause, Treue-Rabatt, Erinnerung (null/false, wenn nichts davon)
+    pause: extras?.pause ?? null,
+    pause_allowed: extras?.pause_allowed ?? false,
+    retention: extras?.retention ?? { applied: false, pending: false, shown: false },
+    renewal_reminder_opt_in: extras?.renewal_reminder_opt_in ?? false,
   }
 }
 
@@ -75,7 +88,11 @@ export async function GET(req: NextRequest) {
 
   const profile = await db.query.users.findFirst({
     where: eq(users.id, user.id),
-    columns: { stripeCustomerId: true, plan: true, billingInterval: true, paymentFailedInvoiceId: true, ...recoveryColumns, ...PENDING_PLAN_COLUMNS },
+    columns: {
+      stripeCustomerId: true, plan: true, billingInterval: true, paymentFailedInvoiceId: true, cancelAtPeriodEnd: true,
+      deletionRequestedAt: true, deletedAt: true, deactivatedAt: true, renewalReminderOptIn: true,
+      ...recoveryColumns, ...PENDING_PLAN_COLUMNS, ...PAUSE_COLUMNS, ...RETENTION_COLUMNS,
+    },
   })
 
   if (!profile?.stripeCustomerId) {
@@ -86,6 +103,12 @@ export async function GET(req: NextRequest) {
     const stripe = getStripe()
     const recovery = await getRecoveryInfo(profile)
     const pendingChange = pendingChangeOf(profile)
+    const extras: Extras = {
+      pause: pauseInfoOf(profile),
+      pause_allowed: pauseAllowedFor(profile).ok,
+      retention: retentionInfoOf(profile),
+      renewal_reminder_opt_in: !!profile.renewalReminderOptIn,
+    }
 
     async function resolveCoupon(sub: Stripe.Subscription) {
       // Stripe v22+: discount coupon lives in discounts[0].source.coupon (string ID)
@@ -115,13 +138,13 @@ export async function GET(req: NextRequest) {
       })
       if (!allSubs.data.length) return NextResponse.json({ subscription: null })
       const coupon = await resolveCoupon(allSubs.data[0])
-      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, recovery, pendingChange) })
+      return NextResponse.json({ subscription: getSubInfo(allSubs.data[0], profile.plan, profile.billingInterval, coupon, recovery, pendingChange, extras) })
     }
 
     const sub0 = subscriptions.data[0]
     const coupon = await resolveCoupon(sub0)
     return NextResponse.json({
-      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, recovery, pendingChange),
+      subscription: getSubInfo(sub0, profile.plan, profile.billingInterval, coupon, recovery, pendingChange, extras),
     })
   } catch {
     return NextResponse.json({ subscription: null })
@@ -165,6 +188,7 @@ export async function PATCH(req: NextRequest) {
     const updated = await stripe.subscriptions.update(sub.id, {
       cancel_at_period_end: false,
     })
+    await db.update(users).set({ cancelAtPeriodEnd: false, cancelEndNoticeSentAt: null }).where(eq(users.id, user.id)).catch(() => {})
 
     const item = (updated as any).items?.data?.[0]
     return NextResponse.json({

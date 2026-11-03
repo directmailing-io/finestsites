@@ -4,6 +4,7 @@ import { eq, sql, count, desc } from 'drizzle-orm'
 import Link from 'next/link'
 import { getFinanceSnapshot, type PlanKey } from '@/lib/admin/finance'
 import { Section, Table, Row, Badge, Bar, eur, num, dateDE } from './_components/AdminTable'
+import { loadFeedback, reasonLabel, OUTCOME_LABELS } from '@/lib/admin/cancellations'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -92,6 +93,11 @@ export default async function AdminPage() {
     }).from(users).orderBy(desc(users.createdAt)).limit(8),
   ])
 
+  // Kündigungen (03.11.2026): Zahlen der letzten 30 Tage + die drei neuesten Rückmeldungen (statt Mail an Daniel)
+  const cancelRows = await loadFeedback(30, 200).catch(() => [])
+  const cancelKept = cancelRows.filter(r => r.outcome === 'kept' || r.outcome === 'paused').length
+  const cancelLost = cancelRows.filter(r => r.outcome === 'canceled').length
+
   const upgrades = rowsOf<UpgradeRow>(upgradesRes)
   const affRows = rowsOf<AffRow>(affRes)
   const dayRows = rowsOf<DayRow>(signupsRes)
@@ -144,7 +150,24 @@ export default async function AdminPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4">
-        <Section title="Kunden & Wachstum">
+        <Section title="Kündigungen (30 Tage)" hint={cancelRows.length ? `${cancelRows.length} gestartet · ${cancelKept} geblieben · ${cancelLost} gekündigt` : 'keine Rückmeldung'} action={link('/admin/cancellations')}>
+        {cancelRows.length === 0 ? (
+          <p className="text-sm py-2" style={{ color: '#94A3B8' }}>Niemand hat in den letzten 30 Tagen den Kündigungsflow gestartet.</p>
+        ) : (
+          <Table head={['Wer', 'Grund', 'Angebot', 'Ergebnis']} minWidth={480}>
+            {cancelRows.slice(0, 3).map(r => (
+              <Row key={r.id} cells={[
+                <Link key="l" href={`/admin/users/${r.userId}`} className="hover:underline">{[r.firstName, r.lastName].filter(Boolean).join(' ') || r.username || r.email}</Link>,
+                reasonLabel(r.reason),
+                r.offerShown === 'none' ? '–' : r.offerShown,
+                <Badge key="b" tone={r.outcome === 'canceled' ? 'red' : r.outcome === 'kept' || r.outcome === 'paused' ? 'green' : 'amber'}>{OUTCOME_LABELS[r.outcome] ?? r.outcome}</Badge>,
+              ]} />
+            ))}
+          </Table>
+        )}
+      </Section>
+
+      <Section title="Kunden & Wachstum">
           <Table head={['', 'Wert']} minWidth={320}>
             <Row strong cells={['Zahlende Kunden', num(paying)]} />
             <Row cells={['Registrierte Nutzer', num(userStats.total)]} />

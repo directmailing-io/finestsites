@@ -13,6 +13,7 @@ import InvoiceDetailsCard from '@/components/billing/InvoiceDetailsCard'
 import TrackingSettings from '@/components/tracking/TrackingSettings'
 import { EMAIL_CATEGORIES, type EmailCategory } from '@/lib/email/categories'
 import AccountDeletionSection from '@/components/settings/AccountDeletionSection'
+import { CANCEL_REASONS, CANCEL_REASON_LABELS, type CancelReason, type Offer } from '@/lib/billing/cancellation-offer'
 
 // ── Social media helpers ──────────────────────────────────────────────────────
 
@@ -165,6 +166,13 @@ interface SubscriptionInfo {
   recovery: RecoveryInfo | null
   /** Geplanter Wechsel nach unten zum Laufzeitende (null = keiner) */
   pending_change?: PendingPlanChange | null
+  /** Ende eines befristeten Rabatts (Unix-Sekunden), still in der Abo-Karte angezeigt */
+  discount_end?: number | null
+  /** Kündigungsprozess 03.11.2026 */
+  pause?: { from: string; until: string; months: number; active: boolean } | null
+  pause_allowed?: boolean
+  retention?: { applied: boolean; pending: boolean; shown: boolean }
+  renewal_reminder_opt_in?: boolean
 }
 
 interface PaidSite { id: string; title: string; url: string | null }
@@ -295,10 +303,22 @@ function SettingsContent() {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [subLoading, setSubLoading] = useState(true)
   const [portalLoading, setPortalLoading] = useState(false)
-  const [cancelLoading, setCancelLoading] = useState(false)
   const [cancelError, setCancelError] = useState('')
-  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [reactivateLoading, setReactivateLoading] = useState(false)
+  // Kündigungsflow (03.11.2026, docs/kuendigung/konzept.html): Schritt 1 Grund, Schritt 2 genau ein Angebot
+  const [cancelStep, setCancelStep] = useState<'reason' | 'offer' | null>(null)
+  const [cancelReason, setCancelReason] = useState<CancelReason | null>(null)
+  const [cancelComment, setCancelComment] = useState('')
+  const [cancelFeedbackId, setCancelFeedbackId] = useState<string | null>(null)
+  const [cancelOffer, setCancelOffer] = useState<Offer | null>(null)
+  const [cancelBusy, setCancelBusy] = useState<string | null>(null)
+  const [talkMode, setTalkMode] = useState(false)
+  const [talkMessage, setTalkMessage] = useState('')
+  const [pauseMonths, setPauseMonths] = useState(2)
+  // Pause direkt (Link aus Mails: ?pause=1, Abo-Karte)
+  const [pauseOpen, setPauseOpen] = useState(false)
+  const [pauseError, setPauseError] = useState('')
+  const [pauseBusy, setPauseBusy] = useState(false)
 
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly')
@@ -401,6 +421,9 @@ function SettingsContent() {
     const rawTab = searchParams.get('tab')
     const wanted = rawTab === 'unternehmen' ? 'profil' : rawTab === 'konto-loeschen' ? 'sicherheit' : rawTab
     if (wanted && TABS.some(t => t.id === wanted)) setActiveTab(wanted as TabId)
+    // Links aus Mails: ?pause=1 öffnet das Pause-Fenster, ?kuendigen=1 den Kündigungsflow
+    if (searchParams.get('pause') === '1') setPauseOpen(true)
+    if (searchParams.get('kuendigen') === '1') setCancelStep('reason')
 
     if (success === '1') {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -514,17 +537,103 @@ function SettingsContent() {
     else setPortalLoading(false)
   }
 
-  async function handleCancelSubscription() {
-    setCancelLoading(true); setCancelError('')
-    const res = await fetch('/api/billing/subscription', { method: 'DELETE' })
-    const data = await res.json()
-    if (data.error) {
-      setCancelError(data.error)
-    } else {
-      setSubscription(prev => prev ? { ...prev, cancel_at_period_end: true, cancel_at: data.current_period_end } : null)
-      setShowCancelConfirm(false)
+  async function reloadSubscription() {
+    const d = await fetch('/api/billing/subscription').then(r => r.json()).catch(() => null)
+    if (d) setSubscription(d.subscription ?? null)
+    const p = await fetch('/api/user/profile').then(r => r.json()).catch(() => null)
+    if (p) { setProfile(p); if (p.billing_interval) setBillingInterval(p.billing_interval) }
+  }
+
+  function showToast(msg: string, ms = 5000) {
+    setToast(msg)
+    setTimeout(() => setToast(''), ms)
+  }
+
+  // ── Kündigungsflow ─────────────────────────────────────────────
+  function openCancelFlow() {
+    setCancelReason(null); setCancelComment(''); setCancelFeedbackId(null); setCancelOffer(null)
+    setTalkMode(false); setTalkMessage(''); setCancelError(''); setPauseMonths(2)
+    setCancelStep('reason')
+  }
+
+  function closeCancelFlow(dismiss = true) {
+    if (dismiss && cancelFeedbackId) {
+      fetch('/api/billing/cancel/dismiss', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ feedback_id: cancelFeedbackId }) }).catch(() => {})
     }
-    setCancelLoading(false)
+    setCancelStep(null); setCancelError(''); setCancelBusy(null)
+  }
+
+  async function submitCancelReason() {
+    if (!cancelReason) return
+    setCancelBusy('start'); setCancelError('')
+    const res = await fetch('/api/billing/cancel/start', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason: cancelReason, comment: cancelComment }),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) {
+      setCancelError(data.error ?? 'Das hat gerade nicht geklappt.')
+      if (data.code === 'ALREADY_CANCELED') reloadSubscription()
+    } else {
+      setCancelFeedbackId(data.feedback_id)
+      setCancelOffer(data.offer)
+      setTalkMode(data.offer?.kind === 'talk')
+      setCancelStep('offer')
+    }
+    setCancelBusy(null)
+  }
+
+  async function confirmCancel() {
+    setCancelBusy('cancel'); setCancelError('')
+    const res = await fetch('/api/billing/cancel/confirm', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ feedback_id: cancelFeedbackId }),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) { setCancelError(data.error ?? 'Das hat gerade nicht geklappt.'); setCancelBusy(null); return }
+    await reloadSubscription()
+    closeCancelFlow(false)
+    showToast(data.immediate ? 'Dein Abo ist beendet.' : 'Alles klar. Dein Abo endet am Laufzeitende, bis dahin bleibt alles online.')
+  }
+
+  async function acceptCancelOffer(action: 'discount' | 'pause' | 'downgrade' | 'yearly_to_monthly' | 'reminder' | 'talk' | 'keep', extra: Record<string, unknown> = {}) {
+    setCancelBusy(action); setCancelError('')
+    const res = await fetch('/api/billing/cancel/offer', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ feedback_id: cancelFeedbackId, action, ...extra }),
+    })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) { setCancelError(data.error ?? 'Das hat gerade nicht geklappt.'); setCancelBusy(null); return }
+    await reloadSubscription()
+    closeCancelFlow(false)
+    const d = data.detail ?? {}
+    if (action === 'discount') showToast(d.mode === 'pending' ? `Treue-Rabatt vorgemerkt: ab dem ${fmtDateIso(d.startsAfter)} zahlst du dauerhaft 10 % weniger.` : 'Treue-Rabatt aktiv: ab deiner nächsten Rechnung zahlst du dauerhaft 10 % weniger.')
+    else if (action === 'pause') showToast(`Pause eingeplant: vom ${fmtDateIso(d.pause?.from)} bis zum ${fmtDateIso(d.pause?.until)}. Danach geht es automatisch weiter.`)
+    else if (action === 'downgrade' || action === 'yearly_to_monthly') showToast(`Wechsel eingeplant ab dem ${fmtDateIso(d.pending_change?.at)}. Bis dahin bleibt alles wie bisher.`)
+    else if (action === 'reminder') showToast('Alles klar, wir erinnern dich 14 Tage vor der Verlängerung per Mail.')
+    else if (action === 'talk') showToast(data.outcome === 'canceled' ? 'Nachricht gesendet und Abo gekündigt. Daniel meldet sich trotzdem bei dir.' : 'Nachricht gesendet. Daniel meldet sich bei dir, meistens am selben Tag.')
+    else showToast('Schön, dass du bleibst!')
+  }
+
+  // ── Pause direkt (ohne Kündigungsflow) ─────────────────────────
+  async function schedulePauseDirect() {
+    setPauseBusy(true); setPauseError('')
+    const res = await fetch('/api/billing/pause', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ months: pauseMonths }) })
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok) { setPauseError(data.error ?? 'Das hat gerade nicht geklappt.'); setPauseBusy(false); return }
+    await reloadSubscription()
+    setPauseOpen(false); setPauseBusy(false)
+    showToast(`Pause eingeplant: vom ${fmtDateIso(data.pause?.from)} bis zum ${fmtDateIso(data.pause?.until)}. Danach geht es automatisch weiter.`)
+  }
+
+  async function endPause() {
+    setPauseBusy(true)
+    const res = await fetch('/api/billing/pause', { method: 'DELETE' })
+    const data = await res.json().catch(() => ({}))
+    setPauseBusy(false)
+    if (!res.ok) { showToast(data.error ?? 'Das hat gerade nicht geklappt.'); return }
+    await reloadSubscription()
+    showToast(data.ended ? 'Pause beendet. Deine Seiten sind wieder online.' : 'Pause abgebrochen. Dein Abo läuft ganz normal weiter.')
   }
 
   async function handleReactivate() {
@@ -1246,9 +1355,11 @@ function SettingsContent() {
                 style={{
                   background: subscription.status === 'past_due' ? '#FEF2F2'
                     : subscription.cancel_at_period_end ? '#FFF7ED'
+                    : subscription.pause ? '#EFF6FF'
                     : '#F0FDF4',
                   border: subscription.status === 'past_due' ? '1px solid #FECACA'
                     : subscription.cancel_at_period_end ? '1px solid #FED7AA'
+                    : subscription.pause ? '1px solid #BFDBFE'
                     : '1px solid #BBF7D0',
                 }}>
                 <div className="flex flex-wrap items-center gap-2 mb-1.5">
@@ -1266,6 +1377,12 @@ function SettingsContent() {
                       style={{ background: '#FEE2E2', color: '#DC2626' }}>
                       Zahlung fehlgeschlagen
                     </span>
+                  ) : subscription.pause ? (
+                    <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5"
+                      style={{ background: '#DBEAFE', color: '#1E40AF' }}>
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#2563EB' }} />
+                      {subscription.pause.active ? 'Pausiert' : `Pause ab ${fmtDateIso(subscription.pause.from)}`}
+                    </span>
                   ) : (
                     <StatusBadge cancelling={subscription.cancel_at_period_end}>
                       {subscription.cancel_at_period_end ? 'Wird beendet' : 'Aktiv'}
@@ -1278,6 +1395,9 @@ function SettingsContent() {
                         ? 'Kostenlos (100% Rabatt)'
                         : `-${subscription.discount_percent}% Rabatt`}
                       {subscription.discount_name ? ` · ${subscription.discount_name}` : ''}
+                      {subscription.discount_end && subscription.discount_duration !== 'forever'
+                        ? ` · bis ${new Date(subscription.discount_end * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })}`
+                        : ''}
                     </span>
                   )}
                 </div>
@@ -1289,7 +1409,7 @@ function SettingsContent() {
                 ) : subscription.cancel_at_period_end ? (
                   <div>
                     <p className="text-sm" style={{ color: '#C2410C' }}>
-                      Dein Abo läuft am <strong>{periodEnd}</strong> aus. Danach werden Premium-Webseiten deaktiviert.
+                      Dein Abo läuft am <strong>{periodEnd}</strong> aus. Danach gehen deine Premium-Webseiten offline, deine Linkseite bleibt online.
                     </p>
                     <button onClick={handleReactivate} disabled={reactivateLoading}
                       className="mt-4 flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
@@ -1297,6 +1417,27 @@ function SettingsContent() {
                       {reactivateLoading ? <Spinner /> : null}
                       Kündigung zurückziehen
                     </button>
+                  </div>
+                ) : subscription.pause ? (
+                  <div>
+                    <p className="text-sm" style={{ color: '#1E40AF' }}>
+                      {subscription.pause.active
+                        ? <>Pausiert bis zum <strong>{fmtDateIso(subscription.pause.until)}</strong>. In der Zeit zahlst du nichts, deine Premium-Webseiten sind offline. Danach geht es automatisch weiter.</>
+                        : <>Pause vom <strong>{fmtDateIso(subscription.pause.from)}</strong> bis zum <strong>{fmtDateIso(subscription.pause.until)}</strong> eingeplant. Bis dahin bleibt alles wie bisher.</>}
+                    </p>
+                    {pendingChange && (
+                      <p className="text-sm mt-2" style={{ color: '#374151' }}>
+                        Nach der Pause läuft dein Abo im <strong>{PLAN_LABELS[pendingChange.plan] ?? pendingChange.plan}</strong>-Tarif weiter.
+                      </p>
+                    )}
+                    <div className="mt-4 flex flex-wrap items-center gap-4">
+                      <button onClick={endPause} disabled={pauseBusy}
+                        className="px-4 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90 disabled:opacity-70"
+                        style={{ background: '#1D4ED8', color: '#fff' }}>
+                        {pauseBusy ? 'Bitte warten…' : subscription.pause.active ? 'Pause beenden' : 'Pause abbrechen'}
+                      </button>
+                      <button onClick={openCancelFlow} className="text-sm underline underline-offset-2" style={{ color: '#6B7280' }}>Doch kündigen</button>
+                    </div>
                   </div>
                 ) : pendingChange ? (
                   <div>
@@ -1320,6 +1461,16 @@ function SettingsContent() {
                     Nächste Abrechnung am <strong>{periodEnd}</strong>.
                   </p>
                 )}
+                {subscription.retention?.pending && subscription.discount_end && (
+                  <p className="text-xs mt-2" style={{ color: '#374151' }}>
+                    Treue-Rabatt vorgemerkt: ab dem {new Date(subscription.discount_end * 1000).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })} dauerhaft 10 % weniger.
+                  </p>
+                )}
+                {subscription.renewal_reminder_opt_in && !subscription.cancel_at_period_end && (
+                  <p className="text-xs mt-2" style={{ color: '#374151' }}>
+                    Wir erinnern dich 14 Tage vor der Verlängerung per Mail.
+                  </p>
+                )}
               </div>
             ) : (
               <div className="rounded-2xl p-5 sm:p-6" style={{ background: '#F8FAFC', border: '1px solid #E5E7EB' }}>
@@ -1331,18 +1482,18 @@ function SettingsContent() {
             )}
           </TabSection>
 
-          {/* ── Kündigung — dezenter Link ganz unten ── */}
-          {subscription && !subscription.cancel_at_period_end && subscription.status !== 'past_due' && (
+          {/* ── Pausieren oder kündigen — dezenter Link ganz unten (Kündigungsflow 03.11.2026) ── */}
+          {subscription && !subscription.cancel_at_period_end && !subscription.pause && subscription.status !== 'past_due' && (
             <div className="pb-2 flex items-center justify-center gap-2">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="2" className="flex-shrink-0"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
               <button
-                onClick={() => setShowCancelConfirm(true)}
+                onClick={openCancelFlow}
                 className="text-sm underline underline-offset-2 transition-colors"
                 style={{ color: '#6B7280' }}
                 onMouseEnter={e => (e.currentTarget.style.color = '#374151')}
                 onMouseLeave={e => (e.currentTarget.style.color = '#6B7280')}
               >
-                Abonnement kündigen
+                Abo pausieren oder kündigen
               </button>
             </div>
           )}
@@ -1788,51 +1939,317 @@ function SettingsContent() {
         )
       })()}
 
-      {showCancelConfirm && (
+      {cancelStep && (() => {
+        const o = cancelOffer
+        const end = o ? fmtDateIso(o.periodEnd) : periodEnd
+        const busy = cancelBusy !== null
+        const X = (
+          <button onClick={() => closeCancelFlow(true)} disabled={busy} aria-label="Schließen"
+            className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors hover:bg-gray-200 disabled:opacity-50"
+            style={{ position: 'absolute', top: 20, right: 20, background: '#F3F4F6', color: '#6B7280' }}>✕</button>
+        )
+        const cancelLink = (label = `Trotzdem zum ${end} kündigen`) => (
+          <button onClick={confirmCancel} disabled={busy}
+            className="block w-full text-center mt-3 text-sm underline underline-offset-2 transition-colors disabled:opacity-60"
+            style={{ color: '#6B7280' }}>
+            {cancelBusy === 'cancel' ? 'Bitte warten…' : label}
+          </button>
+        )
+        const referral = (
+          <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 mt-4 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+            <span>💡</span>
+            <span>Übrigens: Für jede Empfehlung bekommst du dauerhaft 10 % von deren Rechnung als Guthaben. <strong className="text-gray-900">Ein Pro-Kunde = rund {o?.referralPerMonth.toLocaleString('de-DE', { minimumFractionDigits: 2 }) ?? '2,30'} € weniger im Monat.</strong></span>
+          </div>
+        )
+        const errorBox = cancelError ? (
+          <p className="text-sm font-medium px-4 py-3 rounded-2xl" style={{ background: '#FEF2F2', color: '#DC2626' }}>{cancelError}</p>
+        ) : null
+        const primaryBtn = (label: string, onClick: () => void, color = '#111827') => (
+          <button onClick={onClick} disabled={busy}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-60"
+            style={{ background: color }}>
+            {busy && cancelBusy !== 'cancel' ? <Spinner /> : null}{label}
+          </button>
+        )
+        const offerCard = (kicker: string, children: React.ReactNode) => (
+          <div className="rounded-2xl p-4" style={{ background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+            <p className="text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: '#5B21B6' }}>{kicker}</p>
+            {children}
+          </div>
+        )
+        const sideLines = o ? (
+          <div className="flex flex-col gap-2 mt-3">
+            {o.kind !== 'downgrade' && o.downgrade && (
+              <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+                <span>💡</span>
+                <span>Du hast {profile?.paid_sites_count === 1 ? '1 Seite' : `${profile?.paid_sites_count ?? 'wenige'} Seiten`} online: Mit <strong className="text-gray-900">{o.downgrade.name}</strong> zahlst du {o.downgrade.price} € pro {o.downgrade.unit}.{' '}
+                  <button onClick={() => acceptCancelOffer('downgrade', { plan: o.downgrade!.plan })} disabled={busy} className="underline underline-offset-2 text-gray-900 font-medium">Zum Laufzeitende wechseln</button>
+                </span>
+              </div>
+            )}
+            {o.yearlyToMonthly && (
+              <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+                <span>💡</span>
+                <span>Lieber ohne Jahresbindung? Ab dem {end} monatlich weiter für <strong className="text-gray-900">{o.yearlyToMonthly.price} € im Monat</strong>, jederzeit kündbar.{' '}
+                  <button onClick={() => acceptCancelOffer('yearly_to_monthly')} disabled={busy} className="underline underline-offset-2 text-gray-900 font-medium">Monatlich weitermachen</button>
+                </span>
+              </div>
+            )}
+            {o.yearlyHint && o.kind !== 'pause' && (
+              <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+                <span>💡</span>
+                <span>Im Jahresabo zahlst du {o.yearlyHint.perYear} € im Jahr, das sind {o.yearlyHint.perMonth.toLocaleString('de-DE', { minimumFractionDigits: 2 })} € im Monat. Du findest es oben in der Tarifliste unter „Jährlich“.</span>
+              </div>
+            )}
+            {o.unpublishHint && (
+              <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+                <span>💡</span>
+                <span>Du brauchst die Seite gerade nicht? Nimm sie im Editor einfach offline und veröffentliche sie wieder, wenn du magst. Dein Jahr läuft bis zum {end} weiter, es entstehen keine Kosten.</span>
+              </div>
+            )}
+            {o.talk && o.kind !== 'talk' && !talkMode && (
+              <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+                <span>💬</span>
+                <span>Lieber kurz reden? <button onClick={() => setTalkMode(true)} className="underline underline-offset-2 text-gray-900 font-medium">Schreib Daniel direkt</button>, er antwortet meistens am selben Tag.</span>
+              </div>
+            )}
+            {o.pauseLink && o.kind !== 'pause' && (
+              <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-relaxed" style={{ background: '#F8FAFC', color: '#6B7280' }}>
+                <span>⏸</span>
+                <span>Oder erst mal pausieren: 1 bis 3 Monate nichts zahlen, danach geht es automatisch weiter.{' '}
+                  <button onClick={() => { closeCancelFlow(false); setPauseOpen(true) }} disabled={busy} className="underline underline-offset-2 text-gray-900 font-medium">Pause einplanen</button>
+                </span>
+              </div>
+            )}
+          </div>
+        ) : null
+        const talkBlock = (
+          <>
+            <textarea value={talkMessage} onChange={e => setTalkMessage(e.target.value)} rows={4}
+              placeholder="Zum Beispiel: eine Vorlage für …, ein Feld für …, eine Sprache …"
+              className="w-full px-4 py-3 text-sm rounded-2xl outline-none bg-white"
+              style={{ border: '1.5px solid #E5E7EB' }} />
+            {primaryBtn('Nachricht senden und Abo vorerst behalten', () => acceptCancelOffer('talk', { message: talkMessage }))}
+            <button onClick={() => acceptCancelOffer('talk', { message: talkMessage, also_cancel: true })} disabled={busy}
+              className="block w-full text-center mt-3 text-sm underline underline-offset-2 disabled:opacity-60" style={{ color: '#6B7280' }}>
+              Nachricht senden und trotzdem zum {end} kündigen
+            </button>
+          </>
+        )
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}>
+            <div className="relative bg-white rounded-3xl p-7 max-w-md w-full flex flex-col gap-4 max-h-[92vh] overflow-y-auto"
+              style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.20)' }}>
+              {X}
+
+              {cancelStep === 'reason' ? (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">Schade, dass du gehst.</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      Sag uns kurz, warum. Das hilft uns mehr, als du denkst, und dauert einen Tipp.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    {CANCEL_REASONS.map(r => {
+                      const on = cancelReason === r
+                      return (
+                        <button key={r} onClick={() => setCancelReason(r)}
+                          className="flex items-center gap-3 px-4 py-3 rounded-2xl text-left text-sm font-medium transition-colors"
+                          style={{ border: on ? '1.5px solid #111827' : '1.5px solid #E5E7EB', background: on ? '#F8FAFC' : '#fff', color: '#111827' }}>
+                          <span className="w-4 h-4 rounded-full flex-shrink-0" style={{ border: on ? '5px solid #111827' : '2px solid #CBD5E1' }} />
+                          {CANCEL_REASON_LABELS[r]}
+                        </button>
+                      )
+                    })}
+                  </div>
+                  <textarea value={cancelComment} onChange={e => setCancelComment(e.target.value)} rows={2} maxLength={2000}
+                    placeholder="Magst du uns noch etwas dazu sagen? (optional)"
+                    className="w-full px-4 py-3 text-sm rounded-2xl outline-none bg-white"
+                    style={{ border: '1.5px solid #E5E7EB' }} />
+                  {errorBox}
+                  {primaryBtn('Weiter', submitCancelReason)}
+                  {!cancelReason && <p className="text-xs text-center -mt-2" style={{ color: '#94A3B8' }}>Bitte wähle einen Grund.</p>}
+                </>
+              ) : o && talkMode ? (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">{o.kind === 'talk' ? (cancelReason === 'too_complex' ? 'Was klappt nicht?' : 'Was fehlt dir?') : 'Lass uns kurz sprechen.'}</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      Vielleicht gibt es das schon oder es ist gerade in Arbeit. Daniel antwortet dir persönlich, meistens am selben Tag.
+                    </p>
+                  </div>
+                  {errorBox}
+                  {talkBlock}
+                  {o.pauseLink && (
+                    <button onClick={() => { closeCancelFlow(false); setPauseOpen(true) }} disabled={busy} className="block w-full text-center text-sm underline underline-offset-2 disabled:opacity-60" style={{ color: '#6B7280' }}>Oder erst mal pausieren</button>
+                  )}
+                </>
+              ) : o && o.kind === 'pause' && o.pause ? (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">Wie wär&apos;s mit einer Pause?</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      Deine Premium-Seiten gehen am {fmtDateIso(o.pause.from)} offline, du zahlst nichts, und alles bleibt genau so gespeichert. Danach geht es automatisch weiter.
+                    </p>
+                  </div>
+                  {offerCard(`Pause ab dem ${fmtDateIso(o.pause.from)}`, (
+                    <>
+                      <div className="flex gap-2 mt-1">
+                        {o.pause.months.map(m => (
+                          <button key={m} onClick={() => setPauseMonths(m)}
+                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                            style={{ background: '#fff', color: pauseMonths === m ? '#5B21B6' : '#111827', boxShadow: pauseMonths === m ? 'inset 0 0 0 2px #7C3AED' : 'inset 0 0 0 1px #E5E7EB' }}>
+                            {m} {m === 1 ? 'Monat' : 'Monate'}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-sm mt-3" style={{ color: '#4B5563' }}>
+                        Weiter ab dem <strong className="text-gray-900">{fmtDateIso(new Date(new Date(o.pause.from).setUTCMonth(new Date(o.pause.from).getUTCMonth() + pauseMonths)).toISOString())}</strong> mit {PLAN_LABELS[o.plan] ?? o.plan} wie bisher. Wir erinnern dich eine Woche vorher.
+                      </p>
+                    </>
+                  ))}
+                  {errorBox}
+                  {primaryBtn(`Abo ${pauseMonths} ${pauseMonths === 1 ? 'Monat' : 'Monate'} pausieren`, () => acceptCancelOffer('pause', { months: pauseMonths }))}
+                  {o.discount && (
+                    <div className="rounded-2xl p-4" style={{ background: '#F8FAFC', border: '1px solid #E5E7EB' }}>
+                      <p className="text-sm font-semibold text-gray-900">Oder dauerhaft 10 % Rabatt</p>
+                      <p className="text-xs mt-1" style={{ color: '#64748B' }}>
+                        {o.discount.priceAfter.toLocaleString('de-DE', { minimumFractionDigits: 2 })} € statt {o.discount.priceBefore} € pro {o.discount.unit}{o.discount.startsAfter ? `, ab dem ${fmtDateIso(o.discount.startsAfter)}` : ', ab der nächsten Rechnung'}. Ohne Ende, ohne Bedingungen.
+                      </p>
+                      <button onClick={() => acceptCancelOffer('discount')} disabled={busy} className="mt-2 text-sm font-semibold underline underline-offset-2 text-gray-900 disabled:opacity-60">Rabatt sichern und bleiben</button>
+                    </div>
+                  )}
+                  {cancelLink()}
+                  {referral}
+                </>
+              ) : o && (o.kind === 'discount' || o.kind === 'discount_followup') && o.discount ? (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">{o.kind === 'discount_followup' ? 'Dein Rabatt endet bald.' : 'Ein Angebot, bevor du gehst.'}</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      {o.kind === 'discount_followup'
+                        ? `Am ${fmtDateIso(o.discount.startsAfter)} läuft dein aktueller Rabatt aus. Statt dann auf den vollen Preis zu springen, bleibst du dauerhaft darunter.`
+                        : 'Du hast bisher keinen Rabatt bekommen. Das holen wir nach.'}
+                    </p>
+                  </div>
+                  {offerCard(o.kind === 'discount_followup' ? `Rabatt-Anschluss · ab dem ${fmtDateIso(o.discount.startsAfter)}` : 'Dauerhaft 10 % Rabatt', (
+                    <>
+                      <p className="text-2xl font-bold tracking-tight text-gray-900">
+                        {o.discount.priceAfter.toLocaleString('de-DE', { minimumFractionDigits: 2 })} € <span className="text-sm font-medium" style={{ color: '#64748B' }}>statt {o.discount.priceBefore} € pro {o.discount.unit}, dauerhaft</span>
+                      </p>
+                      <p className="text-sm mt-2" style={{ color: '#4B5563' }}>
+                        {o.kind === 'discount_followup'
+                          ? `Bis zum ${fmtDateIso(o.discount.startsAfter)} bleibt dein Rabatt wie er ist. Danach gelten die 10 % ohne Ende.`
+                          : 'Gilt ab der nächsten Rechnung, ohne Ende, ohne Bedingungen. Du kannst weiterhin jederzeit kündigen.'}
+                      </p>
+                    </>
+                  ))}
+                  {errorBox}
+                  {primaryBtn(o.kind === 'discount_followup' ? 'Anschluss sichern und bleiben' : '10 % Rabatt sichern und bleiben', () => acceptCancelOffer('discount'), '#7C3AED')}
+                  {cancelLink()}
+                  {sideLines}
+                  {referral}
+                </>
+              ) : o && o.kind === 'downgrade' && o.downgrade ? (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">{o.downgrade.name} reicht dir vielleicht.</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      Du hast {profile?.paid_sites_count === 1 ? 'eine Seite' : `${profile?.paid_sites_count ?? ''} Seiten`} online. Das passt in den {o.downgrade.name}-Tarif.
+                    </p>
+                  </div>
+                  {offerCard(`Ab dem ${end} · ${o.downgrade.name}`, (
+                    <>
+                      <p className="text-2xl font-bold tracking-tight text-gray-900">{o.downgrade.price} € <span className="text-sm font-medium" style={{ color: '#64748B' }}>pro {o.downgrade.unit}</span></p>
+                      <p className="text-sm mt-2" style={{ color: '#4B5563' }}>Bis zum {end} bleibt alles wie bisher. Keine Kündigung, keine neue Buchung.</p>
+                    </>
+                  ))}
+                  {errorBox}
+                  {primaryBtn(`Zum Laufzeitende zu ${o.downgrade.name} wechseln`, () => acceptCancelOffer('downgrade', { plan: o.downgrade!.plan }))}
+                  {cancelLink()}
+                  {sideLines}
+                  {referral}
+                </>
+              ) : o && o.kind === 'reminder' && o.reminder ? (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">Du musst heute nichts entscheiden.</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      Dein Jahresabo ist bezahlt und läuft bis zum {end}. Bis dahin ändert eine Kündigung nichts.
+                    </p>
+                  </div>
+                  {offerCard('Erinnerung statt Kündigung', (
+                    <p className="text-sm" style={{ color: '#4B5563' }}>
+                      Wir erinnern dich am <strong className="text-gray-900">{fmtDateIso(o.reminder.remindAt)}</strong> per Mail an die Verlängerung. Darin kündigst du mit einem Klick, falls du dann nicht weitermachen willst.
+                    </p>
+                  ))}
+                  {errorBox}
+                  {primaryBtn('Erinnere mich vor der Verlängerung', () => acceptCancelOffer('reminder'))}
+                  {cancelLink(`Jetzt zum ${end} kündigen`)}
+                  {sideLines}
+                </>
+              ) : (
+                <>
+                  <div className="pr-8">
+                    <h3 className="font-bold text-gray-900 text-lg tracking-tight">Alles klar, danke dir.</h3>
+                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                      Dein Abo endet am <strong className="text-gray-900">{end}</strong>. Bis dahin bleibt alles online. Deine Linkseite bleibt auch danach kostenlos online, und deine Inhalte sind 90 Tage sicher gespeichert, falls du zurückkommst.
+                    </p>
+                  </div>
+                  {errorBox}
+                  {primaryBtn(`Zum ${end} kündigen`, confirmCancel)}
+                  <button onClick={() => acceptCancelOffer('keep')} disabled={busy} className="block w-full text-center text-sm underline underline-offset-2 disabled:opacity-60" style={{ color: '#6B7280' }}>Doch lieber bleiben</button>
+                  {sideLines}
+                  {o && o.kind === 'none' && cancelReason !== 'business_ended' ? referral : null}
+                </>
+              )}
+            </div>
+          </div>
+        )
+      })()}
+
+      {pauseOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}>
-          <div className="bg-white rounded-3xl p-7 max-w-md w-full flex flex-col gap-5"
+          <div className="relative bg-white rounded-3xl p-7 max-w-md w-full flex flex-col gap-4"
             style={{ boxShadow: '0 24px 64px rgba(0,0,0,0.20)' }}>
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
-                style={{ background: '#FEF2F2' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="1.75">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-gray-900 text-lg tracking-tight">Abonnement kündigen?</h3>
-                <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
-                  Dein Abonnement bleibt bis zum <strong className="text-gray-900">{periodEnd}</strong> aktiv.
-                  Danach werden aktive Premium-Webseiten deaktiviert.
-                </p>
-              </div>
-            </div>
-
-            {cancelError && (
-              <p className="text-sm font-medium px-4 py-3 rounded-2xl"
-                style={{ background: '#FEF2F2', color: '#DC2626' }}>
-                {cancelError}
+            <button onClick={() => { setPauseOpen(false); setPauseError('') }} disabled={pauseBusy} aria-label="Schließen"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm transition-colors hover:bg-gray-200"
+              style={{ position: 'absolute', top: 20, right: 20, background: '#F3F4F6', color: '#6B7280' }}>✕</button>
+            <div className="pr-8">
+              <h3 className="font-bold text-gray-900 text-lg tracking-tight">Abo pausieren</h3>
+              <p className="text-sm mt-1.5 leading-relaxed" style={{ color: '#64748B' }}>
+                Die Pause beginnt am {periodEnd ?? 'Ende deiner bezahlten Laufzeit'}. Deine Premium-Seiten sind in der Zeit offline, du zahlst nichts, alles bleibt gespeichert. Danach geht es automatisch weiter.
               </p>
-            )}
-
-            <div className="flex gap-3">
-              <button onClick={() => { setShowCancelConfirm(false); setCancelError('') }}
-                className="flex-1 px-4 py-3 text-sm font-semibold rounded-xl transition-colors hover:bg-gray-200"
-                style={{ background: '#F3F4F6', color: '#374151' }}>
-                Behalten
-              </button>
-              <button onClick={handleCancelSubscription} disabled={cancelLoading}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-white rounded-xl transition-colors disabled:opacity-70"
-                style={{ background: '#DC2626' }}
-                onMouseEnter={e => { if (!cancelLoading) (e.currentTarget as HTMLElement).style.background = '#B91C1C' }}
-                onMouseLeave={e => { if (!cancelLoading) (e.currentTarget as HTMLElement).style.background = '#DC2626' }}>
-                {cancelLoading && <Spinner />}
-                Kündigen
-              </button>
             </div>
+            {subscription?.pause_allowed === false ? (
+              <p className="text-sm font-medium px-4 py-3 rounded-2xl" style={{ background: '#FFFBEB', color: '#92400E' }}>
+                Eine Pause ist gerade nicht möglich (einmal in 12 Monaten, nur bei laufendem Abo ohne offene Zahlung).
+              </p>
+            ) : (
+              <div className="rounded-2xl p-4" style={{ background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+                <div className="flex gap-2">
+                  {[1, 2, 3].map(m => (
+                    <button key={m} onClick={() => setPauseMonths(m)}
+                      className="flex-1 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+                      style={{ background: '#fff', color: pauseMonths === m ? '#5B21B6' : '#111827', boxShadow: pauseMonths === m ? 'inset 0 0 0 2px #7C3AED' : 'inset 0 0 0 1px #E5E7EB' }}>
+                      {m} {m === 1 ? 'Monat' : 'Monate'}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs mt-3" style={{ color: '#4B5563' }}>Eine Pause ist einmal in 12 Monaten möglich. Du kannst sie jederzeit vorzeitig beenden.</p>
+              </div>
+            )}
+            {pauseError && <p className="text-sm font-medium px-4 py-3 rounded-2xl" style={{ background: '#FEF2F2', color: '#DC2626' }}>{pauseError}</p>}
+            {subscription?.pause_allowed !== false && (
+              <button onClick={schedulePauseDirect} disabled={pauseBusy}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 text-sm font-bold text-white rounded-xl transition-opacity hover:opacity-90 disabled:opacity-60"
+                style={{ background: '#111827' }}>
+                {pauseBusy && <Spinner />}Abo {pauseMonths} {pauseMonths === 1 ? 'Monat' : 'Monate'} pausieren
+              </button>
+            )}
           </div>
         </div>
       )}

@@ -42,6 +42,14 @@ const PLANNED: Planned[] = [
 ]
 
 const HISTORY: Month[] = [
+  { label: 'November 2026', entries: [
+    { date: '3. Nov', title: 'Abo pausieren',
+      text: 'Du kannst dein Abo jetzt für 1 bis 3 Monate pausieren, zum Ende deiner bezahlten Laufzeit. In der Pause zahlst du nichts, deine Premium-Webseiten sind so lange offline, alle Inhalte bleiben gespeichert. Danach geht es automatisch weiter, eine Woche vorher erinnern wir dich. Du findest es unter Einstellungen → Zahlung & Plan.' },
+    { date: '3. Nov', title: 'Linkseite bleibt kostenlos online',
+      text: 'Wenn du dein Abo beendest oder pausierst, bleibt deine kostenlose Linkseite online. Nur deine Premium-Webseiten gehen offline.' },
+    { date: '3. Nov', title: 'Kündigen in zwei Schritten, mit passendem Angebot',
+      text: 'Wenn du kündigen willst, fragen wir dich einmal kurz nach dem Grund und zeigen dir dazu genau ein Angebot, zum Beispiel eine Pause oder einen kleineren Tarif. Kündigen geht trotzdem jederzeit, der Knopf dafür bleibt immer sichtbar. Beim Jahresabo kannst du dir statt zu kündigen eine Erinnerung vor der Verlängerung bestellen.' },
+  ] },
   { label: 'Oktober 2026', entries: [
     { date: '28. Okt', title: 'Kleinerer Tarif zum Laufzeitende',
       text: 'Du kannst jetzt zum Ende deiner bezahlten Laufzeit in einen kleineren Tarif wechseln, ohne zu kündigen und neu zu buchen. Bis dahin bleibt alles wie bisher. Du findest es unter Einstellungen → Zahlung & Plan beim jeweiligen Tarif.' },
@@ -443,7 +451,7 @@ export default function ChangelogPage() {
 
           <div className="now">
             <div className="now-label">Heute</div>
-            <div className="now-bar">Stand: 22. Oktober 2026</div>
+            <div className="now-bar">Stand: 3. November 2026</div>
           </div>
 
           {HISTORY.map(m => (

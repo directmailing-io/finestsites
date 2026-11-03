@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       cancel_at_period_end: false,
     })
     // Update DB immediately — Stripe webhook will confirm shortly after
-    await db.update(users).set({ cancelAtPeriodEnd: false }).where(eq(users.id, user.id))
+    await db.update(users).set({ cancelAtPeriodEnd: false, cancelEndNoticeSentAt: null }).where(eq(users.id, user.id))
     return NextResponse.json({ success: true })
   } catch (err) {
     console.error('[billing/reactivate] Stripe error:', err)

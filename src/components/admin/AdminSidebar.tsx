@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { Logo } from '@/components/shared/Logo'
 
 export const navItems = [
@@ -45,6 +46,16 @@ export const navItems = [
         <circle cx="9" cy="7" r="4"/>
         <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    ),
+  },
+  {
+    href: '/admin/cancellations',
+    label: 'Kündigungen',
+    icon: (_active: boolean) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M10 9v6M14 9v6"/>
       </svg>
     ),
   },
@@ -197,6 +208,13 @@ export const navItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname()
+  // Neue Kündigungs-Rückmeldungen seit dem letzten Besuch der Seite (statt einer Mail an Daniel, 03.11.2026)
+  const [unseenCancellations, setUnseenCancellations] = useState(0)
+  useEffect(() => {
+    let alive = true
+    fetch('/api/admin/cancellations/unseen').then(r => r.ok ? r.json() : null).then(d => { if (alive && d) setUnseenCancellations(d.count ?? 0) }).catch(() => {})
+    return () => { alive = false }
+  }, [pathname])
 
   return (
     <aside className="hidden lg:flex w-[240px] flex-col flex-shrink-0 p-4 gap-2"
@@ -217,6 +235,7 @@ export function AdminSidebar() {
           const isActive = item.href === '/admin'
             ? pathname === '/admin'
             : pathname.startsWith(item.href)
+          const badge = item.href === '/admin/cancellations' && !isActive ? unseenCancellations : 0
           return (
             <Link key={item.href} href={item.href}
               className="flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all rounded-[14px]"
@@ -228,6 +247,9 @@ export function AdminSidebar() {
                 {item.icon(isActive)}
               </span>
               {item.label}
+              {badge > 0 && (
+                <span className="ml-auto text-[11px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: '#FEE2E2', color: '#B91C1C' }}>{badge}</span>
+              )}
             </Link>
           )
         })}

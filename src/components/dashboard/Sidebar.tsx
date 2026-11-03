@@ -127,7 +127,7 @@ export function DashboardSidebar() {
           <div className="relative group mb-2">
             {quota.plan === null ? (
               /* Free user — prominent upgrade CTA */
-              <Link href="/billing"
+              <Link href="/settings?tab=zahlung"
                 className="block transition-all hover:brightness-95 active:scale-[0.98]"
                 style={{
                   background: '#f5f0fb',
@@ -148,7 +148,7 @@ export function DashboardSidebar() {
             ) : quota.plan !== 'unlimited' ? (
               /* Paid plan with quota */
               <>
-                <Link href="/billing"
+                <Link href="/settings?tab=zahlung"
                   className="flex items-center justify-between px-3 py-2.5 transition-colors"
                   style={{ background: quota.atLimit ? '#FEF2F2' : '#F3F4F6', borderRadius: 10 }}>
                   <div>

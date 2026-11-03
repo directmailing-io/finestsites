@@ -147,6 +147,14 @@ export default function DatenschutzPage() {
             und § 147 AO für 10 Jahre aufbewahrt. Wie Sie Ihr Konto selbst löschen und was dabei
             geschieht, beschreibt Ziffer 14.
           </p>
+          <p style={{ marginTop: 12 }}>
+            Wenn Sie Ihr Abonnement kündigen oder pausieren, fragen wir einmalig nach dem Grund (Auswahl aus
+            einer Liste, optional ein Freitext). Wir speichern diese Angabe zusammen mit Tarif, Abrechnungszeitraum
+            und dem Ihnen angezeigten Angebot, um die Vertragsbeziehung zu verwalten und unser Angebot zu
+            verbessern (Art. 6 Abs. 1 lit. b und f DSGVO). Die Angabe wird mit dem Nutzerkonto gelöscht;
+            statistische Auswertungen enthalten keinen Personenbezug. Bitte geben Sie im Freitext keine
+            Gesundheitsdaten und keine Daten Dritter an.
+          </p>
         </Section>
 
         {/* 6 */}

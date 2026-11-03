@@ -14,7 +14,8 @@ import { DashboardNewsCard } from '@/components/news/DashboardNewsCard'
 interface Site {
   id: string
   template_id: string
-  status: 'draft' | 'published' | 'deactivated' | 'deleted'
+  status: 'draft' | 'published' | 'deactivated' | 'paused' | 'deleted'
+  paused_until?: string | null
   created_at: string
   username: string | null
   custom_domain: string | null
@@ -38,6 +39,7 @@ const STATUS_META = {
   published:   { label: 'Online',  bg: '#DCFCE7', color: '#15803D', dot: '#16A34A' },
   draft:       { label: 'Entwurf', bg: '#F1F5F9', color: '#475569', dot: '#94A3B8' },
   deactivated: { label: 'Offline', bg: '#FEF2F2', color: '#B91C1C', dot: '#DC2626' },
+  paused:      { label: 'Pausiert', bg: '#EFF6FF', color: '#1D4ED8', dot: '#3B82F6' },
 } as const
 
 function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: string) => void; highlight?: boolean }) {
@@ -154,6 +156,11 @@ function SiteCard({ site, onDeleted, highlight }: { site: Site; onDeleted: (id: 
           )}
           {site.status === 'deactivated' && (
             <p className="text-sm mt-1.5" style={{ color: '#B91C1C' }}>Diese Seite ist gerade nicht erreichbar.</p>
+          )}
+          {site.status === 'paused' && (
+            <p className="text-sm mt-1.5" style={{ color: '#1D4ED8' }}>
+              Dein Abo macht Pause{site.paused_until ? ` bis ${new Date(site.paused_until).toLocaleDateString('de-DE', { day: '2-digit', month: 'long', year: 'numeric' })}` : ''}. Danach geht die Seite automatisch wieder online.
+            </p>
           )}
         </div>
 
@@ -302,8 +309,8 @@ export default function SitesPage() {
 
   const hasSites = sites.length > 0
   const liveSites = sites.filter(s => s.status === 'published')
-  const offlineSites = sites.filter(s => s.status === 'deactivated')
-  const draftSites = sites.filter(s => s.status !== 'published' && s.status !== 'deactivated')
+  const offlineSites = sites.filter(s => s.status === 'deactivated' || s.status === 'paused')
+  const draftSites = sites.filter(s => s.status !== 'published' && s.status !== 'deactivated' && s.status !== 'paused')
   const removeSite = (id: string) => setSites(prev => prev.filter(s => s.id !== id))
 
   // Greeting follows the clock (and keeps following it while the page stays open)
@@ -425,11 +432,13 @@ export default function SitesPage() {
       {/* ── Sites taken offline (open payment) ── */}
       {!loading && offlineSites.length > 0 && (
         <section className="mb-10">
-          <h2 className="text-xl font-bold text-gray-900">Offline</h2>
+          <h2 className="text-xl font-bold text-gray-900">{offlineSites.every(s => s.status === 'paused') ? 'Pausiert' : 'Offline'}</h2>
           <p className="text-sm mt-0.5 mb-4" style={{ color: '#64748B' }}>
-            {appMode
-              ? 'Diese Webseiten sind gerade nicht erreichbar.'
-              : 'Diese Webseiten sind gerade nicht erreichbar. Schau unter „Einstellungen“ nach deiner Zahlung.'}
+            {offlineSites.every(s => s.status === 'paused')
+              ? (appMode ? 'Dein Konto macht gerade Pause. Deine Inhalte sind gespeichert.' : 'Dein Abo macht gerade Pause. Unter „Einstellungen → Zahlung & Plan“ kannst du sie jederzeit beenden.')
+              : appMode
+                ? 'Diese Webseiten sind gerade nicht erreichbar.'
+                : 'Diese Webseiten sind gerade nicht erreichbar. Schau unter „Einstellungen“ nach deiner Zahlung.'}
           </p>
           <div className={GRID}>
             {offlineSites.map(site => <SiteCard key={site.id} site={site} onDeleted={removeSite} />)}

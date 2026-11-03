@@ -327,9 +327,9 @@ export interface SiteMeta {
 // unavailable (daily limit reached): without it every single asset request would call
 // the app API.
 const META_MEMO_MS = 60_000
-const metaMemo = new Map<string, { value: SiteMeta | '__offline__'; expires: number }>()
+const metaMemo = new Map<string, { value: SiteMeta | '__offline__' | '__paused__'; expires: number }>()
 
-function rememberMeta(cacheKey: string, value: SiteMeta | '__offline__'): void {
+function rememberMeta(cacheKey: string, value: SiteMeta | '__offline__' | '__paused__'): void {
   if (metaMemo.size > 2000) metaMemo.clear()
   metaMemo.set(cacheKey, { value, expires: Date.now() + META_MEMO_MS })
 }
@@ -379,7 +379,7 @@ async function resolveCustomDomain(hostname: string, env: Env): Promise<CustomSi
 }
 
 // Returns null if the site doesn't exist, or '__offline__' if it exists but isn't published
-async function getSiteMeta(username: string, domain: string, env: Env): Promise<SiteMeta | '__offline__' | null> {
+async function getSiteMeta(username: string, domain: string, env: Env): Promise<SiteMeta | '__offline__' | '__paused__' | null> {
   const cacheKey = `meta:${username}:${domain}`
   const memo = metaMemo.get(cacheKey)
   if (memo && memo.expires > Date.now()) return memo.value
@@ -388,6 +388,7 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
 
   // Offline sentinel — site was explicitly taken offline
   if (cached === '__offline__') { rememberMeta(cacheKey, '__offline__'); return '__offline__' }
+  if (cached === '__paused__') { rememberMeta(cacheKey, '__paused__'); return '__paused__' }
 
   if (cached) {
     try {
@@ -404,13 +405,15 @@ async function getSiteMeta(username: string, domain: string, env: Env): Promise<
   )
   if (!res.ok) return null
 
-  const meta = await res.json() as SiteMeta & { offline?: boolean }
+  const meta = await res.json() as SiteMeta & { offline?: boolean; paused?: boolean }
   // Site exists but is not published (unpublished, or suspended for an open
   // payment) → cache the offline state briefly and show the offline page.
+  // Abo-Pause (03.11.2026): eigener Marker, der Besucher sieht eine ruhige Pausenseite.
   if (meta.offline) {
-    rememberMeta(cacheKey, '__offline__')
-    await kvPut(env, cacheKey, '__offline__', { expirationTtl: 60 })
-    return '__offline__'
+    const marker = meta.paused ? '__paused__' : '__offline__'
+    rememberMeta(cacheKey, marker)
+    await kvPut(env, cacheKey, marker, { expirationTtl: 60 })
+    return marker
   }
   if (!meta.r2BasePath) return null
 
@@ -1228,6 +1231,13 @@ export default {
         return new Response(offlinePage(username, domain), {
           status: 410,
           headers: htmlHeaders({ 'Cache-Control': 'no-store' }),
+        })
+      }
+      // Abo-Pause: ruhige Seite, kein Kontakt (sonst wäre die Pause ein Gratis-Tarif)
+      if (meta === '__paused__') {
+        return new Response(pausedPage(username, domain), {
+          status: 503,
+          headers: htmlHeaders({ 'Cache-Control': 'no-store', 'Retry-After': '86400' }),
         })
       }
 
@@ -2119,6 +2129,23 @@ function offlinePage(username: string, domain: string): string {
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
     Eigene Webseite erstellen
   </a>
+  <p class="footer">Powered by <a href="https://finestsites.com">FinestSites</a></p>
+</div>
+</body></html>`
+}
+
+/** Abo-Pause (03.11.2026): „Diese Seite macht gerade Pause.“ – nur Hinweis, keine Kontaktmöglichkeit. */
+function pausedPage(username: string, domain: string): string {
+  return `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Diese Seite macht gerade Pause – FinestSites</title>${sharedStyles()}</head><body>
+<div class="card">
+  <div class="logo-wrap"><a href="https://finestsites.com">${LOGO_BLACK}</a></div>
+  <div class="sep"></div>
+  <div class="icon-wrap" style="background:#EFF6FF">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="10" y1="9" x2="10" y2="15"/><line x1="14" y1="9" x2="14" y2="15"/></svg>
+  </div>
+  <h1>Diese Seite macht gerade Pause</h1>
+  <div class="url">${username}.${domain}</div>
+  <p>Der Inhaber hat seine Webseite vorübergehend pausiert.<br>Schau bald wieder vorbei.</p>
   <p class="footer">Powered by <a href="https://finestsites.com">FinestSites</a></p>
 </div>
 </body></html>`

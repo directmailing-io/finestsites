@@ -71,6 +71,11 @@ export function publishBlockedText(code: PublishErrorCode | string): { title: st
         title: 'Veröffentlichen geht gerade nicht',
         text: 'Mit deinem Konto sind schon so viele Seiten online wie möglich. Nimm eine andere Seite offline, dann kannst du diese veröffentlichen. Deine Änderungen sind gespeichert.',
       };
+    case 'PAUSED':
+      return {
+        title: 'Dein Konto macht gerade Pause',
+        text: 'Diese Seite geht wieder online, sobald die Pause vorbei ist. Deine Änderungen sind gespeichert. Die Pause verwaltest du im Browser unter app.finestsites.io.',
+      };
     case 'COMPLIANCE_BLOCKED':
     case 'COMPLIANCE_REQUIRED':
       return {
