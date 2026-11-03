@@ -1,10 +1,36 @@
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { NativeTabs } from 'expo-router/native-tabs';
 import { useEffect } from 'react';
 
 import { useConfig, useDeletionStatus, useMe, useOverview } from '@/api/queries';
-import { setBadge } from '@/lib/push';
+import { useLock } from '@/lib/lock';
+import { setBadge, shouldPrimePush } from '@/lib/push';
+import { claimStartPrompt, useStartGate } from '@/lib/start-prompt';
 import { colors, fonts } from '@/theme/tokens';
+
+/**
+ * „Mitteilungen erlauben?“ einmal beim ersten Start nach dem Login (Daniel 03.11.2026, src/lib/start-prompt.ts):
+ * erst wenn Intro und Face-ID-Sperre durch sind und die Tab-Leiste steht – also nie über Login/Onboarding.
+ * Wer schon gefragt wurde (an irgendeiner Stelle) oder Push erlaubt hat, sieht nichts.
+ */
+function StartPushPrompt() {
+  const introDone = useStartGate(s => s.introDone);
+  const locked = useLock(s => s.locked);
+  useEffect(() => {
+    if (!introDone || locked) return;
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      if (!(await shouldPrimePush())) return;
+      if (cancelled || !claimStartPrompt()) return;
+      router.push({ pathname: '/push-priming', params: { reason: 'start' } });
+    }, 900);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [introDone, locked]);
+  return null;
+}
 
 /**
  * Tab-Leiste exakt wie die Handy-Navigation der Webapp (src/components/dashboard/MobileNav.tsx):
@@ -45,6 +71,8 @@ export default function TabsLayout() {
   }
 
   return (
+    <>
+    <StartPushPrompt />
     <NativeTabs
       tintColor={colors.foreground}
       iconColor={{ default: colors.faint, selected: colors.foreground }}
@@ -82,5 +110,6 @@ export default function TabsLayout() {
         ) : null}
       </NativeTabs.Trigger>
     </NativeTabs>
+    </>
   );
 }

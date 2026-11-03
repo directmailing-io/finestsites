@@ -8,8 +8,9 @@ import { markPushPrimed, registerPushDevice, requestPushPermission } from '@/lib
 import { colors, radius, shadows } from '@/theme/tokens';
 
 /**
- * Vorab-Hinweis vor der System-Abfrage. Kommt erst nach der ersten Veröffentlichung
- * oder der ersten Support-Nachricht – nie beim ersten Start. Nur einmal.
+ * Vorab-Hinweis vor der System-Abfrage. Kommt beim ersten Start nach dem Login (seit 03.11.2026,
+ * src/lib/start-prompt.ts) oder – falls dort „Später“ nie gesehen wurde – nach der ersten Veröffentlichung,
+ * der ersten Chat-Antwort oder der ersten Support-Nachricht. Nur einmal je Installation.
  */
 export default function PushPrimingScreen() {
   const { reason } = useLocalSearchParams<{ reason?: string }>();
@@ -32,14 +33,22 @@ export default function PushPrimingScreen() {
         <BellRing size={30} color={colors.accent} strokeWidth={1.75} />
       </View>
       <Text variant="title" align="center">
-        {reason === 'support' ? 'Antwort sofort sehen?' : reason === 'chat' ? 'Neue Nachrichten sofort sehen?' : 'Neue Anfragen sofort sehen?'}
+        {reason === 'support'
+          ? 'Antwort sofort sehen?'
+          : reason === 'chat'
+            ? 'Neue Nachrichten sofort sehen?'
+            : reason === 'start'
+              ? 'Nichts verpassen?'
+              : 'Neue Anfragen sofort sehen?'}
       </Text>
       <Text variant="body" align="center" color={colors.secondary} style={{ maxWidth: 380 }}>
         {reason === 'support'
           ? 'Wir sagen dir Bescheid, sobald der Support geantwortet hat.'
           : reason === 'chat'
             ? 'Wir sagen dir Bescheid, sobald ein Besucher dir im Chat schreibt – mit Name und Nachricht, wie bei WhatsApp.'
-            : 'Wir sagen dir Bescheid, sobald jemand über deine Seite eine Anfrage schickt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'}
+            : reason === 'start'
+              ? 'Wir sagen dir Bescheid, sobald jemand über deine Seite eine Anfrage schickt, dir im Chat schreibt oder der Support geantwortet hat.'
+              : 'Wir sagen dir Bescheid, sobald jemand über deine Seite eine Anfrage schickt. Namen und Nachrichten stehen nie auf dem Sperrbildschirm.'}
       </Text>
       <View style={{ gap: 8, alignSelf: 'stretch', marginTop: 12 }}>
         <Button title="Mitteilungen erlauben" onPress={allow} fullWidth />

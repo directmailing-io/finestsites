@@ -22,6 +22,7 @@ import { useAuth } from '@/lib/auth';
 import { startLockWatcher, useLock } from '@/lib/lock';
 import { startOtaWatcher } from '@/lib/ota';
 import { registerPushDevice } from '@/lib/push';
+import { useStartGate } from '@/lib/start-prompt';
 import { colors, fonts } from '@/theme/tokens';
 
 // Startbildschirm bleibt stehen, bis Schriften, Sitzung und Face-ID-Einstellung geladen sind,
@@ -69,6 +70,8 @@ export default function RootLayout() {
   const [intro, setIntro] = useState(shouldPlayIntro);
   useEffect(() => {
     if (ready && !intro) void SplashScreen.hideAsync().catch(() => {});
+    // Freigabe für die Start-Abfrage „Mitteilungen erlauben?“ (src/lib/start-prompt.ts)
+    useStartGate.getState().setIntroDone(ready && !intro);
   }, [ready, intro]);
 
   useEffect(() => {
