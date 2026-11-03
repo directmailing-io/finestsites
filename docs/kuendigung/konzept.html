@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Konzept: Kündigungsprozess FinestSites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --violet:#7C3AED; --violet-deep:#5B21B6; --violet-soft:#F5F3FF; --ink:#111827; --body:#374151; --muted:#6B7280; --line:#E5E7EB; --bg:#FFFFFF; --soft:#F8FAFC; --ok:#15803D; --ok-soft:#F0FDF4; --warn:#B45309; --warn-soft:#FFFBEB; --bad:#DC2626; --bad-soft:#FEF2F2; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; color:var(--body); background:var(--bg); line-height:1.6; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:0 28px; }
+  h1,h2,h3,h4 { color:var(--ink); letter-spacing:-0.02em; line-height:1.2; margin:0; }
+  h1 { font-size:clamp(34px,5vw,52px); font-weight:800; letter-spacing:-0.03em; }
+  h2 { font-size:26px; font-weight:800; margin-bottom:6px; }
+  h3 { font-size:17px; font-weight:700; margin-bottom:6px; }
+  h4 { font-size:14px; font-weight:700; margin-bottom:4px; }
+  p { margin:0 0 12px; }
+  section { padding:56px 0; border-top:1px solid var(--line); }
+  section.hero { border-top:0; padding:72px 0 48px; }
+  .kicker { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--violet); margin-bottom:10px; }
+  .lead { font-size:17px; color:var(--muted); max-width:720px; }
+  .accent-line { height:4px; width:120px; border-radius:99px; background:linear-gradient(90deg,#C4B5FD,#FBCFE8,#BAE6FD); margin:22px 0 28px; }
+  .pills { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+  .pill { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; font-size:13px; font-weight:600; background:var(--soft); border:1px solid var(--line); color:var(--ink); }
+  .pill b { color:var(--violet); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px; }
+  .card.soft { background:var(--soft); }
+  .card.violet { background:var(--violet-soft); border-color:#DDD6FE; }
+  .card.ok { background:var(--ok-soft); border-color:#BBF7D0; }
+  .card.warn { background:var(--warn-soft); border-color:#FDE68A; }
+  .card.bad { background:var(--bad-soft); border-color:#FECACA; }
+  .num { width:30px; height:30px; border-radius:50%; background:var(--ink); color:#fff; font-weight:700; font-size:14px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .tag { display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .tag.ok { background:#DCFCE7; color:#166534; } .tag.warn { background:#FEF3C7; color:#92400E; } .tag.bad { background:#FEE2E2; color:#991B1B; } .tag.info { background:var(--violet-soft); color:var(--violet-deep); } .tag.grey { background:#F3F4F6; color:#374151; }
+  ul { padding-left:20px; margin:0 0 12px; } li { margin-bottom:6px; }
+  table { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  th,td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; font-size:14px; }
+  th { background:var(--soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  tr:last-child td { border-bottom:0; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; background:#F3F4F6; padding:2px 6px; border-radius:6px; color:var(--ink); }
+  .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .flow .step { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; position:relative; }
+  .flow .step .s { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+  .flow .step strong { display:block; color:var(--ink); margin:4px 0 4px; font-size:15px; }
+  .flow .step p { font-size:13px; margin:0; color:var(--muted); }
+  .note { font-size:13px; color:var(--muted); }
+  .toc { display:grid; grid-template-columns:repeat(3,1fr); gap:6px 24px; font-size:14px; }
+  .toc a { color:var(--ink); text-decoration:none; padding:6px 0; border-bottom:1px solid var(--line); }
+  .toc a:hover { color:var(--violet); }
+  .toc a span { color:var(--muted); font-size:12px; margin-right:8px; }
+
+  /* ── UI-Mockups (im Stil der echten App) ── */
+  .mockrow { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:26px; align-items:start; }
+  .mock { background:#fff; border:1px solid var(--line); border-radius:26px; padding:26px; box-shadow:0 18px 50px rgba(17,24,39,.08); max-width:460px; font-size:14px; }
+  .mock .mh { font-size:19px; font-weight:800; color:var(--ink); letter-spacing:-0.02em; margin:0 0 4px; }
+  .mock .ms { font-size:13.5px; color:#64748B; margin:0 0 16px; line-height:1.5; }
+  .mock .close { float:right; width:28px; height:28px; border-radius:50%; background:#F3F4F6; color:#6B7280; display:flex; align-items:center; justify-content:center; font-size:14px; }
+  .mock .opt { display:flex; align-items:center; gap:12px; padding:11px 14px; border:1px solid var(--line); border-radius:14px; margin-bottom:8px; color:var(--ink); font-weight:500; }
+  .mock .opt .r { width:18px; height:18px; border-radius:50%; border:2px solid #CBD5E1; flex:0 0 18px; }
+  .mock .opt.sel { border-color:var(--ink); background:var(--soft); }
+  .mock .opt.sel .r { border-color:var(--ink); background:radial-gradient(circle, var(--ink) 40%, transparent 44%); }
+  .mock textarea, .mock .ta { width:100%; border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:13.5px; color:#94A3B8; min-height:58px; margin:4px 0 14px; font-family:inherit; }
+  .mock .btn { display:block; width:100%; text-align:center; padding:13px 16px; border-radius:14px; font-weight:700; font-size:14px; }
+  .mock .btn.dark { background:var(--ink); color:#fff; }
+  .mock .btn.violet { background:var(--violet); color:#fff; }
+  .mock .btn.green { background:var(--ok); color:#fff; }
+  .mock .btn.ghost { background:#F3F4F6; color:#374151; }
+  .mock .link { display:block; text-align:center; margin-top:12px; font-size:13.5px; color:#6B7280; text-decoration:underline; text-underline-offset:3px; }
+  .mock .row { display:flex; gap:10px; }
+  .mock .row .btn { flex:1; }
+  .mock .offer { border:1px solid #DDD6FE; background:var(--violet-soft); border-radius:18px; padding:16px; margin:0 0 14px; }
+  .mock .offer .ot { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--violet-deep); margin-bottom:6px; }
+  .mock .offer .big { font-size:24px; font-weight:800; color:var(--ink); letter-spacing:-0.02em; line-height:1.15; }
+  .mock .offer .big small { font-size:14px; color:#64748B; font-weight:500; }
+  .mock .offer p { font-size:13.5px; margin:6px 0 0; color:#4B5563; }
+  .mock .chips { display:flex; gap:8px; margin:10px 0 2px; }
+  .mock .chip { flex:1; text-align:center; padding:10px 6px; border-radius:12px; border:1px solid var(--line); background:#fff; font-weight:600; font-size:13px; color:var(--ink); }
+  .mock .chip.sel { border-color:var(--violet); background:#fff; box-shadow:0 0 0 2px var(--violet) inset; color:var(--violet-deep); }
+  .mock .ref { display:flex; gap:10px; align-items:flex-start; font-size:12.5px; color:#6B7280; background:var(--soft); border-radius:12px; padding:10px 12px; margin-top:14px; }
+  .mock .ref b { color:var(--ink); }
+  .mock .state { border-radius:16px; padding:16px 18px; }
+  .mock .state .badges { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
+  .mock .state .b { font-size:11.5px; font-weight:600; padding:3px 8px; border-radius:999px; background:rgba(255,255,255,.7); color:#374151; }
+  .mock .state strong { font-size:15px; color:var(--ink); }
+  .mock .state p { font-size:13.5px; margin:4px 0 0; }
+  .mock .footerlink { text-align:center; padding-top:16px; font-size:13.5px; color:#6B7280; }
+  .mock .footerlink u { text-underline-offset:3px; }
+  .cap { font-size:12.5px; color:var(--muted); margin-top:10px; max-width:460px; }
+  .mail { border:1px solid var(--line); border-radius:16px; padding:18px 20px; background:#fff; }
+  .mail .subj { font-weight:700; color:var(--ink); margin-bottom:6px; }
+  .mail .meta { font-size:12px; color:var(--muted); margin-bottom:8px; }
+  .mail p { font-size:13.5px; margin:0 0 6px; }
+  .decision { background:var(--ink); color:#fff; border-radius:20px; padding:26px 28px; }
+  .decision h3 { color:#fff; }
+  .decision p, .decision li { color:#D1D5DB; }
+  .decision .q { color:#fff; font-weight:700; }
+  .kpi { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .kpi .k { background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px 16px; }
+  .kpi .k b { display:block; font-size:24px; color:var(--ink); letter-spacing:-0.02em; }
+  .kpi .k span { font-size:12.5px; color:var(--muted); }
+  @media (max-width:820px) { .grid2,.grid3,.flow,.kpi,.toc { grid-template-columns:1fr; } }
+  @media print { section { padding:28px 0; page-break-inside:avoid; } .mock { box-shadow:none; } }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="kicker">Konzept · Stand 3. November 2026</span>
+    <h1>Kündigen bleibt leicht.<br>Wir lernen nur dazu.</h1>
+    <div class="accent-line"></div>
+    <p class="lead">Wer kündigen will, soll das in zwei Schritten können. Dazwischen stellen wir genau eine Frage (warum?) und machen genau ein passendes Angebot: Pause, 10 % Rabatt oder ein kurzes Gespräch. Wer trotzdem geht, sieht den Kündigen-Knopf die ganze Zeit. Drumherum: Mails, Auswertung im Admin, Pause-Mechanik in Stripe, AGB und App.</p>
+    <div class="pills">
+      <span class="pill"><b>168</b> aktive Abos</span>
+      <span class="pill"><b>131</b> davon mit Rabatt</span>
+      <span class="pill"><b>102</b> Rabatte enden bis Januar</span>
+      <span class="pill"><b>0</b> bekannte Kündigungsgründe</span>
+      <span class="pill"><b>1</b> laufende Kündigung</span>
+    </div>
+  </div>
+</section>
+
+<section style="padding:28px 0;">
+  <div class="wrap toc">
+    <a href="#ziele"><span>01</span>Ziele und Leitplanken</a>
+    <a href="#ist"><span>02</span>So läuft es heute</a>
+    <a href="#zahlen"><span>03</span>Zahlen und was sie bedeuten</a>
+    <a href="#flow"><span>04</span>Der neue Ablauf</a>
+    <a href="#ui"><span>05</span>UI Schritt für Schritt</a>
+    <a href="#pause"><span>06</span>Pause im Detail</a>
+    <a href="#rabatt"><span>07</span>10 % Rabatt im Detail</a>
+    <a href="#empfehlung"><span>08</span>Empfehlungshinweis</a>
+    <a href="#mails"><span>09</span>Mails</a>
+    <a href="#admin"><span>10</span>Admin und Auswertung</a>
+    <a href="#app"><span>11</span>App</a>
+    <a href="#recht"><span>12</span>Recht und Datenschutz</a>
+    <a href="#technik"><span>13</span>Technik</a>
+    <a href="#phasen"><span>14</span>Phasen und Aufwand</a>
+    <a href="#entscheidungen"><span>15</span>Deine Entscheidungen</a>
+  </div>
+</section>
+
+<!-- 01 -->
+<section id="ziele">
+  <div class="wrap">
+    <span class="kicker">01</span>
+    <h2>Ziele und Leitplanken</h2>
+    <p class="lead">Deine fünf Wünsche, übersetzt in Regeln, an denen sich jeder Bildschirm messen lassen muss.</p>
+    <div class="grid2" style="margin-top:22px;">
+      <div class="card">
+        <h3>Das wollen wir</h3>
+        <ul>
+          <li><strong>Grund erfahren.</strong> Jede Kündigung hinterlässt einen Grund, auswertbar im Admin, als Hinweis an dich.</li>
+          <li><strong>Pause statt Ende.</strong> Wer gerade nicht braucht, pausiert 1 bis 3 Monate. Seiten gehen offline, nichts geht verloren, es läuft automatisch weiter.</li>
+          <li><strong>10 % für die ohne Rabatt.</strong> Einmaliges Angebot, dauerhaft, nur wenn aktuell kein Rabatt läuft.</li>
+          <li><strong>Empfehlung als Sparweg.</strong> Jede Empfehlung senkt die eigene Rechnung dauerhaft. Das sagen wir an der Stelle, an der es um Geld geht.</li>
+          <li><strong>Nicht erschweren.</strong> Kein Weg darf länger sein als heute plus eine Frage.</li>
+        </ul>
+      </div>
+      <div class="card soft">
+        <h3>Leitplanken (gegen Dark Patterns)</h3>
+        <ul>
+          <li>„Trotzdem kündigen“ steht auf <strong>jedem</strong> Schritt sichtbar, nie hinter Scrollen, nie grau auf grau.</li>
+          <li>Maximal <strong>zwei Schritte</strong>: Grund, dann Angebot. Danach ist gekündigt.</li>
+          <li>Genau <strong>ein Angebot</strong>, passend zum Grund. Keine Kaskade von „Bist du sicher?“.</li>
+          <li>Grund ist ein Tipp, kein Pflichttext. „Möchte ich nicht sagen“ ist eine gültige Antwort.</li>
+          <li>Kein Angebot wird zweimal gemacht. Wer es ausschlägt, sieht es beim nächsten Mal nicht wieder.</li>
+          <li>Sprache bleibt die von FinestSites: freundlich, direkt, kein Schuldgefühl, keine Countdown-Uhren.</li>
+          <li>Kündigung per Mail an info@ geht weiterhin (steht so in den AGB § 10 Abs. 5).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="ist">
+  <div class="wrap">
+    <span class="kicker">02</span>
+    <h2>So läuft es heute</h2>
+    <p class="lead">Aus dem Code gelesen (Einstellungen, API, Stripe-Webhook, Mails, Admin, AGB). Der Prozess ist sauber und ehrlich, aber er ist stumm: Er fragt nichts, bietet nichts und meldet dir nichts.</p>
+
+    <div class="flow" style="margin-top:22px;">
+      <div class="step"><div class="s">Einstieg</div><strong>Grauer Link ganz unten</strong><p>Einstellungen → Zahlung &amp; Plan → „Abonnement kündigen“ (nur im Browser, die App hat keinen Abo-Bereich).</p></div>
+      <div class="step"><div class="s">Dialog</div><strong>Rotes Warndreieck</strong><p>„Abonnement kündigen?“ · bleibt bis Datum aktiv, danach Seiten offline · Knöpfe „Behalten“ / „Kündigen“.</p></div>
+      <div class="step"><div class="s">Technik</div><strong>cancel_at_period_end</strong><p><code>DELETE /api/billing/subscription</code> löst einen geplanten Tarifwechsel und setzt in Stripe das Laufzeitende. Kein Grund wird übergeben.</p></div>
+      <div class="step"><div class="s">Danach</div><strong>Zwei Mails, dann Stille</strong><p>„Dein Abo wurde gekündigt“ sofort, „Dein Abo ist ausgelaufen“ am Laufzeitende. Dazwischen und danach nichts.</p></div>
+    </div>
+
+    <div class="grid2" style="margin-top:22px;">
+      <div class="card">
+        <h3>Was passiert am Laufzeitende</h3>
+        <ul>
+          <li>Stripe meldet <code>customer.subscription.deleted</code> → Konto gilt als deaktiviert, Tarif auf Starter, Status „canceled“.</li>
+          <li><strong>Alle</strong> veröffentlichten Seiten gehen offline und bekommen einen Löschtimer von 90 Tagen.</li>
+          <li>Wiederkommen: einfach neu buchen (Checkout) → Seiten sofort wieder online, Mail „Alles wieder online!“.</li>
+          <li>Kündigung zurückziehen bis zum Laufzeitende: grüner Knopf in der Abo-Karte, <code>PATCH /api/billing/subscription</code>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Was du heute siehst</h3>
+        <ul>
+          <li><code>/admin/cancellations</code>: Liste laufender Kündigungen mit MRR-Verlust (aus Stripe gelesen). Kein Grund, keine Historie abgeschlossener Kündigungen.</li>
+          <li>Nutzerliste: Pille „Kündigt bis 22.11.“.</li>
+          <li>Stripe: alle 13 bisherigen Kündigungen tragen <code>reason = cancellation_requested</code>, Feedback leer.</li>
+          <li>Keine Benachrichtigung an dich, wenn jemand kündigt.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px;">Lücken, die dabei aufgefallen sind</h3>
+    <table style="margin-top:8px;">
+      <thead><tr><th style="width:36%">Befund</th><th>Folge</th><th style="width:16%">Einordnung</th></tr></thead>
+      <tbody>
+        <tr><td>Nach der Kündigung geht auch die <strong>kostenlose Linkseite</strong> offline (<code>suspendSites</code> nimmt alle veröffentlichten Seiten, prüft nicht <code>is_free</code>).</td><td>Widerspricht „Linkseite immer kostenlos dabei“ auf der Startseite. Beim Pausieren wäre das noch störender.</td><td><span class="tag bad">Fix nötig</span></td></tr>
+        <tr><td>Knopf „Abo weiter nutzen“ in der Kündigungsmail zeigt auf <code>/billing</code>, das leitet auf Einstellungen → <strong>Profil</strong>, nicht auf „Zahlung &amp; Plan“. Gleiches beim roten „Upgrade →“ in der Seitenleiste.</td><td>Nutzer landet auf dem falschen Reiter und sucht.</td><td><span class="tag warn">Kleiner Fix</span></td></tr>
+        <tr><td>Tippfehler „koennen“ in der Kündigungsmail.</td><td>Wirkt unsauber in dem Moment, in dem jemand geht.</td><td><span class="tag warn">Kleiner Fix</span></td></tr>
+        <tr><td>Keine Mail kurz vor dem Laufzeitende, keine Mail vor der endgültigen Löschung nach 90 Tagen (steht schon in <code>docs/billing-lifecycle.html</code> als offen).</td><td>Wer es sich anders überlegt, erfährt es zu spät. Daten werden ohne Vorwarnung gelöscht.</td><td><span class="tag info">Im Konzept</span></td></tr>
+        <tr><td>Kein Kündigungsgrund, nirgends.</td><td>Du kannst Churn nicht erklären und nicht gezielt gegensteuern.</td><td><span class="tag info">Im Konzept</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="zahlen">
+  <div class="wrap">
+    <span class="kicker">03</span>
+    <h2>Zahlen und was sie bedeuten</h2>
+    <p class="lead">Stand heute aus Stripe und Datenbank. Die wichtigste Zahl steht nicht im Kündigungsprozess, sondern im Kalender: der Januar.</p>
+    <div class="kpi" style="margin-top:20px;">
+      <div class="k"><b>168</b><span>aktive Abos · 111 monatlich, 57 jährlich</span></div>
+      <div class="k"><b>131</b><span>Abos mit Rabatt · 37 ohne (Zielgruppe für die 10 %)</span></div>
+      <div class="k"><b>89</b><span>mit „InnerVisionDay“ 20 % für 3 Monate (seit Oktober)</span></div>
+      <div class="k"><b>102</b><span>Rabatte enden in den nächsten 90 Tagen</span></div>
+    </div>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="card warn">
+        <h3>Die Januar-Klippe</h3>
+        <p>Rund 100 Kunden zahlen ab Januar 2027 zum ersten Mal den vollen Preis (z. B. Pro 21,60 € → 27 €). Genau dann wird die Kündigungsseite zum ersten Mal richtig besucht. Der Prozess sollte <strong>vor Weihnachten</strong> stehen. Ergänzend empfehle ich eine eigene, freundliche Mail „Dein Startrabatt endet am …“ mit dem Jahresabo als Sparweg (2 Monate geschenkt). Das ist kein Teil des Kündigungsflows, gehört aber zur selben Welle.</p>
+      </div>
+      <div class="card">
+        <h3>Was wir über Kündigungen wissen</h3>
+        <ul>
+          <li>13 gekündigte Abos insgesamt, 0 in den letzten 90 Tagen, 1 läuft gerade aus.</li>
+          <li>Gründe: unbekannt. Weder in Stripe noch bei uns gespeichert.</li>
+          <li>21 der aktiven Kunden kamen über Empfehlung. 156 Partner stehen auf „Guthaben“, d. h. Empfehlungen senken direkt ihre Rechnung.</li>
+          <li>147 der 171 Konten mit Abo sind seit Oktober dabei. Die Basis ist jung, die ersten echten Kündigungswellen kommen erst.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="flow">
+  <div class="wrap">
+    <span class="kicker">04</span>
+    <h2>Der neue Ablauf</h2>
+    <p class="lead">Zwei Schritte, ein Angebot, immer ein Ausgang. Der Einstieg bleibt, wo er ist, heißt aber „Abo pausieren oder kündigen“.</p>
+
+    <div class="flow" style="margin-top:22px;">
+      <div class="step"><div class="s">Schritt 1</div><strong>Warum?</strong><p>Sieben Gründe zum Antippen, optional ein Satz dazu. Weiter mit „Weiter“. Oben rechts ein X, das alles abbricht.</p></div>
+      <div class="step"><div class="s">Schritt 2</div><strong>Ein Angebot</strong><p>Passend zum Grund: Pause, 10 % dauerhaft, kurzes Gespräch oder Jahresabo. Darunter immer „Trotzdem kündigen“.</p></div>
+      <div class="step"><div class="s">Ergebnis</div><strong>Erledigt</strong><p>Abo-Karte zeigt den Zustand: gekündigt zum Datum, pausiert bis Datum oder weiter mit Rabatt. Kein weiteres Fenster.</p></div>
+      <div class="step"><div class="s">Danach</div><strong>Begleitung</strong><p>Mails zum richtigen Zeitpunkt, Grund im Admin, kurze Nachricht an dich.</p></div>
+    </div>
+
+    <h3 style="margin-top:28px;">Welcher Grund führt zu welchem Angebot</h3>
+    <p class="note">Die Entscheidung trifft der Server, nicht der Bildschirm. So lässt sie sich später ändern, ohne die Oberfläche anzufassen.</p>
+    <table style="margin-top:8px;">
+      <thead><tr><th style="width:30%">Grund (ein Tipp)</th><th style="width:30%">Angebot in Schritt 2</th><th>Wenn das nicht geht (Fallback)</th></tr></thead>
+      <tbody>
+        <tr><td>Zu teuer, lohnt sich gerade nicht</td><td><strong>10 % dauerhaft</strong>, wenn kein Rabatt läuft und das Angebot noch nie gemacht wurde</td><td>Läuft schon ein Rabatt: Jahresabo (2 Monate geschenkt) oder kleinerer Tarif zum Laufzeitende (gibt es schon). Immer: Empfehlungshinweis.</td></tr>
+        <tr><td>Ich brauche die Seite gerade nicht</td><td><strong>Pause</strong> 1, 2 oder 3 Monate ab Laufzeitende</td><td>Läuft schon eine Pause im letzten Jahr: 10 % (falls berechtigt), sonst nur kündigen.</td></tr>
+        <tr><td>Ich mache das Geschäft nicht mehr</td><td>Kein Verkaufsangebot. Hinweis: Linkseite bleibt kostenlos online, Daten 90 Tage sicher, jederzeit zurück.</td><td>Optional Pause, falls „vielleicht später“ angetippt wird.</td></tr>
+        <tr><td>Mir fehlt etwas / Vorlage passt nicht</td><td><strong>Kurzes Gespräch:</strong> Pflichtfeld „Was fehlt dir?“, Antwort von Daniel innerhalb eines Werktags, Kündigung trotzdem sofort möglich</td><td>Zusätzlich Pause anbieten („bis es das gibt“).</td></tr>
+        <tr><td>Zu kompliziert / technische Probleme</td><td><strong>Hilfe:</strong> Support-Chat öffnen oder Rückruf; Freitext, was nicht klappt</td><td>Pause anbieten.</td></tr>
+        <tr><td>Ich wechsle zu einem anderen Anbieter</td><td>Frage „Zu welchem?“ (Freitext). 10 % nur, wenn berechtigt.</td><td>Nur kündigen.</td></tr>
+        <tr><td>Anderer Grund / möchte ich nicht sagen</td><td>Pause und (falls berechtigt) 10 % als zwei ruhige Optionen untereinander</td><td>Nur kündigen.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="ui">
+  <div class="wrap">
+    <span class="kicker">05</span>
+    <h2>UI Schritt für Schritt</h2>
+    <p class="lead">Die Mockups folgen dem bestehenden Stil der Einstellungen: weiße Karte, runde Ecken, dunkler Hauptknopf, lila Akzent. Kein rotes Warndreieck mehr. Kündigen ist kein Unfall.</p>
+
+    <h3 style="margin-top:28px;">Einstieg (Zahlung &amp; Plan, unten)</h3>
+    <div class="mockrow">
+      <div>
+        <div class="mock" style="padding:0;">
+          <div class="state" style="background:#F0FDF4;border:1px solid #BBF7D0;margin:22px;">
+            <div class="badges"><strong style="margin-right:4px;">Pro</strong><span class="b">Monatlich</span><span class="b" style="color:#15803D;">● Aktiv</span><span class="b" style="color:#15803D;">-20 % Rabatt · InnerVisionDay</span></div>
+            <p style="color:#15803D;">Nächste Abrechnung am <strong>12. Januar 2027</strong>.</p>
+          </div>
+          <div class="footerlink" style="padding:0 22px 22px;">⊗ &nbsp;<u>Abo pausieren oder kündigen</u></div>
+        </div>
+        <p class="cap">Gleiche Stelle, gleiche Zurückhaltung wie heute. Nur das Wort „pausieren“ kommt dazu. Wer nur eine Auszeit will, soll nicht denken, er müsse kündigen.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:36px;">Schritt 1: Warum?</h3>
+    <div class="mockrow">
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Schade, dass du gehst.</p>
+          <p class="ms">Sag uns kurz, warum. Das hilft uns mehr, als du denkst, und dauert einen Tipp.</p>
+          <div class="opt"><span class="r"></span>Zu teuer, lohnt sich gerade nicht</div>
+          <div class="opt sel"><span class="r"></span>Ich brauche die Webseite gerade nicht</div>
+          <div class="opt"><span class="r"></span>Ich mache das Geschäft nicht mehr</div>
+          <div class="opt"><span class="r"></span>Mir fehlt etwas oder die Vorlage passt nicht</div>
+          <div class="opt"><span class="r"></span>Zu kompliziert oder technische Probleme</div>
+          <div class="opt"><span class="r"></span>Ich wechsle zu einem anderen Anbieter</div>
+          <div class="opt"><span class="r"></span>Anderer Grund / möchte ich nicht sagen</div>
+          <div class="ta">Magst du uns noch etwas dazu sagen? (optional)</div>
+          <div class="btn dark">Weiter</div>
+        </div>
+        <p class="cap">Sieben Gründe, FinestSites-spezifisch formuliert (das PM-Geschäft aufhören ist bei uns ein eigener, häufiger Grund). Reihenfolge wird pro Nutzer einmal zufällig gemischt, damit nicht immer der erste Punkt gewinnt. „Weiter“ ist erst aktiv, wenn ein Grund gewählt ist.</p>
+      </div>
+      <div>
+        <div class="card soft">
+          <h4>Warum keine Pflicht für den Freitext</h4>
+          <p class="note">Ein Pflichttext ist die Stelle, an der Kündigen „erschwert“ wirkt. Der Grund per Tipp liefert dir die Statistik, der Freitext die Geschichten. Erfahrung aus anderen Produkten: 30 bis 40 % schreiben freiwillig etwas, wenn das Feld direkt unter den Gründen steht und klein ist.</p>
+          <h4 style="margin-top:14px;">Warum ein X oben rechts</h4>
+          <p class="note">Der Nutzer darf jederzeit raus, ohne dass etwas passiert. Kein „Behalten“-Knopf, der wie ein Angebot aussieht.</p>
+          <h4 style="margin-top:14px;">Was gespeichert wird</h4>
+          <p class="note">Grund, Freitext, Tarif, Intervall, Rabatt zu dem Zeitpunkt, Monate seit Abo-Start, welches Angebot gezeigt wurde und was daraus wurde. Zusätzlich geben wir Grund und Kommentar an Stripe (<code>cancellation_details</code>), dann steht es auch dort.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:36px;">Schritt 2, Variante A: Pause</h3>
+    <div class="mockrow">
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Wie wär's mit einer Pause?</p>
+          <p class="ms">Deine Seiten gehen am 12. Januar offline, du zahlst nichts, und alles bleibt genau so gespeichert. Danach geht es automatisch weiter.</p>
+          <div class="offer">
+            <div class="ot">Pause ab dem 12. Januar</div>
+            <div class="chips"><div class="chip">1 Monat</div><div class="chip sel">2 Monate</div><div class="chip">3 Monate</div></div>
+            <p>Weiter ab dem <b>12. März 2027</b> mit Pro für 27 € im Monat. Wir erinnern dich eine Woche vorher.</p>
+          </div>
+          <div class="btn dark">Abo 2 Monate pausieren</div>
+          <span class="link">Trotzdem zum 12. Januar kündigen</span>
+          <div class="ref">💡 <span>Übrigens: Für jede Empfehlung bekommst du dauerhaft 10 % von deren Rechnung als Guthaben. <b>Ein Pro-Kunde = rund 2,30 € weniger im Monat.</b></span></div>
+        </div>
+        <p class="cap">Die Pause beginnt immer am Ende der bezahlten Zeit, nie sofort. Bezahlte Tage gehen nicht verloren. Das Rückkehrdatum und der Preis danach stehen schwarz auf weiß, das ist rechtlich sauber und ehrlich.</p>
+      </div>
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Ein Angebot, bevor du gehst.</p>
+          <p class="ms">Du hast bisher nie einen Rabatt bekommen. Das holen wir nach.</p>
+          <div class="offer">
+            <div class="ot">Dauerhaft 10 % Rabatt</div>
+            <div class="big">24,30 € <small>statt 27 € im Monat</small></div>
+            <p>Gilt ab der nächsten Rechnung, ohne Ende, ohne Bedingungen. Du kannst weiterhin jederzeit kündigen.</p>
+          </div>
+          <div class="btn violet">10 % Rabatt sichern und bleiben</div>
+          <span class="link">Trotzdem zum 12. Januar kündigen</span>
+          <div class="ref">💡 <span>Noch mehr sparen: Jede Empfehlung bringt dir dauerhaft 10 % von deren Rechnung als Guthaben.</span></div>
+        </div>
+        <p class="cap"><strong>Variante B: 10 % Rabatt.</strong> Der neue Preis steht groß, nicht der Prozentsatz. Wird nur gezeigt, wenn kein Rabatt läuft und das Angebot auf diesem Konto noch nie gemacht wurde.</p>
+      </div>
+    </div>
+
+    <div class="mockrow" style="margin-top:26px;">
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Was fehlt dir?</p>
+          <p class="ms">Vielleicht gibt es das schon oder es ist gerade in Arbeit. Daniel antwortet dir persönlich, meistens am selben Tag.</p>
+          <div class="ta" style="min-height:76px;">Zum Beispiel: eine Vorlage für …, ein Feld für …, eine Sprache …</div>
+          <div class="btn dark">Nachricht senden und Abo vorerst behalten</div>
+          <span class="link">Nachricht senden und trotzdem kündigen</span>
+        </div>
+        <p class="cap"><strong>Variante C: Gespräch.</strong> Bei „fehlt etwas“ und „zu kompliziert“. Beide Knöpfe senden die Nachricht in den Support-Chat (sie landet als normale Konversation bei dir). Der zweite Weg kündigt zusätzlich sofort. Niemand muss auf eine Antwort warten, um zu kündigen.</p>
+      </div>
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Alles klar, danke dir.</p>
+          <p class="ms">Dein Abo endet am 12. Januar 2027. Bis dahin bleibt alles online. Deine Linkseite bleibt auch danach kostenlos online, und deine Inhalte sind 90 Tage sicher gespeichert, falls du zurückkommst.</p>
+          <div class="btn dark">Zum 12. Januar kündigen</div>
+          <span class="link">Doch lieber pausieren</span>
+        </div>
+        <p class="cap"><strong>Variante D: kein Verkaufsangebot.</strong> Bei „Geschäft beendet“ und bei allen, die schon ein Angebot ausgeschlagen haben. Ein kurzer, warmer Abschluss. Pause bleibt als leiser Link, weil „ich höre auf“ oft „ich pausiere“ heißt.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:36px;">Zustände in der Abo-Karte danach</h3>
+    <div class="mockrow">
+      <div>
+        <div class="mock" style="padding:18px;">
+          <div class="state" style="background:#FFF7ED;border:1px solid #FED7AA;">
+            <div class="badges"><strong style="margin-right:4px;">Pro</strong><span class="b">Monatlich</span><span class="b" style="color:#C2410C;">● Wird beendet</span></div>
+            <p style="color:#C2410C;">Dein Abo läuft am <strong>12. Januar 2027</strong> aus. Danach gehen deine Premium-Seiten offline, deine Linkseite bleibt online.</p>
+            <div class="btn green" style="margin-top:12px;display:inline-block;width:auto;padding:10px 16px;">Kündigung zurückziehen</div>
+          </div>
+        </div>
+        <p class="cap">Gekündigt. Wie heute, mit korrigiertem Text zur Linkseite.</p>
+      </div>
+      <div>
+        <div class="mock" style="padding:18px;">
+          <div class="state" style="background:#EFF6FF;border:1px solid #BFDBFE;">
+            <div class="badges"><strong style="margin-right:4px;">Pro</strong><span class="b">Monatlich</span><span class="b" style="color:#1D4ED8;">⏸ Pause ab 12. Januar</span></div>
+            <p style="color:#1E40AF;">Pausiert vom <strong>12. Januar</strong> bis <strong>12. März 2027</strong>. In der Zeit zahlst du nichts, deine Premium-Seiten sind offline. Ab dem 12. März geht es automatisch weiter.</p>
+            <div style="margin-top:12px;display:flex;gap:14px;font-size:13px;"><u style="color:#1D4ED8;">Pause beenden</u><u style="color:#6B7280;">Doch kündigen</u></div>
+          </div>
+        </div>
+        <p class="cap">Pausiert. Blau, nicht orange: Es ist kein Ende. „Pause beenden“ geht jederzeit (vor Beginn: Pause wird gelöscht; währenddessen: sofort weiter, Rechnung läuft ab dem Tag). „Doch kündigen“ bleibt möglich, dann endet das Abo zum Pausenbeginn bzw. sofort, wenn die Pause schon läuft.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="pause">
+  <div class="wrap">
+    <span class="kicker">06</span>
+    <h2>Pause im Detail</h2>
+    <p class="lead">Eine Pause ist ein Vertrag, der ruht: kein Geld, keine Premium-Seiten online, nichts geht verloren, und es geht von selbst weiter.</p>
+    <div class="grid3" style="margin-top:22px;">
+      <div class="card">
+        <h3>Regeln</h3>
+        <ul>
+          <li>Dauer 1, 2 oder 3 Monate, Beginn immer am Ende der bezahlten Laufzeit.</li>
+          <li>Eine Pause je 12 Monate. Danach wieder möglich.</li>
+          <li>Nur bei aktivem Abo ohne offene Zahlung. Jahresabo: ja, Pause verschiebt die nächste Jahresrechnung.</li>
+          <li>Vorzeitig beenden jederzeit. Verlängern innerhalb der Pause einmal (bis max. 3 Monate gesamt).</li>
+          <li>Kündigen während der Pause jederzeit, dann endet das Abo sofort (es läuft ja nichts).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Was mit den Seiten passiert</h3>
+        <ul>
+          <li>Premium-Seiten: offline mit neuem Status <code>paused</code> (nicht „deactivated“), <strong>kein</strong> 90-Tage-Löschtimer.</li>
+          <li>Besucher sehen eine ruhige Seite: „Diese Seite macht gerade Pause.“ Mit Kontaktmöglichkeit? Nein, sonst wäre die Pause ein Gratis-Tarif. Nur Name und Hinweis.</li>
+          <li>Linkseite (kostenlos): bleibt online. Eigene Domain bleibt verbunden.</li>
+          <li>Bearbeiten im Editor geht weiter (Entwürfe sind immer kostenlos). Veröffentlichen ist gesperrt mit Hinweis „Pause beenden“.</li>
+          <li>Anfragen und Chats: keine neuen (Seite offline). Alte bleiben lesbar.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Stripe-Mechanik (Empfehlung)</h3>
+        <p class="note">Subscription Schedule mit drei Phasen, genau wie beim bestehenden Wechsel nach unten (<code>plan-change.ts</code>, seit 28.10.):</p>
+        <ul class="note">
+          <li>Phase 1: laufende Periode unverändert.</li>
+          <li>Phase 2: neuer Preis <strong>„Pause“ 0 €</strong> für N Abrechnungen (Monatsabo: N Monate; Jahresabo: Pause-Preis monatlich N-mal, dann zurück aufs Jahr).</li>
+          <li>Phase 3: ursprünglicher Preis mit ursprünglichem Rabatt (<code>restoreOriginalDiscounts</code> gibt es schon).</li>
+        </ul>
+        <p class="note">Vorteil gegenüber <code>pause_collection</code>: keine stornierten Rechnungen, die unser Mahnwesen (<code>invoice.voided</code>) verwirren; Abo-ID, Zahlungsmethode und Rabatte bleiben. Die 0-€-Rechnungen sind harmlos (Provision 0, kein Zahlungsversuch).</p>
+      </div>
+    </div>
+    <div class="card soft" style="margin-top:18px;">
+      <h3>Was der Webhook neu können muss</h3>
+      <p class="note">Preis „Pause“ muss in <code>getPlanByPriceId</code> als <code>paused</code> erkannt werden (heute fällt Unbekanntes auf „starter“). <code>reconcileSiteAccess</code> bekommt eine dritte Antwort neben online/offline: <em>paused</em>. Beim Wechsel in Phase 3 (<code>customer.subscription.updated</code>) werden die <code>paused</code>-Seiten wieder veröffentlicht, KV-Cache geleert, Mail „Willkommen zurück“. Kernänderung am Webhook, also nur im 06:00/23:00-Fenster ausrollen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section id="rabatt">
+  <div class="wrap">
+    <span class="kicker">07</span>
+    <h2>10 % Rabatt im Detail</h2>
+    <div class="grid2" style="margin-top:22px;">
+      <div class="card">
+        <h3>Berechtigt ist, wer</h3>
+        <ul>
+          <li>aktuell <strong>keinen</strong> Rabatt auf dem Abo hat (Stripe-Discount leer) und</li>
+          <li>mindestens eine bezahlte Rechnung hat (kein Angebot in der ersten Woche) und</li>
+          <li>das Angebot noch nie gesehen hat (<code>users.retention_offer_shown_at</code> leer) und</li>
+          <li>kein Admin-/Testkonto ist (100 % Rabatt, interne Konten).</li>
+        </ul>
+        <p class="note">Heute wären das höchstens 37 Konten. Alle anderen haben einen Rabatt, meist zeitlich begrenzt. Wenn deren Rabatt ausläuft, werden sie berechtigt. Das ist gewollt: Das Angebot fängt genau die auf, die wegen des Preissprungs kündigen wollen.</p>
+      </div>
+      <div class="card">
+        <h3>Warum dauerhaft und nicht 6 Monate</h3>
+        <ul>
+          <li>Ein befristeter Rabatt baut die nächste Klippe. In sechs Monaten stünden wir wieder hier, ohne zweites Angebot.</li>
+          <li>Dauerhaft ist in einem Satz erklärt und passt zum bestehenden „Partnerpreis“ (10 % dauerhaft beim Jahresabo über Empfehlung).</li>
+          <li>Kosten im schlechtesten Fall: 37 × ca. 2,50 € = rund 93 € im Monat. Dafür bleibt jeder Gehaltene bei 15 bis 33 € MRR.</li>
+        </ul>
+        <h4 style="margin-top:10px;">Missbrauch</h4>
+        <p class="note">Einmal pro Konto, markiert beim <strong>Anzeigen</strong>, nicht erst beim Annehmen. Wer den Flow nur startet, um den Rabatt zu sehen, bekommt ihn genau einmal. Kein neues Konto umgeht das: E-Mail, Teampartner-Nummer und Zahlungsfingerabdruck werden schon heute als „war schon Kunde“ erkannt (Empfehlungsmodell).</p>
+      </div>
+    </div>
+    <div class="card violet" style="margin-top:18px;">
+      <h3>Umsetzung</h3>
+      <p class="note">Neuer Stripe-Coupon <code>BLEIB10</code> (10 %, forever, Name „Treue-Rabatt“), per <code>subscriptions.update({ discounts: [{ coupon }] })</code> auf das laufende Abo. Wirkt ab der nächsten Rechnung, keine Zwischenrechnung. In der Abo-Karte erscheint wie heute „-10 % Rabatt · Treue-Rabatt“. Beim späteren Tarifwechsel bleibt er erhalten (die Rabatt-Wiederherstellung aus <code>plan-change.ts</code> greift). Partnerprovisionen rechnen automatisch vom reduzierten Netto.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section id="empfehlung">
+  <div class="wrap">
+    <span class="kicker">08</span>
+    <h2>Empfehlungshinweis</h2>
+    <p class="lead">Der Hinweis steht in Schritt 2 unter jedem Angebot und in der Kündigungsmail. Leise, konkret, mit einer Zahl, die stimmt.</p>
+    <div class="grid2" style="margin-top:22px;">
+      <div class="card">
+        <h3>Die Zahl</h3>
+        <p>Partner bekommen 10 % vom <strong>Netto</strong> jeder bezahlten Rechnung des Geworbenen, bei 156 von 171 Partnern automatisch als Guthaben auf die eigene Rechnung.</p>
+        <table>
+          <thead><tr><th>Geworbener zahlt</th><th>Guthaben für dich</th></tr></thead>
+          <tbody>
+            <tr><td>Starter 17 € / Monat</td><td>≈ 1,43 € im Monat</td></tr>
+            <tr><td>Pro 27 € / Monat</td><td>≈ 2,27 € im Monat</td></tr>
+            <tr><td>Unlimited 37 € / Monat</td><td>≈ 3,11 € im Monat</td></tr>
+            <tr><td>Pro 270 € / Jahr</td><td>≈ 22,69 € einmal im Jahr</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:8px;">Formulierung im Flow: „Ein Pro-Kunde = rund 2,30 € weniger im Monat, dauerhaft.“ Nicht „fast kostenlos“. Zwei Pro-Empfehlungen decken bei Starter rund ein Viertel der Rechnung.</p>
+      </div>
+      <div class="card soft">
+        <h3>Wo er noch hingehört (außerhalb des Flows)</h3>
+        <ul>
+          <li>In die Mail „Dein Startrabatt endet am …“ (Januar-Welle): „Oder hol dir den Rabatt zurück: eine Empfehlung …“.</li>
+          <li>In die Abo-Karte als einzeiliger Hinweis, wenn kein Rabatt läuft: „Spar dauerhaft mit Empfehlungen →“.</li>
+          <li>Nicht: als Pop-up, nicht als Bedingung für irgendetwas.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 -->
+<section id="mails">
+  <div class="wrap">
+    <span class="kicker">09</span>
+    <h2>Mails</h2>
+    <p class="lead">Alle Mails sind Systemmails (Kategorie „system“, nicht abbestellbar), weil sie Vertragsinformationen tragen. Bestehende Mails werden nur sanft angepasst.</p>
+    <table style="margin-top:20px;">
+      <thead><tr><th style="width:26%">Mail</th><th style="width:20%">Wann</th><th>Inhalt</th><th style="width:12%">Status</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Dein Abo wurde gekündigt</strong></td><td>Sofort nach Kündigung</td><td>Wie heute, plus: Linkseite bleibt online, „Du kannst auch pausieren“ als Link, Empfehlungshinweis, Knopf zeigt auf <code>/settings?tab=zahlung</code>, Tippfehler raus.</td><td><span class="tag warn">Anpassen</span></td></tr>
+        <tr><td><strong>In 3 Tagen gehen deine Seiten offline</strong></td><td>3 Tage vor Laufzeitende, nur bei Kündigung</td><td>Datum, was offline geht, ein Knopf „Abo weiterlaufen lassen“, ein Link „Stattdessen pausieren“. Eine einzige Erinnerung, nicht mehr.</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Dein Abo ist ausgelaufen</strong></td><td>Am Laufzeitende</td><td>Wie heute. Ergänzung: Linkseite bleibt online, Löschung am [Datum].</td><td><span class="tag warn">Anpassen</span></td></tr>
+        <tr><td><strong>Deine Inhalte werden in 14 Tagen gelöscht</strong></td><td>Tag 76 nach Ablauf</td><td>Letzte Information vor der endgültigen Löschung. Ein Klick stellt alles wieder her. Keine Rabattmail, eine Pflichtinformation.</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Deine Pause ist eingeplant</strong></td><td>Sofort nach Pause-Wahl</td><td>Von wann bis wann, was offline geht, Preis danach, wie man die Pause beendet oder doch kündigt.</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Deine Pause endet in 7 Tagen</strong></td><td>7 Tage vor Pausenende</td><td>Datum, Preis, Zahlungsmethode. Zwei Links: „Pause verlängern“ (falls noch möglich) und „Doch kündigen“. Rechtlich wichtig: niemand wird überrascht abgebucht.</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Willkommen zurück, alles ist online</strong></td><td>Bei Pausenende</td><td>Seiten sind wieder online, nächste Abrechnung am [Datum].</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Dein Treue-Rabatt ist aktiv</strong></td><td>Nach Annahme der 10 %</td><td>Neuer Preis, gilt ab der nächsten Rechnung. Kurz und freundlich.</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>An dich: Kündigung von …</strong></td><td>Sofort, an info@</td><td>Name, Tarif, Monate dabei, Rabatt, Grund, Freitext, gezeigtes Angebot, Ergebnis. Eine Mail je Kündigung, keine Sammelmail. Dazu Push in die Admin-App (wie bei Support-Nachrichten).</td><td><span class="tag ok">Neu</span></td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="mail">
+        <div class="subj">Deine Pause endet in 7 Tagen</div>
+        <div class="meta">7 Tage vor dem 12. März · Kategorie system</div>
+        <p>Hey Anita, am <strong>12. März</strong> geht es mit deiner FinestSites-Seite weiter. Deine Premium-Seiten gehen automatisch wieder online, und wir buchen wie vorher <strong>27 € im Monat</strong> über deine Visa ••42 ab.</p>
+        <p>Du musst nichts tun. Falls du noch nicht so weit bist: Pause um einen Monat verlängern · Doch kündigen.</p>
+      </div>
+      <div class="mail">
+        <div class="subj">Kündigung: Anita Mandler (Pro, 4 Monate dabei)</div>
+        <div class="meta">An info@finestsites.io · sofort</div>
+        <p><strong>Grund:</strong> Zu teuer · <strong>Rabatt:</strong> keiner · <strong>Angebot:</strong> 10 % gezeigt, abgelehnt · <strong>Ende:</strong> 12.01.2027</p>
+        <p><strong>Kommentar:</strong> „Ich habe gerade zu wenig Anfragen über die Seite, vielleicht später wieder.“</p>
+        <p>→ Konto im Admin öffnen · Support-Chat starten</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="admin">
+  <div class="wrap">
+    <span class="kicker">10</span>
+    <h2>Admin und Auswertung</h2>
+    <p class="lead"><code>/admin/cancellations</code> gibt es schon. Es wird von einer Stripe-Liste zu deiner Churn-Seite.</p>
+    <div class="kpi" style="margin-top:20px;">
+      <div class="k"><b>4</b><span>Kündigungen gestartet (30 Tage)</span></div>
+      <div class="k"><b>2</b><span>davon geblieben (1 Pause, 1 Rabatt)</span></div>
+      <div class="k"><b>50 %</b><span>Haltequote</span></div>
+      <div class="k"><b>−54 €</b><span>MRR-Verlust, 27 € gehalten</span></div>
+    </div>
+    <table style="margin-top:16px;">
+      <thead><tr><th>Datum</th><th>Kunde</th><th>Tarif</th><th>Dabei seit</th><th>Grund</th><th>Angebot</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr><td>03.11.</td><td>Anita M.</td><td>Pro · monatl.</td><td>4 Mon.</td><td>Zu teuer <span class="tag grey">Kommentar</span></td><td>10 % Rabatt</td><td><span class="tag bad">Gekündigt zum 12.01.</span></td></tr>
+        <tr><td>01.11.</td><td>Markus B.</td><td>Starter · monatl.</td><td>2 Mon.</td><td>Brauche ich gerade nicht</td><td>Pause 2 Mon.</td><td><span class="tag info">Pausiert bis 05.01.</span></td></tr>
+        <tr><td>29.10.</td><td>Sabine K.</td><td>Unlimited · jährl.</td><td>11 Mon.</td><td>Fehlt etwas <span class="tag grey">Kommentar</span></td><td>Gespräch</td><td><span class="tag ok">Geblieben</span></td></tr>
+        <tr><td>22.10.</td><td>Thomas R.</td><td>Pro · monatl.</td><td>3 Mon.</td><td>Geschäft beendet</td><td>keins</td><td><span class="tag bad">Ausgelaufen 22.11.</span></td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="card">
+        <h3>Was die Seite zeigt</h3>
+        <ul>
+          <li>Kennzahlen oben: gestartet, geblieben, Haltequote, MRR, jeweils mit Monatsauswahl (der <code>MonthSelector</code> existiert).</li>
+          <li>Gründe als Balken (Anteil je Grund), darunter die Tabelle mit Klick auf den Kommentar.</li>
+          <li>Reiter „Pausiert“: wer gerade pausiert, bis wann, mit Knopf „Pause beenden“ (Kulanz).</li>
+          <li>CSV-Export, wie bei den Gutschriften.</li>
+        </ul>
+      </div>
+      <div class="card soft">
+        <h3>Was du im Nutzerprofil siehst</h3>
+        <p class="note">Im Admin-Profil ein Block „Kündigung“: Grund, Kommentar, Angebot, Ergebnis, Datum. Beim Support-Chat mit diesem Nutzer schlägt die Support-KI (<code>ai-knowledge.ts</code>) den Grund als Kontext vor, damit du nicht fragen musst, was los ist.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section id="app">
+  <div class="wrap">
+    <span class="kicker">11</span>
+    <h2>App</h2>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="card">
+        <h3>Was die App bekommt</h3>
+        <p>Die App hat bewusst keinen Abo-Bereich (Apple 3.1.1: keine Kauf-, Preis- und Tarifhinweise). Kündigen und Pausieren bleiben deshalb <strong>nur im Browser</strong>. Die App bekommt zwei kleine Dinge:</p>
+        <ul>
+          <li>Unter „Mehr → Konto“ eine neutrale Zeile: „Abo und Zahlung verwaltest du unter app.finestsites.io im Browser.“ Ohne Link-Knopf, ohne Preise. Das ist erlaubt und heute gar nicht da.</li>
+          <li>Pausierte Seiten erscheinen in der Seitenliste mit dem Zustand „Pausiert bis 12. März“, Veröffentlichen zeigt den neutralen Hinweis „Diese Seite macht gerade Pause. Weiter geht es im Browser.“ (gleicher Mechanismus wie <code>PLAN_LIMIT_REACHED</code> mit App-Text).</li>
+        </ul>
+      </div>
+      <div class="card soft">
+        <h3>Gleichlauf-Regel</h3>
+        <p class="note">Web und App werden im selben Arbeitsgang angefasst: Web bekommt den Flow, die App den Seitenzustand „paused“ in <code>mobile/src</code> plus Mock-Server, und der Vertrag <code>app-v1</code> bekommt das neue Feld <code>paused_until</code> (nur hinzufügen, nie umbenennen). Die App-Änderung kommt mit dem nächsten Store-Build bzw. per EAS Update, sobald das eingerichtet ist. Ältere App-Versionen sehen pausierte Seiten einfach als „offline“, nichts bricht.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section id="recht">
+  <div class="wrap">
+    <span class="kicker">12</span>
+    <h2>Recht und Datenschutz</h2>
+    <div class="grid3" style="margin-top:18px;">
+      <div class="card">
+        <h3>Kündigungsbutton (§ 312k BGB)</h3>
+        <p class="note">Gilt formal nur für Verbraucher, FinestSites arbeitet nur mit Unternehmern (AGB § 1). Trotzdem halten wir uns an den Geist: Kündigung in höchstens zwei Schritten, Knopf immer sichtbar, Bestätigung sofort per Mail. Ein Angebot vor der Kündigung ist auch bei Verbrauchern zulässig, solange der Weg daran vorbeiführt.</p>
+      </div>
+      <div class="card">
+        <h3>AGB-Ergänzung für die Pause</h3>
+        <p class="note">Neuer Absatz in § 10: „Der Nutzer kann das Abonnement über die Einstellungen für ein bis drei Monate ruhen lassen (Pause). Die Pause beginnt mit Ablauf des bezahlten Abrechnungszeitraums. Während der Pause fallen keine Entgelte an und kostenpflichtige Webseiten sind nicht erreichbar; Inhalte bleiben gespeichert. Mit Ablauf der Pause läuft das Abonnement zu den bisherigen Konditionen weiter. Eine Kündigung ist auch während der Pause jederzeit möglich.“ Änderung nach § 15 mit 6 Wochen Frist mitteilen (kann mit der ohnehin offenen Mitteilung zu § 16 zusammengehen).</p>
+      </div>
+      <div class="card">
+        <h3>Datenschutz</h3>
+        <p class="note">Grund und Kommentar sind personenbezogen. Zweck: Vertragsverwaltung und Produktverbesserung (Art. 6 Abs. 1 b und f DSGVO). Ein Satz in der Datenschutzerklärung unter „Kundenkonto“. Löschung mit dem Konto (Cascade), Statistik bleibt anonym (Grund, Tarif, Monat ohne Nutzer-ID). Der Freitext bekommt den Hinweis „Bitte keine Gesundheitsdaten oder Daten Dritter“, weil die Zielgruppe gern von Kunden erzählt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section id="technik">
+  <div class="wrap">
+    <span class="kicker">13</span>
+    <h2>Technik</h2>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="card">
+        <h3>Datenmodell</h3>
+        <ul class="note">
+          <li>Neue Tabelle <code>cancellation_feedback</code>: user_id, reason, comment, plan, interval, discount_at_time, tenure_days, offer_shown, offer_result (accepted / declined / none), outcome (canceled / paused / kept), stripe_subscription_id, created_at. Eine Zeile je gestartetem Flow.</li>
+          <li><code>users</code>: <code>retention_offer_shown_at</code>, <code>pause_from</code>, <code>pause_until</code>, <code>pause_schedule_id</code>, <code>last_pause_at</code>.</li>
+          <li><code>user_sites.status</code> bekommt den Wert <code>paused</code> (Worker: Seite offline mit Pausenhinweis, kein Löschtimer).</li>
+          <li>Migration mit GRANT an Rolle <code>finestsites</code> (sonst 500er, wie bei Werbung &amp; Tracking gelernt).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>API</h3>
+        <ul class="note">
+          <li><code>POST /api/billing/cancel/start</code> → speichert Grund + Kommentar, antwortet mit dem passenden Angebot (Server entscheidet). Markiert <code>retention_offer_shown_at</code>, wenn 10 % dabei ist.</li>
+          <li><code>POST /api/billing/cancel/confirm</code> → wie heute <code>DELETE</code>, zusätzlich <code>cancellation_details</code> an Stripe und Outcome in die Tabelle.</li>
+          <li><code>POST /api/billing/pause</code> (months 1–3), <code>DELETE /api/billing/pause</code> (beenden/abbrechen), <code>POST /api/billing/retention-discount</code> (Coupon anwenden).</li>
+          <li>Alle Routen im Browser-only-Modus (<code>blockPurchaseInApp</code>), Kontolöschung-Guard wie bei den anderen Billing-Routen.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Webhook und Cron</h3>
+        <ul class="note">
+          <li>Webhook: Preis „Pause“ erkennen, Seiten <code>paused</code> ↔ <code>published</code> umschalten, KV-Cache je Host leeren, Mails „Pause beginnt“ / „Willkommen zurück“.</li>
+          <li>Täglicher Cron (in <code>billing-enforcement</code> einhängen): Mail 3 Tage vor Laufzeitende bei Kündigung, 7 Tage vor Pausenende, 14 Tage vor Löschung. Marker-Spalten, damit jede Mail genau einmal geht (gleiches Muster wie beim Mahnwesen).</li>
+          <li>Kündigung während Pause: Schedule lösen, Abo sofort beenden, Seiten von <code>paused</code> auf <code>deactivated</code> mit 90-Tage-Timer.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Tests, die es braucht</h3>
+        <ul class="note">
+          <li>Angebotslogik rein (ohne DB) testen: Grund × Rabattlage × Vorgeschichte → Angebot. Deterministisch, wie beim Empfehlungsmodell.</li>
+          <li>Stripe-Testmodus: Pause bei Monats- und Jahresabo, Rabatt nach Pause wieder da, Kündigung während Pause, Pause vorzeitig beenden.</li>
+          <li>Smoke-Test ergänzen: pausierte Seite liefert 200 mit Pausenhinweis, nicht 404.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section id="phasen">
+  <div class="wrap">
+    <span class="kicker">14</span>
+    <h2>Phasen und Aufwand</h2>
+    <p class="lead">Drei Stufen, jede für sich live-fähig. Stufe 1 bringt dir sofort das, was dir heute am meisten fehlt: Wissen.</p>
+    <div class="grid3" style="margin-top:22px;">
+      <div class="card">
+        <div class="num">1</div>
+        <h3>Verstehen</h3>
+        <p class="note"><span class="tag ok">1 bis 2 Tage</span></p>
+        <ul class="note">
+          <li>Schritt 1 (Grund + Kommentar) und Variante D als Abschluss</li>
+          <li>Tabelle, Stripe-<code>cancellation_details</code>, Mail an dich, Admin-Seite mit Gründen</li>
+          <li>Fixes: Linkseite bleibt online, Links auf „Zahlung &amp; Plan“, Tippfehler</li>
+          <li>Mail 3 Tage vor Laufzeitende, Mail 14 Tage vor Löschung</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="num">2</div>
+        <h3>Halten</h3>
+        <p class="note"><span class="tag ok">2 Tage</span></p>
+        <ul class="note">
+          <li>10 %-Angebot (Coupon, Berechtigung, Einmaligkeit, Mail)</li>
+          <li>Gespräch-Variante über den Support-Chat</li>
+          <li>Empfehlungshinweis im Flow und in der Kündigungsmail</li>
+          <li>Jahresabo- und Downgrade-Hinweis bei bestehendem Rabatt</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="num">3</div>
+        <h3>Pausieren</h3>
+        <p class="note"><span class="tag warn">3 bis 4 Tage</span> · Webhook-Änderung, 06:00/23:00-Fenster</p>
+        <ul class="note">
+          <li>Pause-Preis in Stripe, Schedule-Logik, Seitenstatus <code>paused</code>, Worker-Pausenseite</li>
+          <li>Drei Pause-Mails, Cron-Erinnerung</li>
+          <li>AGB § 10 ergänzen und mitteilen</li>
+          <li>App: Zustand „Pausiert“ + Konto-Hinweis (nächster Build)</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note" style="margin-top:16px;">Reihenfolge-Empfehlung: Stufe 1 und 2 vor dem 15. Dezember, Stufe 3 im Januar. Die „Startrabatt endet“-Mail für die Januar-Welle separat, nur mit deiner ausdrücklichen Freigabe.</p>
+  </div>
+</section>
+
+<!-- 15 -->
+<section id="entscheidungen">
+  <div class="wrap">
+    <span class="kicker">15</span>
+    <h2>Deine Entscheidungen</h2>
+    <div class="decision">
+      <h3>Sechs Fragen, dann kann es losgehen</h3>
+      <ul>
+        <li><span class="q">Rabatt dauerhaft oder befristet?</span> Empfehlung: dauerhaft 10 %, einmal pro Konto. Alternative: 6 Monate (billiger, aber zweite Klippe).</li>
+        <li><span class="q">Pause 1 bis 3 Monate, einmal im Jahr?</span> Empfehlung: ja. Alternative: bis 6 Monate für Saisongeschäft, dann aber Löschfristen anpassen.</li>
+        <li><span class="q">Grund als Pflicht-Tipp?</span> Empfehlung: ja, mit „Möchte ich nicht sagen“ als Ausweg. Alternative: komplett optional (weniger Daten, noch weniger Reibung).</li>
+        <li><span class="q">Mail an dich bei jeder Kündigung?</span> Empfehlung: ja, einzeln, plus Push in die Admin-App.</li>
+        <li><span class="q">Pausenseite für Besucher: nur Hinweis oder mit Kontakt?</span> Empfehlung: nur Hinweis, sonst ist Pause ein Gratis-Tarif.</li>
+        <li><span class="q">Reihenfolge?</span> Empfehlung: Stufe 1 + 2 sofort, Pause im Januar, AGB-Mitteilung gebündelt mit § 16.</li>
+      </ul>
+      <p style="margin-top:14px;">Sobald du entschieden hast, baue ich Stufe 1 lokal nach und zeige dir den Flow mit echten Screens, bevor etwas live geht.</p>
+    </div>
+  </div>
+</section>
+
+<section style="padding:28px 0 60px;border-top:1px solid var(--line);">
+  <div class="wrap note">
+    Quellen: <code>src/app/(dashboard)/settings/page.tsx</code>, <code>src/app/api/billing/subscription/route.ts</code>, <code>src/app/api/billing/reactivate/route.ts</code>, <code>src/app/api/webhooks/stripe/route.ts</code>, <code>src/lib/billing/site-access.ts</code>, <code>src/lib/billing/plan-change.ts</code>, <code>src/lib/email/templates.ts</code>, <code>src/app/(admin)/admin/cancellations/page.tsx</code>, <code>src/app/agb/page.tsx</code>, <code>docs/billing-lifecycle.html</code>, Stripe-Live-Daten und Datenbank vom 3. November 2026.
+  </div>
+</section>
+
+</body>
+</html>
