@@ -114,11 +114,12 @@
     <span class="kicker">Konzept · Stand 3. November 2026</span>
     <h1>Kündigen bleibt leicht.<br>Wir lernen nur dazu.</h1>
     <div class="accent-line"></div>
-    <p class="lead">Wer kündigen will, soll das in zwei Schritten können. Dazwischen stellen wir genau eine Frage (warum?) und machen genau ein passendes Angebot: Pause, 10 % Rabatt oder ein kurzes Gespräch. Wer trotzdem geht, sieht den Kündigen-Knopf die ganze Zeit. Drumherum: Mails, Auswertung im Admin, Pause-Mechanik in Stripe, AGB und App.</p>
+    <p class="lead">Wer kündigen will, soll das in zwei Schritten können. Dazwischen stellen wir genau eine Frage (warum?) und machen genau ein passendes Angebot: Pause, 10 % Rabatt oder ein kurzes Gespräch. Wer trotzdem geht, sieht den Kündigen-Knopf die ganze Zeit. Drumherum: Auswertung im Admin statt Mails an dich, eine Antwort für alle, die schon einen Rabatt haben, die Jahresabo-Fälle, Pause-Mechanik in Stripe, Schutz vor Missbrauch und Fehlern, AGB und App.</p>
     <div class="pills">
       <span class="pill"><b>168</b> aktive Abos</span>
       <span class="pill"><b>131</b> davon mit Rabatt</span>
       <span class="pill"><b>102</b> Rabatte enden bis Januar</span>
+      <span class="pill"><b>57</b> Jahresabos</span>
       <span class="pill"><b>0</b> bekannte Kündigungsgründe</span>
       <span class="pill"><b>1</b> laufende Kündigung</span>
     </div>
@@ -134,14 +135,17 @@
     <a href="#ui"><span>05</span>UI Schritt für Schritt</a>
     <a href="#pause"><span>06</span>Pause im Detail</a>
     <a href="#rabatt"><span>07</span>10 % Rabatt im Detail</a>
-    <a href="#empfehlung"><span>08</span>Empfehlungshinweis</a>
-    <a href="#mails"><span>09</span>Mails</a>
-    <a href="#admin"><span>10</span>Admin und Auswertung</a>
-    <a href="#app"><span>11</span>App</a>
-    <a href="#recht"><span>12</span>Recht und Datenschutz</a>
-    <a href="#technik"><span>13</span>Technik</a>
-    <a href="#phasen"><span>14</span>Phasen und Aufwand</a>
-    <a href="#entscheidungen"><span>15</span>Deine Entscheidungen</a>
+    <a href="#mitrabatt"><span>08</span>Wenn schon ein Rabatt läuft</a>
+    <a href="#jahresabo"><span>09</span>Jahresabo: früh und kurz vor Verlängerung</a>
+    <a href="#missbrauch"><span>10</span>Missbrauch und Fehlerquellen</a>
+    <a href="#empfehlung"><span>11</span>Empfehlungshinweis</a>
+    <a href="#mails"><span>12</span>Mails</a>
+    <a href="#admin"><span>13</span>Admin und Auswertung</a>
+    <a href="#app"><span>14</span>App</a>
+    <a href="#recht"><span>15</span>Recht und Datenschutz</a>
+    <a href="#technik"><span>16</span>Technik</a>
+    <a href="#phasen"><span>17</span>Phasen und Aufwand</a>
+    <a href="#entscheidungen"><span>18</span>Deine Entscheidungen</a>
   </div>
 </section>
 
@@ -221,6 +225,7 @@
         <tr><td>Knopf „Abo weiter nutzen“ in der Kündigungsmail zeigt auf <code>/billing</code>, das leitet auf Einstellungen → <strong>Profil</strong>, nicht auf „Zahlung &amp; Plan“. Gleiches beim roten „Upgrade →“ in der Seitenleiste.</td><td>Nutzer landet auf dem falschen Reiter und sucht.</td><td><span class="tag warn">Kleiner Fix</span></td></tr>
         <tr><td>Tippfehler „koennen“ in der Kündigungsmail.</td><td>Wirkt unsauber in dem Moment, in dem jemand geht.</td><td><span class="tag warn">Kleiner Fix</span></td></tr>
         <tr><td>Keine Mail kurz vor dem Laufzeitende, keine Mail vor der endgültigen Löschung nach 90 Tagen (steht schon in <code>docs/billing-lifecycle.html</code> als offen).</td><td>Wer es sich anders überlegt, erfährt es zu spät. Daten werden ohne Vorwarnung gelöscht.</td><td><span class="tag info">Im Konzept</span></td></tr>
+        <tr><td><code>/admin/cancellations</code> liest nur die ersten <strong>100</strong> aktiven Abos aus Stripe (ohne Blättern). Seit Oktober gibt es 168. Kündigungen älterer Abos fehlen in der Liste.</td><td>Du siehst nicht alle laufenden Kündigungen.</td><td><span class="tag bad">Fix nötig</span></td></tr>
         <tr><td>Kein Kündigungsgrund, nirgends.</td><td>Du kannst Churn nicht erklären und nicht gezielt gegensteuern.</td><td><span class="tag info">Im Konzept</span></td></tr>
       </tbody>
     </table>
@@ -242,7 +247,7 @@
     <div class="grid2" style="margin-top:18px;">
       <div class="card warn">
         <h3>Die Januar-Klippe</h3>
-        <p>Rund 100 Kunden zahlen ab Januar 2027 zum ersten Mal den vollen Preis (z. B. Pro 21,60 € → 27 €). Genau dann wird die Kündigungsseite zum ersten Mal richtig besucht. Der Prozess sollte <strong>vor Weihnachten</strong> stehen. Ergänzend empfehle ich eine eigene, freundliche Mail „Dein Startrabatt endet am …“ mit dem Jahresabo als Sparweg (2 Monate geschenkt). Das ist kein Teil des Kündigungsflows, gehört aber zur selben Welle.</p>
+        <p>Rund 100 Kunden zahlen ab Januar 2027 zum ersten Mal den vollen Preis (z. B. Pro 21,60 € → 27 €). Genau dann wird die Kündigungsseite zum ersten Mal richtig besucht. Der Prozess sollte <strong>vor Weihnachten</strong> stehen. <strong>Keine</strong> Erinnerungsmail „Dein Rabatt endet“ (deine Entscheidung: so eine Mail ist eine Einladung zum Kündigen). Stattdessen fängt der Flow genau die auf, die wegen des Preissprungs kündigen wollen, mit dem „Rabatt-Anschluss“ aus Abschnitt 08. Einzige Ausnahme, die bleibt: SEPA-Kunden bekommen 7 Tage vor jeder Abbuchung schon heute die Pflichtmail „Am … buchen wir … € ab“ (Vorabankündigung). Sie nennt den Betrag, nicht den Rabatt. Das bleibt so.</p>
       </div>
       <div class="card">
         <h3>Was wir über Kündigungen wissen</h3>
@@ -276,13 +281,14 @@
     <table style="margin-top:8px;">
       <thead><tr><th style="width:30%">Grund (ein Tipp)</th><th style="width:30%">Angebot in Schritt 2</th><th>Wenn das nicht geht (Fallback)</th></tr></thead>
       <tbody>
-        <tr><td>Zu teuer, lohnt sich gerade nicht</td><td><strong>10 % dauerhaft</strong>, wenn kein Rabatt läuft und das Angebot noch nie gemacht wurde</td><td>Läuft schon ein Rabatt: Jahresabo (2 Monate geschenkt) oder kleinerer Tarif zum Laufzeitende (gibt es schon). Immer: Empfehlungshinweis.</td></tr>
+        <tr><td>Zu teuer, lohnt sich gerade nicht</td><td><strong>10 % dauerhaft</strong>, wenn kein Rabatt läuft und das Angebot noch nie gemacht wurde</td><td>Läuft schon ein Rabatt: <strong>Rabatt-Anschluss</strong> (10 % dauerhaft ab dem Ende des laufenden Rabatts, Abschnitt 08). Dazu als Zeile: kleinerer Tarif, wenn die Seitenzahl passt, oder Jahresabo. Immer: Empfehlungshinweis.</td></tr>
         <tr><td>Ich brauche die Seite gerade nicht</td><td><strong>Pause</strong> 1, 2 oder 3 Monate ab Laufzeitende</td><td>Läuft schon eine Pause im letzten Jahr: 10 % (falls berechtigt), sonst nur kündigen.</td></tr>
         <tr><td>Ich mache das Geschäft nicht mehr</td><td>Kein Verkaufsangebot. Hinweis: Linkseite bleibt kostenlos online, Daten 90 Tage sicher, jederzeit zurück.</td><td>Optional Pause, falls „vielleicht später“ angetippt wird.</td></tr>
         <tr><td>Mir fehlt etwas / Vorlage passt nicht</td><td><strong>Kurzes Gespräch:</strong> Pflichtfeld „Was fehlt dir?“, Antwort von Daniel innerhalb eines Werktags, Kündigung trotzdem sofort möglich</td><td>Zusätzlich Pause anbieten („bis es das gibt“).</td></tr>
         <tr><td>Zu kompliziert / technische Probleme</td><td><strong>Hilfe:</strong> Support-Chat öffnen oder Rückruf; Freitext, was nicht klappt</td><td>Pause anbieten.</td></tr>
         <tr><td>Ich wechsle zu einem anderen Anbieter</td><td>Frage „Zu welchem?“ (Freitext). 10 % nur, wenn berechtigt.</td><td>Nur kündigen.</td></tr>
         <tr><td>Anderer Grund / möchte ich nicht sagen</td><td>Pause und (falls berechtigt) 10 % als zwei ruhige Optionen untereinander</td><td>Nur kündigen.</td></tr>
+        <tr><td colspan="3" style="background:var(--soft);font-size:13px;color:var(--muted);">Jahresabo mit mehr als 60 Tagen Restlaufzeit: vor jedem Angebot steht „Erinnerung statt Kündigung“ (Abschnitt 09). Unlimited- und Jahresabo-Kunden bekommen bei „zu teuer“ und „fehlt etwas“ zusätzlich „Lass uns kurz sprechen“, weil der Wert hoch genug ist, dass du selbst entscheiden willst.</td></tr>
       </tbody>
     </table>
   </div>
@@ -500,15 +506,180 @@
     </div>
     <div class="card violet" style="margin-top:18px;">
       <h3>Umsetzung</h3>
-      <p class="note">Neuer Stripe-Coupon <code>BLEIB10</code> (10 %, forever, Name „Treue-Rabatt“), per <code>subscriptions.update({ discounts: [{ coupon }] })</code> auf das laufende Abo. Wirkt ab der nächsten Rechnung, keine Zwischenrechnung. In der Abo-Karte erscheint wie heute „-10 % Rabatt · Treue-Rabatt“. Beim späteren Tarifwechsel bleibt er erhalten (die Rabatt-Wiederherstellung aus <code>plan-change.ts</code> greift). Partnerprovisionen rechnen automatisch vom reduzierten Netto.</p>
+      <p class="note">Neuer Stripe-Coupon <code>BLEIB10</code> (10 %, forever, Name „Treue-Rabatt“), per <code>subscriptions.update({ discounts: [{ coupon }] })</code> auf das laufende Abo. Wirkt ab der nächsten Rechnung, keine Zwischenrechnung. Läuft noch ein Rabatt, wird der Coupon nicht gestapelt, sondern vorgemerkt (<code>users.retention_coupon_pending</code>) und vom Webhook bei <code>customer.discount.deleted</code> (Stripe meldet das Ende eines Rabatts) angewendet. Das ist der „Rabatt-Anschluss“ aus Abschnitt 08. In der Abo-Karte erscheint wie heute „-10 % Rabatt · Treue-Rabatt“. Beim späteren Tarifwechsel bleibt er erhalten (die Rabatt-Wiederherstellung aus <code>plan-change.ts</code> greift). Partnerprovisionen rechnen automatisch vom reduzierten Netto.</p>
     </div>
   </div>
 </section>
 
+
 <!-- 08 -->
-<section id="empfehlung">
+<section id="mitrabatt">
   <div class="wrap">
     <span class="kicker">08</span>
+    <h2>Wenn schon ein Rabatt läuft</h2>
+    <p class="lead">131 von 168 Kunden haben einen Rabatt, die meisten befristet. Sobald er endet, wird „zu teuer“ die häufigste Antwort. Ohne Erinnerungsmail bleibt genau ein Ort, an dem wir reagieren können: der Kündigungsflow. Hier die Möglichkeiten, bewertet.</p>
+    <table style="margin-top:20px;">
+      <thead><tr><th style="width:24%">Möglichkeit</th><th>Wie es wirkt</th><th style="width:22%">Bewertung</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Rabatt-Anschluss</strong><br><span class="note">10 % dauerhaft ab dem Ende des laufenden Rabatts</span></td><td>„Dein Startrabatt endet am 12. Januar. Danach zahlst du nicht 27 €, sondern dauerhaft 24,30 €.“ Kein Stapeln, keine zweite Klippe, Kosten 2 bis 4 € im Monat je gehaltenem Kunden. Technisch: Coupon vormerken, Webhook wendet ihn an, wenn Stripe das Rabattende meldet. Einmal pro Konto, markiert beim Anzeigen.</td><td><span class="tag ok">Empfehlung, Standard</span></td></tr>
+        <tr><td><strong>Kleinerer Tarif</strong><br><span class="note">datenbasiert</span></td><td>Nur wenn die Zahl der veröffentlichten Premium-Seiten ins kleinere Limit passt: „Du hast 1 Seite online. Mit Starter zahlst du 17 € statt 27 €.“ Wechsel zum Laufzeitende gibt es schon (<code>plan-change.ts</code>). Spart dem Kunden mehr als 10 %, kostet uns mehr MRR, hält aber einen Kunden, der sonst weg wäre.</td><td><span class="tag ok">Als zweite Zeile, wenn zutreffend</span></td></tr>
+        <tr><td><strong>Jahresabo</strong></td><td>Pro 270 € im Jahr = 22,50 € im Monat, also günstiger als 24,30 € mit Anschluss-Rabatt. Für „zu teuer“ ist die Vorauszahlung aber oft gerade das Problem. Als Textzeile unter dem Angebot, nicht als Knopf.</td><td><span class="tag ok">Als Hinweis</span></td></tr>
+        <tr><td><strong>Rabatt verlängern</strong><br><span class="note">gleicher Prozentsatz, 3 Monate</span></td><td>Belohnt die Kündigungsabsicht, kostet doppelt (20 % statt 10 %) und baut in drei Monaten die nächste Klippe. Wer das einmal bekommen hat, probiert es wieder.</td><td><span class="tag bad">Nicht empfohlen</span></td></tr>
+        <tr><td><strong>Ein Monat geschenkt</strong><br><span class="note">100 % einmalig</span></td><td>Stark, aber missbrauchbar (Jahresabo kündigen, um einen Gratismonat zu bekommen) und für Partner provisionsfrei. Nur als Kulanz durch dich im Gespräch, wie heute mit den KULANZ-Coupons. Nie automatisch.</td><td><span class="tag warn">Nur manuell</span></td></tr>
+        <tr><td><strong>Pause</strong></td><td>Löst kein Preisproblem, verschiebt es nur. Bei „zu teuer“ nicht als Hauptangebot, aber als leiser Link („Oder erst mal pausieren“).</td><td><span class="tag grey">Nur als Link</span></td></tr>
+        <tr><td><strong>Gespräch</strong></td><td>Für Unlimited- und Jahresabo-Kunden automatisch als dritte Option: „Lass uns kurz sprechen.“ Die Nachricht landet im Support-Chat, du entscheidest mit Blick auf den Kunden (Dauer, Umsatz, Partnerstatus), ob und was du anbietest.</td><td><span class="tag ok">Bei hohem Wert</span></td></tr>
+        <tr><td><strong>Empfehlung</strong></td><td>Immer als Zeile, mit ehrlicher Zahl: „Eine Pro-Empfehlung bringt dir rund 2,30 € im Monat, dauerhaft.“ Zwei Empfehlungen gleichen den verlorenen Startrabatt bei Starter fast aus (3,40 € Rabatt gegen 4,54 € Guthaben).</td><td><span class="tag ok">Immer</span></td></tr>
+      </tbody>
+    </table>
+    <div class="grid2" style="margin-top:18px;">
+      <div class="card">
+        <h3>Sonderfälle</h3>
+        <ul class="note">
+          <li><strong>Geworbene Kunden</strong> (AFFILIATE10, dauerhaft): haben schon 10 % ohne Ende. Kein Anschluss. Für sie: kleinerer Tarif, Jahresabo, Gespräch, Empfehlung.</li>
+          <li><strong>Team-Rabatte</strong> (Team Ulla 17 %, Early Bird 25 %, dauerhaft): wie Geworbene. Ein zweiter Dauerrabatt ist nicht vorgesehen.</li>
+          <li><strong>Rabatt endet erst in Monaten</strong> (z. B. InnerVisionDay im Januar, Kündigung im November): Anschluss trotzdem anbieten, er wird erst wirksam, wenn der laufende Rabatt endet. Der Kunde sieht beide Daten.</li>
+          <li><strong>Admin-/Testkonten</strong> (100 %): nie ein Angebot.</li>
+        </ul>
+      </div>
+      <div class="card soft">
+        <h3>Transparenz ohne Mail</h3>
+        <p class="note">Damit das Rabattende trotzdem niemanden überrascht, zeigt die Abo-Karte das Datum still an: „-20 % Rabatt · bis 12.01.2027“. Das ist im Konto sichtbar, nicht im Postfach. Rechnungen bleiben wie heute. Die SEPA-Vorabankündigung 7 Tage vor jeder Abbuchung (Pflicht, gibt es schon) nennt den neuen Betrag, mehr nicht.</p>
+      </div>
+    </div>
+    <div class="mockrow" style="margin-top:22px;">
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Dein Startrabatt endet bald.</p>
+          <p class="ms">Am 12. Januar läuft dein 20 %-Rabatt aus. Statt dann auf den vollen Preis zu springen, bleibst du dauerhaft darunter.</p>
+          <div class="offer">
+            <div class="ot">Rabatt-Anschluss · ab dem 12. Januar</div>
+            <div class="big">24,30 € <small>statt 27 € im Monat, dauerhaft</small></div>
+            <p>Bis zum 12. Januar bleibt dein 20 %-Rabatt wie er ist. Danach gelten die 10 % ohne Ende.</p>
+          </div>
+          <div class="btn violet">Anschluss sichern und bleiben</div>
+          <span class="link">Trotzdem zum 12. Januar kündigen</span>
+          <div class="ref">💡 <span>Du hast 1 Seite online: Mit <b>Starter</b> zahlst du 17 € im Monat. Oder im Jahresabo 22,50 € im Monat. Beides zum Laufzeitende wechselbar.</span></div>
+        </div>
+        <p class="cap"><strong>Variante B2: Rabatt-Anschluss.</strong> Beide Daten stehen da, nichts stapelt sich. Die zweite Zeile erscheint nur, wenn die Seitenzahl in den kleineren Tarif passt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 -->
+<section id="jahresabo">
+  <div class="wrap">
+    <span class="kicker">09</span>
+    <h2>Jahresabo: früh und kurz vor Verlängerung</h2>
+    <p class="lead">57 Kunden zahlen jährlich. Bei ihnen ist eine Kündigung meistens keine Entscheidung über heute, sondern über ein Datum in ferner Zukunft. Das verlangt zwei verschiedene Antworten.</p>
+    <div class="grid2" style="margin-top:22px;">
+      <div class="card">
+        <h3>Fall A: Kündigung früh im Jahr <span class="note">(mehr als 60 Tage Restlaufzeit)</span></h3>
+        <p class="note">Was wirklich passiert: nichts. Das Abo läuft bis zum Jahresende weiter, die Kündigung ist nur vorgemerkt. Die Gefahr liegt woanders: Der Kunde vergisst sie, und in 10 Monaten gehen seine Seiten überraschend offline. Oder er kündigt nur aus Angst vor der automatischen Verlängerung.</p>
+        <h4>Angebot: Erinnerung statt Kündigung</h4>
+        <p class="note">„Du musst heute nichts entscheiden. Dein Jahr läuft bis zum 15. September 2027. Wir erinnern dich 14 Tage vor der Verlängerung, dann kündigst du mit einem Klick.“ Opt-in, gespeichert in <code>users.renewal_reminder_opt_in</code>. Diese Mail geht nur an Kunden, die sie ausdrücklich wollten, und sie enthält den Ein-Klick-Link. Darunter bleibt „Jetzt zum 15.09.2027 kündigen“.</p>
+        <h4>Je nach Grund zusätzlich</h4>
+        <ul class="note">
+          <li><strong>Zu teuer:</strong> Jetzt ist nichts zu sparen, das Jahr ist bezahlt. Angebot: kleinerer Tarif <em>zur Verlängerung</em> vormerken (gibt es schon) und der Empfehlungshinweis, der bis zur Verlängerung Guthaben aufbaut.</li>
+          <li><strong>Brauche ich gerade nicht:</strong> Eine Pause bringt nichts, es läuft nichts, was man nicht zahlt. Antwort: „Nimm deine Seite im Editor offline, so lange du willst, und veröffentliche sie wieder, wenn du magst. Dein Jahr läuft bis zum 15.09.2027.“ Wer trotzdem Geld zurück will: siehe Variante unten.</li>
+          <li><strong>Fehlt etwas / zu kompliziert:</strong> Gespräch, wie beim Monatsabo. Hier lohnt es sich besonders, die Zeit ist da.</li>
+        </ul>
+        <h4>Variante (nur bei Nachfrage): Pause mit Gutschrift</h4>
+        <p class="note">Seiten N Monate offline (max. 3), bei der Verlängerung wird N/12 des Jahrespreises als Kundenguthaben gutgeschrieben (Stripe Customer Balance, nutzen wir schon fürs Partnerguthaben). Wer vorher kündigt, verliert die Gutschrift, das steht vorher da. Fair, aber zusätzliche Logik. Erst bauen, wenn der Grund „brauche ich gerade nicht“ bei Jahreskunden messbar auftaucht.</p>
+        <h4>Für dich im Admin</h4>
+        <p class="note">Jahreskunden mit vorgemerkter Kündigung stehen mit Restlaufzeit in der Liste („kündigt in 298 Tagen“). Das ist die längste Vorlaufzeit, die du je für ein persönliches Gespräch bekommst.</p>
+      </div>
+      <div class="card">
+        <h3>Fall B: Kurz vor der Verlängerung <span class="note">(60 Tage oder weniger)</span></h3>
+        <p class="note">Jetzt ist es eine echte Entscheidung, und die Angebote sind dieselben wie beim Monatsabo, auf das Jahr übersetzt:</p>
+        <ul class="note">
+          <li><strong>10 % dauerhaft</strong> (ohne laufenden Rabatt): 243 € statt 270 € im Jahr.</li>
+          <li><strong>Rabatt-Anschluss</strong> (laufender Rabatt endet mit dem Jahr): Die 3-Monats-Rabatte wirkten beim Jahresabo nur auf die erste Rechnung, bei der Verlängerung wären sie weg. Anschluss greift genau da.</li>
+          <li><strong>Pause</strong> 1 bis 3 Monate ab der Verlängerung: Die Jahresrechnung verschiebt sich um die Pausendauer. Klar benennen: „Ab dem 15. Dezember verlängern wir dein Jahresabo für 270 €.“</li>
+          <li><strong>Kleinerer Tarif</strong> zur Verlängerung, wenn die Seitenzahl passt.</li>
+          <li><strong>Neu zu entscheiden: Jahr → Monat zur Verlängerung.</strong> „Lieber monatlich weitermachen, jederzeit kündbar: 27 € im Monat.“ Heute ist Jahr → Monat grundsätzlich gesperrt (<code>canUpgradeTo</code>). Zur Verlängerung ist es kein Rausschleichen aus der Laufzeit, sondern ein neuer Vertrag. Empfehlung: erlauben, aber nur im Kündigungsflow und nur zum Laufzeitende, einmalig. Verliert uns 2 Monate Vorkasse pro Jahr, hält aber Kunden, die 270 € auf einmal scheuen.</li>
+        </ul>
+        <h4>SEPA bei 270 bis 370 €</h4>
+        <p class="note">Die Vorabankündigung 7 Tage vorher gibt es schon (nur SEPA). Wichtig, weil eine Lastschrift 8 Wochen lang ohne Angabe von Gründen zurückgeholt werden kann. Eine überraschte Abbuchung von 370 € ist der teuerste Kündigungsweg: Rücklastschrift 3,50 €, Seiten waren derweil online, Anfechtung 15 €. Für Kartenzahler gibt es keine Ankündigung, braucht es rechtlich auch nicht, und eine Kartenzahlung ist nicht so leicht rückholbar.</p>
+      </div>
+    </div>
+    <div class="mockrow" style="margin-top:22px;">
+      <div>
+        <div class="mock">
+          <div class="close">✕</div>
+          <p class="mh">Du musst heute nichts entscheiden.</p>
+          <p class="ms">Dein Jahresabo ist bezahlt und läuft bis zum 15. September 2027. Bis dahin ändert eine Kündigung nichts.</p>
+          <div class="offer">
+            <div class="ot">Erinnerung statt Kündigung</div>
+            <p style="margin-top:0;">Wir erinnern dich am <b>1. September 2027</b> per Mail an die Verlängerung. Darin kündigst du mit einem Klick, falls du dann nicht weitermachen willst.</p>
+          </div>
+          <div class="btn dark">Erinnere mich vor der Verlängerung</div>
+          <span class="link">Jetzt zum 15. September 2027 kündigen</span>
+        </div>
+        <p class="cap"><strong>Variante E: Jahresabo früh.</strong> Die Erinnerung ist ein Versprechen an den Kunden, kein Verkaufstrick. Sie kommt nur, wenn er sie hier bestellt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="missbrauch">
+  <div class="wrap">
+    <span class="kicker">10</span>
+    <h2>Missbrauch und Fehlerquellen</h2>
+    <p class="lead">Jedes Angebot ist auch eine Einladung, es auszunutzen, und jede neue Zustandsmaschine ein Ort für Fehler. Hier alles, was mir eingefallen ist, mit der jeweiligen Absicherung.</p>
+
+    <h3 style="margin-top:24px;">Missbrauch</h3>
+    <table style="margin-top:8px;">
+      <thead><tr><th style="width:28%">Szenario</th><th>Risiko</th><th>Absicherung</th></tr></thead>
+      <tbody>
+        <tr><td>Flow starten, nur um den Rabatt zu sehen, dann abbrechen</td><td>Rabatt-Angebot als Trick bekannt („Kündigen klicken, 10 % kassieren“)</td><td>Angebot wird beim <strong>Anzeigen</strong> verbraucht, nicht beim Annehmen. Wer abbricht, sieht es nie wieder. Der 10 %-Rabatt ist zudem klein genug, dass sich der Trick kaum herumspricht.</td></tr>
+        <tr><td>Neues Konto für ein neues Angebot</td><td>Rabatt mehrfach</td><td>Gleiche Erkennung wie beim Empfehlungsrabatt: E-Mail, Teampartner-Nummer, Zahlungs-Fingerabdruck → „war schon Kunde“ → kein Angebot.</td></tr>
+        <tr><td>Pause als Dauerzustand (3 Monate Pause, 1 Monat zahlen, 3 Monate Pause …)</td><td>Saisonkunde zahlt 3 von 12 Monaten</td><td>Eine Pause je 12 Monate, gerechnet ab Pausenbeginn. Während der Pause sind Premium-Seiten offline, es gibt also nichts umsonst.</td></tr>
+        <tr><td>Pause direkt nach dem Kauf</td><td>Einen Monat zahlen, Seite 3 Monate „parken“</td><td>Pause beginnt immer erst am Ende der bezahlten Periode. Und: Seiten sind in der Pause offline, parken bringt nichts, Entwürfe sind ohnehin kostenlos.</td></tr>
+        <tr><td>Pause statt Zahlung (offene Rechnung, Karte abgelaufen)</td><td>Mahnwesen umgehen</td><td>Pause nur ohne offene Rechnung und ohne <code>payment_failed_at</code>. Mit offener Zahlung zeigt der Flow den bestehenden Zahlungs-Hinweis.</td></tr>
+        <tr><td>Pause beantragen, dann in der Pause kündigen</td><td>Keins, nur Klarheit</td><td>Erlaubt. Abo endet sofort, Seiten gehen von <code>paused</code> auf <code>deactivated</code> mit 90-Tage-Timer. Es gibt nichts zu erstatten.</td></tr>
+        <tr><td>Kostenlose Linkseite als „Ersatz“ in der Pause</td><td>Keins</td><td>Die Linkseite ist immer kostenlos, auch ohne Abo. Dass sie online bleibt, ist kein Verlust, sondern der Grund, warum Leute zurückkommen.</td></tr>
+        <tr><td>Lastschrift nach dem 10 %-Angebot zurückholen</td><td>Rabatt plus Rücklastschrift</td><td>Unabhängig vom Flow: Rückholung → Mahnwesen wie heute, Seiten nach 7 Tagen offline, Fallback-Karte. Der Rabatt bleibt auf dem Abo, das beim Tag 21 ohnehin gekündigt wird.</td></tr>
+        <tr><td>Gratismonat erschleichen</td><td>Jahresabo kündigen, Gratismonat kassieren</td><td>Gibt es nicht automatisch. Kulanz nur durch dich, einzeln.</td></tr>
+        <tr><td>Partner pausiert, kassiert aber Provisionen als Guthaben</td><td>Guthaben läuft auf 0-€-Rechnungen</td><td>Stripe-Kundenguthaben wird erst mit der nächsten echten Rechnung verrechnet. Nichts geht verloren, nichts wird ausgezahlt. Partnerprogramm bleibt unberührt.</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-top:28px;">Seitenverfügbarkeit</h3>
+    <table style="margin-top:8px;">
+      <thead><tr><th style="width:28%">Moment</th><th>Was schiefgehen kann</th><th>Lösung</th></tr></thead>
+      <tbody>
+        <tr><td>Pausenbeginn (Phasenwechsel in Stripe)</td><td>Webhook kommt, Seiten sind noch bis zu 60 s im KV-Cache</td><td>Wie beim Offline-Nehmen heute: KV je Host leeren. 60 s Restsichtbarkeit sind unkritisch.</td></tr>
+        <tr><td>Pausenende mit Karte</td><td>Rechnung wird sofort bezahlt oder scheitert</td><td>Bezahlt → Seiten online (<code>invoice.payment_succeeded</code>). Gescheitert → Seiten bleiben pausiert, Mahnwesen wie bei jeder Verlängerung, Mail „Zahlung fehlgeschlagen“. Kein Sonderweg.</td></tr>
+        <tr><td>Pausenende mit SEPA</td><td>Einzug dauert 5 bis 14 Tage. Online erst nach Zahlungseingang oder sofort?</td><td><strong>Sofort</strong>, wie beim Erstkauf: Seiten gehen bei <code>payment_intent.processing</code> online. Scheitert der Einzug, greift die Schonfrist (7 Tage, dann offline). Das Risiko ist dasselbe wie bei jeder SEPA-Verlängerung heute und durch „eine Pause je 12 Monate“ begrenzt.</td></tr>
+        <tr><td>Kündigung + letzte SEPA-Rechnung noch in Bearbeitung</td><td>Kunde kündigt am 14.01., Rechnung vom 12.01. platzt am 20.01.</td><td>Mahnwesen läuft normal (Seiten nach 7 Tagen offline), Laufzeitende am 12.02. beendet das Abo. Die offene Rechnung bleibt geschuldet. Heute bekäme er die Mail „Konto pausiert“ statt „Abo ausgelaufen“: beim Laufzeitende mit gesetztem <code>cancel_at_period_end</code> immer die „ausgelaufen“-Mail nehmen.</td></tr>
+        <tr><td>Kündigung zurückziehen nach dem Laufzeitende</td><td>Abo ist in Stripe schon gelöscht</td><td>Geht nicht mehr, wie heute: Neu buchen über den Checkout, Seiten sofort online (auch bei SEPA). Die „3 Tage vorher“-Mail verhindert die meisten dieser Fälle.</td></tr>
+        <tr><td>Pause und eingeplanter Tarifwechsel gleichzeitig</td><td>Zwei Schedules gehen nicht</td><td>Pause übernimmt den Wechsel: Phase 3 startet im kleineren Tarif, den der Kunde ohnehin wollte. Überzählige Seiten werden beim Pausenende zu Entwürfen (Logik gibt es: <code>unpublishSitesBeyondLimit</code>).</td></tr>
+        <tr><td>Eigene Domain während der Pause</td><td>Zertifikat oder Zuordnung geht verloren</td><td>Cloudflare-Hostname bleibt bestehen, der Worker liefert die Pausenseite. Nichts wird abgebaut.</td></tr>
+        <tr><td>Pausierte Seiten in anderen Automatismen</td><td>Entwurfs-Bereinigung (90 Tage), Löschtimer, Vorschaubilder, Domain-Check, Seitenzähler</td><td>Status <code>paused</code> ist weder Entwurf noch deaktiviert. Jeder Cron und jede Abfrage, die heute <code>status = 'published'</code> oder <code>'draft'</code> prüft, wird einmal durchgesehen (Liste in Abschnitt 16).</td></tr>
+        <tr><td>Rabatt-Anschluss, aber Rabatt endet nie</td><td>Coupon bleibt ewig vorgemerkt</td><td>Anschluss nur bei befristeten Rabatten anbieten. Dauerrabatte (AFFILIATE10, Team) bekommen die anderen Optionen.</td></tr>
+        <tr><td>Webhook-Reihenfolge</td><td><code>subscription.updated</code> kommt vor <code>invoice.*</code></td><td>Wie heute: alle Übergänge idempotent über <code>reconcileSiteAccess</code>, kein Ereignis darf den Zustand nur „umschalten“.</td></tr>
+        <tr><td>Nutzer klickt doppelt</td><td>Zwei Pausen, zwei Coupons</td><td>Alle Angebots-Endpunkte idempotent (Vormerkung prüfen, bevor etwas an Stripe geht).</td></tr>
+      </tbody>
+    </table>
+
+    <div class="card soft" style="margin-top:18px;">
+      <h3>Was heute schon falsch läuft und mit reinkommt</h3>
+      <ul class="note">
+        <li>Linkseite geht bei Kündigung offline (Abschnitt 02). Bei einer Pause wäre das noch schlimmer: ausgerechnet das kostenlose Stück wäre weg.</li>
+        <li>Admin-Liste sieht nur 100 Abos (Abschnitt 02). Die neue Liste liest aus unserer Datenbank, nicht aus Stripe.</li>
+        <li>„Konto pausiert“-Mail nach freiwilliger Kündigung, wenn die letzte Rechnung offen war (siehe Tabelle oben).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section id="empfehlung">
+  <div class="wrap">
+    <span class="kicker">11</span>
     <h2>Empfehlungshinweis</h2>
     <p class="lead">Der Hinweis steht in Schritt 2 unter jedem Angebot und in der Kündigungsmail. Leise, konkret, mit einer Zahl, die stimmt.</p>
     <div class="grid2" style="margin-top:22px;">
@@ -529,7 +700,6 @@
       <div class="card soft">
         <h3>Wo er noch hingehört (außerhalb des Flows)</h3>
         <ul>
-          <li>In die Mail „Dein Startrabatt endet am …“ (Januar-Welle): „Oder hol dir den Rabatt zurück: eine Empfehlung …“.</li>
           <li>In die Abo-Karte als einzeiliger Hinweis, wenn kein Rabatt läuft: „Spar dauerhaft mit Empfehlungen →“.</li>
           <li>Nicht: als Pop-up, nicht als Bedingung für irgendetwas.</li>
         </ul>
@@ -541,7 +711,7 @@
 <!-- 09 -->
 <section id="mails">
   <div class="wrap">
-    <span class="kicker">09</span>
+    <span class="kicker">12</span>
     <h2>Mails</h2>
     <p class="lead">Alle Mails sind Systemmails (Kategorie „system“, nicht abbestellbar), weil sie Vertragsinformationen tragen. Bestehende Mails werden nur sanft angepasst.</p>
     <table style="margin-top:20px;">
@@ -555,7 +725,9 @@
         <tr><td><strong>Deine Pause endet in 7 Tagen</strong></td><td>7 Tage vor Pausenende</td><td>Datum, Preis, Zahlungsmethode. Zwei Links: „Pause verlängern“ (falls noch möglich) und „Doch kündigen“. Rechtlich wichtig: niemand wird überrascht abgebucht.</td><td><span class="tag ok">Neu</span></td></tr>
         <tr><td><strong>Willkommen zurück, alles ist online</strong></td><td>Bei Pausenende</td><td>Seiten sind wieder online, nächste Abrechnung am [Datum].</td><td><span class="tag ok">Neu</span></td></tr>
         <tr><td><strong>Dein Treue-Rabatt ist aktiv</strong></td><td>Nach Annahme der 10 %</td><td>Neuer Preis, gilt ab der nächsten Rechnung. Kurz und freundlich.</td><td><span class="tag ok">Neu</span></td></tr>
-        <tr><td><strong>An dich: Kündigung von …</strong></td><td>Sofort, an info@</td><td>Name, Tarif, Monate dabei, Rabatt, Grund, Freitext, gezeigtes Angebot, Ergebnis. Eine Mail je Kündigung, keine Sammelmail. Dazu Push in die Admin-App (wie bei Support-Nachrichten).</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Erinnerung vor der Verlängerung</strong></td><td>14 Tage vor dem Jahresende, nur Opt-in aus dem Flow</td><td>Datum, Betrag, Zahlungsmethode, Ein-Klick-Link „Zum [Datum] kündigen“. Geht nur an Jahreskunden, die sie in Variante E ausdrücklich bestellt haben.</td><td><span class="tag ok">Neu</span></td></tr>
+        <tr><td><strong>Rabattende-Erinnerung</strong></td><td>—</td><td>Gibt es <strong>nicht</strong> (deine Entscheidung). Die SEPA-Vorabankündigung bleibt, weil Pflicht; sie nennt nur den Betrag.</td><td><span class="tag grey">Bewusst nicht</span></td></tr>
+        <tr><td><strong>Mail an dich</strong></td><td>—</td><td>Gibt es <strong>nicht</strong>. Kündigungen siehst du im Admin (Abschnitt 13), mit Zähler in der Navigation.</td><td><span class="tag grey">Bewusst nicht</span></td></tr>
       </tbody>
     </table>
     <div class="grid2" style="margin-top:18px;">
@@ -566,11 +738,10 @@
         <p>Du musst nichts tun. Falls du noch nicht so weit bist: Pause um einen Monat verlängern · Doch kündigen.</p>
       </div>
       <div class="mail">
-        <div class="subj">Kündigung: Anita Mandler (Pro, 4 Monate dabei)</div>
-        <div class="meta">An info@finestsites.io · sofort</div>
-        <p><strong>Grund:</strong> Zu teuer · <strong>Rabatt:</strong> keiner · <strong>Angebot:</strong> 10 % gezeigt, abgelehnt · <strong>Ende:</strong> 12.01.2027</p>
-        <p><strong>Kommentar:</strong> „Ich habe gerade zu wenig Anfragen über die Seite, vielleicht später wieder.“</p>
-        <p>→ Konto im Admin öffnen · Support-Chat starten</p>
+        <div class="subj">Deine Verlängerung am 15. September</div>
+        <div class="meta">14 Tage vorher · nur auf Wunsch · Kategorie system</div>
+        <p>Hey Anita, wie versprochen die Erinnerung: Am <strong>15. September</strong> verlängert sich dein Jahresabo Pro für <strong>270 €</strong> über deine Visa ••42. Deine Seiten bleiben online, du musst nichts tun.</p>
+        <p>Falls du nicht weitermachen willst: Zum 15. September kündigen (ein Klick, keine Rückfrage).</p>
       </div>
     </div>
   </div>
@@ -579,7 +750,7 @@
 <!-- 10 -->
 <section id="admin">
   <div class="wrap">
-    <span class="kicker">10</span>
+    <span class="kicker">13</span>
     <h2>Admin und Auswertung</h2>
     <p class="lead"><code>/admin/cancellations</code> gibt es schon. Es wird von einer Stripe-Liste zu deiner Churn-Seite.</p>
     <div class="kpi" style="margin-top:20px;">
@@ -608,8 +779,13 @@
         </ul>
       </div>
       <div class="card soft">
-        <h3>Was du im Nutzerprofil siehst</h3>
-        <p class="note">Im Admin-Profil ein Block „Kündigung“: Grund, Kommentar, Angebot, Ergebnis, Datum. Beim Support-Chat mit diesem Nutzer schlägt die Support-KI (<code>ai-knowledge.ts</code>) den Grund als Kontext vor, damit du nicht fragen musst, was los ist.</p>
+        <h3>Statt einer Mail an dich</h3>
+        <ul class="note">
+          <li><strong>Admin-Startseite:</strong> Kachel „Kündigungen“ mit Zahl der letzten 30 Tage, gehalten / verloren, und den drei neuesten Einträgen mit Grund.</li>
+          <li><strong>Navigation:</strong> Zähler am Punkt „Kündigungen“ für Einträge seit deinem letzten Besuch der Seite (wie ungelesene Support-Chats).</li>
+          <li><strong>Nutzerprofil:</strong> Block „Kündigung“ mit Grund, Kommentar, Angebot, Ergebnis, Datum. Die Support-KI bekommt den Grund als Kontext, wenn du mit dem Nutzer chattest.</li>
+          <li><strong>Liste aus der Datenbank</strong>, nicht aus Stripe: vollständig, mit Historie, mit Restlaufzeit („kündigt in 298 Tagen“) und Filter nach Grund, Tarif, Intervall.</li>
+        </ul>
       </div>
     </div>
   </div>
@@ -618,7 +794,7 @@
 <!-- 11 -->
 <section id="app">
   <div class="wrap">
-    <span class="kicker">11</span>
+    <span class="kicker">14</span>
     <h2>App</h2>
     <div class="grid2" style="margin-top:18px;">
       <div class="card">
@@ -640,7 +816,7 @@
 <!-- 12 -->
 <section id="recht">
   <div class="wrap">
-    <span class="kicker">12</span>
+    <span class="kicker">15</span>
     <h2>Recht und Datenschutz</h2>
     <div class="grid3" style="margin-top:18px;">
       <div class="card">
@@ -662,14 +838,14 @@
 <!-- 13 -->
 <section id="technik">
   <div class="wrap">
-    <span class="kicker">13</span>
+    <span class="kicker">16</span>
     <h2>Technik</h2>
     <div class="grid2" style="margin-top:18px;">
       <div class="card">
         <h3>Datenmodell</h3>
         <ul class="note">
           <li>Neue Tabelle <code>cancellation_feedback</code>: user_id, reason, comment, plan, interval, discount_at_time, tenure_days, offer_shown, offer_result (accepted / declined / none), outcome (canceled / paused / kept), stripe_subscription_id, created_at. Eine Zeile je gestartetem Flow.</li>
-          <li><code>users</code>: <code>retention_offer_shown_at</code>, <code>pause_from</code>, <code>pause_until</code>, <code>pause_schedule_id</code>, <code>last_pause_at</code>.</li>
+          <li><code>users</code>: <code>retention_offer_shown_at</code>, <code>retention_coupon_pending</code>, <code>renewal_reminder_opt_in</code>, <code>pause_from</code>, <code>pause_until</code>, <code>pause_schedule_id</code>, <code>last_pause_at</code>.</li>
           <li><code>user_sites.status</code> bekommt den Wert <code>paused</code> (Worker: Seite offline mit Pausenhinweis, kein Löschtimer).</li>
           <li>Migration mit GRANT an Rolle <code>finestsites</code> (sonst 500er, wie bei Werbung &amp; Tracking gelernt).</li>
         </ul>
@@ -686,8 +862,9 @@
       <div class="card">
         <h3>Webhook und Cron</h3>
         <ul class="note">
-          <li>Webhook: Preis „Pause“ erkennen, Seiten <code>paused</code> ↔ <code>published</code> umschalten, KV-Cache je Host leeren, Mails „Pause beginnt“ / „Willkommen zurück“.</li>
-          <li>Täglicher Cron (in <code>billing-enforcement</code> einhängen): Mail 3 Tage vor Laufzeitende bei Kündigung, 7 Tage vor Pausenende, 14 Tage vor Löschung. Marker-Spalten, damit jede Mail genau einmal geht (gleiches Muster wie beim Mahnwesen).</li>
+          <li>Webhook: Preis „Pause“ erkennen, Seiten <code>paused</code> ↔ <code>published</code> umschalten, KV-Cache je Host leeren, Mails „Pause beginnt“ / „Willkommen zurück“. Neues Ereignis <code>customer.discount.deleted</code> im Stripe-Endpunkt eintragen (Rabatt-Anschluss).</li>
+          <li>Stellen, die <code>paused</code> kennen müssen: <code>cleanup-drafts</code>, <code>account-deletion</code>, <code>check-domains</code>, Vorschaubilder-Timer, Worker <code>site-meta</code>, Seitenzähler im Publish-Gate, Seitenliste Web + App, Admin-Seitenliste.</li>
+          <li>Täglicher Cron (in <code>billing-enforcement</code> einhängen): Mail 3 Tage vor Laufzeitende bei Kündigung, 7 Tage vor Pausenende, 14 Tage vor Löschung, 14 Tage vor Verlängerung (nur Opt-in). Marker-Spalten, damit jede Mail genau einmal geht (gleiches Muster wie beim Mahnwesen).</li>
           <li>Kündigung während Pause: Schedule lösen, Abo sofort beenden, Seiten von <code>paused</code> auf <code>deactivated</code> mit 90-Tage-Timer.</li>
         </ul>
       </div>
@@ -706,7 +883,7 @@
 <!-- 14 -->
 <section id="phasen">
   <div class="wrap">
-    <span class="kicker">14</span>
+    <span class="kicker">17</span>
     <h2>Phasen und Aufwand</h2>
     <p class="lead">Drei Stufen, jede für sich live-fähig. Stufe 1 bringt dir sofort das, was dir heute am meisten fehlt: Wissen.</p>
     <div class="grid3" style="margin-top:22px;">
@@ -716,8 +893,9 @@
         <p class="note"><span class="tag ok">1 bis 2 Tage</span></p>
         <ul class="note">
           <li>Schritt 1 (Grund + Kommentar) und Variante D als Abschluss</li>
-          <li>Tabelle, Stripe-<code>cancellation_details</code>, Mail an dich, Admin-Seite mit Gründen</li>
-          <li>Fixes: Linkseite bleibt online, Links auf „Zahlung &amp; Plan“, Tippfehler</li>
+          <li>Tabelle, Stripe-<code>cancellation_details</code>, Admin-Seite aus der Datenbank mit Gründen, Kachel + Zähler</li>
+          <li>Fixes: Linkseite bleibt online, Admin-Liste ohne 100er-Grenze, Links auf „Zahlung &amp; Plan“, „ausgelaufen“-Mail bei offener Rechnung, Tippfehler</li>
+          <li>Jahresabo: „Erinnerung statt Kündigung“ (Opt-in-Mail)</li>
           <li>Mail 3 Tage vor Laufzeitende, Mail 14 Tage vor Löschung</li>
         </ul>
       </div>
@@ -726,7 +904,8 @@
         <h3>Halten</h3>
         <p class="note"><span class="tag ok">2 Tage</span></p>
         <ul class="note">
-          <li>10 %-Angebot (Coupon, Berechtigung, Einmaligkeit, Mail)</li>
+          <li>10 %-Angebot und Rabatt-Anschluss (Coupon, Vormerkung, Webhook <code>customer.discount.deleted</code>, Einmaligkeit, Mail)</li>
+          <li>Kleinerer Tarif datenbasiert, Jahr → Monat zur Verlängerung (falls du es erlaubst)</li>
           <li>Gespräch-Variante über den Support-Chat</li>
           <li>Empfehlungshinweis im Flow und in der Kündigungsmail</li>
           <li>Jahresabo- und Downgrade-Hinweis bei bestehendem Rabatt</li>
@@ -737,31 +916,33 @@
         <h3>Pausieren</h3>
         <p class="note"><span class="tag warn">3 bis 4 Tage</span> · Webhook-Änderung, 06:00/23:00-Fenster</p>
         <ul class="note">
-          <li>Pause-Preis in Stripe, Schedule-Logik, Seitenstatus <code>paused</code>, Worker-Pausenseite</li>
+          <li>Pause-Preis in Stripe, Schedule-Logik (inkl. Übernahme eines eingeplanten Wechsels), Seitenstatus <code>paused</code> in allen Crons, Worker-Pausenseite</li>
           <li>Drei Pause-Mails, Cron-Erinnerung</li>
           <li>AGB § 10 ergänzen und mitteilen</li>
           <li>App: Zustand „Pausiert“ + Konto-Hinweis (nächster Build)</li>
         </ul>
       </div>
     </div>
-    <p class="note" style="margin-top:16px;">Reihenfolge-Empfehlung: Stufe 1 und 2 vor dem 15. Dezember, Stufe 3 im Januar. Die „Startrabatt endet“-Mail für die Januar-Welle separat, nur mit deiner ausdrücklichen Freigabe.</p>
+    <p class="note" style="margin-top:16px;">Reihenfolge-Empfehlung: Stufe 1 und 2 vor dem 15. Dezember, damit der Rabatt-Anschluss steht, wenn die Januar-Rechnungen kommen. Stufe 3 im Januar. „Pause mit Gutschrift“ für Jahreskunden nur bei Nachfrage.</p>
   </div>
 </section>
 
 <!-- 15 -->
 <section id="entscheidungen">
   <div class="wrap">
-    <span class="kicker">15</span>
+    <span class="kicker">18</span>
     <h2>Deine Entscheidungen</h2>
     <div class="decision">
-      <h3>Sechs Fragen, dann kann es losgehen</h3>
+      <h3>Acht Fragen, dann kann es losgehen</h3>
       <ul>
-        <li><span class="q">Rabatt dauerhaft oder befristet?</span> Empfehlung: dauerhaft 10 %, einmal pro Konto. Alternative: 6 Monate (billiger, aber zweite Klippe).</li>
+        <li><span class="q">Rabatt dauerhaft oder befristet?</span> Empfehlung: dauerhaft 10 %, einmal pro Konto, auch als Anschluss nach einem auslaufenden Rabatt. Alternative: 6 Monate (billiger, aber zweite Klippe).</li>
+        <li><span class="q">Kleinerer Tarif als zweite Zeile, wenn die Seitenzahl passt?</span> Empfehlung: ja. Es kostet MRR, hält aber Kunden, die sonst ganz gehen.</li>
+        <li><span class="q">Jahr → Monat zur Verlängerung erlauben?</span> Empfehlung: ja, nur im Kündigungsflow, nur zum Laufzeitende. Alternative: weiter gesperrt lassen.</li>
         <li><span class="q">Pause 1 bis 3 Monate, einmal im Jahr?</span> Empfehlung: ja. Alternative: bis 6 Monate für Saisongeschäft, dann aber Löschfristen anpassen.</li>
-        <li><span class="q">Grund als Pflicht-Tipp?</span> Empfehlung: ja, mit „Möchte ich nicht sagen“ als Ausweg. Alternative: komplett optional (weniger Daten, noch weniger Reibung).</li>
-        <li><span class="q">Mail an dich bei jeder Kündigung?</span> Empfehlung: ja, einzeln, plus Push in die Admin-App.</li>
+        <li><span class="q">Grund als Pflicht-Tipp?</span> Empfehlung: ja, mit „Möchte ich nicht sagen“ als Ausweg. Alternative: komplett optional.</li>
+        <li><span class="q">Die Mail „In 3 Tagen gehen deine Seiten offline“ an Gekündigte?</span> Empfehlung: ja, sie geht nur an Leute, die schon gekündigt haben, und erspart die „Ich wollte doch zurückziehen“-Fälle. Wenn dir das zu nah an einer Erinnerung ist: weglassen.</li>
         <li><span class="q">Pausenseite für Besucher: nur Hinweis oder mit Kontakt?</span> Empfehlung: nur Hinweis, sonst ist Pause ein Gratis-Tarif.</li>
-        <li><span class="q">Reihenfolge?</span> Empfehlung: Stufe 1 + 2 sofort, Pause im Januar, AGB-Mitteilung gebündelt mit § 16.</li>
+        <li><span class="q">Reihenfolge?</span> Empfehlung: Stufe 1 + 2 vor dem 15. Dezember, Pause im Januar, AGB-Mitteilung gebündelt mit § 16.</li>
       </ul>
       <p style="margin-top:14px;">Sobald du entschieden hast, baue ich Stufe 1 lokal nach und zeige dir den Flow mit echten Screens, bevor etwas live geht.</p>
     </div>
