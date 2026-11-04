@@ -7,6 +7,14 @@ import { getStripe } from '@/lib/stripe/client'
 import { BRAND_HEX_RE } from '@/lib/color/brand-palette'
 import { normalizeOptOut } from '@/lib/email/categories'
 import { sql } from 'drizzle-orm'
+import { normalizeSocialInput } from '@/lib/utils/social-links'
+
+const SOCIAL_FIELDS = new Set(['instagram', 'facebook', 'linkedin', 'tiktok', 'youtube'])
+const SOCIAL_LABEL: Record<string, string> = { instagram: 'Instagram', facebook: 'Facebook', linkedin: 'LinkedIn', tiktok: 'TikTok', youtube: 'YouTube' }
+// Profilbilder kommen nur aus unserem eigenen Upload (alle 109 Bestandswerte, Stand 04.11.2026)
+const MEDIA_PREFIXES = [...new Set(['https://app.finestsites.io', (process.env.NEXT_PUBLIC_APP_URL ?? '').replace(/\/$/, '')])]
+  .filter(Boolean).map(h => `${h}/api/media/profile-images/`)
+const isOwnProfileImage = (v: string) => /^[^\s"'<>]+$/.test(v) && MEDIA_PREFIXES.some(p => v.startsWith(p)) && !v.includes('..')
 
 export async function GET(req: NextRequest) {
   const user = await getUserFromRequest(req)
@@ -95,8 +103,30 @@ export async function PATCH(req: NextRequest) {
   const updates: Partial<typeof users.$inferInsert> = {}
   for (const [bodyKey, dbKey] of Object.entries(fieldMap)) {
     if (bodyKey in body) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ;(updates as any)[dbKey] = body[bodyKey] ?? null
+      let v = body[bodyKey] ?? null
+      // Serverseitige Prüfung (vorher nur im Client): Textfelder nur als kurze Strings
+      if (bodyKey === 'nm_companies') {
+        if (v !== null && (!Array.isArray(v) || v.some((x: unknown) => typeof x !== 'string' || x.length > 80) || v.length > 10)) {
+          return NextResponse.json({ error: 'Ungültige Unternehmensangabe.' }, { status: 400 })
+        }
+      } else if (v !== null) {
+        if (typeof v !== 'string' || v.length > 300) {
+          return NextResponse.json({ error: 'Ungültige Eingabe.' }, { status: 400 })
+        }
+        v = v.trim()
+        if (SOCIAL_FIELDS.has(bodyKey)) {
+          // Eingefügte Links auf den echten Link kürzen, fremde Domains ablehnen
+          const n = normalizeSocialInput(bodyKey as 'instagram', v)
+          if (n === null) {
+            return NextResponse.json({ error: `Bitte bei ${SOCIAL_LABEL[bodyKey]} nur deinen Namen oder deinen ${SOCIAL_LABEL[bodyKey]}-Link eintragen.` }, { status: 400 })
+          }
+          v = n
+        }
+        if (bodyKey === 'profile_image_url' && v !== '' && !isOwnProfileImage(v)) {
+          return NextResponse.json({ error: 'Ungültiges Profilbild.' }, { status: 400 })
+        }
+      }
+      ;(updates as Record<string, unknown>)[dbKey] = v
     }
   }
 

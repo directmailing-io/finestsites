@@ -68,6 +68,28 @@ const PROFILE: Record<Exclude<Platform, 'whatsapp'>, { host: RegExp; profile: (h
   },
 }
 
+const WHATSAPP_HOST = /(^|\.)(wa\.me|whatsapp\.com)$/
+
+/**
+ * Social-Feld beim Speichern (Profil): eingefügten Link auf den innersten echten Link kürzen
+ * („https://instagram.com/https://www.instagram.com/anna/“ → „https://www.instagram.com/anna/“).
+ * Gibt null zurück, wenn ein Link auf eine fremde Domain zeigt (dann 400 an den Nutzer).
+ * Benutzernamen ohne Domain bleiben unverändert.
+ */
+export function normalizeSocialInput(platform: Exclude<Platform, 'whatsapp'>, raw: string): string | null {
+  let v = (raw || '').trim()
+  if (!v) return ''
+  const all = [...v.matchAll(/https?:\/\//gi)]
+  if (all.length > 1) v = v.slice(all[all.length - 1].index)
+  if (!looksLikeUrl(v)) return v
+  try {
+    const u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`)
+    if (!PROFILE[platform].host.test(u.hostname.toLowerCase()) || u.username || u.password) return null
+    u.protocol = 'https:'
+    return u.href
+  } catch { return null }
+}
+
 /** Plattform aus dem Platzhalter-Namen (instagram_url, partner_whatsapp_number, …). */
 export function platformFromKey(key: string): Platform | null {
   const k = key.toLowerCase()
@@ -94,7 +116,15 @@ export function socialLink(platform: Platform, raw: string): string {
   if (!v) return ''
 
   if (platform === 'whatsapp') {
-    if (looksLikeUrl(v) && !/\s/.test(v)) return /^https?:\/\//i.test(v) ? v : `https://${v}`
+    if (looksLikeUrl(v) && !/\s/.test(v)) {
+      // Nur echte WhatsApp-Links – ein fremder Link hinter dem WhatsApp-Symbol wäre Phishing
+      try {
+        const u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`)
+        if (!WHATSAPP_HOST.test(u.hostname.toLowerCase()) || u.username || u.password) return ''
+        u.protocol = 'https:'
+        return u.href
+      } catch { return '' }
+    }
     const digits = normalizeWhatsAppNumber(v)
     return digits ? `https://wa.me/${digits}` : ''
   }
@@ -112,8 +142,10 @@ export function socialLink(platform: Platform, raw: string): string {
     } catch {
       return cfg.search(encodeURIComponent(handle))
     }
-    url.protocol = 'https:'
     url.hostname = url.hostname.toLowerCase()
+    // Nur die eigene Plattform: ein fremder Link hinter dem Instagram-Symbol wäre Phishing
+    if (!cfg.host.test(url.hostname) || url.username || url.password) return ''
+    url.protocol = 'https:'
     let path = url.pathname
     try { path = decodeURIComponent(path) } catch { /* keep encoded */ }
     // "https://facebook.com/Ulla Hildebrandt" — Name statt Benutzername: zur Suche statt ins Leere
@@ -142,10 +174,9 @@ export function rewriteSocialHrefs(html: string, data: Record<string, unknown>):
       if (!platform) return match
       if (prefix && !/^https?:\/\//i.test(prefix)) return match // tel:, mailto: …
       const linkKey = `__link_${key}`
-      if (!(linkKey in data)) {
-        const value = data[key]
-        data[linkKey] = typeof value === 'string' ? socialLink(platform, value) : ''
-      }
+      // Immer neu berechnen: ein gespeicherter Wert unter `__link_*` darf den Link nie vorgeben
+      const value = data[key]
+      data[linkKey] = typeof value === 'string' ? socialLink(platform, value) : ''
       const link = String(data[linkKey])
       // Query-Anhang (WhatsApp-Vorlagetext) nur an wa.me-Links hängen; "/" am Ende fällt weg
       // Platzhalter im Anhang URL-kodieren ("Hi%20{{vorname}}" mit "Thorsten Michael")

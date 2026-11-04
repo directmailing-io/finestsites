@@ -16,6 +16,7 @@
  */
 
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from './social-links'
+import { neutralizeDangerousUrls } from './url-safety'
 import { applyOpenGraph, type OgContext } from './open-graph'
 import { computeAboutIntro } from './about-intro'
 import { applyBrandColor, brandDataKeys, resolveBrandColor } from '../color/brand-palette'
@@ -107,7 +108,8 @@ export function renderTemplate(html: string, rawData: SiteData, opts: RenderOpti
     // matched by a key in data (renderTemplate already handles knowns,
     // this catches typos / removed schema fields).
     .replace(/\{\{\s*this\.[^}]*\}\}/g, '')
-  return html
+  // Keine javascript:/data:-Links im fertigen HTML (Kundenseite + Editor-Vorschau)
+  return neutralizeDangerousUrls(html)
 }
 
 /**

@@ -1,4 +1,5 @@
 import { normalizeWhatsAppNumber, rewriteSocialHrefs } from '../../src/lib/utils/social-links'
+import { neutralizeDangerousUrls } from '../../src/lib/utils/url-safety'
 import type { PublicTrackingConfig } from '../../src/lib/tracking/types'
 import { pickContactFields } from '../../src/lib/tracking/platforms'
 import { applyOpenGraph, type OgContext } from '../../src/lib/utils/open-graph'
@@ -306,7 +307,8 @@ function render(html: string, data: Data, rawKeys: Set<string> = new Set(), og?:
     .replace(/\{\{\s*\/\s*(?:each|if|unless)\s*\}\}/g, '')
     .replace(/\{\{\s*#\s*(?:each|if|unless)[^}]*\}\}/g, '')
     .replace(/\{\{\s*this\.[^}]*\}\}/g, '')
-  return html
+  // Keine javascript:/data:-Links im fertigen HTML (gleich wie src/lib/utils/template-engine.ts)
+  return neutralizeDangerousUrls(html)
 }
 
 // ─── Site Metadata Lookup ─────────────────────────────────────────────────────

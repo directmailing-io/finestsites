@@ -1,5 +1,5 @@
 import { TRANSLATION_LANGS } from '@/lib/utils/template-engine'
-import { sanitizeRichtext } from '@/lib/security/sanitize'
+import { RAW_OUTPUT_KEY_RE, sanitizeRichtext } from '@/lib/security/sanitize'
 import { createHash } from 'crypto'
 import { db } from '@/lib/db'
 import { siteData, userSites } from '@/lib/db/schema'
@@ -135,7 +135,7 @@ export async function ensureAboutMeTranslation(siteId: string, langs: SiteLang[]
         const translated = await translateText(german, lang, f.html, f.context)
         // Fallback auf Datenebene: deutscher Text, damit nie ein leerer Abschnitt erscheint.
         // Der Hash wird nur bei echter Übersetzung gesetzt — beim nächsten Mal wird es erneut versucht.
-        const value = f.html ? sanitizeRichtext(translated ?? german) : (translated ?? german)
+        const value = (f.html || RAW_OUTPUT_KEY_RE.test(outKey)) ? sanitizeRichtext(translated ?? german) : (translated ?? german)
         await db.insert(siteData)
           .values([
             { userSiteId: siteId, fieldKey: outKey, fieldValue: value, updatedAt: new Date() },
@@ -178,7 +178,7 @@ export async function ensurePublishedTranslation(siteId: string, langs: SiteLang
       jobs.push(async () => {
         const translated = await translateText(german, lang, f.html, f.context)
         if (!translated) return // kein Fallback nötig: ohne Schlüssel zeigt der Worker den deutschen Text
-        patch[outKey] = f.html ? sanitizeRichtext(translated) : translated
+        patch[outKey] = (f.html || RAW_OUTPUT_KEY_RE.test(outKey)) ? sanitizeRichtext(translated) : translated
         patch[srcKey] = srcHash
       })
     }

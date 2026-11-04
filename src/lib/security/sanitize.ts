@@ -47,9 +47,19 @@ export function richtextKeysFromSchema(schema: unknown): { richtext: Set<string>
  * werden je Eintrag behandelt: Richtext-Unterfelder bereinigt, alle anderen Strings
  * von Tags befreit.
  */
+/**
+ * Schlüssel, die beide Renderer roh ausgeben (RAW_KEY_RE in template-engine.ts und im Worker).
+ * Alles, was roh ausgegeben wird, muss beim Speichern bereinigt werden – auch wenn das Schema
+ * das Feld als einfaches Textfeld führt (z. B. `bio` in myevnt-events).
+ */
+export const RAW_OUTPUT_KEY_RE = /_html(_[a-z]{2})?$|^(intro|bio|about_me_html)(_[a-z]{2})?$/
+
+/** Interne Render-Schlüssel (`__link_*` u. a.) dürfen nie aus Nutzerdaten kommen. */
+export const isReservedFieldKey = (key: string) => key.startsWith('__')
+
 export function sanitizeFieldValue(key: string, value: string, info: ReturnType<typeof richtextKeysFromSchema>): string {
   if (typeof value !== 'string' || value === '') return value
-  if (info.richtext.has(key) || /_html(_[a-z]{2})?$/.test(key) || /^intro(_[a-z]{2})?$/.test(key)) return sanitizeRichtext(value)
+  if (info.richtext.has(key) || RAW_OUTPUT_KEY_RE.test(key)) return sanitizeRichtext(value)
   const loopSub = info.loops.get(key)
   if (loopSub !== undefined || (value.startsWith('[') && value.endsWith(']'))) {
     try {

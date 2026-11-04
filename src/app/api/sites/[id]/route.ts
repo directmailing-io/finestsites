@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { rawKeysFromSchema } from '@/lib/utils/template-engine'
-import { richtextKeysFromSchema, sanitizeFieldValue } from '@/lib/security/sanitize'
+import { isReservedFieldKey, richtextKeysFromSchema, sanitizeFieldValue } from '@/lib/security/sanitize'
 import { getUserFromRequest } from '@/lib/auth/server'
 import { differs } from '@/lib/sites/published-data'
 import { db } from '@/lib/db'
@@ -111,7 +111,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const schemaInfo = richtextKeysFromSchema((site as { template?: { placeholderSchema?: unknown } }).template?.placeholderSchema)
   const entries: Array<[string, string]> = []
   for (const [fieldKey, raw] of Object.entries(body as Record<string, unknown>)) {
-    if (!/^[\w.:-]{1,80}$/.test(fieldKey)) continue
+    if (!/^[\w.:-]{1,80}$/.test(fieldKey) || isReservedFieldKey(fieldKey)) continue
     const str = raw === null || raw === undefined ? '' : (typeof raw === 'string' ? raw : (typeof raw === 'number' || typeof raw === 'boolean' ? String(raw) : JSON.stringify(raw)))
     if (str.length > 200_000) return NextResponse.json({ error: `Feld „${fieldKey}“ ist zu groß.` }, { status: 413 })
     entries.push([fieldKey, sanitizeFieldValue(fieldKey, str, schemaInfo)])
