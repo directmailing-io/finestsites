@@ -1,0 +1,68 @@
+[
+  {
+    "de": "Diese Seite wird betrieben von <strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong>",
+    "alt": "Ovu stranicu vodi <strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong>",
+    "neu": "Ovu stranicu {{#unless team_modus=team}}vodi <strong>{{vorname}} {{nachname}}</strong>{{/unless}}{{#if team_modus=team}}vode <strong>{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}</strong>{{/if}}",
+    "grund": "TAGS-IN-BLÖCKEN: Verb in beide team_modus-Blöcke gezogen, Team = zwei Personen, daher „vode“ (Plural); <strong> steht dadurch in beiden Blöcken"
+  },
+  {
+    "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+    "alt": "PowerCocktail ujutru i Restorate uveče čine osnovu. Ako ti tokom dana treba više energije, uzmi Activize.{{#unless joghurt_anzeigen=nein}} Probiotski jogurt je opciona nadogradnja za creva.{{/unless}}",
+    "neu": "PowerCocktail ujutru i Restorate uveče čine osnovu. Ako ti tokom dana treba više energije, uzmi Activize.{{#unless joghurt_anzeigen=nein}} Po želji, u svoju rutinu možeš dodati i probiotski jogurt.{{/unless}}",
+    "grund": "„opciona nadogradnja za creva“ wörtlich/technisch; Wunschformulierung des Auftraggebers"
+  },
+  {
+    "de": "Joghurt-Drink",
+    "alt": "Joghurt-Drink",
+    "neu": "Jogurt napitak",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt, kein Produktname"
+  },
+  {
+    "de": "Joghurt-Drink",
+    "alt": "Joghurt-Drink",
+    "neu": "Jogurt napitak",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt (Bildbeschreibung)"
+  },
+  {
+    "de": "Mehr zum Joghurt-Drink",
+    "alt": "Više o Joghurt-Drink-u",
+    "neu": "Više o jogurt napitku",
+    "grund": "Beschreibung übersetzt, dadurch auch normal deklinierbar"
+  },
+  {
+    "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+    "alt": "Domaći Joghurt-Drink umesto gotovog proizvoda: sveže pripremljen, bez konzervansa, prirodnog ukusa i sa kulturama mlečne kiseline, idealan za celu porodicu.",
+    "neu": "Domaći jogurt napitak umesto gotovog proizvoda: sveže pripremljen, bez konzervansa, prirodnog ukusa i sa kulturama mlečne kiseline, idealan za celu porodicu.",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt"
+  },
+  {
+    "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+    "alt": "Odozgo dodaj gutljaj Joghurt-Drink-a. Ova dva proizvoda su međusobno usklađena i dopunjuju se u tvojoj svakodnevnoj rutini.",
+    "neu": "Na vrh dodaj malo jogurt napitka. Ova dva proizvoda su međusobno usklađena i dopunjuju se u tvojoj svakodnevnoj rutini.",
+    "grund": "Beschreibung übersetzt (statt „Joghurt-Drink-a“); „gutljaj“ (Schluck zum Trinken) wörtlich, hier ist „ein Schuss obendrauf“ gemeint"
+  },
+  {
+    "de": "Damit bereitest du den Yoghurt Drink zu",
+    "alt": "Uz njega pripremaš Yoghurt Drink",
+    "neu": "Uz njega pripremaš jogurt napitak",
+    "grund": "„Yoghurt Drink“ ist hier Beschreibung, übersetzt"
+  },
+  {
+    "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+    "alt": "Rastvorljivo dijetetsko vlakno iz korena cikorije. {{#unless joghurt_anzeigen=nein}}U napitku Probiotic-Joghurt-Drink je prirodna hranljiva osnova za sadržane kulture mlečnokiselinskih bakterija.{{/unless}}{{#if joghurt_anzeigen=nein}}U napitku PowerCocktail je prirodna hranljiva osnova za sadržane kulture mlečnokiselinskih bakterija.{{/if}}",
+    "neu": "Rastvorljivo dijetetsko vlakno iz korena cikorije. {{#unless joghurt_anzeigen=nein}}U probiotskom jogurt napitku je prirodna hranljiva osnova za kulture mlečne kiseline koje sadrži.{{/unless}}{{#if joghurt_anzeigen=nein}}U napitku PowerCocktail je prirodna hranljiva osnova za kulture mlečne kiseline koje sadrži.{{/if}}",
+    "grund": "„Probiotic-Joghurt-Drink“ als Beschreibung übersetzt; „kulture mlečnokiselinskih bakterija“ → präziser/einheitlich „kulture mlečne kiseline“; „sadržane“ war steif"
+  },
+  {
+    "de": "Milchsäurekulturen",
+    "alt": "Mlečnokiselinske kulture",
+    "neu": "Kulture mlečne kiseline",
+    "grund": "Einheitlich mit den übrigen Stellen „kulture mlečne kiseline“ (Auftraggeber)"
+  },
+  {
+    "de": "Probiotisch, cremig &amp; sättigend",
+    "alt": "Probiotski, kremasto &amp; zasitno",
+    "neu": "Probiotski, kremast &amp; zasitan",
+    "grund": "Kongruenz: alle drei Adjektive auf „napitak/jogurt“ (mask.), vorher gemischt mask./neutr."
+  }
+]

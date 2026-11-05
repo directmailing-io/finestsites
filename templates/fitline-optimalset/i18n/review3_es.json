@@ -1,0 +1,92 @@
+[
+  {
+    "de": "Der Wachmacher",
+    "alt": "Tu despertador",
+    "neu": "Para empezar el día",
+    "grund": "„Tu despertador“ heißt „dein Wecker“; Auftraggeber-Vorgabe"
+  },
+  {
+    "de": "Der Wachmacher",
+    "alt": "Tu despertador",
+    "neu": "Para empezar el día",
+    "grund": "Bild-Alt wie Überschrift; Auftraggeber-Vorgabe"
+  },
+  {
+    "de": "Besseres Bauchgefühl?",
+    "alt": "¿Sentirte mejor de la tripa?",
+    "neu": "¿Una digestión más cómoda?",
+    "grund": "„¿Sentirte mejor de la tripa?“ zu wörtlich; Auftraggeber-Vorgabe"
+  },
+  {
+    "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+    "alt": "PowerCocktail por la mañana y Restorate por la noche forman la base. Si necesitas más energía durante el día, recurre a Activize.{{#unless joghurt_anzeigen=nein}} El yogur probiótico es la mejora opcional para el intestino.{{/unless}}",
+    "neu": "PowerCocktail por la mañana y Restorate por la noche forman la base. Si necesitas más energía durante el día, recurre a Activize.{{#unless joghurt_anzeigen=nein}} Si quieres, también puedes añadir el yogur probiótico a tu rutina.{{/unless}}",
+    "grund": "„mejora opcional para el intestino“ technisch; Auftraggeber-Vorgabe, „Si quieres“ hält das „optional“"
+  },
+  {
+    "de": "Dein Probiotic-Joghurt",
+    "alt": "Tu Probiotic-Joghurt",
+    "neu": "Tu yogur probiótico",
+    "grund": "„Probiotic-Joghurt“ ist kein offizieller Produktname, deutsches Wort im spanischen Text; Beschreibung übersetzt (Punkt 7), passt zu „Tu bebida de noche“"
+  },
+  {
+    "de": "Joghurt-Drink",
+    "alt": "Joghurt-Drink",
+    "neu": "Bebida de yogur",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt (Punkt 7)"
+  },
+  {
+    "de": "Joghurt-Drink",
+    "alt": "Joghurt-Drink",
+    "neu": "Bebida de yogur",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt (Punkt 7)"
+  },
+  {
+    "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+    "alt": "Joghurt-Drink casero en lugar de un producto preparado: recién mezclado, sin conservantes, con sabor natural y cultivos lácticos, ideal para toda la familia.",
+    "neu": "Bebida de yogur casera en lugar de un producto preparado: recién mezclado, sin conservantes, con sabor natural y cultivos lácticos, ideal para toda la familia.",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt (Punkt 7)"
+  },
+  {
+    "de": "Joghurt rundet ab",
+    "alt": "Joghurt-Drink para rematar",
+    "neu": "Remata con yogur",
+    "grund": "Deutsches Wort entfernt; Imperativ wie die anderen Schritte („Empieza con…“, „Añade…“)"
+  },
+  {
+    "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+    "alt": "Un chorrito de Joghurt-Drink por encima. Los dos productos están pensados para ir juntos y se complementan en tu rutina diaria.",
+    "neu": "Un chorrito de bebida de yogur por encima. Los dos productos están pensados para ir juntos y se complementan en tu rutina diaria.",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt (Punkt 7)"
+  },
+  {
+    "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+    "alt": "Fibra soluble de la raíz de achicoria. {{#unless joghurt_anzeigen=nein}}En el Probiotic-Joghurt-Drink es la base nutritiva natural para los cultivos lácticos que contiene.{{/unless}}{{#if joghurt_anzeigen=nein}}En el PowerCocktail es la base nutritiva natural para los cultivos lácticos que contiene.{{/if}}",
+    "neu": "Fibra soluble de la raíz de achicoria. {{#unless joghurt_anzeigen=nein}}En la bebida de yogur probiótico es la base nutritiva natural para los cultivos lácticos que contiene.{{/unless}}{{#if joghurt_anzeigen=nein}}En el PowerCocktail es la base nutritiva natural para los cultivos lácticos que contiene.{{/if}}",
+    "grund": "„Probiotic-Joghurt-Drink“ als Beschreibung übersetzt (Punkt 7)"
+  },
+  {
+    "de": "Mehr zum Joghurt-Drink",
+    "alt": "Más sobre el Joghurt-Drink",
+    "neu": "Más sobre la bebida de yogur",
+    "grund": "Beschreibung „Joghurt-Drink“ übersetzt (Punkt 7)"
+  },
+  {
+    "de": "Dein tägliches Nährstoff-System.",
+    "alt": "Tu sistema diario de nutrientes.",
+    "neu": "Tu rutina diaria de nutrientes.",
+    "grund": "„sistema de nutrientes“ technisch (gleiche Fehlerart wie tr „besin sistemi“)"
+  },
+  {
+    "de": "Probier mein liebstes Nährstoff-System.",
+    "alt": "Prueba mi sistema de nutrientes favorito.",
+    "neu": "Prueba mi rutina de nutrientes favorita.",
+    "grund": "wie oben, „sistema“ → „rutina“, einheitlich"
+  },
+  {
+    "de": "Probier unser liebstes Nährstoff-System.",
+    "alt": "Prueba nuestro sistema de nutrientes favorito.",
+    "neu": "Prueba nuestra rutina de nutrientes favorita.",
+    "grund": "wie oben, „sistema“ → „rutina“, einheitlich"
+  }
+]

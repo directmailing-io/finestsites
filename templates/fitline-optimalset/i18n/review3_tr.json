@@ -1,0 +1,122 @@
+[
+ {
+  "de": "Hand auf's Herz",
+  "alt": "Elini vicdanına koy",
+  "neu": "Dürüst olalım",
+  "grund": "Auftraggeber: „Elini vicdanına koy“ klingt vorwurfsvoll"
+ },
+ {
+  "de": "Dein tägliches Nährstoff-System.",
+  "alt": "Günlük besin sistemin.",
+  "neu": "Günlük takviye rutinin.",
+  "grund": "Auftraggeber-Wunsch"
+ },
+ {
+  "de": "Dein Nährstoff-Cocktail",
+  "alt": "Besin kokteylin",
+  "neu": "Besin öğesi kokteylin",
+  "grund": "Nährstoffe konsequent „besin öğeleri“ (besin = auch Lebensmittel)"
+ },
+ {
+  "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+  "alt": "Sabah, gün içinde, akşam: birbirine tam uyumlu {{#unless joghurt_anzeigen=nein}}dört{{/unless}}{{#if joghurt_anzeigen=nein}}üç{{/if}} ürün. Günlük hayatta zinde kalman ve ihtiyacın olan besinleri alman için. 100’den fazla patente sahip, 40 ülkeden profesyonel sporculara resmi olarak üretim yapan bir üretici tarafından geliştirildi. {{#unless team_modus=team}}Kendim de kullanıyorum{{/unless}}{{#if team_modus=team}}Kendimiz de kullanıyoruz{{/if}}, hem de her gün.",
+  "neu": "Sabah, gün içinde, akşam: birbirine tam uyumlu {{#unless joghurt_anzeigen=nein}}dört{{/unless}}{{#if joghurt_anzeigen=nein}}üç{{/if}} ürün. Günlük hayatta zinde kalman ve ihtiyacın olan besin öğelerini alman için. 100’den fazla patente sahip, 40 ülkeden profesyonel sporculara resmi olarak üretim yapan bir üretici tarafından geliştirildi. {{#unless team_modus=team}}Kendim de kullanıyorum{{/unless}}{{#if team_modus=team}}Kendimiz de kullanıyoruz{{/if}}, hem de her gün.",
+  "grund": "besin öğeleri statt besin"
+ },
+ {
+  "de": "Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.",
+  "alt": "Stres, uykusuzluk, az güneş ışığı. Vücudun ihtiyacı, normal beslenmeyle karşılayabildiğinden daha fazla. Optimalset, 12 alan için günlük temel olarak biyoaktif mikro besinler sağlar.",
+  "neu": "Stres, uykusuzluk, az güneş ışığı. Vücudun ihtiyacı, normal beslenmeyle karşılayabildiğinden daha fazla. Optimalset, 12 alan için günlük temel olarak biyoaktif mikro besin öğeleri sağlar.",
+  "grund": "Mikronährstoffe = mikro besin öğeleri"
+ },
+ {
+  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+  "alt": "Optimal besin desteği için günlük sabah rutinin: vücudunun güne enerjik başlaması için ihtiyaç duyduğu her şey, tek bir taze bardakta.",
+  "neu": "Besin öğesi ihtiyacını en iyi şekilde karşılayan günlük sabah rutinin: vücudunun güne enerjik başlaması için ihtiyaç duyduğu her şey, tek bir taze bardakta.",
+  "grund": "Nährstoffversorgung eindeutig als Nährstoffe, natürlicher"
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Yoğurt içeceği",
+  "grund": "Beschreibung, kein Produktname: übersetzen"
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "Hazır ürün yerine ev yapımı Joghurt-Drink: taze hazırlanır, koruyucu madde içermez, doğal tadı ve laktik asit kültürleriyle tüm aile için idealdir.",
+  "neu": "Hazır ürün yerine ev yapımı yoğurt içeceği: taze hazırlanır, koruyucu madde içermez, doğal tadı ve laktik asit kültürleriyle tüm aile için idealdir.",
+  "grund": "Joghurt-Drink als Beschreibung übersetzt"
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "Üstüne bir yudum Joghurt-Drink. Bu iki ürün birbiriyle uyumlu ve günlük rutininde birbirini tamamlar.",
+  "neu": "Üstüne bir yudum yoğurt içeceği. Bu iki ürün birbiriyle uyumlu ve günlük rutininde birbirini tamamlar.",
+  "grund": "Joghurt-Drink als Beschreibung übersetzt"
+ },
+ {
+  "de": "Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC, das Nährstoff-Transport-Konzept von PM-International, ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ nationale und internationale Patente stehen hinter diesem Ansatz.",
+  "alt": "Besinleri almakla besinleri değerlendirmek arasında uzun bir yol var. PM-International’ın NTC’si, yani Besin Taşıma Konsepti, besinleri doğru formda, doğru zamanda, vücudunun ihtiyaç duyduğu yere ulaştırmak için tasarlandı. Bu yaklaşımın arkasında 100+ ulusal ve uluslararası patent var.",
+  "neu": "Besin öğelerini almakla onları değerlendirmek arasında uzun bir yol var. PM-International’ın NTC’si, yani Besin Öğesi Taşıma Konsepti, besin öğelerini doğru formda, doğru zamanda, vücudunun ihtiyaç duyduğu yere ulaştırmak için tasarlandı. Bu yaklaşımın arkasında 100+ ulusal ve uluslararası patent var.",
+  "grund": "besin öğeleri konsequent, auch in der NTC-Erklärung"
+ },
+ {
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "alt": "Hindiba kökünden elde edilen çözünür lif. {{#unless joghurt_anzeigen=nein}}Probiotic-Joghurt-Drink içinde bulunan laktik asit kültürleri için doğal besin temelidir.{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail içinde bulunan laktik asit kültürleri için doğal besin temelidir.{{/if}}",
+  "neu": "Hindiba kökünden elde edilen çözünür lif. {{#unless joghurt_anzeigen=nein}}Probiotic yoğurt içeceğinde bulunan laktik asit kültürleri için doğal besin temelidir.{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail içinde bulunan laktik asit kültürleri için doğal besin temelidir.{{/if}}",
+  "grund": "„Joghurt-Drink“ übersetzt, „Probiotic“ als Produktname bleibt (wie EN „Probiotic yogurt drink“); „besin temeli“ = Nahrung für die Kulturen, korrekt"
+ },
+ {
+  "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Viele Nährstoffe hemmen sich gegenseitig in der Aufnahme. Wer das nicht weiß, dosiert falsch, ohne es zu merken. Das Optimalset nimmt dir das ab.",
+  "alt": "Vitaminleri, mineralleri ve bitki özlerini tek tek alan biri, kolayca düşündüğünden fazla para harcar. Bir de şu var: Birçok besin maddesi birbirinin emilimini engeller. Bunu bilmeyen kişi, fark etmeden yanlış doz kullanır. Optimalset bunu senin yerine halleder.",
+  "neu": "Vitaminleri, mineralleri ve bitki özlerini tek tek alan biri, kolayca düşündüğünden fazla para harcar. Bir de şu var: Birçok besin öğesi birbirinin emilimini engeller. Bunu bilmeyen kişi, fark etmeden yanlış doz kullanır. Optimalset bunu senin yerine halleder.",
+  "grund": "besin öğeleri konsequent"
+ },
+ {
+  "de": "Damit bereitest du den Yoghurt Drink zu",
+  "alt": "Bununla Yoghurt Drink’i hazırlarsın",
+  "neu": "Bununla yoğurt içeceğini hazırlarsın",
+  "grund": "Beschreibung übersetzt"
+ },
+ {
+  "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+  "alt": "Optimalset’in arkasında NTC, yani PM-International’ın Besin Taşıma Konsepti var. Temel fikir şu: Besinleri almakla besinleri kullanmak arasında uzun bir yol var. NTC, besinleri doğru formda ve doğru zamanda, vücudunun ihtiyaç duyduğu yere ulaştırmak üzere tasarlanmış. Arkasında 100+ patent var. Buna bir de zamanlama yaklaşımı ekleniyor: bazı ürünler sabah, bazıları gün içinde veya akşam; çünkü vücudunun farklı zamanlarda farklı besinlere ihtiyacı var. Tek bir takviye ile iyi düşünülmüş bir sistem arasındaki fark bu.",
+  "neu": "Optimalset’in arkasında NTC, yani PM-International’ın Besin Öğesi Taşıma Konsepti var. Temel fikir şu: Besin öğelerini almakla onları kullanmak arasında uzun bir yol var. NTC, besin öğelerini doğru formda ve doğru zamanda, vücudunun ihtiyaç duyduğu yere ulaştırmak üzere tasarlanmış. Arkasında 100+ patent var. Buna bir de zamanlama yaklaşımı ekleniyor: bazı ürünler sabah, bazıları gün içinde veya akşam; çünkü vücudunun farklı zamanlarda farklı besin öğelerine ihtiyacı var. Tek bir takviye ile iyi düşünülmüş bir sistem arasındaki fark bu.",
+  "grund": "besin öğeleri konsequent"
+ },
+ {
+  "de": "Das ist eine Frage, die {{#unless team_modus=team}}ich oft bekomme{{/unless}}{{#if team_modus=team}}wir oft bekommen{{/if}}, und die Antwort überrascht viele. Ja, in manchen Produkten steckt eine kleine Menge Zucker, zum Beispiel Dextrose. Aber der ist nicht da, damit es süß schmeckt. Er funktioniert als Transportmittel. Vereinfacht erklärt: Dein Darm hat Kanäle, durch die Nährstoffe ins Blut wandern. Bestimmte Vitamine und Aminosäuren kommen durch diese Kanäle deutlich besser rein, wenn gleichzeitig ein kleiner Zuckeranteil dabei ist. Der Zucker öffnet quasi das Tor, und die Nährstoffe kommen mit rein. Die Menge ist so gering, dass du dir da keine Sorgen machen musst, solange du nicht den ganzen Tag davon isst.",
+  "alt": "Bu, {{#unless team_modus=team}}sık aldığım{{/unless}}{{#if team_modus=team}}sık aldığımız{{/if}} bir soru ve cevap birçok kişiyi şaşırtıyor. Evet, bazı ürünlerde az miktarda şeker var, örneğin dekstroz. Ama bu, tadı tatlı olsun diye orada değil. Taşıyıcı madde olarak işlev görüyor. Basitçe anlatırsak: Bağırsağında, besinlerin kana geçtiği kanallar var. Bazı vitaminler ve amino asitler, aynı anda küçük bir şeker oranı da olduğunda bu kanallardan çok daha iyi içeri giriyor. Şeker adeta kapıyı açıyor ve besinler de içeri giriyor. Miktar o kadar az ki, bütün gün bundan yemediğin sürece endişelenmene gerek yok.",
+  "neu": "Bu, {{#unless team_modus=team}}sık aldığım{{/unless}}{{#if team_modus=team}}sık aldığımız{{/if}} bir soru ve cevap birçok kişiyi şaşırtıyor. Evet, bazı ürünlerde az miktarda şeker var, örneğin dekstroz. Ama bu, tadı tatlı olsun diye orada değil. Taşıyıcı madde olarak işlev görüyor. Basitçe anlatırsak: Bağırsağında, besin öğelerinin kana geçtiği kanallar var. Bazı vitaminler ve amino asitler, aynı anda küçük bir şeker oranı da olduğunda bu kanallardan çok daha iyi içeri giriyor. Şeker adeta kapıyı açıyor ve besin öğeleri de içeri giriyor. Miktar o kadar az ki, bütün gün bundan yemediğin sürece endişelenmene gerek yok.",
+  "grund": "besin öğeleri konsequent"
+ },
+ {
+  "de": "Probier mein liebstes Nährstoff-System.",
+  "alt": "En sevdiğim besin sistemini dene.",
+  "neu": "En sevdiğim takviye rutinini dene.",
+  "grund": "analog „Günlük takviye rutinin“"
+ },
+ {
+  "de": "Probier unser liebstes Nährstoff-System.",
+  "alt": "En sevdiğimiz besin sistemini dene.",
+  "neu": "En sevdiğimiz takviye rutinini dene.",
+  "grund": "analog „Günlük takviye rutinin“"
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "Yoğurt içeceği",
+  "grund": "Bildbeschreibung: Beschreibung übersetzt"
+ },
+ {
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "Joghurt-Drink hakkında daha fazla",
+  "neu": "Yoğurt içeceği hakkında daha fazla",
+  "grund": "Beschreibung übersetzt"
+ },
+ {
+  "de": "{{vorname}} {{nachname}} · Nährstoff-Empfehlung",
+  "alt": "{{vorname}} {{nachname}} · Besin önerisi",
+  "neu": "{{vorname}} {{nachname}} · Besin öğesi önerisi",
+  "grund": "besin öğeleri konsequent"
+ }
+]

@@ -18,7 +18,7 @@
   "start": 5.42,
   "end": 7.64,
   "de": "vielleicht auch ein Eiweißshake nach dem Sport.",
-  "text": "也许运动完还会喝杯蛋白粉。"
+  "text": "也许运动后喝一杯蛋白饮品。"
  },
  {
   "id": 3,
@@ -74,7 +74,7 @@
   "start": 26.24,
   "end": 28.22,
   "de": "Sie fangen die guten Nährstoffe ein",
-  "text": "它们把好的营养抓住，"
+  "text": "它们抓住有益的营养素，"
  },
  {
   "id": 11,
@@ -102,7 +102,7 @@
   "start": 32.94,
   "end": 35.98,
   "de": "Was nicht gebraucht wird, wandert ins Töpfchen.",
-  "text": "用不着的，就溜进小马桶。"
+  "text": "用不着的，就排出体外。"
  },
  {
   "id": 15,
@@ -151,21 +151,21 @@
   "start": 51.83,
   "end": 55.76,
   "de": "Und plötzlich rutschen selbst die guten Nährstoffe aus deinem Smoothie",
-  "text": "于是突然间，就连你果昔里的好营养，"
+  "text": "于是突然间，就连你果昔里有益的营养素，"
  },
  {
   "id": 22,
   "start": 55.76,
   "end": 58.24,
   "de": "oder deinen Vitaminen einfach durch.",
-  "text": "还有维生素，也都直接溜走了。"
+  "text": "或是维生素，也都白白溜走了，"
  },
  {
   "id": 23,
   "start": 58.64,
   "end": 59.94,
   "de": "Direkt ins Töpfchen.",
-  "text": "直奔小马桶。"
+  "text": "直接排出体外。"
  },
  {
   "id": 24,
@@ -207,7 +207,7 @@
   "start": 77.1,
   "end": 79.96,
   "de": "Damit mehr von den guten Nährstoffen ankommt,",
-  "text": "好让更多的好营养抵达"
+  "text": "好让更多有益的营养素抵达"
  },
  {
   "id": 30,
@@ -221,13 +221,13 @@
   "start": 81.34,
   "end": 82.66,
   "de": "In deinen Zellen.",
-  "text": "在你的细胞里。"
+  "text": "在你的细胞里，"
  },
  {
   "id": 32,
   "start": 83.26,
   "end": 85.38,
   "de": "Und du optimal versorgt wirst.",
-  "text": "让你获得最佳供给。"
+  "text": "让身体获得所需营养。"
  }
 ]

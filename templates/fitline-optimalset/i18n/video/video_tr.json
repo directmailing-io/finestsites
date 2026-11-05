@@ -74,14 +74,14 @@
   "start": 26.24,
   "end": 28.22,
   "de": "Sie fangen die guten Nährstoffe ein",
-  "text": "İyi besinleri yakalarlar"
+  "text": "İyi besin öğelerini yakalar"
  },
  {
   "id": 11,
   "start": 28.22,
   "end": 29.66,
   "de": "und reichen sie weiter.",
-  "text": "ve onları aktarırlar."
+  "text": "ve onları aktarır."
  },
  {
   "id": 12,
@@ -102,7 +102,7 @@
   "start": 32.94,
   "end": 35.98,
   "de": "Was nicht gebraucht wird, wandert ins Töpfchen.",
-  "text": "Gerekmeyenler de lazımlığa gider."
+  "text": "Gerekmeyenler de dışarı atılır."
  },
  {
   "id": 15,
@@ -151,7 +151,7 @@
   "start": 51.83,
   "end": 55.76,
   "de": "Und plötzlich rutschen selbst die guten Nährstoffe aus deinem Smoothie",
-  "text": "Ve birden smoothie'ndeki iyi besinler bile"
+  "text": "Ve birden smoothie'ndeki iyi besin öğeleri bile"
  },
  {
   "id": 22,
@@ -165,7 +165,7 @@
   "start": 58.64,
   "end": 59.94,
   "de": "Direkt ins Töpfchen.",
-  "text": "Dosdoğru lazımlığa."
+  "text": "Dosdoğru dışarı."
  },
  {
   "id": 24,
@@ -207,7 +207,7 @@
   "start": 77.1,
   "end": 79.96,
   "de": "Damit mehr von den guten Nährstoffen ankommt,",
-  "text": "Daha çok iyi besin ulaşsın diye,"
+  "text": "Daha çok besin öğesi ulaşsın diye,"
  },
  {
   "id": 30,

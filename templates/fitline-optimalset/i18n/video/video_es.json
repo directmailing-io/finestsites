@@ -102,7 +102,7 @@
   "start": 32.94,
   "end": 35.98,
   "de": "Was nicht gebraucht wird, wandert ins Töpfchen.",
-  "text": "Lo que no hace falta se va al orinal."
+  "text": "Lo que no hace falta, se elimina."
  },
  {
   "id": 15,
@@ -165,7 +165,7 @@
   "start": 58.64,
   "end": 59.94,
   "de": "Direkt ins Töpfchen.",
-  "text": "Directos al orinal."
+  "text": "Y se eliminan."
  },
  {
   "id": 24,
@@ -228,6 +228,6 @@
   "start": 83.26,
   "end": 85.38,
   "de": "Und du optimal versorgt wirst.",
-  "text": "Y tengas un aporte óptimo."
+  "text": "Y tengas lo que necesitas."
  }
 ]

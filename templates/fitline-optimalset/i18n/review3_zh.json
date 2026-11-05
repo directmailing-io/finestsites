@@ -1,0 +1,50 @@
+[
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "酸奶饮品",
+  "grund": "Kartenüberschrift ist Beschreibung, Produktname „FitLine Probiotic“ steht darunter unverändert"
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "酸奶饮品",
+  "grund": "Bildbeschreibung: Beschreibung übersetzt statt deutschem Wort"
+ },
+ {
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "了解更多Joghurt-Drink",
+  "neu": "进一步了解酸奶饮品",
+  "grund": "aria-label: Beschreibung übersetzt"
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "自制Joghurt-Drink，替代现成品：新鲜现调，不含防腐剂，口味天然，含乳酸菌，全家都适合。",
+  "neu": "自制酸奶饮品，代替现成产品：新鲜现调，不含防腐剂，口味天然，含乳酸菌，全家都适合。",
+  "grund": "„Joghurt-Drink“ als Beschreibung übersetzt"
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "再加一小口Joghurt-Drink。这两款产品相互搭配，在你的日常习惯中相辅相成。",
+  "neu": "最后在上面加一小口酸奶饮品。这两款产品相互搭配，在你的日常习惯中相辅相成。",
+  "grund": "„Joghurt-Drink“ als Beschreibung übersetzt; „obendrauf“ natürlich"
+ },
+ {
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "alt": "来自菊苣根的可溶性膳食纤维。{{#unless joghurt_anzeigen=nein}}在Probiotic-Joghurt-Drink里，是其中乳酸菌的天然营养基础。{{/unless}}{{#if joghurt_anzeigen=nein}}在PowerCocktail里，是其中乳酸菌的天然营养基础。{{/if}}",
+  "neu": "来自菊苣根的可溶性膳食纤维。{{#unless joghurt_anzeigen=nein}}在Probiotic酸奶饮品里，它是其中乳酸菌的天然养料。{{/unless}}{{#if joghurt_anzeigen=nein}}在PowerCocktail里，它是其中乳酸菌的天然养料。{{/if}}",
+  "grund": "Produktname „Probiotic“ bleibt, Beschreibung „酸奶饮品“ übersetzt; „营养基础“ technisch → „天然养料“ (gleiche Aussage), in beiden Blöcken einheitlich"
+ },
+ {
+  "de": "Damit bereitest du den Yoghurt Drink zu",
+  "alt": "用它来制作Yoghurt Drink",
+  "neu": "用它来制作酸奶饮品",
+  "grund": "„Yoghurt Drink“ ist hier Beschreibung, übersetzt"
+ },
+ {
+  "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+  "alt": "早上喝PowerCocktail，晚上喝Restorate，这是基础。白天需要更多能量的话，就选Activize。{{#unless joghurt_anzeigen=nein}}益生菌酸奶是可选的肠道升级。{{/unless}}",
+  "neu": "早上喝PowerCocktail，晚上喝Restorate，这是基础。白天需要更多能量的话，就选Activize。{{#unless joghurt_anzeigen=nein}}如果愿意，还可以加上益生菌酸奶，给肠道多一份照顾。{{/unless}}",
+  "grund": "„可选的肠道升级“ wörtlich/technisch; natürlicher als freiwillige Ergänzung formuliert, nicht verstärkt"
+ }
+]

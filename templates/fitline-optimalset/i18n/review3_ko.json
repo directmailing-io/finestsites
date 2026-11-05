@@ -1,0 +1,68 @@
+[
+ {
+  "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+  "alt": "아침의 PowerCocktail과 저녁의 Restorate가 기본이에요. 낮에 에너지가 더 필요하다면 Activize를 더하면 돼요.{{#unless joghurt_anzeigen=nein}} 프로바이오틱 요거트는 장을 위한 선택 업그레이드예요.{{/unless}}",
+  "neu": "아침의 PowerCocktail과 저녁의 Restorate가 기본이에요. 낮에 에너지가 더 필요하다면 Activize를 더하면 돼요.{{#unless joghurt_anzeigen=nein}} 프로바이오틱 요거트도 선택해서 추가할 수 있어요.{{/unless}}",
+  "grund": "Auftraggeber Punkt 4: „장을 위한 선택 업그레이드“ klang technisch; Wunschformulierung übernommen, Gesundheitsaussage nicht verstärkt"
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "요거트 드링크",
+  "grund": "Punkt 7: Beschreibung „Joghurt-Drink“ übersetzt (kein Produktname)"
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "완제품 대신 직접 만드는 Joghurt-Drink예요. 바로 만들어 신선하고, 보존료 없이 자연스러운 맛과 유산균을 담아 온 가족에게 딱이에요.",
+  "neu": "완제품 대신 직접 만드는 요거트 드링크예요. 바로 만들어 신선하고, 보존료 없이 자연스러운 맛과 유산균을 담아 온 가족에게 딱이에요.",
+  "grund": "Punkt 7: Beschreibung übersetzt"
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "위에 Joghurt-Drink를 조금 더해요. 두 제품은 서로 잘 맞게 만들어져 매일의 루틴 속에서 서로를 보완해요.",
+  "neu": "위에 요거트 드링크를 조금 더해요. 두 제품은 서로 잘 맞게 만들어져 매일의 루틴 속에서 서로를 보완해요.",
+  "grund": "Punkt 7: Beschreibung übersetzt"
+ },
+ {
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "alt": "치커리 뿌리에서 얻은 수용성 식이섬유예요. {{#unless joghurt_anzeigen=nein}}Probiotic Joghurt-Drink에서는 함께 들어 있는 유산균의 천연 먹이가 돼요.{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail에서는 함께 들어 있는 유산균의 천연 먹이가 돼요.{{/if}}",
+  "neu": "치커리 뿌리에서 얻은 수용성 식이섬유예요. {{#unless joghurt_anzeigen=nein}}프로바이오틱 요거트 드링크에서는 함께 들어 있는 유산균의 천연 먹이가 돼요.{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail에서는 함께 들어 있는 유산균의 천연 먹이가 돼요.{{/if}}",
+  "grund": "Punkt 7: Mischform aus Latein/Deutsch ersetzt, einheitlich mit „프로바이오틱 요거트“ (Abschnitt Probiotik)"
+ },
+ {
+  "de": "Damit bereitest du den Yoghurt Drink zu",
+  "alt": "Joghurt-Drink를 만드는 데 필요해요",
+  "neu": "요거트 드링크를 만들 때 필요해요",
+  "grund": "Punkt 7: Beschreibung übersetzt; „만들 때 필요해요“ natürlicher als „만드는 데 필요해요“"
+ },
+ {
+  "de": "Joghurt-Drink",
+  "alt": "Joghurt-Drink",
+  "neu": "요거트 드링크",
+  "grund": "Punkt 7: Bildbeschreibung übersetzt"
+ },
+ {
+  "de": "Mehr zum Joghurt-Drink",
+  "alt": "Joghurt-Drink 자세히 보기",
+  "neu": "요거트 드링크 자세히 보기",
+  "grund": "Punkt 7: Bedienhilfe übersetzt"
+ },
+ {
+  "de": "Dein tägliches Nährstoff-System.",
+  "alt": "매일 챙기는 나만의 영양 시스템.",
+  "neu": "매일 챙기는 나만의 영양 루틴.",
+  "grund": "Ähnlich technische Stelle: „영양 시스템“ klingt nach Technik; „루틴“ ist der auf der Seite durchgängige Begriff"
+ },
+ {
+  "de": "Probier mein liebstes Nährstoff-System.",
+  "alt": "제가 가장 좋아하는 영양 시스템을 경험해 보세요.",
+  "neu": "제가 가장 좋아하는 영양 루틴을 경험해 보세요.",
+  "grund": "wie oben, „영양 루틴“ statt „영양 시스템“"
+ },
+ {
+  "de": "Probier unser liebstes Nährstoff-System.",
+  "alt": "저희가 가장 좋아하는 영양 시스템을 경험해 보세요.",
+  "neu": "저희가 가장 좋아하는 영양 루틴을 경험해 보세요.",
+  "grund": "wie oben, „영양 루틴“ statt „영양 시스템“"
+ }
+]
