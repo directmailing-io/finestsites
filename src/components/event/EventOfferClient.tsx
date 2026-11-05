@@ -13,9 +13,9 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
 /** Kurztexte der nicht empfohlenen Tarife (der empfohlene kommt aus der Event-Konfiguration) */
 const PLAN_COPY: Record<PlanKey, { title: string; text: string; alt: string }> = {
-  starter: { title: '1 Webseite', text: 'Zum Beispiel deine Optimalset-Seite. Mehr Seiten gehen später jederzeit dazu.', alt: 'Nur eine Seite? Starter' },
+  starter: { title: '1 Webseite', text: 'Zum Beispiel deine Optimalset-Seite. Mehr Seiten gehen später jederzeit dazu.', alt: 'Nur 1 Seite (Starter)' },
   pro: { title: '3 Webseiten', text: 'Optimalset, PM-Business und cellRESET. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.', alt: 'Zurück zu Pro' },
-  unlimited: { title: 'Alle Webseiten', text: 'Optimalset, PM-Business, cellRESET, Vitalprofil und jede neue Vorlage, die dazukommt.', alt: 'Alle Vorlagen? Unlimited' },
+  unlimited: { title: 'Alle Webseiten', text: 'Optimalset, PM-Business, cellRESET, Vitalprofil und jede neue Vorlage, die dazukommt.', alt: 'Alle Vorlagen (Unlimited)' },
 }
 
 function pad(n: number): string { return n < 10 ? `0${n}` : String(n) }
@@ -32,9 +32,6 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<{ text: string; existing?: boolean } | null>(null)
-  const [saveState, setSaveState] = useState<'idle' | 'copied' | 'mailing' | 'mailed' | 'mailError'>('idle')
-  const [saveMail, setSaveMail] = useState('')
-  const [saveMailError, setSaveMailError] = useState('')
 
   const countdown = useCampaignCountdown(campaign)
   // Angebot läuft: Code vorhanden und noch nicht abgelaufen (tickt sekündlich, endet ohne Neuladen)
@@ -57,12 +54,6 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
     return { base, off, price, duration, saving, perMonth: Math.round((price / 12) * 100) / 100, monthlyList: p.monthly_eur }
   }, [plan, interval, offer])
 
-  const altPrice = (k: PlanKey) => {
-    const p = PLANS[k]
-    const base = interval === 'yearly' ? p.yearly_eur : p.monthly_eur
-    return `${formatEur(discountedTotal(base, campaignDiscount(offer, interval)))} €/${interval === 'yearly' ? 'Jahr' : 'Monat'}`
-  }
-
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -83,41 +74,6 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
     } catch {
       setError({ text: 'Keine Verbindung. Bitte prüfe dein Internet und versuche es noch einmal.' })
       setLoading(false)
-    }
-  }
-
-  async function saveForLater() {
-    const url = `https://finestsites.io/${event.slug}`
-    const title = `FinestSites · ${event.name}-Angebot`
-    try {
-      if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title, text: 'Mein Link zum FinestSites-Angebot', url })
-        return
-      }
-    } catch { /* abgebrochen → Link kopieren */ }
-    try {
-      await navigator.clipboard.writeText(url)
-      setSaveState('copied')
-      setTimeout(() => setSaveState(s => (s === 'copied' ? 'idle' : s)), 3000)
-    } catch { /* kein Zugriff → Mailfeld bleibt */ }
-  }
-
-  async function sendLink(e: React.FormEvent) {
-    e.preventDefault()
-    setSaveMailError('')
-    setSaveState('mailing')
-    try {
-      const res = await fetch('/api/event/send-link', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slug: event.slug, email: saveMail || email }),
-      })
-      const data = await res.json().catch(() => ({})) as { error?: string }
-      if (!res.ok) { setSaveMailError(data.error ?? 'Das hat nicht geklappt.'); setSaveState('mailError'); return }
-      setSaveState('mailed')
-    } catch {
-      setSaveMailError('Keine Verbindung. Bitte versuche es noch einmal.')
-      setSaveState('mailError')
     }
   }
 
@@ -195,33 +151,16 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
         <p className="ev-fine">Apple Pay, Karte oder SEPA-Lastschrift · Du bekommst sofort deinen Zugang</p>
       </form>
 
-      <div className="ev-alt">
+      {/* Eine ruhige Zeile für die anderen Tarife: kein Preis, kein Unterstrich-Gewitter, der Preis steht nach dem Tippen in der Karte */}
+      <p className="ev-alt">
+        <span>Anderer Tarif?</span>
         {(['starter', 'pro', 'unlimited'] as PlanKey[]).filter(k => k !== plan).map(k => (
-          <button key={k} type="button" onClick={() => setPlan(k)}>
-            {k === event.recommendedPlan ? `Zurück zu ${PLANS[k].name}` : PLAN_COPY[k].alt} {altPrice(k)}
-          </button>
+          <button key={k} type="button" onClick={() => setPlan(k)}>{PLAN_COPY[k].alt}</button>
         ))}
-      </div>
-
-      <section className="ev-save" aria-label="Für später speichern">
-        <h2>Jetzt keine Zeit?</h2>
-        <p>Speichere dir die Seite und entscheide in Ruhe{live ? ', solange der Countdown läuft' : ''}.</p>
-        <button type="button" className="ev-btn ghost" onClick={saveForLater}>
-          {saveState === 'copied' ? 'Link kopiert ✓' : 'Für später speichern'}
-        </button>
-        {saveState === 'mailed' ? (
-          <div className="ev-ok">Die Mail mit deinem Link ist unterwegs. Schau auch im Spam-Ordner nach.</div>
-        ) : (
-          <form className="ev-save-row" onSubmit={sendLink} style={{ marginTop: 10 }}>
-            <input type="email" inputMode="email" autoComplete="email" placeholder="Link an meine E-Mail" value={saveMail || email} onChange={e => setSaveMail(e.target.value)} required aria-label="E-Mail-Adresse für den Link" />
-            <button type="submit" disabled={saveState === 'mailing'}>{saveState === 'mailing' ? '…' : 'Senden'}</button>
-          </form>
-        )}
-        {saveMailError && <p className="ev-fine" style={{ color: '#8A2E1F', marginTop: 8 }}>{saveMailError}</p>}
-      </section>
+      </p>
 
       {demoSites.length > 0 && (
-        <section aria-label="Beispiele">
+        <section className="ev-shots-wrap" aria-label="Beispiele">
           <p className="ev-shots-h">So sehen fertige Seiten aus</p>
           <div className="ev-shots">
             {demoSites.map(s => (
@@ -231,14 +170,9 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
               </a>
             ))}
           </div>
-          <p className="ev-shots-label">Wischen für mehr · Antippen öffnet die echte Seite</p>
+          <p className="ev-shots-label">Antippen öffnet die echte Seite</p>
         </section>
       )}
-
-      <p className="ev-fine" style={{ fontSize: 14 }}>
-        Lieber erst in Ruhe ansehen? <a href="https://finestsites.io" style={{ color: 'var(--ink)', fontWeight: 600 }}>Zur Startseite</a>
-        {live ? <><br />Der {event.name}-Preis gilt dort genauso, solange der Countdown läuft.</> : null}
-      </p>
     </>
   )
 }

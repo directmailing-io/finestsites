@@ -50,19 +50,14 @@ export const EVENT_CSS = `
   .ev-field input:focus { outline: 3px solid #B8D2F1; outline-offset: 1px; border-color: var(--ink); }
   .ev-btn { display: block; width: 100%; border: 0; background: var(--ink); color: #fff; border-radius: 999px; padding: 18px; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer; margin: 6px 0 10px; }
   .ev-btn:disabled { opacity: .6; cursor: wait; }
-  .ev-btn.ghost { background: #fff; color: var(--ink); border: 1.5px solid var(--line); font-weight: 500; font-size: 16px; padding: 14px; }
   .ev-fine { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.5; margin: 0 0 18px; }
   .ev-err { background: #FFF4F2; border: 1px solid #F3C4BB; color: #8A2E1F; border-radius: 14px; padding: 14px 16px; font-size: 15.5px; margin: 0 0 14px; line-height: 1.5; }
   .ev-err a { color: inherit; font-weight: 600; }
   .ev-ok { background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534; border-radius: 14px; padding: 14px 16px; font-size: 15.5px; margin: 0 0 14px; line-height: 1.5; }
-  .ev-alt { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 4px 0 28px; }
-  .ev-alt button { border: 0; background: none; font: inherit; font-size: 15px; color: var(--muted); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--line); cursor: pointer; padding: 4px; }
-  .ev-save { border-top: 1px solid var(--line); padding-top: 20px; margin: 0 0 28px; }
-  .ev-save h2 { font-size: 17px; font-weight: 600; color: var(--ink); margin: 0 0 6px; text-align: center; }
-  .ev-save p { font-size: 15px; color: var(--muted); text-align: center; margin: 0 0 12px; }
-  .ev-save-row { display: flex; gap: 10px; }
-  .ev-save-row input { flex: 1; min-width: 0; border: 1.5px solid var(--line); border-radius: 999px; padding: 13px 16px; font: inherit; font-size: 16px; color: var(--ink); }
-  .ev-save-row button { border: 0; background: var(--ink); color: #fff; border-radius: 999px; padding: 0 18px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .ev-alt { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 10px; margin: 0 0 36px; font-size: 14px; color: var(--muted); }
+  .ev-alt > span { flex-basis: 100%; text-align: center; }
+  .ev-alt button { border: 1px solid var(--line); background: #fff; border-radius: 999px; font: inherit; font-size: 14px; color: var(--body); cursor: pointer; padding: 7px 14px; }
+  .ev-shots-wrap { border-top: 1px solid var(--line); padding-top: 24px; }
   .ev-shots-h { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
   .ev-shots { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 2px 2px 10px; margin: 0 -20px 4px; padding-left: 20px; padding-right: 20px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
   .ev-shots::-webkit-scrollbar { display: none; }
