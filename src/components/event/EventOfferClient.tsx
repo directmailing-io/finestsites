@@ -16,9 +16,9 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
  * („Pro“ könnte als „pro Webseite“ gelesen werden), darum überall „für 3 Seiten“ / „deiner Wahl“.
  */
 const PLAN_COPY: Record<PlanKey, { kicker: string; choice: string; forWhat: string; text: string; alt: string }> = {
-  starter: { kicker: '1 Webseite inklusive', choice: '1 Webseite deiner Wahl', forWhat: 'für deine Seite', text: 'Weitere Seiten kannst du später jederzeit dazubuchen.', alt: 'Nur 1 Seite (Starter)' },
-  pro: { kicker: '3 Webseiten inklusive', choice: '3 Webseiten deiner Wahl', forWhat: 'für alle 3 Seiten', text: 'Fertige Texte, fertiges Design, du trägst nur deine Daten ein.', alt: 'Zurück zu Pro' },
-  unlimited: { kicker: 'Alle Webseiten inklusive', choice: 'Alle Webseiten', forWhat: 'für alle Seiten', text: 'Jede Vorlage, auch jede neue, die dazukommt.', alt: 'Alle Vorlagen (Unlimited)' },
+  starter: { kicker: '1 Webseite inklusive', choice: 'In diesem Tarif kannst du 1 davon wählen.', forWhat: 'für deine Seite', text: 'Weitere Seiten kannst du später jederzeit dazubuchen.', alt: 'Nur 1 Seite (Starter)' },
+  pro: { kicker: '3 Webseiten inklusive', choice: 'In diesem Tarif kannst du 3 davon wählen.', forWhat: 'für alle 3 Seiten', text: 'Fertige Texte, fertiges Design, du trägst nur deine Daten ein.', alt: 'Zurück zu Pro' },
+  unlimited: { kicker: 'Alle Webseiten inklusive', choice: 'In diesem Tarif bekommst du alle.', forWhat: 'für alle Seiten', text: 'Jede Vorlage, auch jede neue, die dazukommt.', alt: 'Alle Vorlagen (Unlimited)' },
 }
 
 function pad(n: number): string { return n < 10 ? `0${n}` : String(n) }
@@ -133,12 +133,13 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
             Tarif jederzeit nach oben wechselbar.
           </p>
           <div className="sites">
-            <b>{copy.choice}</b>
-            <span>{copy.text}</span>
+            <b>Unsere Vorlagen</b>
             <ul className="chips" aria-label="Vorlagen zur Auswahl">
-              {event.templates.map(t => <li key={t.label} className={t.soon ? 'soon' : ''}>{t.label}{t.soon ? ' · bald' : ''}</li>)}
-              <li className="soon">weitere folgen</li>
+              {event.templates.map(t => <li key={t.label} className={t.soon ? 'soon' : ''}>{t.label}{t.soon ? ' (bald verfügbar)' : ''}</li>)}
+              <li className="soon">uvm.</li>
             </ul>
+            <span className="choice">{copy.choice}</span>
+            <span>{copy.text}</span>
           </div>
         </div>
 

@@ -35,7 +35,8 @@ const eur = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2,
 /** Welche Vorlagen das gekaufte Paket umfasst, in Laiensprache (Preis gilt für alle Seiten zusammen) */
 function packageLine(plan: PlanKey, event: EventConfig): string {
   const soon = event.templates.filter(t => t.soon).map(t => t.label)
-  const soonText = soon.length ? ` Bald auch ${soon.join(' und ')}, weitere Vorlagen folgen.` : ' Weitere Vorlagen folgen.'
+  const list = soon.length > 1 ? `${soon.slice(0, -1).join(', ')} und ${soon[soon.length - 1]}` : soon[0]
+  const soonText = soon.length ? ` Bald auch ${list}, und viele mehr.` : ' Weitere Vorlagen folgen.'
   if (plan === 'starter') return `Du wählst eine dieser Vorlagen. Weitere Seiten kannst du später jederzeit dazubuchen.${soonText}`
   if (plan === 'unlimited') return `Alle Vorlagen, und jede neue, die dazukommt.${soonText}`
   return `Du wählst 3 dieser Vorlagen, alle im Preis enthalten. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.${soonText}`

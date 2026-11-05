@@ -50,7 +50,8 @@ export const EVENT_CSS = `
   .ev-card .sites { border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; }
   .ev-card .sites b { display: block; color: #fff; font-size: 16px; font-weight: 600; margin-bottom: 4px; }
   .ev-card .sites span { color: rgba(255,255,255,.72); font-size: 14px; line-height: 1.5; }
-  .ev-card .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 12px 0 0; }
+  .ev-card .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 10px 0 14px; }
+  .ev-card .sites .choice { display: block; color: #fff; font-weight: 600; font-size: 15px; margin-bottom: 2px; }
   .ev-card .chips li { font-size: 13px; font-weight: 500; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 5px 11px; }
   .ev-card .chips li.soon { color: rgba(255,255,255,.55); background: transparent; border-style: dashed; }
   .ev-field { display: block; margin: 0 0 12px; }
