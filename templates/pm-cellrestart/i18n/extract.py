@@ -24,6 +24,7 @@ skip={'Deutsch','English','finestsites','max@beispiel.de','Facebook','Instagram'
 attrs=[a for a in attrs if a not in skip and re.search(r'[A-Za-zÄÖÜäöüß]{3,}',a)]
 m=re.search(r'<meta name="description" content="([^"]*)"',s)
 if m and m.group(1) not in attrs: attrs.append(m.group(1))
-if 'Stoffwechselkur' not in attrs: attrs.append('Stoffwechselkur')   # <title>-Wort, wird per JS je Sprache ersetzt
+for w in ('Stoffwechselkur','Deine Stoffwechselkur'):
+    if w not in attrs: attrs.append(w)   # <title>-Wort, wird per JS je Sprache ersetzt
 json.dump(attrs,open(os.path.join(HERE,'attrs.json'),'w'),ensure_ascii=False,indent=1)
 print('Paare:',len(pairs),'| JS-Strings:',len(js),'| source.json gesamt:',len(out),'| Attribute:',len(attrs))

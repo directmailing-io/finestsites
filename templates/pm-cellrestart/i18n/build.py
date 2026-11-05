@@ -66,7 +66,7 @@ src_en={x['de']:x['en'] for x in json.load(open(os.path.join(HERE,'source.json')
 attrs_de=json.load(open(os.path.join(HERE,'attrs.json')))
 rows_en=dict(re.findall(r'data-de-placeholder="([^"]*)" data-en-placeholder="([^"]*)"', html)); rows_en.update(dict(re.findall(r'data-en-placeholder="([^"]*)" data-de-placeholder="([^"]*)"', html)))
 m=re.search(r'<meta name="description" content="([^"]*)"',html); META_DE=m.group(1) if m else ''
-ATTRS_EN={'Cookie-Einstellungen':'Cookie settings','Cookie-Einstellungen öffnen':'Open cookie settings','Deutsche Flagge':'German flag','Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)':'This image was created with AI (EU labelling)','Land oder Vorwahl suchen …':'Search country or dialling code …','Marketing-Cookies erlauben':'Allow marketing cookies','Menü schließen':'Close menu','Menü öffnen':'Open menu','Statistik-Cookies erlauben':'Allow statistics cookies','Technisch notwendig (immer aktiv)':'Technically necessary (always active)','Vielfalt an Nährstoff-Formaten':'A variety of nutrient formats','Vor- und Nachname':'First and last name','Was möchtest du wissen?':'What would you like to know?','Stoffwechselkur':'Metabolism reset', META_DE:'A reset programme for your everyday life. Four phases back to more energy and a clear head.'}
+ATTRS_EN={'Cookie-Einstellungen':'Cookie settings','Cookie-Einstellungen öffnen':'Open cookie settings','Deutsche Flagge':'German flag','Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)':'This image was created with AI (EU labelling)','Land oder Vorwahl suchen …':'Search country or dialling code …','Marketing-Cookies erlauben':'Allow marketing cookies','Menü schließen':'Close menu','Menü öffnen':'Open menu','Statistik-Cookies erlauben':'Allow statistics cookies','Technisch notwendig (immer aktiv)':'Technically necessary (always active)','Vielfalt an Nährstoff-Formaten':'A variety of nutrient formats','Vor- und Nachname':'First and last name','Was möchtest du wissen?':'What would you like to know?','Stoffwechselkur':'Metabolism reset','Deine Stoffwechselkur':'Your metabolism reset', META_DE:'A reset programme for your everyday life. Four phases back to more energy and a clear head.'}
 def attr_dict(l):
     base={k:re.sub(r'<[^>]+>','',v) for k,v in tr[l]['strings'].items() if len(k)<=60 and '<' not in k and '{{' not in k}
     base.update(tr[l]['attrs']); return base
@@ -99,7 +99,7 @@ function fsAttrAll(l) {
     });
   });
   if (!window.FS_TITLE0) window.FS_TITLE0 = document.title;
-  document.title = l === 'de' ? window.FS_TITLE0 : window.FS_TITLE0.replace('Stoffwechselkur', fsT(l, 'Stoffwechselkur'));
+  document.title = l === 'de' ? window.FS_TITLE0 : (window.FS_TITLE0.indexOf('Deine Stoffwechselkur') >= 0 ? window.FS_TITLE0.replace('Deine Stoffwechselkur', fsT(l, 'Deine Stoffwechselkur')) : window.FS_TITLE0.replace('Stoffwechselkur', fsT(l, 'Stoffwechselkur')));
   var md = document.querySelector('meta[name="description"]');
   if (md && FS_I18N.metaDe) md.setAttribute('content', l === 'de' ? FS_I18N.metaDe : fsT(l, FS_I18N.metaDe));
 }
