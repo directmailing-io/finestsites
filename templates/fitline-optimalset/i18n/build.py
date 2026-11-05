@@ -34,7 +34,7 @@ for _a,_row in {
  'ko':'독일어|영어|이탈리아어|러시아어|우크라이나어|폴란드어|불가리아어|힌디어|터키어|세르비아어|스페인어|중국어|한국어',
 }.items():
     NAMES_IN[_a]=dict(zip(_ORDER,_row.split('|'))); assert len(NAMES_IN[_a])==13
-VIDEO_LANGS=['en','it','ru','uk','pl','bg','hi']   # videos/darm_{lang}.mp4 in R2; Sprachen ohne eigene Tonspur bekommen die englische
+VIDEO_LANGS=['en','it','ru','uk','pl','bg','hi','tr','sr','es','zh','ko']   # videos/darm_{lang}.mp4 in R2 (tr/sr/es/zh/ko VoiceStudio/OmniVoice 05.11.2026); Sprachen ohne eigene Tonspur bekommen die englische
 SHOP={'en':'en-us','it':'it-it','ru':'ru-ru','uk':'uk-ua','pl':'pl-pl','bg':'bg-bg','hi':'hi-in','tr':'tr-tr','sr':'sr-rs','es':'es-es','zh':'zh-cn','ko':'ko-kr'}
 USER_FIELDS=['about_me_html']                   # Nutzertexte mit Sprachvarianten {key}_{lang}
 

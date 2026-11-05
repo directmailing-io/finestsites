@@ -10161,7 +10161,7 @@ function switchKontaktTab(tab) {
     // neu laden und weiterspielen.
     var vid = document.getElementById('darm-video');
     if (vid) {
-      var want = l === 'de' ? 'videos/darm.mp4' : 'videos/darm_' + (["en", "it", "ru", "uk", "pl", "bg", "hi"].indexOf(l) >= 0 ? l : 'en') + '.mp4';
+      var want = l === 'de' ? 'videos/darm.mp4' : 'videos/darm_' + (["en", "it", "ru", "uk", "pl", "bg", "hi", "tr", "sr", "es", "zh", "ko"].indexOf(l) >= 0 ? l : 'en') + '.mp4';
       var srcEl = vid.querySelector('source');
       if (srcEl && srcEl.getAttribute('src') !== want) {
         var t = vid.currentTime || 0;
