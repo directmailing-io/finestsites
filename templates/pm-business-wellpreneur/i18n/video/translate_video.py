@@ -7,7 +7,9 @@ Aufruf: OPENAI_API_KEY=… python3 translate_video.py [lang ...]
 """
 import json, os, sys, time, urllib.request
 HERE=os.path.dirname(os.path.abspath(__file__))
-LANGS={'it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi'}
+LANGS={'it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi',
+       'tr':'Turkish (informal sen, as spoken in Turkey)','sr':'Serbian (LATIN script, ekavian, informal ti, as spoken in Belgrade)',
+       'es':'Spanish (Spain, neutral, informal tú)','zh':'Simplified Chinese (Mainland Mandarin, spoken register, 你)','ko':'Korean (polite informal 해요체, spoken register)'}
 MODEL=os.environ.get('I18N_MODEL','gpt-5.5-2026-04-23'); KEY=os.environ['OPENAI_API_KEY']
 SYSTEM="""You translate the voice-over script of a short animated explainer video (about two minutes). A PM-International team partner explains, warmly and casually, how recommending wellness products you use yourself can become a side income: no selling, no pressure, 30-day money-back trial, a German family business founded in 1993. The German narration is spoken language: short sentences, "du", friendly, no corporate or sales tone.
 Rules:

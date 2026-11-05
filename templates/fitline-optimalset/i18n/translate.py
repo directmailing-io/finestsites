@@ -7,7 +7,14 @@ Aufruf: OPENAI_API_KEY=… python3 translate.py [lang ...]
 """
 import json, os, sys, re, time, urllib.request
 HERE=os.path.dirname(os.path.abspath(__file__))
-LANGS={'en':'English','it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi'}
+LANGS={'en':'English','it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi',
+       'tr':'Turkish','sr':'Serbian','es':'Spanish','zh':'Chinese','ko':'Korean'}
+# Zusatzhinweise je Sprache (Register, Schrift, Varietät) – seit 05.11.2026 für tr/sr/es/zh/ko
+NOTES={'tr':'Turkish as spoken in Turkey today; informal "sen"; natural everyday Turkish, not stiff translationese; Turkish punctuation and typographic quotes (“…”).',
+       'sr':'Serbian in LATIN script (latinica), ekavian standard as used in Serbia; informal "ti"; natural everyday Serbian, the way a person from Belgrade would write to a friend; Serbian quotes „…“.',
+       'es':'Spanish as spoken in Spain (neutral, no regional slang), informal "tú"; natural, warm everyday Spanish; opening ¿ ¡ where needed; quotes «…» or “…”.',
+       'zh':'Simplified Chinese (Mainland China), natural spoken Mandarin style as on a modern Chinese consumer website; informal 你 (never 您 unless unavoidable); full-width Chinese punctuation (，。？！：“”); no spaces between Chinese characters and placeholders are kept as is.',
+       'ko':'Korean as used on modern Korean consumer websites: polite informal 해요체 (not 합니다체, not 반말), warm and natural; Korean spacing rules; keep headlines short; use Korean typographic conventions (no full-width punctuation, normal quotes).'}
 MODEL=os.environ.get('I18N_MODEL','gpt-5.5-2026-04-23')
 KEY=os.environ['OPENAI_API_KEY']
 SYSTEM="""You translate marketing copy for a personal recommendation website of a FitLine (PM-International) team partner. The German source is warm, colloquial, personal ("du"), short sentences, no corporate tone.
@@ -23,7 +30,7 @@ Rules:
 - Return ONLY a JSON object mapping each input id (string) to the translation."""
 def call(lang, items, kind):
     msgs=[{"role":"system","content":SYSTEM.replace('{lang}',LANGS[lang])},
-          {"role":"user","content":f"Target language: {LANGS[lang]} ({lang}). Context: {kind}. Translate these German strings. Input JSON (id → German):\n"+json.dumps(items,ensure_ascii=False)}]
+          {"role":"user","content":f"Target language: {LANGS[lang]} ({lang}). {NOTES.get(lang,'')} Context: {kind}. Translate these German strings. Input JSON (id → German):\n"+json.dumps(items,ensure_ascii=False)}]
     body={"model":MODEL,"messages":msgs,"response_format":{"type":"json_object"}}
     for attempt in range(4):
         try:

@@ -420,7 +420,7 @@ function replaceSimplePlaceholders(html: string, data: SiteData, rawKeys: Set<st
 }
 /** Schlüssel, deren Wert als HTML ausgegeben wird (Richtext). Muss mit dem Worker übereinstimmen. */
 /** Alle Sprach-Suffixe, in die Nutzertexte übersetzt werden können (siehe templateLangs in translate.ts). */
-export const TRANSLATION_LANGS = ['en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'] as const
+export const TRANSLATION_LANGS = ['en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi', 'tr', 'sr', 'es', 'zh', 'ko'] as const
 export const RAW_KEY_RE = /_html(_[a-z]{2})?$|^(intro|bio|about_me_html)(_[a-z]{2})?$/
 function jsEscape(s: string): string {
   return s.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '\\x3C').replace(/\r/g, '\\r').replace(/\n/g, '\\n').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')

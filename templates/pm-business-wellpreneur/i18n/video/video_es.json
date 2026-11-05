@@ -1,0 +1,177 @@
+[
+ {
+  "id": 0,
+  "start": 0.0,
+  "end": 7.44,
+  "de": "Du hast bestimmt schon mal ein gutes Restaurant, eine spannende Serie oder ein Produkt empfohlen, von dem du selbst begeistert warst.",
+  "text": "Seguro que alguna vez has recomendado un buen restaurante, una serie que engancha o un producto que a ti te encantó."
+ },
+ {
+  "id": 1,
+  "start": 7.44,
+  "end": 11.56,
+  "de": "Einfach, weil du dir dachtest, das könnte auch anderen gefallen.",
+  "text": "Simplemente porque pensaste: esto también le puede gustar a otros."
+ },
+ {
+  "id": 2,
+  "start": 11.56,
+  "end": 14.0,
+  "de": "Normalerweise bekommst du dafür nichts.",
+  "text": "Normalmente, por eso no recibes nada."
+ },
+ {
+  "id": 3,
+  "start": 14.0,
+  "end": 20.6,
+  "de": "Aber stell dir mal vor, ein Unternehmen würde dich für eine erfolgreiche Empfehlung mit einer Provision belohnen.",
+  "text": "Pero imagina que una empresa te premiara con una comisión por una recomendación que saliera bien."
+ },
+ {
+  "id": 4,
+  "start": 20.6,
+  "end": 22.4,
+  "de": "Eigentlich fair, oder?",
+  "text": "Sería justo, ¿no?"
+ },
+ {
+  "id": 5,
+  "start": 22.4,
+  "end": 25.36,
+  "de": "Genau darum geht's bei unserem Geschäftsmodell.",
+  "text": "Justo de eso va nuestro modelo de negocio."
+ },
+ {
+  "id": 6,
+  "start": 25.36,
+  "end": 28.48,
+  "de": "Es geht darum, Lebensqualität weiterzugeben.",
+  "text": "Se trata de compartir calidad de vida."
+ },
+ {
+  "id": 7,
+  "start": 28.56,
+  "end": 33.28,
+  "de": "Vielleicht kennst du jemanden, der sich jeden Morgen mühsam aus dem Bett quält,",
+  "text": "Quizá conozcas a alguien que cada mañana sale de la cama a duras penas,"
+ },
+ {
+  "id": 8,
+  "start": 33.28,
+  "end": 41.08,
+  "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
+  "text": "que por la tarde ya casi no tiene energía, o que intenta estar a la vez para el trabajo, la familia y para sí mismo."
+ },
+ {
+  "id": 9,
+  "start": 41.08,
+  "end": 46.56,
+  "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
+  "text": "Y quizá tú seas justo la persona que le enseña que las cosas pueden ser distintas."
+ },
+ {
+  "id": 10,
+  "start": 46.56,
+  "end": 48.88,
+  "de": "Genau das ist dein Job.",
+  "text": "Ese es justo tu trabajo."
+ },
+ {
+  "id": 11,
+  "start": 48.88,
+  "end": 57.92,
+  "de": "Nicht verkaufen, nicht überreden, sondern einfach ehrlich von deinen Erfahrungen erzählen und zeigen, was auch für andere möglich sein kann.",
+  "text": "No vender, no convencer, sino contar con sinceridad tu experiencia y enseñar lo que también puede ser posible para los demás."
+ },
+ {
+  "id": 12,
+  "start": 57.92,
+  "end": 63.0,
+  "de": "Du lernst hochwertige Produkte aus den Bereichen Wellness, Fitness und Schönheit kennen,",
+  "text": "Descubres productos de alta calidad de bienestar, fitness y belleza,"
+ },
+ {
+  "id": 13,
+  "start": 63.0,
+  "end": 68.6,
+  "de": "probierst sie selbst aus und teilst deine Erfahrungen, wenn du wirklich dahinter stehst.",
+  "text": "los pruebas tú y compartes tu experiencia, si de verdad te convencen."
+ },
+ {
+  "id": 14,
+  "start": 68.6,
+  "end": 74.52,
+  "de": "Das Beste daran, jeder kann die Produkte 30 Tage lang ganz in Ruhe ausprobieren.",
+  "text": "Lo mejor es que cualquiera puede probar los productos durante 30 días, con toda tranquilidad."
+ },
+ {
+  "id": 15,
+  "start": 74.52,
+  "end": 78.0,
+  "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
+  "text": "Si no convencen, se devuelve el dinero y ya."
+ },
+ {
+  "id": 16,
+  "start": 78.0,
+  "end": 82.2,
+  "de": "Das heißt für dich, du kannst die Produkte mit einem guten Gefühl empfehlen",
+  "text": "Para ti, eso significa que puedes recomendar los productos con la conciencia tranquila"
+ },
+ {
+  "id": 17,
+  "start": 82.2,
+  "end": 87.0,
+  "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
+  "text": "y la otra persona puede ver, sin ningún riesgo, si le van bien."
+ },
+ {
+  "id": 18,
+  "start": 87.08,
+  "end": 92.88,
+  "de": "Einfacher und ehrlicher kann man sich nebenbei kaum ein zusätzliches Einkommen aufbauen.",
+  "text": "Es difícil montarse un ingreso extra en paralelo de una forma más sencilla y honesta."
+ },
+ {
+  "id": 19,
+  "start": 92.88,
+  "end": 99.2,
+  "de": "Hinter dem Ganzen steckt ein deutsches Familienunternehmen, gegründet im Jahr 1993.",
+  "text": "Detrás de todo esto hay una empresa familiar alemana, fundada en 1993."
+ },
+ {
+  "id": 20,
+  "start": 99.2,
+  "end": 105.2,
+  "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
+  "text": "En vez de pagar a muchos intermediarios y publicidad cara, el dinero se invierte directamente en los productos."
+ },
+ {
+  "id": 21,
+  "start": 105.2,
+  "end": 109.28,
+  "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
+  "text": "Así se consigue una calidad que de verdad notas en el día a día."
+ },
+ {
+  "id": 22,
+  "start": 109.28,
+  "end": 116.4,
+  "de": "Und ein Teil geht an die Menschen, die die Produkte selbst nutzen, weiterempfehlen und andere dabei unterstützen.",
+  "text": "Y una parte va a quienes usan los productos, los recomiendan y apoyan a otros en el proceso."
+ },
+ {
+  "id": 23,
+  "start": 116.4,
+  "end": 119.4,
+  "de": "Wie das genau funktioniert, zeige ich dir.",
+  "text": "Te enseño cómo funciona exactamente."
+ },
+ {
+  "id": 24,
+  "start": 119.4,
+  "end": 122.4,
+  "de": "Ich nehme dich gerne an die Hand.",
+  "text": "Te acompaño paso a paso."
+ }
+]

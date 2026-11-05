@@ -4,7 +4,7 @@
  * Eigener Text aus dem Editor: about_intro (DE) und about_intro_{lang} (übersetzt, siehe translate.ts);
  * fehlt eine Übersetzung, bleibt der deutsche Text.
  */
-export const SITE_LANGS = ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'] as const
+export const SITE_LANGS = ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi', 'tr', 'sr', 'es', 'zh', 'ko'] as const
 export type SiteLang = typeof SITE_LANGS[number]
 
 const GREETING: Record<SiteLang, { solo: (n: string) => string; duo: (n: string) => string }> = {
@@ -16,8 +16,13 @@ const GREETING: Record<SiteLang, { solo: (n: string) => string; duo: (n: string)
   pl: { solo: n => `Cześć, jestem ${n}`, duo: n => `Cześć, jesteśmy ${n}` },
   bg: { solo: n => `Здравей, аз съм ${n}`, duo: n => `Здравей, ние сме ${n}` },
   hi: { solo: n => `नमस्ते, मैं हूँ ${n}`, duo: n => `नमस्ते, हम हैं ${n}` },
+  tr: { solo: n => `Merhaba, ben ${n}`, duo: n => `Merhaba, biz ${n}` },
+  sr: { solo: n => `Ćao, ja sam ${n}`, duo: n => `Ćao, mi smo ${n}` },
+  es: { solo: n => `Hola, soy ${n}`, duo: n => `Hola, somos ${n}` },
+  zh: { solo: n => `你好，我是${n}`, duo: n => `你好，我们是${n}` },
+  ko: { solo: n => `안녕하세요, ${n}예요`, duo: n => `안녕하세요, ${n}예요` },
 }
-const AND: Record<SiteLang, string> = { de: '&amp;', en: '&amp;', it: '&amp;', ru: 'и', uk: 'і', pl: 'i', bg: 'и', hi: 'और' }
+const AND: Record<SiteLang, string> = { de: '&amp;', en: '&amp;', it: '&amp;', ru: 'и', uk: 'і', pl: 'i', bg: 'и', hi: 'और', tr: 've', sr: 'i', es: 'y', zh: '和', ko: '&amp;' }
 
 export function htmlEscape(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')

@@ -1,0 +1,176 @@
+[
+  {
+    "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+    "alt": "{{#unless partner_modus=duo}}이 페이지는 <strong>{{vorname}} {{nachname}}</strong>님이 운영해요. {{#if geschlecht=weiblich}}PM-International (FitLine®)의 독립 판매 파트너{{/if}}{{#if geschlecht=maennlich}}PM-International (FitLine®)의 독립 판매 파트너{{/if}}이며, PM-International AG의 공식 웹사이트가 아니에요.{{/unless}}{{#if partner_modus=duo}}이 페이지는 <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong> 두 분이 운영해요. PM-International (FitLine®)의 독립 판매 파트너이며, PM-International AG의 공식 웹사이트가 아니에요.{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}이 페이지는 {{#if geschlecht=weiblich}}PM-International (FitLine®)의 독립 판매 파트너{{/if}}{{#if geschlecht=maennlich}}PM-International (FitLine®)의 독립 판매 파트너{{/if}}인 <strong>{{vorname}} {{nachname}}</strong>님이 운영해요. PM-International AG의 공식 웹사이트는 아니에요.{{/unless}}{{#if partner_modus=duo}}이 페이지는 PM-International (FitLine®)의 독립 판매 파트너인 <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong> 두 분이 운영해요. PM-International AG의 공식 웹사이트는 아니에요.{{/if}}",
+    "grund": "Satzbau verunglückt: „…Partner이며, … keine offizielle Website“ macht die Person zur Website; Subjektbezug korrigiert"
+  },
+  {
+    "de": "Von einem Produkt, das du selbst nutzt und magst.",
+    "alt": "내가 직접 쓰고 좋아하는 제품에 대해요.",
+    "neu": "직접 써보고 마음에 든 제품에 대해서요.",
+    "grund": "„제품에 대해요“ ist ungrammatisch"
+  },
+  {
+    "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+    "alt": "수수료는 자동으로 계좌에 들어와요. 주문이 계속되는 한 매달요.",
+    "neu": "수당은 자동으로 계좌에 들어와요. 주문이 이어지는 동안 매달요.",
+    "grund": "„수수료“ klingt nach Gebühr; Provision sonst „수당“ (einheitlich)"
+  },
+  {
+    "de": "Transparent in Speyer, geprüfte statt billige Rohstoffe",
+    "alt": "Speyer에서 투명하게, 싼 원료가 아닌 검증된 원료로",
+    "neu": "독일 슈파이어에서 투명하게, 값싼 원료 대신 검증된 원료로",
+    "grund": "Ortsname in Lateinschrift unverständlich, auf Koreanisch schreiben"
+  },
+  {
+    "de": "Speyer, geprüfte Rohstoffe",
+    "alt": "Speyer, 검증된 원료",
+    "neu": "독일 슈파이어, 검증된 원료",
+    "grund": "Ortsname auf Koreanisch"
+  },
+  {
+    "de": "100+ Patente",
+    "alt": "100+개 특허",
+    "neu": "특허 100개 이상",
+    "grund": "„100+개“ unnatürlich"
+  },
+  {
+    "de": "1.000+ Profisportler",
+    "alt": "1.000+명의 프로 운동선수",
+    "neu": "프로 운동선수 1,000명 이상",
+    "grund": "deutscher Tausenderpunkt (1.000) falsch, Koreanisch 1,000; „+명의“ unnatürlich"
+  },
+  {
+    "de": "Marktführer in Europa, in 40+ Ländern im Einsatz",
+    "alt": "유럽 시장 리더, 40+개국에서 사용",
+    "neu": "유럽 시장 선도 기업, 40개국 이상에서 사용",
+    "grund": "„40+개국“ unnatürlich"
+  },
+  {
+    "de": "20+ Vitamine, 25+ Pflanzenextrakte in einem Glas",
+    "alt": "한 잔에 20+가지 비타민, 25+가지 식물 추출물",
+    "neu": "한 잔에 비타민 20가지 이상, 식물 추출물 25가지 이상",
+    "grund": "„20+가지“ unnatürlich"
+  },
+  {
+    "de": "20+ Vitamine, 25+ Extrakte",
+    "alt": "20+가지 비타민, 25+가지 추출물",
+    "neu": "비타민 20가지+, 추출물 25가지+",
+    "grund": "Zahl nach Nomen, natürlicher"
+  },
+  {
+    "de": "Marktführer Europa, 40+ Länder",
+    "alt": "유럽 시장 리더, 40+개국",
+    "neu": "유럽 시장 선도, 40개국 이상",
+    "grund": "„40+개국“ unnatürlich"
+  },
+  {
+    "de": "Damit du beim ersten Schluck merkst: das ist anders",
+    "alt": "첫 모금부터 느껴져요: 이건 다르다고요",
+    "neu": "첫 모금부터 '이건 다르다'는 걸 느낄 수 있도록",
+    "grund": "Doppelpunkt-Konstruktion ist deutscher Satzbau"
+  },
+  {
+    "de": "Mediziner & Biochemiker im Beirat",
+    "alt": "자문위원으로 의사 & 생화학자",
+    "neu": "의사·생화학자 자문위원단",
+    "grund": "Wortstellung holprig (Calque)"
+  },
+  {
+    "de": "30 Tage ausprobieren. Passt nicht? 100 % Geld zurück. Ohne Papierkram.",
+    "alt": "30일 동안 써보세요. 안 맞나요? 100 % 환불해 드려요. 번거로운 서류 절차 없이요.",
+    "neu": "30일 동안 써보세요. 안 맞으면 100% 환불해 드려요. 복잡한 서류도 필요 없어요.",
+    "grund": "„100 %“ mit Leerzeichen falsch; „안 맞나요?“ als Frage unnatürlich"
+  },
+  {
+    "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+    "alt": "아니요. 피라미드 사기는 새로 들어온 사람들이 돈을 내면 거기서 수익이 나는 구조예요. 여기서는 제품이 구매되고 계속 사용될 때만 수익이 생겨요. 주문이 없으면 수익도 없어요. 이 차이는 독일 법으로 명확히 규정되어 있고(<a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG 부록 14번</a> 참고), <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">독일 직접판매협회</a>에서도 그렇게 정의해요. 그리고 이 회사는 1993년부터 이어져 왔고 매출 4 billion을 기록하고 있어요. 피라미드 사기는 몇 년 지나면 무너져요. 우리는 30년이 넘었어요.",
+    "neu": "아니요. 피라미드 사기는 새로 들어온 사람들이 돈을 내면 거기서 수익이 나는 구조예요. 여기서는 제품이 구매되고 계속 사용될 때만 수익이 생겨요. 주문이 없으면 수익도 없어요. 이 차이는 독일 법으로 명확히 규정되어 있고(<a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG 부록 14번</a> 참고), <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">독일 직접판매협회</a>에서도 그렇게 정의해요. 그리고 이 회사는 1993년부터 이어져 왔고 연 매출이 40억 달러에 달해요. 피라미드 사기는 몇 년 지나면 무너져요. 우리는 30년이 넘었어요.",
+    "grund": "englisches „4 billion“ unübersetzt"
+  },
+  {
+    "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+    "alt": "절대 아니에요. 저는 잘 맞을 것 같다고 생각될 때만 추천해요. 그게 아니면 솔직히 민망하잖아요. 주변 사람에게 말하고 싶지 않다면, 소셜 미디어나 본인의 커뮤니티를 통해서도 충분히 다른 방법이 있어요. 본인에게 맞는 방식으로 해요.",
+    "neu": "절대 아니에요. 저는 잘 맞을 것 같다고 생각될 때만 추천해요. 그게 아니면 솔직히 민망하잖아요. 주변 사람에게 말하고 싶지 않다면, 소셜 미디어나 내 커뮤니티처럼 다른 방법도 충분히 있어요. 본인에게 맞는 방식으로 해요.",
+    "grund": "„통해서도 충분히 다른 방법이 있어요“ grammatisch schief"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "좋아요. 여기서는 아무도 판매하지 않거든요. 그냥 본인에게 실제로 도움이 됐던 걸 이야기하는 거예요. 듣고 싶은 사람은 듣고, 아니면 아닌 거고요. 세일즈 피치도, 기술도 없어요. 좋은 식당을 추천하듯이 자연스럽게 전하는 추천이에요.",
+    "neu": "좋아요. 여기서는 아무도 판매하지 않거든요. 그냥 본인에게 실제로 도움이 됐던 걸 이야기하는 거예요. 듣고 싶은 사람은 듣고, 아니면 아닌 거고요. 세일즈 멘트도, 영업 기술도 필요 없어요. 좋은 식당을 추천하듯이 자연스럽게 전하는 추천이에요.",
+    "grund": "„기술“ allein missverständlich (= Technik/Technologie)"
+  },
+  {
+    "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+    "alt": "솔직히 말하면 정말 사람마다 달라요. 어떤 사람은 한 달에 100을 벌고, 어떤 사람은 몇 천을 벌고, 또 어떤 사람은 이걸로 완전히 생활해요.",
+    "neu": "솔직히 말하면 정말 사람마다 달라요. 어떤 사람은 한 달에 100유로, 어떤 사람은 몇천 유로를 벌고, 또 어떤 사람은 이걸로 완전히 생활해요.",
+    "grund": "ohne Währung liest man Won (100원); „몇 천“ → „몇천“"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "조금 extra로 벌고 싶다면 한 달에 몇 시간. 제대로 된 부수입을 원한다면 주 4~6시간. 크게 키우고 싶다면 더 많이요. 첫 대화에서 본인의 일상에 뭐가 맞는지, 어떤 그림을 그릴 수 있는지 같이 봐요.",
+    "neu": "용돈 정도면 한 달에 몇 시간. 제대로 된 부수입을 원한다면 주 4~6시간. 크게 키우고 싶다면 그보다 더요. 첫 대화에서 내 일상에 뭐가 맞는지, 어떤 그림을 그릴 수 있는지 같이 봐요.",
+    "grund": "englisches „extra“ unübersetzt"
+  },
+  {
+    "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+    "alt": "그럼 그만두면 돼요. 계약도, 해지 기간도, 남은 청구서도, 말다툼도 없어요. 우리는 이렇게 생각해요. 누구나 할 수 있지만, 아무도 해야 하는 건 아니에요.",
+    "neu": "그럼 그만두면 돼요. 계약도, 해지 예고 기간도, 남은 청구서도, 실랑이도 없어요. 우리는 이렇게 생각해요. 누구나 할 수 있지만, 아무도 해야 하는 건 아니에요.",
+    "grund": "„말다툼“ = Streit, falsche Bedeutung; Kündigungsfrist = „해지 예고 기간“"
+  },
+  {
+    "de": "Schritt 1 von 3",
+    "alt": "3단계 중 1단계",
+    "neu": "1/3단계",
+    "grund": "uneinheitlich zu „2/3단계“, „3/3단계“"
+  },
+  {
+    "de": "Wer euch begleitet",
+    "alt": "두 분을 도와줄 사람",
+    "neu": "함께해 줄 두 사람",
+    "grund": "„두 분을“ macht den Besucher zu zwei Personen; im Duo-Modus begleiten zwei Partner"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}PM-International (FitLine®)의 독립 판매 파트너{{/if}}{{#if geschlecht=maennlich}}PM-International (FitLine®)의 독립 판매 파트너{{/if}}{{/unless}}{{#if partner_modus=duo}}PM-International (FitLine®)의 독립 판매 파트너들{{/if}}입니다. 이 페이지는 PM-International AG의 공식 웹사이트가 아니에요.",
+    "neu": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}PM-International (FitLine®)의 독립 판매 파트너예요{{/if}}{{#if geschlecht=maennlich}}PM-International (FitLine®)의 독립 판매 파트너예요{{/if}}{{/unless}}{{#if partner_modus=duo}}PM-International (FitLine®)의 독립 판매 파트너들이에요{{/if}}. 이 페이지는 PM-International AG의 공식 웹사이트가 아니에요.",
+    "grund": "„입니다“ = 합니다체, Stilbruch; Kopula in die Blöcke gezogen (파트너예요/파트너들이에요)"
+  },
+  {
+    "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+    "alt": "개인정보 보호 안내를 확인해 주세요.",
+    "neu": "개인정보 처리방침에 동의해 주세요.",
+    "grund": "„확인“ trifft „bestätigen“ (Häkchen = Zustimmung) nicht"
+  },
+  {
+    "de": "Startpaket wählen, oder nicht",
+    "alt": "스타터 팩 선택, 또는 선택 안 함",
+    "neu": "스타터 키트는 골라도, 안 골라도 돼요",
+    "grund": "„스타터 팩“ uneinheitlich zu „스타터 키트“ (FAQ); „또는 선택 안 함“ steif"
+  },
+  {
+    "de": "Öffnet die offizielle Registrierungsseite von PM-International in einem neuen Tab.",
+    "alt": "공식 PM-International 등록 페이지가 새 탭에서 열려요.",
+    "neu": "PM-International 공식 등록 페이지가 새 탭에서 열려요.",
+    "grund": "Wortstellung: 공식 gehört hinter den Firmennamen"
+  },
+  {
+    "de": "Am liebsten per",
+    "alt": "가능하면",
+    "neu": "편한 연락 방법",
+    "grund": "„가능하면“ als Label vor Auswahl unklar"
+  },
+  {
+    "de": "Die Teampartner-Nummer besteht nur aus Ziffern.",
+    "alt": "팀파트너 번호는 숫자로만 입력해 주세요.",
+    "neu": "팀 파트너 번호는 숫자로만 입력해 주세요.",
+    "grund": "Schreibweise einheitlich „팀 파트너“"
+  },
+  {
+    "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+    "alt": "좋은 품질의 웰니스 제품을 추천하고, 그와 함께 월수입도 만들어 보세요. 판매 없이, 부담 없이, 당신의 속도로요.",
+    "neu": "좋은 웰니스 제품을 추천하면서 부업으로 월수입을 만들어 보세요. 판매도, 압박도 없이 내 속도로요.",
+    "grund": "„그와 함께“ Calque von „nebenbei“; Sinn „nebenbei“ fehlt"
+  }
+]

@@ -38,10 +38,11 @@ const CARD_BASE: React.CSSProperties = {
 // Alle anderen Templates mit Tag „multilingual“ zeigen DE + EN.
 const LANGS_BY_DOMAIN: Record<string, string[]> = {
   'dailyoptimal.de': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'],
-  'wellpreneur.io': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'],
+  'wellpreneur.io': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi', 'tr', 'sr', 'es', 'zh', 'ko'],
 }
 const LANG_LABEL: Record<string, string> = {
   de: 'Deutsch', en: 'Englisch', it: 'Italienisch', ru: 'Russisch', uk: 'Ukrainisch', pl: 'Polnisch', bg: 'Bulgarisch', hi: 'Hindi',
+  tr: 'Türkisch', sr: 'Serbisch', es: 'Spanisch', zh: 'Chinesisch', ko: 'Koreanisch',
 }
 
 // Runde Landesflaggen als kompakte SVGs (gleiche Optik wie der Sprachschalter im Template).
@@ -63,6 +64,11 @@ const FLAG: Record<string, React.ReactNode> = {
     <rect width="20" height="6.67" fill="#FF9933" /><rect width="20" height="6.67" y="6.67" fill="#fff" /><rect width="20" height="6.66" y="13.34" fill="#138808" />
     <circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" strokeWidth="0.8" />
   </>,
+  tr: <><rect width="20" height="20" fill="#E30A17" /><circle cx="8" cy="10" r="5" fill="#fff" /><circle cx="9.2" cy="10" r="4" fill="#E30A17" /><path d="M13.9 7.9l.7 1.8 1.9.1-1.5 1.2.5 1.9-1.6-1.1-1.6 1.1.5-1.9-1.5-1.2 1.9-.1z" fill="#fff" /></>,
+  sr: <><rect width="20" height="6.67" fill="#C6363C" /><rect width="20" height="6.67" y="6.67" fill="#0C4076" /><rect width="20" height="6.66" y="13.34" fill="#fff" /></>,
+  es: <><rect width="20" height="20" fill="#AA151B" /><rect width="20" height="10" y="5" fill="#F1BF00" /></>,
+  zh: <><rect width="20" height="20" fill="#DE2910" /><path d="M6 3.4l1.2 3.4h3.6L7.9 8.9l1.1 3.4L6 10.2l-3 2.1 1.1-3.4-2.9-2.1h3.6z" fill="#FFDE00" /><circle cx="11.6" cy="3.6" r="1" fill="#FFDE00" /><circle cx="13.6" cy="6" r="1" fill="#FFDE00" /><circle cx="13.6" cy="9" r="1" fill="#FFDE00" /><circle cx="11.6" cy="11.4" r="1" fill="#FFDE00" /></>,
+  ko: <><rect width="20" height="20" fill="#fff" /><path d="M5 10A5 5 0 0 1 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#CD2E3A" /><path d="M5 10A5 5 0 0 0 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#0047A0" /></>,
 }
 
 function LanguageFlags({ langs }: { langs: string[] }) {

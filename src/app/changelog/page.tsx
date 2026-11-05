@@ -36,13 +36,15 @@ const PLANNED: Planned[] = [
   { title: 'Visitenkarten-Generator', status: 'Geplant', visual: 'card',
     text: 'Damit erstellst du eine Visitenkarte, die zu deiner Webseite passt, mit QR-Code darauf. Du lädst sie als Druckdatei herunter.' },
   { title: 'Mehr Sprachen', status: 'Geplant', visual: 'flags',
-    text: 'Bisher gibt es Optimalset- und Business-Seite in 8 Sprachen, die übrigen Vorlagen auf Deutsch und Englisch. Wir wollen alle Vorlagen in möglichst vielen Landessprachen anbieten.' },
+    text: 'Die Business-Seite gibt es in 13, die Optimalset-Seite in 8 Sprachen, die übrigen Vorlagen auf Deutsch und Englisch. Wir wollen alle Vorlagen in möglichst vielen Landessprachen anbieten.' },
   { title: 'Weitere Vorlagen', status: 'In Arbeit', visual: 'templates',
     text: 'Wir arbeiten an neuen Vorlagen für weitere Produkte und Anlässe. Du findest sie dann direkt bei „Neue Webseite“.' },
 ]
 
 const HISTORY: Month[] = [
   { label: 'November 2026', entries: [
+    { date: '5. Nov', title: 'Business-Seite in 13 Sprachen', visual: 'flags',
+      text: 'Die Business-Seite gibt es jetzt zusätzlich auf Türkisch, Serbisch, Spanisch, Chinesisch und Koreanisch, inklusive Video mit der vertrauten Sprecherstimme. Besucher sehen automatisch ihre Sprache; Chinesisch und Koreanisch kommen in landesüblicher Schrift und Typografie.' },
     { date: '3. Nov', title: 'Abo pausieren',
       text: 'Du kannst dein Abo jetzt für 1 bis 3 Monate pausieren, zum Ende deiner bezahlten Laufzeit. In der Pause zahlst du nichts, deine Premium-Webseiten sind so lange offline, alle Inhalte bleiben gespeichert. Danach geht es automatisch weiter, eine Woche vorher erinnern wir dich. Du findest es unter Einstellungen → Zahlung & Plan.' },
     { date: '3. Nov', title: 'Linkseite bleibt kostenlos online',

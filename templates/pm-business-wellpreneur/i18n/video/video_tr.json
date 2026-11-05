@@ -1,0 +1,177 @@
+[
+ {
+  "id": 0,
+  "start": 0.0,
+  "end": 7.44,
+  "de": "Du hast bestimmt schon mal ein gutes Restaurant, eine spannende Serie oder ein Produkt empfohlen, von dem du selbst begeistert warst.",
+  "text": "Sen de mutlaka iyi bir restoranı, sürükleyici bir diziyi ya da kendi bayıldığın bir ürünü önermişsindir."
+ },
+ {
+  "id": 1,
+  "start": 7.44,
+  "end": 11.56,
+  "de": "Einfach, weil du dir dachtest, das könnte auch anderen gefallen.",
+  "text": "Sırf başkalarının da hoşuna gidebilir diye düşündüğün için."
+ },
+ {
+  "id": 2,
+  "start": 11.56,
+  "end": 14.0,
+  "de": "Normalerweise bekommst du dafür nichts.",
+  "text": "Normalde bunun için bir şey almazsın."
+ },
+ {
+  "id": 3,
+  "start": 14.0,
+  "end": 20.6,
+  "de": "Aber stell dir mal vor, ein Unternehmen würde dich für eine erfolgreiche Empfehlung mit einer Provision belohnen.",
+  "text": "Ama bir düşün: Bir şirket, başarılı bir önerin için seni komisyonla ödüllendirse."
+ },
+ {
+  "id": 4,
+  "start": 20.6,
+  "end": 22.4,
+  "de": "Eigentlich fair, oder?",
+  "text": "Aslında adil, değil mi?"
+ },
+ {
+  "id": 5,
+  "start": 22.4,
+  "end": 25.36,
+  "de": "Genau darum geht's bei unserem Geschäftsmodell.",
+  "text": "Bizim iş modelimizin olayı da tam bu."
+ },
+ {
+  "id": 6,
+  "start": 25.36,
+  "end": 28.48,
+  "de": "Es geht darum, Lebensqualität weiterzugeben.",
+  "text": "Mesele, yaşam kalitesini paylaşmak."
+ },
+ {
+  "id": 7,
+  "start": 28.56,
+  "end": 33.28,
+  "de": "Vielleicht kennst du jemanden, der sich jeden Morgen mühsam aus dem Bett quält,",
+  "text": "Belki her sabah yataktan zar zor kalkan birini tanıyorsun,"
+ },
+ {
+  "id": 8,
+  "start": 33.28,
+  "end": 41.08,
+  "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
+  "text": "öğleden sonra enerjisi neredeyse kalmayan ya da aynı anda işe, ailesine ve kendine yetişmeye çalışan birini."
+ },
+ {
+  "id": 9,
+  "start": 41.08,
+  "end": 46.56,
+  "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
+  "text": "Ve belki de onlara başka türlü de olabileceğini gösteren kişi tam sensin."
+ },
+ {
+  "id": 10,
+  "start": 46.56,
+  "end": 48.88,
+  "de": "Genau das ist dein Job.",
+  "text": "İşte senin işin tam da bu."
+ },
+ {
+  "id": 11,
+  "start": 48.88,
+  "end": 57.92,
+  "de": "Nicht verkaufen, nicht überreden, sondern einfach ehrlich von deinen Erfahrungen erzählen und zeigen, was auch für andere möglich sein kann.",
+  "text": "Satmak değil, ikna etmeye çalışmak değil; sadece deneyimlerini dürüstçe anlatmak ve başkaları için nelerin mümkün olabileceğini göstermek."
+ },
+ {
+  "id": 12,
+  "start": 57.92,
+  "end": 63.0,
+  "de": "Du lernst hochwertige Produkte aus den Bereichen Wellness, Fitness und Schönheit kennen,",
+  "text": "Wellness, fitness ve güzellik alanlarında kaliteli ürünlerle tanışırsın,"
+ },
+ {
+  "id": 13,
+  "start": 63.0,
+  "end": 68.6,
+  "de": "probierst sie selbst aus und teilst deine Erfahrungen, wenn du wirklich dahinter stehst.",
+  "text": "kendin denersin ve gerçekten arkasında duruyorsan deneyimlerini paylaşırsın."
+ },
+ {
+  "id": 14,
+  "start": 68.6,
+  "end": 74.52,
+  "de": "Das Beste daran, jeder kann die Produkte 30 Tage lang ganz in Ruhe ausprobieren.",
+  "text": "En güzel tarafı, herkes ürünleri 30 gün boyunca rahat rahat deneyebilir."
+ },
+ {
+  "id": 15,
+  "start": 74.52,
+  "end": 78.0,
+  "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
+  "text": "Uymazsa, paranı kolayca geri alırsın."
+ },
+ {
+  "id": 16,
+  "start": 78.0,
+  "end": 82.2,
+  "de": "Das heißt für dich, du kannst die Produkte mit einem guten Gefühl empfehlen",
+  "text": "Yani sen ürünleri gönül rahatlığıyla önerebilirsin"
+ },
+ {
+  "id": 17,
+  "start": 82.2,
+  "end": 87.0,
+  "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
+  "text": "ve karşındaki kişi de hiç risk almadan kendisine uyup uymadığına bakabilir."
+ },
+ {
+  "id": 18,
+  "start": 87.08,
+  "end": 92.88,
+  "de": "Einfacher und ehrlicher kann man sich nebenbei kaum ein zusätzliches Einkommen aufbauen.",
+  "text": "Kendine yan gelir oluşturmanın bundan daha kolay ve dürüst bir yolu pek yok."
+ },
+ {
+  "id": 19,
+  "start": 92.88,
+  "end": 99.2,
+  "de": "Hinter dem Ganzen steckt ein deutsches Familienunternehmen, gegründet im Jahr 1993.",
+  "text": "Bütün bunların arkasında, 1993 yılında kurulmuş bir Alman aile şirketi var."
+ },
+ {
+  "id": 20,
+  "start": 99.2,
+  "end": 105.2,
+  "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
+  "text": "Çok sayıda aracıya ve pahalı reklamlara para ödemek yerine, para doğrudan ürünlere gidiyor."
+ },
+ {
+  "id": 21,
+  "start": 105.2,
+  "end": 109.28,
+  "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
+  "text": "Böylece günlük hayatta gerçekten hissedilen bir kalite ortaya çıkıyor."
+ },
+ {
+  "id": 22,
+  "start": 109.28,
+  "end": 116.4,
+  "de": "Und ein Teil geht an die Menschen, die die Produkte selbst nutzen, weiterempfehlen und andere dabei unterstützen.",
+  "text": "Bir kısmı da ürünleri kendisi kullanan, tavsiye eden ve bu süreçte başkalarına destek olan insanlara gidiyor."
+ },
+ {
+  "id": 23,
+  "start": 116.4,
+  "end": 119.4,
+  "de": "Wie das genau funktioniert, zeige ich dir.",
+  "text": "Tam olarak nasıl işlediğini sana göstereceğim."
+ },
+ {
+  "id": 24,
+  "start": 119.4,
+  "end": 122.4,
+  "de": "Ich nehme dich gerne an die Hand.",
+  "text": "Sana memnuniyetle yol gösteririm."
+ }
+]

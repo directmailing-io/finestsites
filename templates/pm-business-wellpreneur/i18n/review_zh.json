@@ -1,0 +1,170 @@
+[
+  {
+    "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+    "alt": "{{#unless partner_modus=duo}}本页面由<strong>{{vorname}} {{nachname}}</strong>运营，{{#if geschlecht=weiblich}}PM-International（FitLine®）的独立销售伙伴{{/if}}{{#if geschlecht=maennlich}}PM-International（FitLine®）的独立销售伙伴{{/if}}。这不是 PM-International AG 的官方网站。{{/unless}}{{#if partner_modus=duo}}本页面由<strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>运营，PM-International（FitLine®）的独立销售伙伴。这不是PM-International AG的官方网站。{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}本页面由<strong>{{vorname}} {{nachname}}</strong>运营，{{#if geschlecht=weiblich}}她是PM-International（FitLine®）的独立销售伙伴{{/if}}{{#if geschlecht=maennlich}}他是PM-International（FitLine®）的独立销售伙伴{{/if}}。本页面不是PM-International AG的官方网站。{{/unless}}{{#if partner_modus=duo}}本页面由<strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>运营，他们是PM-International（FitLine®）的独立销售伙伴。本页面不是PM-International AG的官方网站。{{/if}}",
+    "grund": "Apposition hängt grammatisch in der Luft (Calque); Leerzeichen um Latein uneinheitlich; Wortlaut an Fußzeile angeglichen"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}PM-International（FitLine®）独立经销伙伴{{/if}}{{#if geschlecht=maennlich}}PM-International（FitLine®）独立经销伙伴{{/if}}{{/unless}}{{#if partner_modus=duo}}PM-International（FitLine®）独立经销伙伴{{/if}}。本页面不是PM-International AG的官方网站。",
+    "neu": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}PM-International（FitLine®）独立销售伙伴{{/if}}{{#if geschlecht=maennlich}}PM-International（FitLine®）独立销售伙伴{{/if}}{{/unless}}{{#if partner_modus=duo}}PM-International（FitLine®）独立销售伙伴{{/if}}。本页面不是PM-International AG的官方网站。",
+    "grund": "Begriff uneinheitlich (经销伙伴 vs. 销售伙伴 im Seitenkopf)"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "做好事，也长期受益",
+    "neu": "帮到别人，也让自己长期受益",
+    "grund": "做好事 klingt nach Wohltätigkeit; wie Meta-Titel formulieren"
+  },
+  {
+    "de": "100% Unterstützung von",
+    "alt": "100%支持，来自",
+    "neu": "100%支持来自",
+    "grund": "Komma vor dem Logo ist deutscher Satzbau"
+  },
+  {
+    "de": "Visionäre",
+    "alt": "有愿景的人",
+    "neu": "有远见的人",
+    "grund": "有愿景的人 klingt unnatürlich; einheitlich mit alt-Text"
+  },
+  {
+    "de": "Paare",
+    "alt": "伴侣",
+    "neu": "夫妻档",
+    "grund": "伴侣 meint eine Einzelperson; 夫妻档 = Paare, die gemeinsam etwas machen"
+  },
+  {
+    "de": "Kundengelder einziehen und auszahlen",
+    "alt": "收取并支付客户款项",
+    "neu": "收取货款并结算佣金",
+    "grund": "Sinnfehler: 支付客户款项 = Geld an Kunden zahlen"
+  },
+  {
+    "de": "Deine Provisionen berechnen und überweisen",
+    "alt": "计算并转账你的佣金",
+    "neu": "计算并发放你的佣金",
+    "grund": "转账你的佣金 ist unidiomatisch"
+  },
+  {
+    "de": "Business-Akademie, PowerDays und Reisen organisieren",
+    "alt": "组织Business-Akademie、PowerDays和旅行",
+    "neu": "组织商业学院培训、PowerDays活动和奖励旅行",
+    "grund": "Deutsches Wort „Business-Akademie“ unübersetzt"
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "适合日常使用的健康生活和养护产品。从维生素饮品到免疫力支持产品。所有产品都按同样严格的标准生产。这里先拿我们的核心产品PowerCocktail做例子给你看。",
+    "neu": "适合日常使用的健康养生产品。从维生素饮品到免疫力支持产品。所有产品都按同样严格的标准生产。这里先拿我们的核心产品PowerCocktail做例子给你看。",
+    "grund": "养护产品 passt nicht (Haut-/Autopflege)"
+  },
+  {
+    "de": "1.000+ Profisportler",
+    "alt": "1.000+名职业运动员",
+    "neu": "1000+名职业运动员",
+    "grund": "Deutscher Tausenderpunkt; im Chinesischen 1000 oder 1,000"
+  },
+  {
+    "de": "Natürliche Rohstoffe, keine Ersatz-Chemie",
+    "alt": "天然原料，不用替代化学成分",
+    "neu": "天然原料，不用化学合成替代品",
+    "grund": "替代化学成分 ist holprig"
+  },
+  {
+    "de": "Kein Risiko. <span class=\"accent\">Für keinen.</span>",
+    "alt": "没有风险。<span class=\"accent\">对谁都一样。</span>",
+    "neu": "没有风险。<span class=\"accent\">对谁都没有。</span>",
+    "grund": "对谁都一样 = „für alle gleich“, Sinn verschoben"
+  },
+  {
+    "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+    "alt": "可以。但那你买到的就是别的东西了。普通维生素通常是单独配比的。我们的产品是相互搭配设计的，并且在德国按制药标准生产。这就像速溶咖啡和一杯真正的意式浓缩咖啡之间的区别。",
+    "neu": "可以。但那你买到的就是别的东西了。普通维生素通常是单一成分。我们的产品是相互搭配设计的，并且在德国按制药标准生产。这就像速溶咖啡和一杯真正的意式浓缩咖啡之间的区别。",
+    "grund": "单独配比 unklar; gemeint sind Einzelpräparate"
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "不用。你想什么时候订、订多少，都由你决定。不过有一个自动配送系统，每次下单都能帮你省钱。大多数人是自愿选择的，因为他们本来就在用这些产品，也想省钱。不是因为必须，而是因为他们愿意。没有最低期限，随时可以调整或取消。没有风险。",
+    "neu": "不用。你想什么时候订、订多少，都由你决定。不过有一个自动配送系统，每次下单都能帮你省钱。大多数人是自愿选择的，因为他们本来就在用这些产品，也想省钱。不是因为必须，而是因为他们愿意。没有最低合约期，随时可以调整或取消。没有风险。",
+    "grund": "最低期限 unvollständig/unidiomatisch"
+  },
+  {
+    "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+    "alt": "那就停。没有合同，没有解约期，没有未结账单，也没有争论。我们这里的原则是：谁都可以做，但没人必须做。",
+    "neu": "那就停。没有合同，没有解约通知期，没有未结账单，也不用多费口舌。我们这里的原则是：谁都可以做，但没人必须做。",
+    "grund": "Kündigungsfrist = 通知期; 没有争论 klingt nach Streit"
+  },
+  {
+    "de": "Ein bisschen was nebenbei",
+    "alt": "顺便有点收入",
+    "neu": "业余赚点外快",
+    "grund": "顺便有点收入 holprig; Antwortoption umgangssprachlich"
+  },
+  {
+    "de": "Ich bin einverstanden, dass meine Angaben zur Kontaktaufnahme verwendet werden. Sie werden nicht weitergegeben. <a href=\"/datenschutz\" target=\"_blank\">Datenschutz</a>",
+    "alt": "我同意，我提供的信息可用于联系我，不会透露给他人。<a href=\"/datenschutz\" target=\"_blank\">隐私政策</a>",
+    "neu": "我同意将我提供的信息用于联系我，这些信息不会提供给第三方。<a href=\"/datenschutz\" target=\"_blank\">隐私政策</a>",
+    "grund": "Deutscher Satzbau (我同意，我提供的…) ungrammatisch"
+  },
+  {
+    "de": "Wird gesendet …",
+    "alt": "正在发送…",
+    "neu": "正在发送……",
+    "grund": "Chinesische Auslassungspunkte sind ……"
+  },
+  {
+    "de": "Kontakt aufnehmen",
+    "alt": "取得联系",
+    "neu": "联系我",
+    "grund": "取得联系 steif für einen Button"
+  },
+  {
+    "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "我们使用Cookie，是为了给你更好的体验。技术必要的Cookie始终启用——它们能让网站正常运行。其他Cookie（比如统计）只有在你同意后才会使用。更多信息见我们的<a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">隐私政策</a>。",
+    "neu": "我们使用Cookie，是为了给你更好的体验。必要Cookie始终启用——它们能让网站正常运行。其他Cookie（比如统计）只有在你同意后才会使用。更多信息见我们的<a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">隐私政策</a>。",
+    "grund": "技术必要的 ist Lehnübersetzung; üblich: 必要Cookie"
+  },
+  {
+    "de": "Technisch notwendig",
+    "alt": "技术必要",
+    "neu": "必要Cookie",
+    "grund": "技术必要 unidiomatisch als Kategorie"
+  },
+  {
+    "de": "Technisch notwendig (immer aktiv)",
+    "alt": "技术必要（始终开启）",
+    "neu": "必要Cookie（始终开启）",
+    "grund": "wie oben"
+  },
+  {
+    "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+    "alt": "请确认隐私提示。",
+    "neu": "请勾选同意隐私声明。",
+    "grund": "确认隐私提示 unklar; es geht um die Checkbox"
+  },
+  {
+    "de": "Bescheid geben",
+    "alt": "告诉我",
+    "neu": "提交",
+    "grund": "告诉我 passt im Duo-Modus nicht (zwei Personen); neutral formulieren"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{vorname}} hat deine Nachricht und meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} haben deine Nachricht und melden sich{{/if}} bei dir, meistens noch am selben Tag. Willkommen im Team!",
+    "alt": "{{#unless partner_modus=duo}}{{vorname}}已经收到你的消息，{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}已经收到你的消息，{{/if}}会联系你，一般当天就会。欢迎加入团队！",
+    "neu": "{{#unless partner_modus=duo}}{{vorname}}已经收到你的消息，{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}已经收到你的消息，{{/if}}一般当天就会联系你。欢迎加入团队！",
+    "grund": "会联系你，一般当天就会 abgehackt/unnatürlich"
+  },
+  {
+    "de": "Land suchen…",
+    "alt": "搜索国家/地区…",
+    "neu": "搜索国家/地区……",
+    "grund": "Chinesische Auslassungspunkte sind ……"
+  },
+  {
+    "de": "Und noch viel mehr …",
+    "alt": "还有更多…",
+    "neu": "还有更多……",
+    "grund": "Chinesische Auslassungspunkte sind ……"
+  }
+]

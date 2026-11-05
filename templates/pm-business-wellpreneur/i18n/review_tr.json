@@ -1,0 +1,140 @@
+[
+  {
+    "de": "{{#unless partner_modus=duo}}Zeig{{/unless}}{{#if partner_modus=duo}}Zeigt{{/if}} mir, wie das läuft",
+    "alt": "{{#unless partner_modus=duo}}Göster{{/unless}}{{#if partner_modus=duo}}Gösterin{{/if}} bana, nasıl oluyor",
+    "neu": "{{#unless partner_modus=duo}}Nasıl olduğunu göster{{/unless}}{{#if partner_modus=duo}}Nasıl olduğunu gösterin{{/if}}",
+    "grund": "Deutsche Satzstellung übernommen, Button wirkt holprig"
+  },
+  {
+    "de": "100% Unterstützung von",
+    "alt": "100% destek",
+    "neu": "%100 destek",
+    "grund": "Im Türkischen steht das Prozentzeichen vor der Zahl"
+  },
+  {
+    "de": "30 Tage ausprobieren. Passt nicht? 100 % Geld zurück. Ohne Papierkram.",
+    "alt": "30 gün dene. Sana uymadı mı? 100 % para iadesi. Evrak işi yok.",
+    "neu": "30 gün dene. Sana uymadı mı? %100 para iadesi. Evrak işi yok.",
+    "grund": "Prozentzeichen vor die Zahl"
+  },
+  {
+    "de": "Kundengelder einziehen und auszahlen",
+    "alt": "Müşteri ödemelerini tahsil edip ödemek",
+    "neu": "Ödemeleri tahsil edip dağıtmak",
+    "grund": "„tahsil edip ödemek“ ist unklar/doppelt"
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "Günlük hayat için wellness ve sağlık ürünleri. Vitamin kokteylinden bağışıklık desteğine kadar. Hepsi aynı sıkı standartlara göre üretiliyor. Burada örnek olarak işin kalbini görüyorsun: PowerCocktail.",
+    "neu": "Günlük hayat için wellness ve sağlık ürünleri. Vitamin kokteylinden bağışıklık desteğine kadar. Hepsi aynı sıkı standartlara göre üretiliyor. Burada örnek olarak en önemli ürünümüzü görüyorsun: PowerCocktail.",
+    "grund": "„işin kalbi“ heißt „Kern der Sache“, nicht „unser Herzstück“"
+  },
+  {
+    "de": "Transparent in Speyer, geprüfte statt billige Rohstoffe",
+    "alt": "Speyer’de şeffaf üretim, ucuz değil test edilmiş hammaddeler",
+    "neu": "Speyer’de şeffaf üretim, ucuz yerine test edilmiş hammaddeler",
+    "grund": "„ucuz değil test edilmiş“ grammatisch holprig/missverständlich"
+  },
+  {
+    "de": "Natürliche Rohstoffe, keine Ersatz-Chemie",
+    "alt": "Doğal hammaddeler, yapay ikame kimyası yok",
+    "neu": "Doğal hammaddeler, yapay katkı yok",
+    "grund": "„yapay ikame kimyası“ ist Übersetzungsdeutsch"
+  },
+  {
+    "de": "Wumms im Alltag statt Nachmittagstief",
+    "alt": "Öğleden sonra düşüşü yerine gün içinde enerji",
+    "neu": "Öğleden sonra çökmek yerine gün boyu enerji",
+    "grund": "„öğleden sonra düşüşü“ ist kein gängiger Ausdruck"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg şirketi 1993’te kurdu. Hissedar yok, ensesinde duran yatırımcılar yok. Sadece ailesi ve 30 yılı aşkın süredir öğrenmeye devam eden bir ekip var. Ortaya ne çıktığını burada görüyorsun:",
+    "neu": "Rolf Sorg şirketi 1993’te kurdu. Hissedar yok, ensesinde soluyan yatırımcılar yok. Sadece ailesi ve 30 yılı aşkın süredir öğrenmeye devam eden bir ekip var. Ortaya ne çıktığını burada görüyorsun:",
+    "grund": "Redewendung lautet „ensesinde solumak“"
+  },
+  {
+    "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+    "alt": "Hayır. Saadet zincirinde para yatıran yeni kişilerden kazanırsın. Bizde ise ancak ürünler satın alınıp kullanılmaya devam ederse kazanırsın. Sipariş yoksa para da yok. Aradaki fark Alman yasalarında net şekilde düzenlenmiş durumda (bkz. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Ek No. 14</a>) ve <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Alman Doğrudan Satış Birliği</a> de bunu böyle tanımlıyor. Ayrıca şirket 1993’ten beri var ve 4 milyar ciroya ulaştı. Saadet zincirleri birkaç yıl sonra çöker. Biz 30 yılı geçtik.",
+    "neu": "Hayır. Saadet zincirinde para, sisteme para yatıran yeni kişilerden kazanılır. Bizde ise ancak ürünler satın alınıp kullanılmaya devam ederse kazanırsın. Sipariş yoksa para da yok. Aradaki fark Alman yasalarında net şekilde düzenlenmiş durumda (bkz. <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Ek No. 14</a>) ve <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Alman Doğrudan Satış Birliği</a> de bunu böyle tanımlıyor. Ayrıca şirket 1993’ten beri var ve 4 milyar ciroya ulaştı. Saadet zincirleri birkaç yıl sonra çöker. Biz 30 yılı geçtik.",
+    "grund": "Allgemeines „man“ als „sen“ übersetzt: klingt, als würde der Leser am Schneeballsystem verdienen"
+  },
+  {
+    "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+    "alt": "Kesinlikle hayır. Ben sadece gerçekten uygun olduğunu düşündüğüm yerde tavsiye ederim. Diğeri zaten tuhaf olur. Çevrenden kimseye bahsetmek istemiyorsan, sosyal medya ya da kendi topluluğun üzerinden başka bir sürü yol var. Bunu sana nasıl uyuyorsa öyle yapıyoruz.",
+    "neu": "Kesinlikle hayır. Ben sadece gerçekten uygun olduğunu düşündüğüm yerde tavsiye ederim. Aksi zaten ayıp olurdu. Çevrenden kimseye bahsetmek istemiyorsan, sosyal medya ya da kendi topluluğun üzerinden başka bir sürü yol var. Bunu sana nasıl uyuyorsa öyle yapıyoruz.",
+    "grund": "„Diğeri zaten tuhaf olur“ ist wörtlich aus dem Deutschen"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "Daha iyi. Çünkü burada kimse satış yapmıyor. Sadece sana neyin iyi geldiğini anlatıyorsun. Duymak isteyen dinler. İstemeyen de dinlemez, olur biter. Satış konuşması yok, teknik yok. İyi bir restoranı tavsiye eder gibi bir tavsiye sadece.",
+    "neu": "Çok iyi. Çünkü burada kimse satış yapmıyor. Sadece sana neyin iyi geldiğini anlatıyorsun. Duymak isteyen dinler. İstemeyen de dinlemez, olur biter. Satış konuşması yok, teknik yok. İyi bir restoranı nasıl tavsiye ediyorsan öyle, sadece bir tavsiye.",
+    "grund": "Letzter Satz holprig („tavsiye eder gibi bir tavsiye“), „Daha iyi“ klingt nach Komparativ"
+  },
+  {
+    "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+    "alt": "Bunu daha ucuza kozmetik marketten alamaz mıyım?",
+    "neu": "Bunu marketten ya da eczaneden daha ucuza alamaz mıyım?",
+    "grund": "„kozmetik market“ sagt man nicht; Vitamine kauft man in TR im Markt/in der Apotheke"
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "Hayır. Ne zaman ve ne kadar istersen o zaman sipariş verirsin. Ama her siparişte tasarruf etmeni sağlayan otomatik bir teslimat sistemi var. Çoğu kişi bunu gönüllü olarak seçiyor, çünkü ürünleri zaten kullanıyor ve tasarruf etmek istiyor. Mecbur oldukları için değil, istedikleri için. Minimum süre yok, istediğin zaman değiştirebilir ya da iptal edebilirsin. Risk yok.",
+    "neu": "Hayır. İstediğin zaman, istediğin kadar sipariş verirsin. Ama her siparişte tasarruf etmeni sağlayan otomatik bir teslimat sistemi var. Çoğu kişi bunu gönüllü olarak seçiyor, çünkü ürünleri zaten kullanıyor ve tasarruf etmek istiyor. Mecbur oldukları için değil, istedikleri için. Minimum süre yok, istediğin zaman değiştirebilir ya da iptal edebilirsin. Risk yok.",
+    "grund": "Erster Satz ist eine deutsche Satzbau-Kopie"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "Başta kendi tavsiye ettiklerinden kazanırsın. Zamanla senin yaptığının aynısını yapan başka insanları da yanına alabilirsin. Ekibinin ortaya çıkardığı işten sen de pay alırsın. Onların üzerinden kazandığın için değil, onları kurmaya ve eğitmeye yardımcı olduğun için. Sporcularının başarısından belli bir yüzde alan antrenör gibi.",
+    "neu": "Başta kendi tavsiye ettiklerinden kazanırsın. Zamanla senin yaptığının aynısını yapan başka insanları da yanına alabilirsin. Ekibinin ortaya çıkardığı işten sen de pay alırsın. Onların üzerinden kazandığın için değil, onları yetiştirip eğittiğin için. Sporcularının başarısından belli bir yüzde alan antrenör gibi.",
+    "grund": "„onları kurmak“ heißt „sie gründen“, gemeint ist aufbauen/fördern"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "Bazılarının burada gerçekten büyümesinin nedeni bu: Zamanla kendileriyle birlikte büyüyen kendi ekiplerini kuruyorlar. Ve içine koyduğun her şey sana geri dönüyor. Bir patrona değil.",
+    "neu": "Bazılarının burada gerçekten büyümesinin nedeni bu: Zamanla kendileriyle birlikte büyüyen kendi ekiplerini kuruyorlar. Ve harcadığın her emeğin karşılığı sana gelir. Bir patrona değil.",
+    "grund": "„içine koyduğun her şey“ ist wörtlich aus „reinstecken“"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "Az biraz ekstra için: ayda birkaç saat. Gerçek bir ek gelir için: haftada 4 ila 6 saat. Gerçekten büyütmek için: daha fazla. İlk görüşmede günlük hayatına neyin uyduğuna ve senin neyi hayal edebileceğine birlikte bakıyoruz.",
+    "neu": "Biraz ekstra para için: ayda birkaç saat. Gerçek bir ek gelir için: haftada 4 ila 6 saat. Gerçekten büyütmek için: daha fazla. İlk görüşmede günlük hayatına neyin uyduğuna ve sana neyin uygun geldiğine birlikte bakıyoruz.",
+    "grund": "„Az biraz“ falsch; „neyi hayal edebileceğine“ ist Calque von „was du dir vorstellen kannst“"
+  },
+  {
+    "de": "Schritt 1 von 3",
+    "alt": "3 adımdan 1.",
+    "neu": "Adım 1/3",
+    "grund": "Ordinal ohne Suffix falsch und uneinheitlich mit Schritt 2/3"
+  },
+  {
+    "de": "Schritt 2 von 3",
+    "alt": "3 adımdan 2.’si",
+    "neu": "Adım 2/3",
+    "grund": "Einheitlich und kürzer"
+  },
+  {
+    "de": "Schritt 3 von 3",
+    "alt": "3 adımdan 3.’sü",
+    "neu": "Adım 3/3",
+    "grund": "Einheitlich und kürzer"
+  },
+  {
+    "de": "Ein bisschen was nebenbei",
+    "alt": "Yanına küçük bir ek gelir",
+    "neu": "Biraz ek gelir",
+    "grund": "„Yanına“ ergibt hier keinen Sinn"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if partner_modus=duo}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+    "alt": "PM-International (FitLine®) {{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}bağımsız satış partneri{{/if}}{{#if geschlecht=maennlich}}bağımsız satış partneri{{/if}}{{/unless}}{{#if partner_modus=duo}}bağımsız satış partnerleri{{/if}}. Bu sayfa PM-International AG’nin resmi web sitesi değildir.",
+    "neu": "PM-International (FitLine®) {{#unless partner_modus=duo}}{{#if geschlecht=weiblich}}bağımsız satış ortağı{{/if}}{{#if geschlecht=maennlich}}bağımsız satış ortağı{{/if}}{{/unless}}{{#if partner_modus=duo}}bağımsız satış ortakları{{/if}}. Bu sayfa PM-International AG’nin resmi web sitesi değildir.",
+    "grund": "Einheitlich mit dem Kopfhinweis („satış ortağı“ statt „satış partneri“)"
+  },
+  {
+    "de": "Steht in der Bestätigungs-Mail von PM, geht auch später.",
+    "alt": "PM’in onay e-postasında yazar, daha sonra da olur.",
+    "neu": "PM’in onay e-postasında yazar, sonra da girebilirsin.",
+    "grund": "„daha sonra da olur“ unklar, was später geht"
+  }
+]

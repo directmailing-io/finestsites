@@ -1,0 +1,80 @@
+[
+  {
+    "de": "Über {{vorname}}",
+    "alt": "O {{vorname}}",
+    "neu": "Ko je {{vorname}}",
+    "grund": "Nach „O“ braucht es den Lokativ (O Marku), Platzhalter ist aber Nominativ; „Ko je …“ funktioniert mit jedem Namen"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Radi nešto dobro i dugoročno profitiraj",
+    "neu": "Čini dobro i zarađuj dugoročno",
+    "grund": "„Radi nešto dobro … profitiraj“ klingt nach Übersetzung; natürlich: „Čini dobro“"
+  },
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "Upoznaješ <strong>visokokvalitetne wellness i zdravstvene proizvode</strong>, koristiš ih <strong>lično</strong> i deliš svoje iskustvo sa drugima. Ko ih proba i <strong>nastavi da poručuje</strong>, doprinosi tome da <strong>svakog meseca nešto legne na tvoj račun</strong>.",
+    "neu": "Upoznaješ <strong>visokokvalitetne velnes i zdravstvene proizvode</strong>, koristiš ih <strong>lično</strong> i deliš svoje iskustvo sa drugima. Kad ih neko proba i <strong>nastavi da poručuje</strong>, <strong>svakog meseca ti nešto legne na račun</strong>.",
+    "grund": "„doprinosi tome da“ ist steifer Calque von „sorgt dafür“; „wellness“ einheitlich als „velnes“ wie im Produktabschnitt"
+  },
+  {
+    "de": "Selbstständige",
+    "alt": "Samostalci",
+    "neu": "Preduzetnici",
+    "grund": "„Samostalci“ ist im Serbischen unüblich; gängig ist „Preduzetnici“"
+  },
+  {
+    "de": "Und alle anderen, die Bock haben.",
+    "alt": "I svi ostali koji su za.",
+    "neu": "I svi ostali koji imaju volje.",
+    "grund": "„koji su za“ wirkt abgebrochen; „imaju volje“ trifft „Bock haben“"
+  },
+  {
+    "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+    "alt": "Od firme. Ne od tebe. Ti s tim nemaš ništa.",
+    "neu": "Od firme. Ne od tebe. Ti s tim nemaš nikakve veze.",
+    "grund": "„Ti s tim nemaš ništa“ ist unvollständig/falsch; korrekt „nemaš nikakve veze“"
+  },
+  {
+    "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+    "alt": "Tvoja provizija automatski leže na račun. Svakog meseca, dokle god se poručuje.",
+    "neu": "Tvoja provizija automatski stiže na račun. Svakog meseca, dokle god se poručuje.",
+    "grund": "Grammatikfehler: „leže“ ist 3. Pl. von „ležati“; richtig „stiže“ (oder „legne“)"
+  },
+  {
+    "de": "Transparent in Speyer, geprüfte statt billige Rohstoffe",
+    "alt": "Transparentno proizvedeno u Speyeru, od proverenih umesto jeftinih sirovina",
+    "neu": "Transparentno proizvedeno u Špajeru, od proverenih umesto jeftinih sirovina",
+    "grund": "Ortsnamen werden im Serbischen transkribiert: Speyer = Špajer"
+  },
+  {
+    "de": "Speyer, geprüfte Rohstoffe",
+    "alt": "Speyer, proverene sirovine",
+    "neu": "Špajer, proverene sirovine",
+    "grund": "Ortsnamen werden im Serbischen transkribiert: Speyer = Špajer"
+  },
+  {
+    "de": "Natürliche Rohstoffe, keine Ersatz-Chemie",
+    "alt": "Prirodne sirovine, bez zamenske hemije",
+    "neu": "Prirodne sirovine, bez veštačkih zamena",
+    "grund": "„zamenska hemija“ ist kein serbischer Ausdruck"
+  },
+  {
+    "de": "30 Tage ausprobieren. Passt nicht? 100 % Geld zurück. Ohne Papierkram.",
+    "alt": "Probaj 30 dana. Ne odgovara? 100 % novca nazad. Bez papirologije.",
+    "neu": "Probaj 30 dana. Ne odgovara? Dobijaš 100 % novca nazad. Bez papirologije.",
+    "grund": "„100 % novca nazad.“ ohne Verb ist Calque des deutschen Telegrammstils"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg je osnovao firmu 1993. Nema akcionara, nema investitora za vratom. Samo njegova porodica i tim koji već preko 30 godina uči i napreduje. Evo do čega to dovodi:",
+    "neu": "Rolf Sorg je osnovao firmu 1993. godine. Nema akcionara, nema investitora za vratom. Samo njegova porodica i tim koji već preko 30 godina uči i napreduje. Evo do čega je to dovelo:",
+    "grund": "Jahreszahl braucht Ordinalpunkt + „godine“ (sonst wirkt der Punkt als Satzende); „dovelo“ passt zur Vergangenheit"
+  },
+  {
+    "de": "Ganz egal wie's der Wirtschaft gerade geht: Auf <strong>Gesundheit, Fitness und Wohlbefinden</strong> will niemand verzichten. <strong>Die Nachfrage steigt jedes Jahr</strong>, und wir wachsen mit. <strong>Hunderttausende Menschen weltweit</strong> sind längst dabei. <strong>Und jetzt bist du dran.</strong>",
+    "alt": "Bez obzira na to kako ekonomija trenutno stoji: niko ne želi da se odrekne <strong>zdravlja, fitnesa i dobrog osećaja</strong>. <strong>Potražnja raste svake godine</strong>, a mi rastemo zajedno s njom. <strong>Stotine hiljada ljudi širom sveta</strong> odavno su tu. <strong>A sada si ti na redu.</strong>",
+    "neu": "Bez obzira na to kako ekonomija trenutno stoji: niko ne želi da se odrekne <strong>zdravlja, fitnesa i blagostanja</strong>. <strong>Potražnja raste svake godine</strong>, a mi rastemo zajedno s njom. <strong>Stotine hiljada ljudi širom sveta</strong> odavno su tu. <strong>A sada si ti na redu.</strong>",
+    "grund": "„dobar osećaj“ trifft „Wohlbefinden“ nicht; richtig „blagostanje“"
+  }
+]

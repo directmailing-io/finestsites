@@ -1597,7 +1597,7 @@ function legalHead(title: string, d: LegalDesign, domain = ''): string {
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>${title}</title>
-<script>(function(){var SUP=${JSON.stringify(langs)};var l;try{l=localStorage.getItem('fs-lang')}catch(e){}if(SUP.indexOf(l)<0){l='de';var c=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'de']);for(var i=0;i<c.length;i++){var x=String(c[i]||'').toLowerCase().split('-')[0];if(SUP.indexOf(x)>=0){l=x;break}}}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l)})();</script>
+<script>(function(){var SUP=${JSON.stringify(langs)};var l;try{l=localStorage.getItem('fs-lang')}catch(e){}if(SUP.indexOf(l)<0){l='de';var c=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'de']);for(var i=0;i<c.length;i++){var x=String(c[i]||'').toLowerCase().split('-')[0];if(SUP.indexOf(x)>=0){l=x;break}}}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',({zh:'zh-Hans',sr:'sr-Latn'})[l]||l)})();</script>
 ${fontLink}
 ${legalStyles(d)}
 </head>`
@@ -1607,10 +1607,15 @@ ${legalStyles(d)}
 // Templates mit mehr als DE/EN: Impressum und Datenschutz bekommen je Sprache einen Block
 // (Übersetzungen: src/legal-i18n/translations.json, Quelle de.json, Skript translate.py).
 const MULTI_LANG_DOMAINS = new Set(['dailyoptimal.de', 'wellpreneur.io'])
-const LEGAL_LANGS = ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'] as const
+const LEGAL_LANGS = ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi', 'tr', 'sr', 'es', 'zh', 'ko'] as const
 type LegalLang = typeof LEGAL_LANGS[number]
 const LEGAL_I18N = LEGAL_I18N_JSON as Record<string, Record<string, string>>
-const LANG_NAMES: Record<LegalLang, string> = { de: 'Deutsch', en: 'English', it: 'Italiano', ru: 'Русский', uk: 'Українська', pl: 'Polski', bg: 'Български', hi: 'हिन्दी' }
+const LANG_NAMES: Record<LegalLang, string> = { de: 'Deutsch', en: 'English', it: 'Italiano', ru: 'Русский', uk: 'Українська', pl: 'Polski', bg: 'Български', hi: 'हिन्दी', tr: 'Türkçe', sr: 'Srpski', es: 'Español', zh: '中文', ko: '한국어' }
+// Welche Sprachen ein Template tatsächlich hat (Dailyoptimal bislang 8, Wellpreneur seit 11/2026 13)
+const LEGAL_LANGS_BY_DOMAIN: Record<string, readonly LegalLang[]> = {
+  'dailyoptimal.de': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'],
+  'wellpreneur.io': LEGAL_LANGS,
+}
 const FLAG_PATHS: Record<LegalLang, string> = {
   de: '<rect width="20" height="7" fill="#000"/><rect y="7" width="20" height="6" fill="#D00"/><rect y="13" width="20" height="7" fill="#FFCE00"/>',
   en: '<rect width="20" height="20" fill="#012169"/><path d="M0 0L20 20M20 0L0 20" stroke="#fff" stroke-width="4"/><path d="M0 0L20 20M20 0L0 20" stroke="#C8102E" stroke-width="2"/><path d="M10 0V20M0 10H20" stroke="#fff" stroke-width="6"/><path d="M10 0V20M0 10H20" stroke="#C8102E" stroke-width="3"/>',
@@ -1620,18 +1625,23 @@ const FLAG_PATHS: Record<LegalLang, string> = {
   pl: '<rect width="20" height="10" fill="#fff"/><rect y="10" width="20" height="10" fill="#DC143C"/>',
   bg: '<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="6" fill="#00966E"/><rect y="13" width="20" height="7" fill="#D62612"/>',
   hi: '<rect width="20" height="7" fill="#FF9933"/><rect y="7" width="20" height="6" fill="#fff"/><rect y="13" width="20" height="7" fill="#138808"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/>',
+  tr: '<rect width="20" height="20" fill="#E30A17"/><circle cx="8" cy="10" r="5" fill="#fff"/><circle cx="9.2" cy="10" r="4" fill="#E30A17"/><path d="M13.9 7.9l.7 1.8 1.9.1-1.5 1.2.5 1.9-1.6-1.1-1.6 1.1.5-1.9-1.5-1.2 1.9-.1z" fill="#fff"/>',
+  sr: '<rect width="20" height="7" fill="#C6363C"/><rect y="7" width="20" height="6" fill="#0C4076"/><rect y="13" width="20" height="7" fill="#fff"/>',
+  es: '<rect width="20" height="20" fill="#AA151B"/><rect y="5" width="20" height="10" fill="#F1BF00"/>',
+  zh: '<rect width="20" height="20" fill="#DE2910"/><path d="M6 3.4l1.2 3.4h3.6L7.9 8.9l1.1 3.4L6 10.2l-3 2.1 1.1-3.4-2.9-2.1h3.6z" fill="#FFDE00"/><circle cx="11.6" cy="3.6" r="1" fill="#FFDE00"/><circle cx="13.6" cy="6" r="1" fill="#FFDE00"/><circle cx="13.6" cy="9" r="1" fill="#FFDE00"/><circle cx="11.6" cy="11.4" r="1" fill="#FFDE00"/>',
+  ko: '<rect width="20" height="20" fill="#fff"/><path d="M5 10A5 5 0 0 1 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#CD2E3A"/><path d="M5 10A5 5 0 0 0 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#0047A0"/>'
 }
 const flagSvg = (l: LegalLang) => `<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">${FLAG_PATHS[l]}</svg></span>`
 // Nur Sprachen anbieten, für die eine Übersetzung vorliegt (sonst wäre die Seite leer)
 const legalLangsFor = (domain: string): LegalLang[] =>
-  MULTI_LANG_DOMAINS.has(domain) ? LEGAL_LANGS.filter(l => l === 'de' || l === 'en' || !!LEGAL_I18N[l]?.impressum) : ['de', 'en']
+  MULTI_LANG_DOMAINS.has(domain) ? (LEGAL_LANGS_BY_DOMAIN[domain] ?? LEGAL_LANGS).filter(l => l === 'de' || l === 'en' || !!LEGAL_I18N[l]?.impressum) : ['de', 'en']
 /** Übersetzter Rechtstext-Chunk; fehlt er, deutscher Text. */
 const legalChunk = (lang: string, key: string, de: string) => LEGAL_I18N[lang]?.[key] ?? de
 /** Blöcke der Zusatzsprachen (it, ru, …) für Impressum/Datenschutz aus den Übersetzungen. */
 function extraLegalBlocks(domain: string, page: 'impressum' | 'datenschutz', tracking?: PublicTrackingConfig, chat = false): string {
   if (!MULTI_LANG_DOMAINS.has(domain)) return ''
   let out = ''
-  for (const lang of LEGAL_LANGS) {
+  for (const lang of legalLangsFor(domain)) {
     if (lang === 'de' || lang === 'en') continue
     const t = LEGAL_I18N[lang]
     if (!t?.[page]) continue
@@ -1684,7 +1694,7 @@ function legalTopbarHtml(domain = ''): string {
 function legalLangScript(titleDe: string, titleEn: string, domain = '', key: 'title_imprint' | 'title_privacy' = 'title_imprint'): string {
   const titles: Record<string, string> = { de: titleDe, en: titleEn }
   for (const l of legalLangsFor(domain)) if (l !== 'de' && l !== 'en') titles[l] = legalChunk(l, key, titleDe)
-  return `<script>var FS_TITLES=${JSON.stringify(titles)};function fsSetLang(l){try{localStorage.setItem('fs-lang',l)}catch(e){}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',l);document.title=FS_TITLES[l]||FS_TITLES.de}
+  return `<script>var FS_TITLES=${JSON.stringify(titles)};function fsSetLang(l){try{localStorage.setItem('fs-lang',l)}catch(e){}document.documentElement.setAttribute('data-lang',l);document.documentElement.setAttribute('lang',({zh:'zh-Hans',sr:'sr-Latn'})[l]||l);document.title=FS_TITLES[l]||FS_TITLES.de}
 (function(){var l=document.documentElement.getAttribute('data-lang');if(l&&FS_TITLES[l])document.title=FS_TITLES[l]})();</script>`
 }
 

@@ -307,7 +307,10 @@
   "Direkt loslegen": "शुरू करें",
   "Gespräch vereinbaren": "कॉल तय करें",
   "Schreib mir auf": "मुझे यहाँ मैसेज करें",
-  "Schreib uns auf": "हमें यहाँ मैसेज करें"
+  "Schreib uns auf": "हमें यहाँ मैसेज करें",
+  "USA": "अमेरिका",
+  "UK": "यूके",
+  "Japan": "जापान"
  },
  "attrs": {
   "Alleinerziehende": "सिंगल पैरेंट्स",

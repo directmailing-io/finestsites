@@ -23,7 +23,7 @@ const TRANSLATED_FIELDS: Array<{ key: string; html: boolean; context: string }> 
   { key: 'intro', html: false, context: 'a short personal intro text on a landing page' },
 ]
 
-const LANG_NAMES: Record<SiteLang, string> = { de: 'German', en: 'English', it: 'Italian', ru: 'Russian', uk: 'Ukrainian', pl: 'Polish', bg: 'Bulgarian', hi: 'Hindi' }
+const LANG_NAMES: Record<SiteLang, string> = { de: 'German', en: 'English', it: 'Italian', ru: 'Russian', uk: 'Ukrainian', pl: 'Polish', bg: 'Bulgarian', hi: 'Hindi', tr: 'Turkish', sr: 'Serbian (Latin script)', es: 'Spanish', zh: 'Simplified Chinese', ko: 'Korean (polite 해요체)' }
 
 /** Welche Sprachen ein Template zeigt (de ist immer die Quelle). */
 export function templateLangs(templateDomain: string | null | undefined): SiteLang[] {
