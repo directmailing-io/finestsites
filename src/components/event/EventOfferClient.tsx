@@ -7,7 +7,7 @@ import { discountedTotal, formatEur, promoDurationInfo } from '@/lib/billing/pro
 import { useCampaignCountdown } from '@/components/billing/useCampaign'
 import type { EventConfig } from '@/lib/event/config'
 
-export interface DemoSite { domain: string; label: string; url: string; thumbUrl: string | null }
+import type { DemoSite } from './demo-sites'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 

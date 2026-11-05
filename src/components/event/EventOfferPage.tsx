@@ -1,14 +1,9 @@
-import { inArray, and, eq } from 'drizzle-orm'
-import { db } from '@/lib/db'
-import { templates, users, userSites } from '@/lib/db/schema'
 import { getCampaignByCode, toPublicCampaign } from '@/lib/billing/campaign'
 import type { PublicCampaign } from '@/lib/billing/campaign-shared'
 import { getEventConfig } from '@/lib/event/config'
 import { EVENT_CSS } from './event-styles'
-import EventOfferClient, { type DemoSite } from './EventOfferClient'
-
-/** Benutzername des Demo-Kontos, dessen veröffentlichte Seiten als Beispiele dienen */
-const DEMO_USERNAME = 'demo'
+import { loadDemoSites } from './demo-sites'
+import EventOfferClient from './EventOfferClient'
 
 function previewCampaign(code: string): PublicCampaign {
   const endsAt = new Date(Date.now() + 4 * 86400_000 + 12 * 3600_000).toISOString()
@@ -28,22 +23,7 @@ export default async function EventOfferPage({ slug, canceled, preview }: { slug
   // Nur lokal (nie in Produktion): ?vorschau=1 zeigt den laufenden Countdown ohne Stripe-Code
   if (!campaign && preview && process.env.NODE_ENV !== 'production') campaign = previewCampaign(event.code)
 
-  // Die Beispielseiten sind die veröffentlichten Seiten des Demo-Kontos je Vorlage (templates.domain,
-  // z. B. dailyoptimal.de); ihre Vorschaubilder kommen aus user_sites.thumb_url.
-  // Verlinkt wird die Seite des Demo-Kontos (demo.<vorlagen-domain>), nicht die Vorlagen-Domain selbst
-  const demoUrl = (domain: string) => `https://${DEMO_USERNAME}.${domain}`
-  let demoSites: DemoSite[] = event.demoSites.map(s => ({ ...s, url: demoUrl(s.domain), thumbUrl: null }))
-  try {
-    const rows = await db
-      .select({ domain: templates.domain, thumbUrl: userSites.thumbUrl })
-      .from(userSites)
-      .innerJoin(templates, eq(templates.id, userSites.templateId))
-      .innerJoin(users, eq(users.id, userSites.userId))
-      .where(and(eq(users.username, DEMO_USERNAME), inArray(templates.domain, event.demoSites.map(s => s.domain)), eq(userSites.status, 'published')))
-    demoSites = event.demoSites.map(s => ({ ...s, url: demoUrl(s.domain), thumbUrl: rows.find(r => r.domain === s.domain)?.thumbUrl ?? null }))
-  } catch (e) {
-    console.error('[event] demo thumbs:', e instanceof Error ? e.message : e)
-  }
+  const demoSites = await loadDemoSites(event)
 
   return (
     <div className="ev">

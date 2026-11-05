@@ -43,6 +43,8 @@ const PLANNED: Planned[] = [
 
 const HISTORY: Month[] = [
   { label: 'November 2026', entries: [
+    { date: '5. Nov', title: 'Optimalset-Seite in 13 Sprachen', visual: 'flags',
+      text: 'Auch die Optimalset-Seite gibt es jetzt auf Türkisch, Serbisch, Spanisch, Chinesisch und Koreanisch, inklusive Darm-Video mit der vertrauten Sprecherstimme. Der Besucher-Chat spricht auf allen Vorlagen die Sprache der Seite.' },
     { date: '5. Nov', title: 'Business-Seite in 13 Sprachen', visual: 'flags',
       text: 'Die Business-Seite gibt es jetzt zusätzlich auf Türkisch, Serbisch, Spanisch, Chinesisch und Koreanisch, inklusive Video mit der vertrauten Sprecherstimme. Besucher sehen automatisch ihre Sprache; Chinesisch und Koreanisch kommen in landesüblicher Schrift und Typografie.' },
     { date: '3. Nov', title: 'Abo pausieren',

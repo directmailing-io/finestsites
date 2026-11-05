@@ -37,7 +37,7 @@ const CARD_BASE: React.CSSProperties = {
 // Sprachen je Template-Domain (muss zu templateLangs() in src/lib/utils/translate.ts passen).
 // Alle anderen Templates mit Tag „multilingual“ zeigen DE + EN.
 const LANGS_BY_DOMAIN: Record<string, string[]> = {
-  'dailyoptimal.de': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'],
+  'dailyoptimal.de': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi', 'tr', 'sr', 'es', 'zh', 'ko'],
   'wellpreneur.io': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi', 'tr', 'sr', 'es', 'zh', 'ko'],
 }
 const LANG_LABEL: Record<string, string> = {

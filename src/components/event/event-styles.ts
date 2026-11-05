@@ -88,16 +88,47 @@ export const EVENT_CSS = `
   .ev-shots-label { font-size: 14px; color: var(--muted); text-align: center; margin: 4px 0 28px; }
   .ev-foot { text-align: center; font-size: 13px; color: var(--faint); padding: 0 20px 40px; }
   .ev-foot a { color: var(--faint); text-decoration: underline; text-underline-offset: 3px; margin: 0 6px; }
-  .ev-steps { list-style: none; padding: 0; margin: 20px 0 0; counter-reset: s; }
-  .ev-steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
-  .ev-steps li::before { content: counter(s); width: 36px; height: 36px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; grid-row: 1 / span 2; }
-  .ev-steps li.done::before { content: "✓"; background: #166534; }
-  .ev-steps b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 2px; }
-  .ev-steps span { display: block; font-size: 15.5px; color: var(--body); line-height: 1.5; }
-  .ev-steps a { color: var(--ink); font-weight: 600; }
-  .ev-mailbox { background: var(--soft); border: 1px solid var(--line); border-radius: 16px; padding: 14px 18px; margin: 18px 0; text-align: center; }
-  .ev-mailbox small { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
-  .ev-mailbox b { font-size: 19px; color: var(--ink); word-break: break-all; }
+  /* ── Danke-Seite: Abschluss-Moment ─────────────────────────────────────────── */
+  .ev-in { animation: ev-in .7s cubic-bezier(.2,.7,.2,1) both; }
+  .ev-d1 { animation-delay: .15s; }
+  .ev-d2 { animation-delay: .3s; }
+  .ev-d3 { animation-delay: .45s; }
+  @keyframes ev-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  .ev-hero { text-align: center; padding: 6px 0 4px; }
+  .ev-check { width: 76px; height: 76px; display: block; margin: 4px auto 18px; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .ev-check circle { stroke-dasharray: 190; stroke-dashoffset: 190; animation: ev-draw .9s cubic-bezier(.4,0,.2,1) .2s forwards; }
+  .ev-check path { stroke-dasharray: 40; stroke-dashoffset: 40; animation: ev-draw .5s cubic-bezier(.4,0,.2,1) .9s forwards; }
+  @keyframes ev-draw { to { stroke-dashoffset: 0; } }
+  .ev-link { color: var(--ink); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line); }
+  .ev-pack { position: relative; overflow: hidden; background: #111; color: #fff; border-radius: 24px; padding: 22px 20px 20px; margin: 22px 0 10px; }
+  .ev-pack::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--rainbow); }
+  .ev-pack-head .k { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin: 0 0 8px; }
+  .ev-pack-head b { display: block; font-family: 'Plein', var(--font-geist-sans), sans-serif; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; color: #fff; }
+  .ev-pack-head span { display: block; font-size: 14px; color: rgba(255,255,255,.65); margin-top: 4px; }
+  .ev-pack-sites { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0 14px; }
+  .ev-pack-sites figure { margin: 0; }
+  .ev-pack-sites .img { display: block; aspect-ratio: 16 / 11; border-radius: 12px; background: rgba(255,255,255,.08) center top / cover no-repeat; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+  .ev-pack-sites figcaption { font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.85); margin-top: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-pack-text { font-size: 14.5px; color: rgba(255,255,255,.72); line-height: 1.5; margin: 0; border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; }
+  .ev-journey { list-style: none; padding: 0; margin: 22px 0 0; counter-reset: s; }
+  .ev-journey li { counter-increment: s; position: relative; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; padding: 18px 12px 22px; margin: 0 -12px; }
+  .ev-journey li::before { content: counter(s); width: 36px; height: 36px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; grid-row: 1 / span 9; box-shadow: 0 0 0 6px #fff; z-index: 1; }
+  .ev-journey li::after { content: ""; position: absolute; left: 29px; top: 18px; bottom: -4px; width: 2px; background: var(--line); }
+  .ev-journey li:last-child::after { display: none; }
+  .ev-journey li.done::before { content: "✓"; background: #166534; }
+  .ev-journey li.next::before { background: #fff; color: var(--muted); border: 2px solid var(--line); }
+  .ev-journey li.next b { color: var(--muted); }
+  .ev-journey li.next span { color: var(--muted); }
+  .ev-journey li.active { background: var(--soft); border-radius: 22px; padding-bottom: 18px; }
+  .ev-journey li.active::before { box-shadow: 0 0 0 6px var(--soft); }
+  .ev-journey li.active .ev-field input { background: #fff; }
+  .ev-journey > li > b { display: block; color: var(--ink); font-size: 18px; margin-bottom: 4px; font-weight: 600; line-height: 1.3; }
+  .ev-journey > li > span { display: block; font-size: 15.5px; color: var(--body); line-height: 1.5; }
+  .ev-login-as { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; margin: 6px 0 2px; font-size: 14.5px !important; color: var(--muted) !important; }
+  .ev-login-as b { display: inline; color: var(--ink); font-size: inherit; margin: 0; overflow-wrap: anywhere; }
+  .ev-store { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; border: 1.5px solid var(--line); border-radius: 999px; padding: 10px 16px; font-size: 14.5px; font-weight: 600; color: var(--ink); text-decoration: none; background: #fff; }
+  .ev-journey li.next .ev-store { color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .ev-in, .ev-check circle, .ev-check path { animation: none; opacity: 1; transform: none; stroke-dashoffset: 0; } }
   .ev-pw { position: relative; }
   .ev-pw button { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); border: 0; background: none; font: inherit; font-size: 14px; color: var(--muted); cursor: pointer; padding: 6px; }
   .ev-pw input { padding-right: 90px; }
