@@ -1,13 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import { sanitizeUsername } from '@/lib/username'
 
 /**
- * Passwort festlegen auf der Danke-Seite (Schlüssel = Stripe-Session-ID), danach normale Anmeldung
- * über /api/auth/sign-in/email (wie die Login-Seite: roher fetch, zuverlässig auf iOS Safari) und
- * weiter in die App. Die Weiterleitung landet beim Onboarding (Benutzername), das die Middleware erzwingt.
+ * Zugangsdaten auf der Danke-Seite: Vorname, Nachname, Benutzername, Passwort (Schlüssel = Stripe-Session-ID).
+ * Danach normale Anmeldung über /api/auth/sign-in/email (wie die Login-Seite: roher fetch, zuverlässig auf
+ * iOS Safari) und weiter in die App. Benutzername wird hier gesetzt, das Onboarding fragt ihn nicht mehr.
  */
-export default function EventPasswordForm({ sessionId, email }: { sessionId: string; email: string }) {
+export default function EventPasswordForm({ sessionId, email, firstName: initialFirstName }: { sessionId: string; email: string; firstName?: string }) {
+  const [firstName, setFirstName] = useState(initialFirstName ?? '')
+  const [lastName, setLastName] = useState('')
+  const [username, setUsername] = useState(sanitizeUsername(initialFirstName ?? ''))
+  const [usernameTouched, setUsernameTouched] = useState(false)
   const [password, setPassword] = useState('')
   const [repeat, setRepeat] = useState('')
   const [show, setShow] = useState(false)
@@ -15,9 +20,17 @@ export default function EventPasswordForm({ sessionId, email }: { sessionId: str
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
 
+  // Vorschlag: vorname-nachname, solange die Person den Benutzernamen nicht selbst angefasst hat
+  function suggest(fn: string, ln: string) {
+    if (usernameTouched) return
+    setUsername(sanitizeUsername([fn, ln].filter(Boolean).join('-')))
+  }
+
   async function submit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+    if (!firstName.trim()) { setError('Bitte gib deinen Vornamen ein.'); return }
+    if (sanitizeUsername(username).length < 3) { setError('Bitte wähle einen Benutzernamen mit mindestens 3 Buchstaben.'); return }
     if (password.length < 8) { setError('Bitte wähle ein Passwort mit mindestens 8 Zeichen.'); return }
     if (password !== repeat) { setError('Die beiden Passwörter sind nicht gleich. Bitte prüfe die Eingabe.'); return }
     setLoading(true)
@@ -25,7 +38,7 @@ export default function EventPasswordForm({ sessionId, email }: { sessionId: str
       const res = await fetch('/api/event/set-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: sessionId, password }),
+        body: JSON.stringify({ session_id: sessionId, password, username: sanitizeUsername(username), first_name: firstName.trim(), last_name: lastName.trim() }),
       })
       const data = await res.json().catch(() => ({})) as { ok?: boolean; error?: string; already?: boolean }
       if (!res.ok || !data.ok) {
@@ -52,11 +65,27 @@ export default function EventPasswordForm({ sessionId, email }: { sessionId: str
     }
   }
 
-  if (done) return <span className="ev-ok" style={{ display: 'block', marginTop: 8 }}>Passwort gespeichert. Du wirst jetzt angemeldet …</span>
+  if (done) return <span className="ev-ok" style={{ display: 'block', marginTop: 8 }}>Gespeichert. Du wirst jetzt angemeldet …</span>
+
+  const cleanUsername = sanitizeUsername(username)
 
   return (
     <form onSubmit={submit} style={{ marginTop: 8 }}>
-      <label className="ev-field"><span>Neues Passwort (mindestens 8 Zeichen)</span>
+      <div className="ev-row">
+        <label className="ev-field"><span>Vorname</span>
+          <input type="text" autoComplete="given-name" value={firstName} onChange={e => { setFirstName(e.target.value); suggest(e.target.value, lastName) }} required maxLength={60} />
+        </label>
+        <label className="ev-field"><span>Nachname</span>
+          <input type="text" autoComplete="family-name" value={lastName} onChange={e => { setLastName(e.target.value); suggest(firstName, e.target.value) }} maxLength={60} />
+        </label>
+      </div>
+      <label className="ev-field"><span>Benutzername</span>
+        <input type="text" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={username}
+          onChange={e => { setUsernameTouched(true); setUsername(e.target.value) }}
+          onBlur={() => setUsername(cleanUsername)} required maxLength={30} />
+        <small className="ev-hint">Nur Kleinbuchstaben und Bindestrich. Daraus wird deine Webadresse, zum Beispiel <b>{cleanUsername || 'sabine-mueller'}</b>.dailyoptimal.de</small>
+      </label>
+      <label className="ev-field"><span>Passwort (mindestens 8 Zeichen)</span>
         <span className="ev-pw" style={{ display: 'block', fontWeight: 400 }}>
           <input type={show ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={e => setPassword(e.target.value)} required minLength={8} maxLength={128} />
           <button type="button" onClick={() => setShow(s => !s)} aria-label={show ? 'Passwort verbergen' : 'Passwort anzeigen'}>{show ? 'Verbergen' : 'Anzeigen'}</button>
@@ -66,8 +95,8 @@ export default function EventPasswordForm({ sessionId, email }: { sessionId: str
         <input type={show ? 'text' : 'password'} autoComplete="new-password" value={repeat} onChange={e => setRepeat(e.target.value)} required minLength={8} maxLength={128} />
       </label>
       {error && <div className="ev-err" role="alert">{error}</div>}
-      <button type="submit" className="ev-btn" disabled={loading}>{loading ? 'Einen Moment …' : 'Passwort speichern und anmelden'}</button>
-      <p className="ev-fine">Merke dir das Passwort gut oder schreib es dir auf.</p>
+      <button type="submit" className="ev-btn" disabled={loading}>{loading ? 'Einen Moment …' : 'Speichern und anmelden'}</button>
+      <p className="ev-fine">Merke dir Benutzername und Passwort gut oder schreib sie dir auf.</p>
     </form>
   )
 }

@@ -62,10 +62,14 @@ ok('Nur ein Zugangsdatensatz', accCount.length === 1)
 
 // 3) Passwort setzen
 ok('Passwort offen', await eventPasswordPending(row!.id, sessionId))
-ok('Falsche Session → kein Passwort', (await setEventPassword(row!.id, 'cs_test_wrong', 'Powerday-2026!')) === false)
-ok('Passwort gesetzt', await setEventPassword(row!.id, sessionId, 'Powerday-2026!'))
+ok('Falsche Session → kein Passwort', (await setEventPassword(row!.id, 'cs_test_wrong', 'Powerday-2026!')) === 'invalid')
+ok('Passwort + Benutzername gesetzt', (await setEventPassword(row!.id, sessionId, 'Powerday-2026!', { username: 'sabine-test', firstName: 'Sabine', lastName: 'Test' })) === 'ok')
 ok('Schlüssel verbraucht', !(await eventPasswordPending(row!.id, sessionId)))
-ok('Zweites Setzen abgelehnt', (await setEventPassword(row!.id, sessionId, 'Anderes-Passwort1')) === false)
+{
+  const u = await db.query.users.findFirst({ where: eq(users.id, row!.id), columns: { username: true, firstName: true, lastName: true, name: true } })
+  ok('Benutzername + Name gespeichert', u?.username === 'sabine-test' && u.firstName === 'Sabine' && u.lastName === 'Test' && u.name === 'Sabine Test', JSON.stringify(u))
+}
+ok('Zweites Setzen abgelehnt', (await setEventPassword(row!.id, sessionId, 'Anderes-Passwort1')) === 'invalid')
 const vrows = await db.query.verifications.findMany({ where: like(verifications.identifier, `event-password:${row!.id}`) })
 ok('Schlüsselzeile gelöscht', vrows.length === 0)
 
@@ -85,7 +89,7 @@ try {
   // API-Routen gegen den Dev-Server: Danke-Seite mit kaputter Session, Passwort-Route mit kaputter Session
   const danke = await fetch(`${BASE}/powerday/danke?session_id=cs_test_unbekannt123`)
   ok('Danke-Seite unbekannte Session → Hinweis', danke.status === 200 && /nicht zuordnen/.test(await danke.text()))
-  const sp = await fetch(`${BASE}/api/event/set-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: 'cs_test_unbekannt123', password: 'Powerday-2026!' }) })
+  const sp = await fetch(`${BASE}/api/event/set-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: 'cs_test_unbekannt123', password: 'Powerday-2026!', username: 'sabine', first_name: 'Sabine' }) })
   ok('Passwort-Route unbekannte Session → 404', sp.status === 404, sp.status)
   const bad = await fetch(`${BASE}/api/event/checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: 'powerday', first_name: '', email: 'x', plan: 'pro', interval: 'yearly' }) })
   ok('Checkout ohne Vorname → 400', bad.status === 400, bad.status)

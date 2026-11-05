@@ -5,33 +5,11 @@ import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { sendEmail } from '@/lib/resend'
 import { welcomeEmail } from '@/lib/email/templates'
+import { RESERVED_USERNAMES, sanitizeUsername, isValidUsername } from '@/lib/username'
 
-function sanitize(val: string) {
-  return val
-    .toLowerCase()
-    .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z-]/g, '')
-    .replace(/^-+|-+$/g, '').replace(/-{2,}/g, '-')
-    .slice(0, 30)
-}
-
-function isValid(u: string) {
-  return /^[a-z][a-z-]*[a-z]$/.test(u) && u.length >= 3
-}
-
-// Blocked as subdomains: infrastructure hosts (custom = CF-for-SaaS fallback
-// origin!) and names that would look official enough for phishing.
-const RESERVED_USERNAMES = new Set([
-  'admin', 'administrator', 'www', 'api', 'app', 'mail', 'email', 'smtp',
-  'imap', 'pop', 'ftp', 'custom', 'cdn', 'assets', 'static', 'login',
-  'signin', 'signup', 'register', 'auth', 'account', 'accounts', 'dashboard',
-  'console', 'portal', 'manage', 'support', 'help', 'hilfe', 'info', 'kontakt',
-  'contact', 'billing', 'payment', 'pay', 'checkout', 'shop', 'store',
-  'status', 'blog', 'news', 'dev', 'staging', 'test', 'beta', 'preview',
-  'root', 'system', 'security', 'abuse', 'postmaster', 'webmaster', 'noreply',
-  'no-reply', 'finestsites', 'official', 'verify', 'verification',
-])
+// Regeln und Sperrliste: src/lib/username.ts (gemeinsam mit der Event-Danke-Seite)
+const sanitize = sanitizeUsername
+const isValid = isValidUsername
 
 export async function POST(req: NextRequest) {
   const user = await getUserFromRequest(req)

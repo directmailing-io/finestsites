@@ -58,7 +58,7 @@ export default async function EventThanksPage({ slug, sessionId, preview }: { sl
         <img src="/logos/logo-black.svg" alt="FinestSites" width={160} height={26} />
       </header>
       <main className="ev-main">
-        {isPreview && <div className="ev-ok" style={{ textAlign: 'center' }}>Vorschau mit Beispieldaten. Das Passwort-Formular ist hier ohne Funktion.</div>}
+        {isPreview && <div className="ev-ok" style={{ textAlign: 'center' }}>Vorschau mit Beispieldaten. Das Formular ist hier ohne Funktion.</div>}
         {state.kind === 'invalid' && (
           <>
             <h1 className="ev-h1">Diesen Link können wir nicht zuordnen.</h1>
@@ -77,24 +77,24 @@ export default async function EventThanksPage({ slug, sessionId, preview }: { sl
         {(state.kind === 'pending' || state.kind === 'done') && (
           <>
             <h1 className="ev-h1">{greeting(state.firstName)}<br /><span className="c">Dein Angebot ist gesichert.</span></h1>
-            <p className="ev-sub">Die Bezahlung hat geklappt. Jetzt nur noch dein Passwort, dann kannst du dich jederzeit anmelden und deine Webseite in Ruhe einrichten.</p>
+            <p className="ev-sub">Die Bezahlung hat geklappt. Jetzt noch deine Zugangsdaten, dann kannst du dich jederzeit anmelden und deine Webseite in Ruhe einrichten.</p>
 
             <div className="ev-mailbox">
-              <small>Dein Benutzername ist deine E-Mail-Adresse</small>
+              <small>Du meldest dich an mit dieser E-Mail-Adresse</small>
               <b>{state.email}</b>
             </div>
 
             <ol className="ev-steps">
               <li className={state.kind === 'done' ? 'done' : ''}>
-                <b>Passwort festlegen</b>
+                <b>Zugangsdaten festlegen</b>
                 {state.kind === 'pending'
-                  ? <span><EventPasswordForm sessionId={sessionId} email={state.email} /></span>
-                  : <span>Dein Passwort ist schon festgelegt. Falls du es vergessen hast, nutze bei der Anmeldung „Passwort vergessen“.</span>}
+                  ? <span><EventPasswordForm sessionId={sessionId} email={state.email} firstName={state.firstName} /></span>
+                  : <span>Deine Zugangsdaten sind schon festgelegt. Falls du dein Passwort vergessen hast, nutze bei der Anmeldung „Passwort vergessen“.</span>}
               </li>
               <li>
                 <b>Anmelden</b>
                 <span>
-                  Am Computer oder Handy im Browser unter <a href={`${APP_URL}/login`}>app.finestsites.io</a>.
+                  Mit E-Mail-Adresse und Passwort am Computer oder Handy im Browser unter <a href={`${APP_URL}/login`}>app.finestsites.io</a>.
                   Oder mit der FinestSites-App auf dem iPhone: <a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer">im App Store laden</a> und mit E-Mail und Passwort anmelden.
                 </span>
               </li>

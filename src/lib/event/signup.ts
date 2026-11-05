@@ -149,7 +149,16 @@ export async function eventPasswordPending(userId: string, sessionId: string): P
  * Setzt das Passwort für das Konto zur Session und verbraucht den Schlüssel.
  * false = Schlüssel ungültig/abgelaufen/verbraucht.
  */
-export async function setEventPassword(userId: string, sessionId: string, password: string): Promise<boolean> {
+export interface EventProfile { username: string; firstName: string; lastName: string }
+
+export type SetEventPasswordResult = 'ok' | 'invalid' | 'username_taken'
+
+/**
+ * Passwort (und auf Wunsch Benutzername + Name) auf der Danke-Seite festlegen. Schlüssel = Stripe-Session-ID,
+ * einmal einlösbar. Benutzername wird direkt gesetzt (kein Onboarding-Umweg, keine Willkommensmail);
+ * ist er schon vergeben, bleibt der Schlüssel gültig und die Person kann einen anderen wählen.
+ */
+export async function setEventPassword(userId: string, sessionId: string, password: string, profile?: EventProfile): Promise<SetEventPasswordResult> {
   const row = await db.query.verifications.findFirst({
     where: and(
       eq(verifications.identifier, passwordIdentifier(userId)),
@@ -158,17 +167,35 @@ export async function setEventPassword(userId: string, sessionId: string, passwo
     ),
     columns: { id: true },
   })
-  if (!row) return false
+  if (!row) return 'invalid'
   const hash = await hashPassword(password)
-  await db.transaction(async tx => {
-    const updated = await tx.update(accounts)
-      .set({ password: hash, updatedAt: new Date() })
-      .where(and(eq(accounts.userId, userId), eq(accounts.providerId, 'credential')))
-      .returning({ id: accounts.id })
-    if (updated.length === 0) {
-      await tx.insert(accounts).values({ id: randomUUID(), accountId: userId, providerId: 'credential', userId, password: hash })
-    }
-    await tx.delete(verifications).where(eq(verifications.id, row.id))
-  })
-  return true
+  try {
+    await db.transaction(async tx => {
+      if (profile) {
+        const current = await tx.query.users.findFirst({ where: eq(users.id, userId), columns: { username: true } })
+        const name = `${profile.firstName} ${profile.lastName}`.trim()
+        await tx.update(users).set({
+          // Benutzername nur, wenn noch keiner gesetzt ist (z. B. zweiter Versuch nach Abbruch)
+          ...(current?.username ? {} : { username: profile.username, usernameSetAt: new Date() }),
+          firstName: profile.firstName || null,
+          lastName: profile.lastName || null,
+          ...(name ? { name } : {}),
+          updatedAt: new Date(),
+        }).where(eq(users.id, userId))
+      }
+      const updated = await tx.update(accounts)
+        .set({ password: hash, updatedAt: new Date() })
+        .where(and(eq(accounts.userId, userId), eq(accounts.providerId, 'credential')))
+        .returning({ id: accounts.id })
+      if (updated.length === 0) {
+        await tx.insert(accounts).values({ id: randomUUID(), accountId: userId, providerId: 'credential', userId, password: hash })
+      }
+      await tx.delete(verifications).where(eq(verifications.id, row.id))
+    })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    if (profile && (msg.includes('23505') || msg.includes('unique'))) return 'username_taken'
+    throw e
+  }
+  return 'ok'
 }

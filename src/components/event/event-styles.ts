@@ -53,6 +53,9 @@ export const EVENT_CSS = `
   .ev-field { display: block; margin: 0 0 12px; }
   .ev-field span { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 6px; }
   .ev-field input { width: 100%; border: 1.5px solid var(--line); border-radius: 14px; padding: 15px 16px; font: inherit; font-size: 18px; color: var(--ink); background: #fff; }
+  .ev-field .ev-hint { display: block; font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
+  .ev-field .ev-hint b { display: inline; color: var(--ink); font-weight: 600; font-size: inherit; margin: 0; }
+  .ev-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .ev-field input:focus { outline: 3px solid #B8D2F1; outline-offset: 1px; border-color: var(--ink); }
   .ev-btn { display: block; width: 100%; border: 0; background: var(--ink); color: #fff; border-radius: 999px; padding: 18px; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer; margin: 6px 0 10px; }
   .ev-btn:disabled { opacity: .6; cursor: wait; }
