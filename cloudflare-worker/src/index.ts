@@ -1675,7 +1675,7 @@ function legalTopbarHtml(domain = ''): string {
   const langs = legalLangsFor(domain)
   if (langs.length > 2) {
     const cur = langs.map(l => `<span class="lang-cur-flag" data-lang="${l}">${flagSvg(l)}</span>`).join('')
-    const order = [...langs].sort((a, b) => (/^[\x00-\x7f]/.test(LANG_NAMES[a]) ? 0 : 1) - (/^[\x00-\x7f]/.test(LANG_NAMES[b]) ? 0 : 1) || LANG_NAMES[a].localeCompare(LANG_NAMES[b], 'en'))   // alphabetisch: lateinische Namen zuerst, dann Kyrillisch/Devanagari/CJK
+    const order = [...langs].sort((a, b) => (/^[\x00-\x7f]/.test(LANG_NAMES[a]) ? 0 : 1) - (/^[\x00-\x7f]/.test(LANG_NAMES[b]) ? 0 : 1) || (/^[\x00-\x7f]/.test(LANG_NAMES[a]) ? LANG_NAMES[a].localeCompare(LANG_NAMES[b], 'en') : (LANG_NAMES[a] < LANG_NAMES[b] ? -1 : 1)))   // nicht-lateinische Namen nach Codepunkt, wie in build.py (中文 vor 한국어)   // alphabetisch: lateinische Namen zuerst, dann Kyrillisch/Devanagari/CJK
     const items = order.map(l => `<button type="button" class="lang-item" data-lang="${l}" onclick="fsSetLang('${l}');fsLangClose()">${flagSvg(l)}<span>${LANG_NAMES[l]}</span></button>`).join('')
     return `<div class="legal-topbar">
 <a class="back-link" href="/">&#8592; ${legalUiSpans(domain, 'ui_back', 'Zurück', 'Back')}</a>
