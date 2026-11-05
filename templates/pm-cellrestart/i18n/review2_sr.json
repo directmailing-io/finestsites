@@ -1,0 +1,284 @@
+[
+  {
+    "de": "Wofür?",
+    "alt": "Za šta je?",
+    "neu": "Čemu služi?",
+    "grund": "natürlicher für Nav"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "Kratka samoprovera, pa ti se javljam",
+    "neu": "Kratka samoprocena, pa ti se javljam",
+    "grund": "„samoprocena“ üblich, einheitlich"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "Kratka samoprovera, pa ti se javljamo",
+    "neu": "Kratka samoprocena, pa ti se javljamo",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Kreni sa svojim <strong>resetom metabolizma</strong>. Nema dijete, nema šejkova, nema brojanja. Umesto toga, tu su <strong>4 fiksna obroka</strong> i <strong>patentirani suplementi</strong>, da se u svojoj svakodnevici <strong>osećaš stvarno dobro.</strong>",
+    "neu": "Započni svoj <strong>reset metabolizma</strong>. Bez dijete, bez šejkova, bez brojanja. Umesto toga <strong>4 fiksna obroka</strong> i <strong>patentirani suplementi</strong>, da se u svakodnevici <strong>osećaš stvarno dobro.</strong>",
+    "grund": "flüssiger, „Kreni sa svojim resetom“ holprig"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Razmena sa ljudima koji su u istoj priči",
+    "neu": "Razmena sa istomišljenicima",
+    "grund": "kürzer, üblicher Ausdruck"
+  },
+  {
+    "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+    "alt": "Toliko je jednostavna <span class=\"mark\">cela priča.</span>",
+    "neu": "Sve je to <span class=\"mark\">baš jednostavno.</span>",
+    "grund": "wörtlich, natürlicher"
+  },
+  {
+    "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+    "alt": "Nema grickanja između, nema preskakanja. Jasna struktura i sitost do sledećeg obroka.",
+    "neu": "Nema grickanja između obroka, nema preskakanja. Jasna struktura, a sitost traje do sledećeg obroka.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Zucker, Salz, Milchprodukte<sup class=\"essence-star\">*</sup>",
+    "alt": "Šećer, so, mlečne proizvode<sup class=\"essence-star\">*</sup>",
+    "neu": "Šećer, so, mlečni proizvodi<sup class=\"essence-star\">*</sup>",
+    "grund": "Nominativ statt Akkusativ (eigenständige Zeile)"
+  },
+  {
+    "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+    "alt": "<b>Ova tri elementa rade zajedno.</b> Reset efekat se razvija tek kada kombinuješ sva tri.",
+    "neu": "<b>Ova tri elementa deluju zajedno.</b> Efekat reseta se razvija tek kada kombinuješ sva tri.",
+    "grund": "„Reset efekat“ Anglizismus-Stellung"
+  },
+  {
+    "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+    "alt": "U fazi aktivacije pratiš princip <b>ketogene ishrane</b>. Zvuči komplikovano, ali nije: sličan princip kao <b>klasični keto</b>, samo <b>bez preterivanja s mastima na kašiku</b> i <b>bez stalnog odricanja</b>.",
+    "neu": "U fazi aktivacije pratiš princip <b>ketogene ishrane</b>. Zvuči komplikovano, ali nije: sličan princip kao <b>klasični keto</b>, samo <b>bez masti na kašike</b> i <b>bez stalnog odricanja</b>.",
+    "grund": "Redewendung „na kašike“ natürlicher"
+  },
+  {
+    "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+    "alt": "To su utisci koji se stalno ponavljaju. Jasno, svako telo reaguje drugačije.",
+    "neu": "To su utisci koji se stalno ponavljaju. Naravno, svako telo reaguje drugačije.",
+    "grund": "„Naravno“ natürlicher"
+  },
+  {
+    "de": "Von morgens bis abends. Ohne dass der Kaffee die Hauptrolle spielt.",
+    "alt": "Od jutra do večeri. Bez toga da kafa vodi glavnu reč.",
+    "neu": "Od jutra do večeri. A da kafa ne igra glavnu ulogu.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Ohne Kaffee-Krücke",
+    "alt": "Bez kafe kao štake",
+    "neu": "Bez kafe kao oslonca",
+    "grund": "„štaka“ wörtlich"
+  },
+  {
+    "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+    "alt": "Jutro se oseća drugačije. Manje tromosti, više onog osećaja da si odmah tu.",
+    "neu": "Jutro je drugačije. Manje tromosti, više bistrine od prvog trenutka.",
+    "grund": "wörtliche Übertragung geglättet"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Bez rolerkostera s hranom",
+    "neu": "Bez stalnih skokova apetita",
+    "grund": "„rolerkoster“ wörtlich"
+  },
+  {
+    "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+    "alt": "Nema stalnog razmišljanja o sledećem obroku. Nema one potrebe za slatkišima u tri. Sve to jednostavno utihne.",
+    "neu": "Nema stalnog razmišljanja o sledećem obroku. Nema one želje za nečim slatkim oko tri popodne. Sve to jednostavno utihne.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+    "alt": "Kratka poruka za {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}nas{{/if}}",
+    "neu": "Napiši poruku{{#unless partner_modus=duo}}: {{vorname}}{{/unless}}{{#if partner_modus=duo}} nama{{/if}}",
+    "grund": "„za {{vorname}}“ verlangt Akkusativ am Namen; Doppelpunkt, Name im Nominativ"
+  },
+  {
+    "de": "Keine Kalorien tracken",
+    "alt": "Bez praćenja kalorija",
+    "neu": "Bez brojanja kalorija",
+    "grund": "üblicher Ausdruck"
+  },
+  {
+    "de": "Eine Beispiel-Woche pro Phase.",
+    "alt": "Po jedan primer nedelje za svaku fazu.",
+    "neu": "Primer jedne nedelje za svaku fazu.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Wichtig: Jede Zeile zeigt nur eine Woche. Rechts siehst du wie oft sich das wiederholt.",
+    "alt": "Važno: svaki red prikazuje samo jednu nedelju. Desno vidiš koliko puta se ponavlja.",
+    "neu": "Važno: svaki red prikazuje samo jednu nedelju. Desno vidiš koliko se puta to ponavlja.",
+    "grund": "Wortstellung"
+  },
+  {
+    "de": "Wochen",
+    "alt": "nedelje",
+    "neu": "ned.",
+    "grund": "passt hinter ×2, ×3, ×12+ (Kasus zahlabhängig)"
+  },
+  {
+    "de": "Woche",
+    "alt": "nedelja",
+    "neu": "ned.",
+    "grund": "passt hinter ×1, einheitlich"
+  },
+  {
+    "de": "Woche 1: nur weiße Tage",
+    "alt": "Nedelja 1: samo beli dani",
+    "neu": "1. nedelja: samo beli dani",
+    "grund": "Ordinalzahl üblich"
+  },
+  {
+    "de": "Woche 2 bis 4",
+    "alt": "Nedelje 2 do 4",
+    "neu": "Od 2. do 4. nedelje",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "dauerhaft",
+    "alt": "stalno",
+    "neu": "trajno",
+    "grund": "passender für „dauerhaft“"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4× jedeš ukusno.</span> Umesto posta ili samo šejkova.",
+    "neu": "<span class=\"mark\">4× ukusan obrok.</span> Umesto posta ili samo šejkova.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+    "alt": "Mnogo raznovrsnih recepata, pogodno i za vegetarijance. Poenta nije brz gubitak kilograma gladovanjem, već svesna ishrana.",
+    "neu": "Mnogo raznovrsnih recepata, pogodnih i za vegetarijance. Poenta nije brz gubitak kilograma gladovanjem, već svesna ishrana.",
+    "grund": "Kongruenz"
+  },
+  {
+    "de": "Nach strengsten deutschen Standards produziert",
+    "alt": "Proizvedeno po najstrožim nemačkim standardima",
+    "neu": "Izrađeno po najstrožim nemačkim standardima",
+    "grund": "Dopplung mit „Proizvedeno u Nemačkoj“ vermieden"
+  },
+  {
+    "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+    "alt": "Veruju mu svetski prvaci i olimpijski profesionalci",
+    "neu": "Svetski prvaci i olimpijci se oslanjaju na njih",
+    "grund": "„mu“ ohne Bezug, „olimpijski profesionalci“ unüblich"
+  },
+  {
+    "de": "Unabhängig geprüft von ELAB Analytik",
+    "alt": "Nezavisno provereno u ELAB Analytik",
+    "neu": "Nezavisna provera: ELAB Analytik",
+    "grund": "Eigenname nicht im Lokativ"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "Ne. Koncept nije dijeta na kalorije. Jedeš kvalitetne, prirodne obroke, uz to idu odabrane hranljive materije. Fokus je na boljoj ishrani, ne na odricanju.",
+    "neu": "Ne. Koncept nije kalorijska dijeta. Jedeš kvalitetne, prirodne obroke, a uz to idu odabrane hranljive materije. Fokus je na boljoj ishrani, ne na odricanju.",
+    "grund": "„dijeta na kalorije“ unüblich"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "U osnovnoj fazi (aktivacija) svesno izbacuješ mleko, sir, sveži sir i pavlaku &mdash; da bi tvoja crevna flora mogla ponovo da se izgradi. <b>Izuzetak:</b> probiotski jogurt ujutru, kao prvi obrok, izričito je deo koncepta i čak je važan. Od faze stabilizacije vraćaju se tvrdi sirevi, sveži sir, mocarela i slično &mdash; umereno, kao izvor proteina. U kafi je dozvoljeno malo nezaslađenog bademovog ili sojinog mleka.",
+    "neu": "U glavnoj fazi (aktivacija) svesno izbacuješ mleko, sir, sveži sir i pavlaku, da bi tvoja crevna flora mogla ponovo da se izgradi. <b>Izuzetak:</b> probiotski jogurt ujutru, kao prvi obrok, izričito je deo koncepta i čak je važan. Od faze stabilizacije vraćaju se tvrdi sirevi, sveži sir, mocarela i slično, umereno i kao izvor proteina. U kafi je dozvoljeno malo nezaslađenog bademovog ili sojinog mleka.",
+    "grund": "ENTITY: &mdash; durch Komma ersetzt; „glavna faza“ einheitlich"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>Ne.</b> Klasični šejkovi kao zamena za obrok ili proteinski šejkovi nisu dozvoljeni u osnovnoj fazi, a ni posle toga se ne preporučuju. Jedeš prave obroke. Ono što mnogi pomešaju sa „šejkovima“: <b>koncentrati hranljivih materija</b> (Basic-Immun-Mix, Restorate minerali, aminokiseline) &mdash; to su prahovi koje razmutiš u vodi da svoje telo snabdeš vitaminima i mineralima. Oni ne zamenjuju obrok, nego ga dopunjuju. Čak su važan deo koncepta.",
+    "neu": "<b>Ne.</b> Klasični šejkovi kao zamena za obrok ili proteinski šejkovi nisu dozvoljeni u glavnoj fazi, a ni posle toga se ne preporučuju. Jedeš prave obroke. Ono što mnogi pomešaju sa „šejkovima“: <b>koncentrati hranljivih materija</b> (Basic-Immun-Mix, Restorate minerali, aminokiseline). To su prahovi koje razmutiš u vodi da svoje telo snabdeš vitaminima i mineralima. Oni ne zamenjuju obrok, nego ga dopunjuju. Čak su važan deo koncepta.",
+    "grund": "ENTITY: &mdash; durch Punkt ersetzt; „glavna faza“ einheitlich"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "Kölner Liste (Cologne List) je nezavisna baza podataka. Tamo se suplementi testiraju na zabranjene supstance i doping supstance. Ako je proizvod na toj listi, znaš da unutra nema ničeg skrivenog. Baš zato mnogi profesionalni sportisti koriste FitLine. Za tebe to znači: znaš šta unosiš. Bez neprijatnih iznenađenja.",
+    "neu": "Kölner Liste (Kelnska lista) je nezavisna baza podataka. Tamo se suplementi testiraju na zabranjene i doping supstance. Ako je proizvod na toj listi, znaš da unutra nema ničeg skrivenog. Baš zato mnogi profesionalni sportisti koriste FitLine. Za tebe to znači: znaš šta unosiš. Bez neprijatnih iznenađenja.",
+    "grund": "landesübliche Erklärung statt englischer, Dopplung „supstance“"
+  },
+  {
+    "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+    "alt": "NTC znači koncept transporta hranljivih materija. Jednostavno rečeno: formula pomaže da hranljive materije stignu baš tamo gde treba da deluju. U tvoje ćelije. Kod mnogih drugih preparata veliki deo izađe neiskorišćen. MicroSolve Q10 je primer takve tehnologije: običan Q10 telo teško usvaja, a uz MicroSolve se mnogo bolje iskorišćava. Zvuči tehnički, ali to je razlog zašto od ove stvari stvarno ima koristi.",
+    "neu": "NTC je skraćenica za koncept transporta hranljivih materija (Nährstoff-Transport-Konzept). Jednostavno rečeno: formula pomaže da hranljive materije stignu baš tamo gde treba da deluju. U tvoje ćelije. Kod mnogih drugih preparata veliki deo izađe iz tela neiskorišćen. MicroSolve Q10 je primer takve tehnologije: običan Q10 telo teško usvaja, a uz MicroSolve se mnogo bolje iskorišćava. Zvuči tehnički, ali to je razlog zašto od ove stvari stvarno ima koristi.",
+    "grund": "Abkürzung sauber erklärt, „iz tela“ ergänzt (wie „draußen“)"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Prelazak na dugoročnu svakodnevicu ide postepeno. Imaš nove navike i bolje poznaješ svoje telo. Ko želi, održava efekat pojedinačnim svesnim danima u mesecu.",
+    "neu": "Prelazak na dugoročnu svakodnevicu ide postepeno. Imaš nove navike i bolje poznaješ svoje telo. Ko želi, održava efekat uz nekoliko svesnih dana mesečno.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Für Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis. Bei chronischen Erkrankungen wird ärztliche Begleitung empfohlen.",
+    "alt": "Za trudnice, dojilje i osobe koje su pod lekarskim nadzorom, samo posle dogovora sa ordinacijom koja te vodi. Kod hroničnih oboljenja preporučuje se praćenje lekara.",
+    "neu": "Za trudnice, dojilje i osobe na lečenju kod lekara samo uz dogovor sa lekarom koji ih leči. Kod hroničnih oboljenja preporučuje se praćenje lekara.",
+    "grund": "„koja te vodi“ mischt Anrede, Bezug falsch"
+  },
+  {
+    "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+    "alt": "Kratak <em>samopregled</em>.<br><span class=\"mark\">Pa onda pričamo.</span>",
+    "neu": "Kratka <em>samoprocena</em>.<br><span class=\"mark\">Pa onda pričamo.</span>",
+    "grund": "„samopregled“ = medizinische Selbstuntersuchung"
+  },
+  {
+    "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+    "alt": "Posle jela bi najradije napravio pauzu",
+    "neu": "Posle jela bi ti najviše prijala pauza",
+    "grund": "neutral statt männlich „napravio“"
+  },
+  {
+    "de": "Du würdest morgens gern mit mehr Schwung starten",
+    "alt": "Voleo bi da ujutru krećeš sa više energije",
+    "neu": "Želiš da ujutru kreneš s više elana",
+    "grund": "neutral statt männlich „Voleo bi“"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "Označi sve što se odnosi na tebe. {{#unless partner_modus=duo}}Pokazaću{{/unless}}{{#if partner_modus=duo}}Pokazaćemo{{/if}} ti onda šta konkretno {{#unless partner_modus=duo}}mogu da ti pokažem{{/unless}}{{#if partner_modus=duo}}možemo da ti pokažemo{{/if}}.",
+    "neu": "Klikni na sve što se odnosi na tebe. {{#unless partner_modus=duo}}Pokazaću{{/unless}}{{#if partner_modus=duo}}Pokazaćemo{{/if}} ti onda šta konkretno {{#unless partner_modus=duo}}ja{{/unless}}{{#if partner_modus=duo}}mi{{/if}} {{#unless partner_modus=duo}}mogu da uradim za tebe{{/unless}}{{#if partner_modus=duo}}možemo da uradimo za tebe{{/if}}.",
+    "grund": "3+3 Bedingungsblöcke wie im Deutschen (vorher 2+2); Wiederholung „pokazati“ vermieden"
+  },
+  {
+    "de": "<b>Check dein Postfach.</b> Eine Bestätigung ist unterwegs.",
+    "alt": "<b>Proveri inbox.</b> Potvrda je na putu.",
+    "neu": "<b>Proveri e-mail.</b> Potvrda je na putu.",
+    "grund": "„inbox“ Anglizismus"
+  },
+  {
+    "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+    "alt": "Koliko kafa sa kroasanom. Samo što za to <b>3 meseca potpuno menjaš ishranu</b>, umesto da se samo nakratko razbudiš.",
+    "neu": "Koliko i kafa sa kroasanom. Samo što za to <b>3 meseca potpuno menjaš ishranu</b>, umesto da se samo nakratko razbudiš.",
+    "grund": "Grammatik („Koliko i …“)"
+  },
+  {
+    "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+    "alt": "<b>Nije pogodno za</b> trudnice, dojilje i osobe koje su pod lekarskim nadzorom, osim posle dogovora sa ordinacijom koja ih vodi.",
+    "neu": "<b>Nije pogodno za</b> trudnice, dojilje i osobe na lečenju kod lekara, osim uz dogovor sa lekarom koji ih leči.",
+    "grund": "einheitlich mit FAQ, natürlicher"
+  },
+  {
+    "de": "Nutzen",
+    "alt": "Koristi",
+    "neu": "Prednosti",
+    "grund": "„Koristi“ als Verb missverständlich"
+  },
+  {
+    "de": "Datenschutz",
+    "alt": "Privatnost",
+    "neu": "Zaštita podataka",
+    "grund": "übliche Bezeichnung"
+  },
+  {
+    "de": "Einstellungen anpassen ›",
+    "alt": "Podesi izbor ›",
+    "neu": "Podešavanja ›",
+    "grund": "kurz, „Podesi izbor“ doppelt mit „Sačuvaj izbor“"
+  }
+]

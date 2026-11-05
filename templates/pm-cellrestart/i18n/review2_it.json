@@ -1,0 +1,356 @@
+[
+  {
+    "de": "Mit vorbereiteter Nachricht, direkt im Chat",
+    "alt": "Con messaggio già pronto, direttamente in chat",
+    "neu": "Con un messaggio già pronto, direttamente in chat",
+    "grund": "Artikel ergänzt, flüssiger"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "Breve self-check, poi ti ricontatto",
+    "neu": "Un test veloce, poi ti ricontatto",
+    "grund": "„self-check“ ist kein Italienisch; einheitlich „test veloce“"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "Breve self-check, poi ti ricontattiamo",
+    "neu": "Un test veloce, poi ti ricontattiamo",
+    "grund": "wie oben, einheitlich"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Inizia il tuo <strong>reset del metabolismo</strong>. Niente dieta, niente shake, niente conteggi. In cambio <strong>4 pasti fissi</strong> e <strong>integratori brevettati</strong>, per sentirti <strong>davvero bene nella vita di tutti i giorni.</strong>",
+    "neu": "Inizia il tuo <strong>reset del metabolismo</strong>. Niente dieta, niente shake, niente conteggi. Al loro posto <strong>4 pasti fissi</strong> e <strong>integratori brevettati</strong>, per sentirti <strong>davvero bene nella vita di tutti i giorni.</strong>",
+    "grund": "„In cambio“ klingt nach Tauschgeschäft; „Al loro posto“ natürlicher"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Confronto con persone sulla tua stessa strada",
+    "neu": "Confronto con chi fa il tuo stesso percorso",
+    "grund": "wörtlich/umständlich; idiomatischer"
+  },
+  {
+    "de": "Was ist das eigentlich",
+    "alt": "Di cosa si tratta davvero",
+    "neu": "Ma cos’è, in pratica?",
+    "grund": "natürlichere Einleitungsfrage"
+  },
+  {
+    "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+    "alt": "È tutto <span class=\"mark\">così semplice.</span>",
+    "neu": "In fondo è <span class=\"mark\">semplicissimo.</span>",
+    "grund": "„È tutto così semplice“ wirkt hölzern"
+  },
+  {
+    "de": "Was wir geben",
+    "alt": "Cosa diamo",
+    "neu": "Cosa aggiungiamo",
+    "grund": "„Cosa diamo“ ohne Objekt unklar; Gegenstück zu „Cosa togliamo“"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Nutrienti vitali di alta qualità da un concetto brevettato. Non dallo scaffale del supermercato.",
+    "neu": "Sostanze nutritive di alta qualità, da un concetto brevettato. Non prese dallo scaffale del supermercato.",
+    "grund": "„Nutrienti vitali“ ist Germanismus"
+  },
+  {
+    "de": "<b>Warum wichtig:</b> Nur was der Körper aufnehmen kann, wirkt auch.",
+    "alt": "<b>Perché è importante:</b> Solo ciò che il corpo riesce ad assorbire può anche fare effetto.",
+    "neu": "<b>Perché è importante:</b> funziona solo ciò che il corpo riesce ad assorbire.",
+    "grund": "wörtliche Satzstellung geglättet; Kleinschreibung nach Doppelpunkt"
+  },
+  {
+    "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+    "alt": "Niente snack tra un pasto e l’altro, niente pasti saltati. Una struttura chiara, sazia fino al pasto successivo.",
+    "neu": "Niente snack tra un pasto e l’altro, niente pasti saltati. Una struttura chiara e niente fame fino al pasto successivo.",
+    "grund": "„sazia“ bezog sich grammatisch auf die Struktur; genderneutral umformuliert"
+  },
+  {
+    "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+    "alt": "Li togliamo per qualche settimana, così il tuo corpo può ritrovare calma. Non per sempre, solo nella fase centrale.",
+    "neu": "Via per qualche settimana, così il tuo corpo può ritrovare la calma. Non per sempre, solo nella fase centrale.",
+    "grund": "knapper wie im DE, Artikel ergänzt"
+  },
+  {
+    "de": "<span class=\"essence-star\">*</span> Probiotischer Joghurt am Morgen bleibt drin, der baut deine Darmflora auf.",
+    "alt": "<span class=\"essence-star\">*</span> Lo yogurt probiotico al mattino resta, perché aiuta a costruire la tua flora intestinale.",
+    "neu": "<span class=\"essence-star\">*</span> Lo yogurt probiotico al mattino resta, perché sostiene la tua flora intestinale.",
+    "grund": "„costruire la flora“ wörtlich; „sostiene“ üblich und nicht stärker"
+  },
+  {
+    "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+    "alt": "<b>Questi tre elementi lavorano insieme.</b> Solo se li combini tutti e tre, l’effetto reset può svilupparsi.",
+    "neu": "<b>Questi tre elementi lavorano insieme.</b> L’effetto reset si sviluppa solo se li combini tutti e tre.",
+    "grund": "Satzbau natürlicher, kein Komma vor Hauptsatz"
+  },
+  {
+    "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+    "alt": "Nella fase di attivazione ti orienti al principio dell’<b>alimentazione chetogenica</b>. Sembra complicato, ma non lo è: un principio simile alla <b>keto classica</b>, solo <b>senza cucchiaiate estreme di grassi</b> e <b>senza rinunce continue</b>.",
+    "neu": "Nella fase di attivazione segui il principio dell’<b>alimentazione chetogenica</b>. Sembra complicato, ma non lo è: un principio simile alla <b>keto classica</b>, solo <b>senza grassi a cucchiaiate</b> e <b>senza rinunce continue</b>.",
+    "grund": "„ti orienti al“ Germanismus; Bild „Fett-Löffel“ idiomatisch"
+  },
+  {
+    "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+    "alt": "Il termine tecnico per questo stato è: <b style=\"color:var(--ink);\">chetosi</b>. Per questo si parla anche di «alimentazione chetogenica».",
+    "neu": "Il termine tecnico per questo stato è <b style=\"color:var(--ink);\">chetosi</b>. Per questo si parla di «alimentazione chetogenica».",
+    "grund": "Doppelpunkt nach „è“ falsch; „anche“ überflüssig"
+  },
+  {
+    "de": "Was du davon hast",
+    "alt": "Cosa ti porta",
+    "neu": "Cosa ci guadagni",
+    "grund": "idiomatisch statt „Cosa ti porta“"
+  },
+  {
+    "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+    "alt": "Sono i riscontri che tornano più spesso. Chiaro, ogni corpo reagisce a modo suo.",
+    "neu": "Sono i riscontri che sentiamo più spesso. Certo, ogni corpo reagisce a modo suo.",
+    "grund": "„tornano“ holprig; „Chiaro“ wirkt hier abrupt"
+  },
+  {
+    "de": "Wieder wohl in dir",
+    "alt": "Di nuovo a tuo agio con te",
+    "neu": "Di nuovo a tuo agio nel tuo corpo",
+    "grund": "„a tuo agio con te“ ungebräuchlich"
+  },
+  {
+    "de": "Ohne Kaffee-Krücke",
+    "alt": "Senza il caffè come stampella",
+    "neu": "Senza aggrapparti al caffè",
+    "grund": "„Krücke“-Bild wörtlich übertragen"
+  },
+  {
+    "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+    "alt": "La mattina sembra diversa. Meno fatica a partire, più presenza da subito.",
+    "neu": "La mattina è un’altra cosa. Meno fatica a carburare, e ci sei subito.",
+    "grund": "wörtlich; idiomatisch, genderneutral"
+  },
+  {
+    "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+    "alt": "Niente pensiero fisso al prossimo pasto. Niente voglia irrefrenabile di dolci alle tre. Semplicemente, si fa più silenzioso.",
+    "neu": "Niente pensiero fisso al prossimo pasto. Niente voglia matta di sgranocchiare qualcosa alle tre. Semplicemente, tutto si calma.",
+    "grund": "„Nasch-Zwang“ meint Naschen allg., nicht nur Süßes; „si fa più silenzioso“ wörtlich"
+  },
+  {
+    "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+    "alt": "{{#unless partner_modus=duo}}Scrivi due righe a {{vorname}}{{/unless}}{{#if partner_modus=duo}}Scrivici due righe{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Scrivi a {{vorname}}{{/unless}}{{#if partner_modus=duo}}Scrivici{{/if}}",
+    "grund": "Knopf kürzer"
+  },
+  {
+    "de": "Dein Körper tankt Kraft für das, was kommt.",
+    "alt": "Il tuo corpo fa il pieno di energia per quello che arriva.",
+    "neu": "Il tuo corpo fa il pieno di energia per quello che verrà.",
+    "grund": "Futur natürlicher"
+  },
+  {
+    "de": "Du isst wie gewohnt und fügst zusätzlich gute Nährstoffe hinzu.",
+    "alt": "Mangi come al solito e aggiungi in più nutrienti di qualità.",
+    "neu": "Mangi come al solito e in più aggiungi nutrienti di qualità.",
+    "grund": "Wortstellung"
+  },
+  {
+    "de": "Du isst 4× am Tag nach klarem Plan, ohne Zucker und Weißmehl.",
+    "alt": "Mangi 4 volte al giorno seguendo un piano chiaro, senza zucchero e farina bianca.",
+    "neu": "Mangi 4 volte al giorno seguendo un piano chiaro, senza zucchero né farina bianca.",
+    "grund": "„né“ grammatisch korrekt bei Verneinung"
+  },
+  {
+    "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+    "alt": "Solo proteine, grassi buoni, lo yogurt probiotico al mattino e i concentrati di nutrienti. Niente verdure. Sembra rigido, ma fa parte della fase centrale.",
+    "neu": "Solo proteine, grassi buoni, lo yogurt probiotico al mattino e i concentrati di nutrienti. Nemmeno le verdure. Sembra rigido, ma fa parte della fase centrale.",
+    "grund": "„Auch kein“ = „Nemmeno“"
+  },
+  {
+    "de": "Eine Beispiel-Woche pro Phase.",
+    "alt": "Una settimana esempio per ogni fase.",
+    "neu": "Una settimana tipo per ogni fase.",
+    "grund": "„settimana tipo“ ist der übliche Ausdruck"
+  },
+  {
+    "de": "Woche 2 bis 4",
+    "alt": "Settimane 2-4",
+    "neu": "Dalla settimana 2 alla 4",
+    "grund": "Bindestrich-Bereich vermieden, natürlicher"
+  },
+  {
+    "de": "dauerhaft",
+    "alt": "Sempre",
+    "neu": "per sempre",
+    "grund": "steht hinter ∞, klein und als „per sempre“ natürlicher"
+  },
+  {
+    "de": "Du wirst satt",
+    "alt": "Ti sazi",
+    "neu": "Mangi a sazietà",
+    "grund": "„Ti sazi“ ungebräuchlich"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4× mangi con gusto.</span> Invece di digiunare o bere solo shake.",
+    "neu": "<span class=\"mark\">4× al giorno, con gusto.</span> Invece di digiunare o vivere di shake.",
+    "grund": "„4× mangi con gusto“ holprig"
+  },
+  {
+    "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+    "alt": "Tantissime ricette varie, adatte anche ai vegetariani. Non si tratta di perdere peso in fretta facendo la fame, ma di mangiare in modo consapevole.",
+    "neu": "Tante ricette diverse, adatte anche ai vegetariani. Non si tratta di perdere peso in fretta facendo la fame, ma di mangiare in modo consapevole.",
+    "grund": "„Tantissime ricette varie“ doppelt"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "Usiamo volutamente il <strong>concetto prodotti FitLine</strong>. Il motivo: spesso il buon cibo da solo non basta. Quello di cui hai bisogno in più deve anche arrivare davvero nel corpo.",
+    "neu": "Usiamo volutamente il <strong>sistema di prodotti FitLine</strong>. Il motivo: spesso il buon cibo da solo non basta. E quello che ti serve in più deve arrivare davvero nel corpo.",
+    "grund": "„concetto prodotti“ ungrammatisch"
+  },
+  {
+    "de": "Auf Dopingstoffe geprüft, offiziell gelistet",
+    "alt": "Controllato per sostanze dopanti e ufficialmente in lista",
+    "neu": "Testato contro le sostanze dopanti, ufficialmente in elenco",
+    "grund": "„Controllato per“ Germanismus"
+  },
+  {
+    "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+    "alt": "Campioni del mondo e professionisti olimpici ci si affidano",
+    "neu": "Campioni del mondo e atleti olimpici si fidano di FitLine",
+    "grund": "„ci si affidano“ holprig; „professionisti olimpici“ unüblich"
+  },
+  {
+    "de": "Ein Vitamin bringt nichts, wenn dein Körper es nicht aufnimmt. Genau da haben viele Präparate ihr Problem. FitLine ist exakt dafür gemacht: dass die Nährstoffe <b>wirklich dort ankommen, wo sie gebraucht werden</b>. In deinen Zellen.",
+    "alt": "Una vitamina non serve a molto, se il tuo corpo non la assimila. È proprio qui che molti integratori hanno il loro punto debole. FitLine è fatto esattamente per questo: perché i nutrienti <b>arrivino davvero dove servono</b>. Nelle tue cellule.",
+    "neu": "Una vitamina non serve a niente se il tuo corpo non la assorbe. È proprio qui che molti integratori hanno il loro punto debole. FitLine è fatto apposta per questo: perché i nutrienti <b>arrivino davvero dove servono</b>. Nelle tue cellule.",
+    "grund": "„bringt nichts“ = „non serve a niente“; Komma entfernt; „apposta“ idiomatisch"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "No. Il concetto non è una dieta ipocalorica. Mangi pasti buoni e naturali, in più ci sono nutrienti selezionati. Il focus è mangiare meglio, non rinunciare a tutto.",
+    "neu": "No. Il concetto non è una dieta ipocalorica. Mangi pasti buoni e naturali, in più ci sono nutrienti selezionati. L’idea è mangiare meglio, non fare rinunce.",
+    "grund": "„rinunciare a tutto“ verstärkt; natürlicher"
+  },
+  {
+    "de": "Normale Mahlzeiten aus natürlichen Lebensmitteln. Frisches Gemüse, gute Eiweiße, hochwertige Fette. Je nach Phase mehr das Eine oder das Andere. Nichts Ungewöhnliches, nichts Kompliziertes.",
+    "alt": "Pasti normali con alimenti naturali. Verdura fresca, buone proteine, grassi di qualità. A seconda della fase, un po’ più una cosa o l’altra. Niente di strano, niente di complicato.",
+    "neu": "Pasti normali con alimenti naturali. Verdura fresca, buone proteine, grassi di qualità. A seconda della fase, un po’ più dell’una o dell’altra cosa. Niente di strano, niente di complicato.",
+    "grund": "„più una cosa o l’altra“ ungrammatisch"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "Nella fase centrale (attivazione) lasci consapevolmente da parte latte, formaggi, quark e panna &mdash; così la tua flora intestinale può ricostruirsi. <b>Eccezione:</b> lo yogurt probiotico al mattino, come primo pasto, fa espressamente parte del concetto ed è persino importante. Dalla fase di stabilizzazione rientrano formaggi stagionati, quark, mozzarella e simili &mdash; con moderazione, come fonte di proteine. Nel caffè è consentito un goccio di latte di mandorla o di soia non zuccherato.",
+    "neu": "Nella fase centrale (attivazione) lasci da parte di proposito latte, formaggi, quark e panna, così la tua flora intestinale può ricostruirsi. <b>Eccezione:</b> lo yogurt probiotico al mattino, come primo pasto, fa espressamente parte del concetto ed è persino importante. Dalla fase di stabilizzazione rientrano formaggi stagionati, quark, mozzarella e simili: con moderazione, come fonte di proteine. Nel caffè è consentito un goccio di latte di mandorla o di soia non zuccherato.",
+    "grund": "ENTITY: beide &mdash; durch Komma/Doppelpunkt ersetzt; „consapevolmente“ hölzern"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>No.</b> I classici shake sostitutivi del pasto o proteici non sono consentiti nella fase centrale e non sono consigliati nemmeno dopo. Tu mangi pasti veri. Quello che molti scambiano per “shake\": i <b>concentrati di nutrienti</b> (Basic-Immun-Mix, minerali Restorate, aminoacidi) &mdash; sono polveri da sciogliere in acqua, per fornire al tuo corpo vitamine e minerali. Non sostituiscono un pasto, lo integrano. Anzi, sono una parte importante del concetto.",
+    "neu": "<b>No.</b> I classici shake sostitutivi del pasto o proteici non sono consentiti nella fase centrale e non sono consigliati nemmeno dopo. Mangi pasti veri. Quello che molti scambiano per «shake» sono i <b>concentrati di nutrienti</b> (Basic-Immun-Mix, minerali Restorate, aminoacidi): polveri da sciogliere in acqua per fornire al tuo corpo vitamine e minerali. Non sostituiscono un pasto, lo integrano. Anzi, sono una parte importante del concetto.",
+    "grund": "ENTITY: &mdash; durch Doppelpunkt ersetzt; gemischte Anführungszeichen vereinheitlicht; betontes „Tu“ entfernt"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Il passaggio alla quotidianità a lungo termine è graduale. Hai nuove abitudini e conosci meglio il tuo corpo. Chi vuole, mantiene l’effetto con singole giornate consapevoli durante il mese.",
+    "neu": "Il passaggio alla quotidianità a lungo termine è graduale. Hai nuove abitudini e conosci meglio il tuo corpo. Chi vuole mantiene l’effetto con qualche giornata consapevole al mese.",
+    "grund": "„singole giornate … durante il mese“ wörtlich; kein Komma nach „Chi vuole“"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "La Kölner Liste (Cologne List) è una banca dati indipendente. Lì gli integratori alimentari vengono testati per sostanze vietate e sostanze dopanti. Se un prodotto è presente in lista, puoi stare tranquillo: non c’è niente di nascosto dentro. Proprio per questo molti sportivi professionisti usano FitLine. Per te significa: sai cosa stai assumendo. Senza brutte sorprese.",
+    "neu": "La Kölner Liste (Cologne List) è una banca dati indipendente. Qui gli integratori alimentari vengono analizzati alla ricerca di sostanze vietate e dopanti. Se un prodotto è in lista, puoi fidarti: dentro non c’è niente di nascosto. Proprio per questo molti sportivi professionisti usano FitLine. Per te significa: sai cosa stai assumendo. Senza brutte sorprese.",
+    "grund": "„testati per“ Germanismus; „stare tranquillo“ männlich, genderneutral gemacht"
+  },
+  {
+    "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+    "alt": "ELAB è un laboratorio indipendente. Controlla costantemente che i prodotti FitLine contengano davvero ciò che è indicato sull’etichetta e che non ci sia dentro nulla che non dovrebbe esserci. Sembra scontato, ma purtroppo non lo è per tutti gli integratori alimentari. Con FitLine viene controllato in modo continuo. Per te significa: puoi contarci.",
+    "neu": "ELAB è un laboratorio indipendente. Controlla costantemente che i prodotti FitLine contengano davvero ciò che è indicato sull’etichetta e che dentro non ci sia nulla che non dovrebbe esserci. Sembra scontato, ma purtroppo non lo è per tutti gli integratori alimentari. Per FitLine questi controlli sono continui. Per te significa: puoi contarci.",
+    "grund": "„viene controllato in modo continuo“ hölzern"
+  },
+  {
+    "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+    "alt": "NTC sta per concetto di trasporto dei nutrienti. Detto semplice: la formula fa sì che i nutrienti arrivino proprio dove devono agire. Nelle tue cellule. Con molti altri preparati, una grande parte finisce di nuovo fuori senza essere utilizzata. MicroSolve Q10 è un esempio di questa tecnologia: il Q10 normale viene assorbito male dal corpo, con MicroSolve viene utilizzato molto meglio. Sembra tecnico, ma è il motivo per cui questa roba serve davvero a qualcosa.",
+    "neu": "NTC sta per «Nutrient Transport Concept», cioè concetto di trasporto dei nutrienti. Detto in parole semplici: la formula fa sì che i nutrienti arrivino proprio dove devono agire. Nelle tue cellule. Con molti altri prodotti, buona parte viene eliminata senza essere utilizzata. MicroSolve Q10 è un esempio di questa tecnologia: il Q10 normale viene assorbito male dal corpo, con MicroSolve viene utilizzato molto meglio. Sembra tecnico, ma è il motivo per cui questi prodotti servono davvero a qualcosa.",
+    "grund": "Abkürzung NTC einmal erklärt; „finisce di nuovo fuori“ und „questa roba“ wörtlich/abwertend"
+  },
+  {
+    "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+    "alt": "Sì, e anche tanti. Oltre 500 campioni del mondo e partecipanti olimpici hanno già lavorato con FitLine, tra cui la Federazione Tedesca Sci e la Federazione Tedesca Hockey su Ghiaccio. Perché? Gli sportivi professionisti sono estremamente attenti a ciò che entra nel loro corpo, perché devono potersi fidare al 100 percento della purezza. È un indicatore di qualità piuttosto forte, anche se tu non fai sport agonistico.",
+    "neu": "Sì, e sono tanti. Oltre 500 campioni del mondo e atleti olimpici hanno già lavorato con FitLine, tra cui la federazione tedesca di sci e quella di hockey su ghiaccio. Perché? Gli sportivi professionisti stanno attentissimi a ciò che entra nel loro corpo, perché devono potersi fidare al 100% della purezza. È un buon indicatore di qualità, anche se tu non fai sport agonistico.",
+    "grund": "„piuttosto forte“ verstärkt (DE „ziemlich gut“); Verbandsnamen natürlich; 100%"
+  },
+  {
+    "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+    "alt": "Un breve <em>test di autovalutazione</em>.<br><span class=\"mark\">Poi ne parliamo.</span>",
+    "neu": "Un <em>test veloce</em>.<br><span class=\"mark\">Poi ne parliamo.</span>",
+    "grund": "Headline kürzer, einheitlich mit „test veloce“"
+  },
+  {
+    "de": "Nachmittags greifst du oft zu Kaffee oder Süßem",
+    "alt": "Nel pomeriggio finisci spesso per prendere un caffè o qualcosa di dolce",
+    "neu": "Nel pomeriggio cerchi spesso un caffè o qualcosa di dolce",
+    "grund": "kürzer, natürlicher"
+  },
+  {
+    "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+    "alt": "Dopo mangiato faresti volentieri una pausa",
+    "neu": "Dopo i pasti avresti solo voglia di fermarti un po’",
+    "grund": "„am liebsten“ = Wunsch, natürlicher"
+  },
+  {
+    "de": "Du würdest morgens gern mit mehr Schwung starten",
+    "alt": "La mattina vorresti partire con più energia",
+    "neu": "La mattina vorresti partire con più slancio",
+    "grund": "„Schwung“ = slancio"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "Seleziona tutto quello che ti riguarda. Poi {{#unless partner_modus=duo}}ti faccio vedere{{/unless}}{{#if partner_modus=duo}}ti facciamo vedere{{/if}} in concreto cosa {{#unless partner_modus=duo}}posso{{/unless}}{{#if partner_modus=duo}}possiamo{{/if}} mostrarti.",
+    "neu": "Seleziona tutto quello che ti riguarda. Poi {{#unless partner_modus=duo}}ti faccio vedere{{/unless}}{{#if partner_modus=duo}}ti facciamo vedere{{/if}} in concreto cosa {{#unless partner_modus=duo}}posso{{/unless}}{{#if partner_modus=duo}}possiamo{{/if}} proporti.",
+    "grund": "„ti faccio vedere … mostrarti“ doppelt"
+  },
+  {
+    "de": "Kein Newsletter, keine Weitergabe. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} persönlich bei dir zurück.",
+    "alt": "Niente newsletter, nessuna condivisione dei dati. {{#unless partner_modus=duo}}Ti ricontatto{{/unless}}{{#if partner_modus=duo}}Ti ricontattiamo{{/if}} personalmente.",
+    "neu": "Niente newsletter, nessun dato a terzi. {{#unless partner_modus=duo}}Ti ricontatto{{/unless}}{{#if partner_modus=duo}}Ti ricontattiamo{{/if}} personalmente.",
+    "grund": "„nessuna condivisione dei dati“ sperrig"
+  },
+  {
+    "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+    "alt": "Quanto un caffè con cornetto. Solo che in cambio <b>per 3 mesi cambi completamente la tua alimentazione</b>, invece di tirarti su solo per poco.",
+    "neu": "Quanto un caffè e cornetto. Solo che così <b>per 3 mesi cambi completamente la tua alimentazione</b>, invece di tirarti su solo per poco.",
+    "grund": "feste Wendung „caffè e cornetto“"
+  },
+  {
+    "de": "Konzept",
+    "alt": "Concept",
+    "neu": "Concetto",
+    "grund": "„Concept“ ist Englisch"
+  },
+  {
+    "de": "Rechtliches",
+    "alt": "Note legali",
+    "neu": "Informazioni legali",
+    "grund": "einheitlich mit Wellpreneur/Optimalset"
+  },
+  {
+    "de": "Impressum",
+    "alt": "Informazioni legali",
+    "neu": "Note legali",
+    "grund": "einheitlich mit Wellpreneur/Optimalset"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Diese Seite dient der Information und ersetzt keine ärztliche Beratung, Diagnose oder Behandlung. Erfahrungen sind individuell und stellen keine Zusicherung eines bestimmten Ergebnisses dar. Bei Beschwerden oder Vorerkrankungen sprich bitte mit {{#unless partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/unless}}{{#if partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/if}}.",
+    "alt": "Tutti i prodotti sono integratori alimentari e non farmaci. Questa pagina è solo a scopo informativo e non sostituisce una consulenza, una diagnosi o un trattamento medico. Le esperienze sono soggettive e non garantiscono un risultato specifico. In caso di disturbi o patologie pregresse, parlane con {{#unless partner_modus=duo}}la tua dottoressa o il tuo medico{{/unless}}{{#if partner_modus=duo}}la tua dottoressa o il tuo medico{{/if}}.",
+    "neu": "Tutti i prodotti sono integratori alimentari e non farmaci. Questa pagina è solo a scopo informativo e non sostituisce una consulenza, una diagnosi o un trattamento medico. Le esperienze sono soggettive e non garantiscono un risultato specifico. In caso di disturbi o patologie pregresse, parlane con {{#unless partner_modus=duo}}il tuo medico{{/unless}}{{#if partner_modus=duo}}il tuo medico{{/if}}.",
+    "grund": "„la tua dottoressa o il tuo medico“ asymmetrisch; „il tuo medico“ ist im It. neutral üblich"
+  },
+  {
+    "de": "Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Usiamo solo i cookie tecnicamente necessari per far funzionare il sito. Per statistiche o marketing ci serve il tuo consenso, puoi scegliere liberamente. Trovi i dettagli nella nostra <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">informativa sulla privacy</a>.",
+    "neu": "Usiamo solo i cookie tecnicamente necessari per far funzionare il sito. Per statistiche o marketing ci serve il tuo consenso: scegli tu liberamente. Trovi i dettagli nella nostra <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">informativa sulla privacy</a>.",
+    "grund": "Komma-Spleiß durch Doppelpunkt ersetzt"
+  },
+  {
+    "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+    "alt": "Un programma reset per la tua quotidianità. In quattro fasi, per tornare ad avere più energia e la mente più lucida.",
+    "neu": "Un programma di reset per la tua vita di tutti i giorni. In quattro fasi, per ritrovare più energia e una mente più lucida.",
+    "grund": "„programma reset“ ungrammatisch; Meta-Beschreibung flüssiger"
+  }
+]

@@ -1,0 +1,1302 @@
+[
+ {
+  "id": 0,
+  "de": "Das Konzept",
+  "en": "The concept"
+ },
+ {
+  "id": 1,
+  "de": "Wofür?",
+  "en": "What for?"
+ },
+ {
+  "id": 2,
+  "de": "Die 4 Phasen",
+  "en": "The 4 phases"
+ },
+ {
+  "id": 3,
+  "de": "{{#unless partner_modus=duo}}Über mich{{/unless}}{{#if partner_modus=duo}}Über uns{{/if}}",
+  "en": "{{#unless partner_modus=duo}}About me{{/unless}}{{#if partner_modus=duo}}About us{{/if}}"
+ },
+ {
+  "id": 4,
+  "de": "FAQ",
+  "en": "FAQ"
+ },
+ {
+  "id": 5,
+  "de": "Kontakt",
+  "en": "Contact"
+ },
+ {
+  "id": 6,
+  "de": "Schreib mir auf WhatsApp",
+  "en": "Message me on WhatsApp"
+ },
+ {
+  "id": 7,
+  "de": "Mit vorbereiteter Nachricht, direkt im Chat",
+  "en": "With a prepared message, straight into the chat"
+ },
+ {
+  "id": 8,
+  "de": "WhatsApp",
+  "en": "WhatsApp"
+ },
+ {
+  "id": 9,
+  "de": "Beratung anfragen",
+  "en": "Request a consultation"
+ },
+ {
+  "id": 10,
+  "de": "Kurzer Selbst-Check, dann melde ich mich",
+  "en": "A quick self-check, then I’ll get in touch"
+ },
+ {
+  "id": 11,
+  "de": "Kurzer Selbst-Check, dann melden wir uns",
+  "en": "A quick self-check, then we’ll get in touch"
+ },
+ {
+  "id": 12,
+  "de": "Folge mir auf",
+  "en": "Follow me on"
+ },
+ {
+  "id": 13,
+  "de": "Folgt uns auf",
+  "en": "Follow us on"
+ },
+ {
+  "id": 14,
+  "de": "Jetzt loslegen",
+  "en": "Let's get started"
+ },
+ {
+  "id": 15,
+  "de": "Schreib mir direkt",
+  "en": "Message me directly"
+ },
+ {
+  "id": 16,
+  "de": "Schreib uns direkt",
+  "en": "Message us directly"
+ },
+ {
+  "id": 17,
+  "de": "Der Stoffwechsel-Reset in 4 Phasen",
+  "en": "The metabolism reset in 4 phases"
+ },
+ {
+  "id": 18,
+  "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+  "en": "More energy. Clearer mind. <span class=\"mark\">With more ease.</span>"
+ },
+ {
+  "id": 19,
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "en": "Start your <strong>metabolism reset</strong>. No diet, no shakes, no counting. Instead <strong>4 solid meals</strong> and <strong>patented supplements</strong>, so your everyday life <strong>feels really good.</strong>"
+ },
+ {
+  "id": 20,
+  "de": "Wie es funktioniert",
+  "en": "How it works"
+ },
+ {
+  "id": 21,
+  "de": "Ohne Hungern",
+  "en": "No hunger"
+ },
+ {
+  "id": 22,
+  "de": "Auch für Vegetarier",
+  "en": "Vegetarian-friendly"
+ },
+ {
+  "id": 23,
+  "de": "Austausch mit Gleichgesinnten",
+  "en": "Community of like-minded people"
+ },
+ {
+  "id": 24,
+  "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+  "en": "{{#unless partner_modus=duo}}This site is operated by <b>{{vorname}} {{nachname}}</b>, independent distributor of PM-International (FitLine®). Not an official website of PM-International AG.{{/unless}}{{#if partner_modus=duo}}This site is operated by <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, independent distributors of PM-International (FitLine®). Not an official website of PM-International AG.{{/if}}"
+ },
+ {
+  "id": 25,
+  "de": "Was ist das eigentlich",
+  "en": "What is this, really"
+ },
+ {
+  "id": 26,
+  "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+  "en": "The <span class=\"mark\">whole thing</span> is that simple."
+ },
+ {
+  "id": 27,
+  "de": "Was wir geben",
+  "en": "What we add"
+ },
+ {
+  "id": 28,
+  "de": "Unser Nährstoffkonzept",
+  "en": "Our nutrient concept"
+ },
+ {
+  "id": 29,
+  "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+  "en": "High-quality nutrients from a patented concept. Not off the supermarket shelf."
+ },
+ {
+  "id": 30,
+  "de": "<b>Warum wichtig:</b> Nur was der Körper aufnehmen kann, wirkt auch.",
+  "en": "<b>Why it matters:</b> only what your body can absorb actually works."
+ },
+ {
+  "id": 31,
+  "de": "Wie wir essen",
+  "en": "How we eat"
+ },
+ {
+  "id": 32,
+  "de": "4× feste Mahlzeiten",
+  "en": "4 fixed meals"
+ },
+ {
+  "id": 33,
+  "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+  "en": "No snacking in between, no skipping. Clear structure, full until the next meal."
+ },
+ {
+  "id": 34,
+  "de": "<b>Warum wichtig:</b> Regelmäßigkeit gibt dem Körper den Rhythmus zurück.",
+  "en": "<b>Why it matters:</b> a steady pattern gives your body its rhythm back."
+ },
+ {
+  "id": 35,
+  "de": "Was wir weglassen",
+  "en": "What we drop"
+ },
+ {
+  "id": 36,
+  "de": "Zucker, Salz, Milchprodukte<sup class=\"essence-star\">*</sup>",
+  "en": "Sugar, salt, dairy<sup class=\"essence-star\">*</sup>"
+ },
+ {
+  "id": 37,
+  "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+  "en": "Out for a few weeks so your body can settle. Not forever, just for the core phase."
+ },
+ {
+  "id": 38,
+  "de": "<span class=\"essence-star\">*</span> Probiotischer Joghurt am Morgen bleibt drin, der baut deine Darmflora auf.",
+  "en": "<span class=\"essence-star\">*</span> Probiotic yogurt in the morning stays in, it builds your gut flora."
+ },
+ {
+  "id": 39,
+  "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+  "en": "<b>These three pieces work together.</b> The reset only kicks in when you combine all three."
+ },
+ {
+  "id": 40,
+  "de": "Das Ziel",
+  "en": "The goal"
+ },
+ {
+  "id": 41,
+  "de": "Das Ziel: <em>Ketose</em>.",
+  "en": "The goal: <em>ketosis</em>."
+ },
+ {
+  "id": 42,
+  "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+  "en": "In the activation phase you follow the principle of a <b>ketogenic diet</b>. Sounds complicated, but it isn't: the same idea as <b>classic keto</b>, just <b>without spoons of pure fat</b> and <b>without constant restriction</b>."
+ },
+ {
+  "id": 43,
+  "de": "Vorher",
+  "en": "Before"
+ },
+ {
+  "id": 44,
+  "de": "Zucker-Energie",
+  "en": "Sugar energy"
+ },
+ {
+  "id": 45,
+  "de": "Morgen",
+  "en": "Morning"
+ },
+ {
+  "id": 46,
+  "de": "Mittag",
+  "en": "Midday"
+ },
+ {
+  "id": 47,
+  "de": "Abend",
+  "en": "Evening"
+ },
+ {
+  "id": 48,
+  "de": "Achterbahn",
+  "en": "Rollercoaster"
+ },
+ {
+  "id": 49,
+  "de": "Energie schnell hoch, schnell wieder weg. Nach 2–3 Stunden wieder Hunger.",
+  "en": "Energy shoots up, drops just as fast. Hungry again after 2 to 3 hours."
+ },
+ {
+  "id": 50,
+  "de": "Ziel",
+  "en": "Goal"
+ },
+ {
+  "id": 51,
+  "de": "Fett-Energie",
+  "en": "Fat energy"
+ },
+ {
+  "id": 52,
+  "de": "Konstant",
+  "en": "Steady"
+ },
+ {
+  "id": 53,
+  "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+  "en": "Energy stays stable. You're full for longer and your body taps its own reserves."
+ },
+ {
+  "id": 54,
+  "de": "Bioverfügbare Nährstoffe machen den Unterschied",
+  "en": "Bioavailable nutrients make the difference"
+ },
+ {
+  "id": 55,
+  "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+  "en": "The technical term for this state: <b style=\"color:var(--ink);\">ketosis</b>. That's why it's also called a \"ketogenic diet\"."
+ },
+ {
+  "id": 56,
+  "de": "Was du davon hast",
+  "en": "What's in it for you"
+ },
+ {
+  "id": 57,
+  "de": "Sechs Dinge, die sich <span class=\"mark\">wirklich ändern</span> können.",
+  "en": "Six things that can <span class=\"mark\">actually change</span>."
+ },
+ {
+  "id": 58,
+  "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+  "en": "This is the feedback that keeps coming back. Of course, every body reacts differently."
+ },
+ {
+  "id": 59,
+  "de": "01 · Energie",
+  "en": "01 · Energy"
+ },
+ {
+  "id": 60,
+  "de": "Mehr Energie im Alltag",
+  "en": "More energy day to day"
+ },
+ {
+  "id": 61,
+  "de": "Von morgens bis abends. Ohne dass der Kaffee die Hauptrolle spielt.",
+  "en": "From morning to night. Without coffee doing all the heavy lifting."
+ },
+ {
+  "id": 62,
+  "de": "02 · Fokus",
+  "en": "02 · Focus"
+ },
+ {
+  "id": 63,
+  "de": "Klarer Kopf",
+  "en": "Clear head"
+ },
+ {
+  "id": 64,
+  "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+  "en": "Better concentration and sharper focus when you need it."
+ },
+ {
+  "id": 65,
+  "de": "03 · Körper",
+  "en": "03 · Body"
+ },
+ {
+  "id": 66,
+  "de": "Wieder wohl in dir",
+  "en": "At home in your body again"
+ },
+ {
+  "id": 67,
+  "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+  "en": "No more being weighed down. You notice again that your body is working with you, not against you."
+ },
+ {
+  "id": 68,
+  "de": "04 · Schlaf",
+  "en": "04 · Sleep"
+ },
+ {
+  "id": 69,
+  "de": "Ohne Kaffee-Krücke",
+  "en": "No coffee crutch"
+ },
+ {
+  "id": 70,
+  "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+  "en": "Mornings feel different. Less sluggish, more instantly there."
+ },
+ {
+  "id": 71,
+  "de": "05 · Kontrolle",
+  "en": "05 · Control"
+ },
+ {
+  "id": 72,
+  "de": "Kein Ess-Rollercoaster",
+  "en": "No more food rollercoaster"
+ },
+ {
+  "id": 73,
+  "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+  "en": "No constant thinking about the next meal. No 3pm sugar cravings. It just quiets down."
+ },
+ {
+  "id": 74,
+  "de": "06 · Routine",
+  "en": "06 · Routine"
+ },
+ {
+  "id": 75,
+  "de": "Neue Gewohnheiten",
+  "en": "New habits"
+ },
+ {
+  "id": 76,
+  "de": "Was du in den Phasen lernst, nimmst du in den Alltag mit.",
+  "en": "What you learn in the phases, you take with you into everyday life."
+ },
+ {
+  "id": 77,
+  "de": "Klingt nach dem was du suchst? <span class=\"accent\">{{#unless partner_modus=duo}}Ich erklär{{/unless}}{{#if partner_modus=duo}}Wir erklären{{/if}} dir alles.</span>",
+  "en": "Sounds like what you're after? <span class=\"accent\">{{#unless partner_modus=duo}}I'll walk{{/unless}}{{#if partner_modus=duo}}We'll walk{{/if}} you through it.</span>"
+ },
+ {
+  "id": 78,
+  "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+  "en": "Message {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}us{{/if}}"
+ },
+ {
+  "id": 79,
+  "de": "Und wie kommst du dahin?",
+  "en": "And how do you get there?"
+ },
+ {
+  "id": 80,
+  "de": "In <span class=\"mark\">4 Phasen</span> zu deinem neuen Alltag.",
+  "en": "In <span class=\"mark\">4 phases</span> to your new everyday."
+ },
+ {
+  "id": 81,
+  "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+  "en": "Four clear phases, from week one all the way into your long-term routine."
+ },
+ {
+  "id": 82,
+  "de": "Fertige Rezepte",
+  "en": "Ready-made recipes"
+ },
+ {
+  "id": 83,
+  "de": "Auch vegetarisch",
+  "en": "Also vegetarian"
+ },
+ {
+  "id": 84,
+  "de": "Für die ganze Familie",
+  "en": "For the whole family"
+ },
+ {
+  "id": 85,
+  "de": "Keine Kalorien tracken",
+  "en": "No calorie tracking"
+ },
+ {
+  "id": 86,
+  "de": "Kein Sport nötig",
+  "en": "No workouts needed"
+ },
+ {
+  "id": 87,
+  "de": "Kein Hunger",
+  "en": "No going hungry"
+ },
+ {
+  "id": 88,
+  "de": "Hoch",
+  "en": "High"
+ },
+ {
+  "id": 89,
+  "de": "Mittel",
+  "en": "Medium"
+ },
+ {
+  "id": 90,
+  "de": "Niedrig",
+  "en": "Low"
+ },
+ {
+  "id": 91,
+  "de": "Tag 1–14",
+  "en": "Day 1 to 14"
+ },
+ {
+  "id": 92,
+  "de": "Tag 15–42",
+  "en": "Day 15 to 42"
+ },
+ {
+  "id": 93,
+  "de": "Tag 43–90",
+  "en": "Day 43 to 90"
+ },
+ {
+  "id": 94,
+  "de": "Ab Tag 91",
+  "en": "From day 91"
+ },
+ {
+  "id": 95,
+  "de": "Energie",
+  "en": "Energy"
+ },
+ {
+  "id": 96,
+  "de": "Gewicht",
+  "en": "Weight"
+ },
+ {
+  "id": 97,
+  "de": "Phase 1",
+  "en": "Phase 1"
+ },
+ {
+  "id": 98,
+  "de": "Vorbereiten",
+  "en": "Prepare"
+ },
+ {
+  "id": 99,
+  "de": "Dein Körper tankt Kraft für das, was kommt.",
+  "en": "Your body loads up on strength for what's coming."
+ },
+ {
+  "id": 100,
+  "de": "Du isst wie gewohnt und fügst zusätzlich gute Nährstoffe hinzu.",
+  "en": "You eat like normal and just add good nutrients on top."
+ },
+ {
+  "id": 101,
+  "de": "Phase 2",
+  "en": "Phase 2"
+ },
+ {
+  "id": 102,
+  "de": "Aktivieren",
+  "en": "Activate"
+ },
+ {
+  "id": 103,
+  "de": "Jetzt stellt dein Körper wirklich um.",
+  "en": "This is when your body really shifts gears."
+ },
+ {
+  "id": 104,
+  "de": "Du isst 4× am Tag nach klarem Plan, ohne Zucker und Weißmehl.",
+  "en": "You eat 4× a day on a clear plan, no sugar and no white flour."
+ },
+ {
+  "id": 105,
+  "de": "Phase 3",
+  "en": "Phase 3"
+ },
+ {
+  "id": 106,
+  "de": "Stabilisieren",
+  "en": "Stabilise"
+ },
+ {
+  "id": 107,
+  "de": "Der neue Rhythmus wird zur Gewohnheit.",
+  "en": "The new rhythm turns into a habit."
+ },
+ {
+  "id": 108,
+  "de": "Du bringst mehr Vielfalt auf den Teller und hältst die Struktur.",
+  "en": "You bring more variety to the plate and keep the structure."
+ },
+ {
+  "id": 109,
+  "de": "Phase 4",
+  "en": "Phase 4"
+ },
+ {
+  "id": 110,
+  "de": "Alltag",
+  "en": "Everyday"
+ },
+ {
+  "id": 111,
+  "de": "So bleibt es dauerhaft, ohne Verzicht.",
+  "en": "This sticks for the long run, without giving anything up."
+ },
+ {
+  "id": 112,
+  "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+  "en": "You eat mindfully, and exceptions are part of it."
+ },
+ {
+  "id": 113,
+  "de": "So sieht ein Tag aus",
+  "en": "What a day looks like"
+ },
+ {
+  "id": 114,
+  "de": "Jeder Tag hat <span class=\"mark\">eine Farbe.</span>",
+  "en": "Every day has <span class=\"mark\">a colour.</span>"
+ },
+ {
+  "id": 115,
+  "de": "Im Programm ist jeder Tag entweder <b>weiß</b>, <b>grün</b> oder <b>rot</b>. Die Farbe verrät dir sofort, was heute auf den Teller kommt. Kein Grübeln, kein Rechnen.",
+  "en": "In the programme every day is either <b>white</b>, <b>green</b> or <b>red</b>. The colour tells you right away what goes on the plate. No thinking, no counting."
+ },
+ {
+  "id": 116,
+  "de": "Weißer Tag",
+  "en": "White day"
+ },
+ {
+  "id": 117,
+  "de": "Nur Eiweiß",
+  "en": "Protein only"
+ },
+ {
+  "id": 118,
+  "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+  "en": "Only protein, good fats, the probiotic yogurt in the morning and the nutrient concentrates. Not even vegetables. Sounds strict, but it's part of the core phase."
+ },
+ {
+  "id": 119,
+  "de": "Eiweiß",
+  "en": "Protein"
+ },
+ {
+  "id": 120,
+  "de": "Gute Fette",
+  "en": "Good fats"
+ },
+ {
+  "id": 121,
+  "de": "Nährstoffe",
+  "en": "Nutrients"
+ },
+ {
+  "id": 122,
+  "de": "Gemüse",
+  "en": "Vegetables"
+ },
+ {
+  "id": 123,
+  "de": "Kohlenhydrate",
+  "en": "Carbs"
+ },
+ {
+  "id": 124,
+  "de": "Milch",
+  "en": "Dairy"
+ },
+ {
+  "id": 125,
+  "de": "Zucker",
+  "en": "Sugar"
+ },
+ {
+  "id": 126,
+  "de": "Salz",
+  "en": "Salt"
+ },
+ {
+  "id": 127,
+  "de": "Grüner Tag",
+  "en": "Green day"
+ },
+ {
+  "id": 128,
+  "de": "Der Normal-Tag",
+  "en": "The normal day"
+ },
+ {
+  "id": 129,
+  "de": "Wie ein weißer Tag, plus Gemüse und Salat. Der Standard-Tag im Programm.",
+  "en": "Like a white day, plus vegetables and salad. The standard day in the programme."
+ },
+ {
+  "id": 130,
+  "de": "Roter Tag",
+  "en": "Red day"
+ },
+ {
+  "id": 131,
+  "de": "Alles erlaubt",
+  "en": "Anything goes"
+ },
+ {
+  "id": 132,
+  "de": "Wochenende, Feier, Geburtstag. An diesen Tagen darfst du essen was du willst. Aber halt nicht jeden Tag.",
+  "en": "Weekend, party, birthday. On these days you eat whatever you want. Just not every day."
+ },
+ {
+  "id": 133,
+  "de": "Eine Beispiel-Woche pro Phase.",
+  "en": "A sample week per phase."
+ },
+ {
+  "id": 134,
+  "de": "Wichtig: Jede Zeile zeigt nur eine Woche. Rechts siehst du wie oft sich das wiederholt.",
+  "en": "Important: each row shows just one week. On the right you'll see how often it repeats."
+ },
+ {
+  "id": 135,
+  "de": "Mo",
+  "en": "Mon"
+ },
+ {
+  "id": 136,
+  "de": "Di",
+  "en": "Tue"
+ },
+ {
+  "id": 137,
+  "de": "Mi",
+  "en": "Wed"
+ },
+ {
+  "id": 138,
+  "de": "Do",
+  "en": "Thu"
+ },
+ {
+  "id": 139,
+  "de": "Fr",
+  "en": "Fri"
+ },
+ {
+  "id": 140,
+  "de": "Sa",
+  "en": "Sat"
+ },
+ {
+  "id": 141,
+  "de": "So",
+  "en": "Sun"
+ },
+ {
+  "id": 142,
+  "de": "Wiederholt sich",
+  "en": "Repeats"
+ },
+ {
+  "id": 143,
+  "de": "Phase 01",
+  "en": "Phase 01"
+ },
+ {
+  "id": 144,
+  "de": "Wochen",
+  "en": "weeks"
+ },
+ {
+  "id": 145,
+  "de": "Phase 02",
+  "en": "Phase 02"
+ },
+ {
+  "id": 146,
+  "de": "Woche 1: nur weiße Tage",
+  "en": "Week 1: white days only"
+ },
+ {
+  "id": 147,
+  "de": "Woche",
+  "en": "week"
+ },
+ {
+  "id": 148,
+  "de": "Woche 2 bis 4",
+  "en": "Weeks 2 to 4"
+ },
+ {
+  "id": 149,
+  "de": "Phase 03",
+  "en": "Phase 03"
+ },
+ {
+  "id": 150,
+  "de": "Phase 04",
+  "en": "Phase 04"
+ },
+ {
+  "id": 151,
+  "de": "dauerhaft",
+  "en": "ongoing"
+ },
+ {
+  "id": 152,
+  "de": "Du wirst satt",
+  "en": "You'll be full"
+ },
+ {
+  "id": 153,
+  "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+  "en": "<span class=\"mark\">4 tasty meals.</span> Not fasting or just shakes."
+ },
+ {
+  "id": 154,
+  "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+  "en": "Lots of varied recipes, vegetarian-friendly too. It's not about quick weight loss through starving, it's about eating with awareness."
+ },
+ {
+  "id": 155,
+  "de": "Rezepte anfragen",
+  "en": "Ask for recipes"
+ },
+ {
+  "id": 156,
+  "de": "Neben den Mahlzeiten: <span class=\"mark\">die richtigen Nährstoffe.</span>",
+  "en": "Alongside the meals: <span class=\"mark\">the right nutrients.</span>"
+ },
+ {
+  "id": 157,
+  "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+  "en": "We deliberately use the <strong>FitLine product concept</strong>. The reason: good food alone often isn't enough. What you add on top needs to actually reach your body."
+ },
+ {
+  "id": 158,
+  "de": "Patente weltweit",
+  "en": "Patents worldwide"
+ },
+ {
+  "id": 159,
+  "de": "Geschützte Forschung im Nährstoff-Transport",
+  "en": "Protected research in nutrient transport"
+ },
+ {
+  "id": 160,
+  "de": "Made in Germany",
+  "en": "Made in Germany"
+ },
+ {
+  "id": 161,
+  "de": "Nach strengsten deutschen Standards produziert",
+  "en": "Produced to the strictest German standards"
+ },
+ {
+  "id": 162,
+  "de": "Kölner Liste<sup style=\"font-size: 0.6em;\">®</sup>",
+  "en": "Cologne List<sup style=\"font-size: 0.6em;\">®</sup>"
+ },
+ {
+  "id": 163,
+  "de": "Auf Dopingstoffe geprüft, offiziell gelistet",
+  "en": "Tested for doping substances, officially listed"
+ },
+ {
+  "id": 164,
+  "de": "Spitzensportler",
+  "en": "Top athletes"
+ },
+ {
+  "id": 165,
+  "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+  "en": "World champions and Olympic pros rely on it"
+ },
+ {
+  "id": 166,
+  "de": "Der entscheidende Unterschied",
+  "en": "The decisive difference"
+ },
+ {
+  "id": 167,
+  "de": "Ein Vitamin bringt nichts, wenn dein Körper es nicht aufnimmt. Genau da haben viele Präparate ihr Problem. FitLine ist exakt dafür gemacht: dass die Nährstoffe <b>wirklich dort ankommen, wo sie gebraucht werden</b>. In deinen Zellen.",
+  "en": "A vitamin does nothing if your body doesn't absorb it. That's exactly where many supplements fall down. FitLine is built for one thing: making sure the nutrients <b>actually arrive where they're needed</b>. In your cells."
+ },
+ {
+  "id": 168,
+  "de": "Unabhängig geprüft von ELAB Analytik",
+  "en": "Independently tested by ELAB Analytik"
+ },
+ {
+  "id": 169,
+  "de": "MicroSolve<sup style=\"font-size: 0.7em;\">®</sup> Q10 Technologie",
+  "en": "MicroSolve<sup style=\"font-size: 0.7em;\">®</sup> Q10 technology"
+ },
+ {
+  "id": 170,
+  "de": "Mehr erfahren",
+  "en": "Learn more"
+ },
+ {
+  "id": 171,
+  "de": "Über mich",
+  "en": "About me"
+ },
+ {
+  "id": 172,
+  "de": "Über uns",
+  "en": "About us"
+ },
+ {
+  "id": 173,
+  "de": "Fragen &amp; Antworten",
+  "en": "Questions &amp; answers"
+ },
+ {
+  "id": 174,
+  "de": "Kurz und <span class=\"mark\">ehrlich.</span>",
+  "en": "Short and <span class=\"mark\">honest.</span>"
+ },
+ {
+  "id": 175,
+  "de": "Wie lange dauert der Reset?",
+  "en": "How long does the reset take?"
+ },
+ {
+  "id": 176,
+  "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+  "en": "The active reset takes a few weeks. After that comes a longer stabilisation phase and then your long-term everyday. The exact timing depends on which version you pick."
+ },
+ {
+  "id": 177,
+  "de": "Muss ich hungern?",
+  "en": "Do I have to starve?"
+ },
+ {
+  "id": 178,
+  "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+  "en": "No. This isn't a calorie diet. You eat good, natural meals, plus some targeted nutrients. The focus is on better eating, not on giving stuff up."
+ },
+ {
+  "id": 179,
+  "de": "Ist das eine Diät?",
+  "en": "Is this a diet?"
+ },
+ {
+  "id": 180,
+  "de": "Nein. Diäten enden und du bist meistens wieder da, wo du vorher warst. Hier geht es um neue Ernährungsgewohnheiten, die auch nach den ersten Phasen bleiben.",
+  "en": "No. Diets end and you're usually right back where you started. This is about new eating habits that stick around after the first phases."
+ },
+ {
+  "id": 181,
+  "de": "Was esse ich denn dann?",
+  "en": "So what do I actually eat?"
+ },
+ {
+  "id": 182,
+  "de": "Normale Mahlzeiten aus natürlichen Lebensmitteln. Frisches Gemüse, gute Eiweiße, hochwertige Fette. Je nach Phase mehr das Eine oder das Andere. Nichts Ungewöhnliches, nichts Kompliziertes.",
+  "en": "Normal meals made from natural food. Fresh vegetables, good protein, quality fats. Depending on the phase, more of one or the other. Nothing weird, nothing complicated."
+ },
+ {
+  "id": 183,
+  "de": "Muss ich wirklich auf Milch verzichten? Was ist mit dem Joghurt?",
+  "en": "Do I really have to skip dairy? What about the yogurt?"
+ },
+ {
+  "id": 184,
+  "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+  "en": "In the core phase (activation) you consciously leave out milk, cheese, quark and cream &mdash; so your gut flora can rebuild. <b>One exception:</b> the probiotic yogurt in the morning as your first meal is explicitly part of the concept and actually important. From the stabilisation phase onwards, hard cheese, quark, mozzarella and the like come back in &mdash; in moderation, as a protein source. A splash of unsweetened almond or soy milk in your coffee is fine."
+ },
+ {
+  "id": 185,
+  "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+  "en": "Are shakes allowed? Do I drink my meals?"
+ },
+ {
+  "id": 186,
+  "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+  "en": "<b>No.</b> Classic meal-replacement or protein shakes are not allowed in the core phase and not recommended after it either. You eat real meals. What people often confuse with \"shakes\": the <b>nutrient concentrates</b> (Basic immune mix, Restorate minerals, amino acids) &mdash; these are powders you stir into water to supply your body with vitamins and minerals. They don't replace a meal, they add to it. They're actually a key part of the concept."
+ },
+ {
+  "id": 187,
+  "de": "Ist das auch für Vegetarier oder Veganer?",
+  "en": "Does this work for vegetarians or vegans?"
+ },
+ {
+  "id": 188,
+  "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+  "en": "Yes. You can do this vegetarian or vegan. There are proper alternatives for everything animal-based."
+ },
+ {
+  "id": 189,
+  "de": "Was passiert nach den ersten Phasen?",
+  "en": "What happens after the first phases?"
+ },
+ {
+  "id": 190,
+  "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+  "en": "The switch to your long-term everyday is smooth. You've built new habits and you know your body better. If you want, you keep the effect going with a few mindful days each month."
+ },
+ {
+  "id": 191,
+  "de": "Was ist die Kölner Liste und warum ist die wichtig?",
+  "en": "What is the Cologne List and why does it matter?"
+ },
+ {
+  "id": 192,
+  "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+  "en": "The Cologne List is an independent database. It tests food supplements for banned substances and doping agents. If a product is on it, you know one thing for sure: nothing hidden inside. That's exactly why so many pro athletes use FitLine. For you it means you know what you're putting in your body. No nasty surprises."
+ },
+ {
+  "id": 193,
+  "de": "Was macht ELAB Analytik?",
+  "en": "What does ELAB Analytik do?"
+ },
+ {
+  "id": 194,
+  "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+  "en": "ELAB is an independent lab. They constantly check that the FitLine products actually contain what's on the label, and that nothing sneaks in that shouldn't be there. Sounds obvious, but sadly it isn't the case with all food supplements. With FitLine it's checked non-stop. For you: you can rely on it."
+ },
+ {
+  "id": 195,
+  "de": "Was ist NTC und MicroSolve Q10?",
+  "en": "What is NTC and MicroSolve Q10?"
+ },
+ {
+  "id": 196,
+  "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+  "en": "NTC stands for Nutrient Transport Concept. Simply put: the formula makes sure nutrients arrive exactly where they work. In your cells. With many other supplements a big chunk goes back out unused. MicroSolve Q10 is one example of that kind of tech: your body barely absorbs regular Q10, but with MicroSolve it's used much better. Sounds technical, but this is the reason the stuff actually does something."
+ },
+ {
+  "id": 197,
+  "de": "Nutzen die Produkte wirklich Profisportler?",
+  "en": "Do pro athletes actually use these products?"
+ },
+ {
+  "id": 198,
+  "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+  "en": "Yes, and quite a lot of them. Over 500 world champions and Olympic athletes have worked with FitLine, including the German Ski Association and the German Ice Hockey Federation. Why? Pro athletes are extremely careful about what goes into their bodies, because they have to trust the purity 100 percent. That's a pretty good quality indicator, even if you're nowhere near competitive sports yourself."
+ },
+ {
+  "id": 199,
+  "de": "Für wen ist das nicht geeignet?",
+  "en": "Who is this not suitable for?"
+ },
+ {
+  "id": 200,
+  "de": "Für Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis. Bei chronischen Erkrankungen wird ärztliche Begleitung empfohlen.",
+  "en": "For anyone pregnant, breastfeeding, or under medical treatment, only after talking to your doctor. For chronic conditions, medical supervision is recommended."
+ },
+ {
+  "id": 201,
+  "de": "Passt das zu dir?",
+  "en": "Is this for you?"
+ },
+ {
+  "id": 202,
+  "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+  "en": "Quick <em>self-check</em>.<br><span class=\"mark\">Then we talk.</span>"
+ },
+ {
+  "id": 203,
+  "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+  "en": "Tick the boxes. We'll figure out together if and how this fits you."
+ },
+ {
+  "id": 204,
+  "de": "Kennst du das?",
+  "en": "Sound familiar?"
+ },
+ {
+  "id": 205,
+  "de": "Nachmittags greifst du oft zu Kaffee oder Süßem",
+  "en": "You often reach for coffee or sweets in the afternoon"
+ },
+ {
+  "id": 206,
+  "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+  "en": "After meals you would love to take a break"
+ },
+ {
+  "id": 207,
+  "de": "Deine Klamotten sitzen nicht mehr so wie du willst",
+  "en": "Your clothes don't fit the way you want them to"
+ },
+ {
+  "id": 208,
+  "de": "Du würdest morgens gern mit mehr Schwung starten",
+  "en": "You would like to start the morning with more energy"
+ },
+ {
+  "id": 209,
+  "de": "Du wünschst dir mehr Fokus im Alltag",
+  "en": "You wish for more focus in everyday life"
+ },
+ {
+  "id": 210,
+  "de": "Setz dein erstes Häkchen",
+  "en": "Tick your first box"
+ },
+ {
+  "id": 211,
+  "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+  "en": "Tick everything that fits you. Then {{#unless partner_modus=duo}}I'll{{/unless}}{{#if partner_modus=duo}}we'll{{/if}} show you what actually works for you."
+ },
+ {
+  "id": 212,
+  "de": "Zurück",
+  "en": "Back"
+ },
+ {
+  "id": 213,
+  "de": "Persönliche Beratung",
+  "en": "One-on-one chat"
+ },
+ {
+  "id": 214,
+  "de": "Fast geschafft",
+  "en": "Almost done"
+ },
+ {
+  "id": 215,
+  "de": "Dein Name",
+  "en": "Your name"
+ },
+ {
+  "id": 216,
+  "de": "Deine E-Mail",
+  "en": "Your email"
+ },
+ {
+  "id": 217,
+  "de": "Wie soll {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}einer von uns{{/if}} dich erreichen?",
+  "en": "How should we reach you?"
+ },
+ {
+  "id": 218,
+  "de": "Telefon",
+  "en": "Phone"
+ },
+ {
+  "id": 219,
+  "de": "Kurze Nachricht",
+  "en": "Short message"
+ },
+ {
+  "id": 220,
+  "de": "optional",
+  "en": "optional"
+ },
+ {
+  "id": 221,
+  "de": "Anfrage absenden",
+  "en": "Send request"
+ },
+ {
+  "id": 222,
+  "de": "Kein Newsletter, keine Weitergabe. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} persönlich bei dir zurück.",
+  "en": "No newsletter, no sharing. {{#unless partner_modus=duo}}I'll{{/unless}}{{#if partner_modus=duo}}We'll{{/if}} get back to you personally."
+ },
+ {
+  "id": 223,
+  "de": "Angekommen",
+  "en": "Received"
+ },
+ {
+  "id": 224,
+  "de": "Danke<span id=\"successNameDe\"></span>!",
+  "en": "Thanks<span id=\"successNameEn\"></span>!"
+ },
+ {
+  "id": 225,
+  "de": "Deine Anfrage ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} innerhalb von 24 Stunden persönlich bei dir.",
+  "en": "Your request landed with {{#unless partner_modus=duo}}me{{/unless}}{{#if partner_modus=duo}}us{{/if}}. {{#unless partner_modus=duo}}I'll{{/unless}}{{#if partner_modus=duo}}We'll{{/if}} get back to you personally within 24 hours."
+ },
+ {
+  "id": 226,
+  "de": "<b>Check dein Postfach.</b> Eine Bestätigung ist unterwegs.",
+  "en": "<b>Check your inbox.</b> A confirmation is on its way."
+ },
+ {
+  "id": 227,
+  "de": "<b>Persönlicher Kontakt.</b> {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} — ohne Verkaufsdruck.",
+  "en": "<b>Personal reply.</b> {{#unless partner_modus=duo}}I'll{{/unless}}{{#if partner_modus=duo}}We'll{{/if}} reach out — no sales pressure."
+ },
+ {
+  "id": 228,
+  "de": "<b>Du entscheidest.</b> Nur wenn es wirklich passt.",
+  "en": "<b>You decide.</b> Only if it's really a fit."
+ },
+ {
+  "id": 229,
+  "de": "am Tag",
+  "en": "per day"
+ },
+ {
+  "id": 230,
+  "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+  "en": "About what you'd pay for a coffee and a croissant. Except this time you're <b>resetting your nutrition for 3 months</b> instead of just waking up for an hour."
+ },
+ {
+  "id": 231,
+  "de": "{{#unless partner_modus=duo}}Bei mir{{/unless}}{{#if partner_modus=duo}}Bei uns{{/if}} sogar noch günstiger.",
+  "en": "Often even less through {{#unless partner_modus=duo}}me{{/unless}}{{#if partner_modus=duo}}us{{/if}}."
+ },
+ {
+  "id": 232,
+  "de": "Kostenlose Beratung",
+  "en": "Free consultation"
+ },
+ {
+  "id": 233,
+  "de": "Keine Bindung",
+  "en": "No commitment"
+ },
+ {
+  "id": 234,
+  "de": "Kein Abo-Zwang",
+  "en": "No forced subscription"
+ },
+ {
+  "id": 235,
+  "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+  "en": "<b>Not suitable for</b> pregnant or breastfeeding women; anyone under medical care only after consulting their doctor."
+ },
+ {
+  "id": 236,
+  "de": "Jetzt anfragen",
+  "en": "Get in touch"
+ },
+ {
+  "id": 237,
+  "de": "Konzept",
+  "en": "Concept"
+ },
+ {
+  "id": 238,
+  "de": "Was ist das",
+  "en": "What it is"
+ },
+ {
+  "id": 239,
+  "de": "Nutzen",
+  "en": "Benefits"
+ },
+ {
+  "id": 240,
+  "de": "4 Phasen",
+  "en": "4 phases"
+ },
+ {
+  "id": 241,
+  "de": "Info",
+  "en": "Info"
+ },
+ {
+  "id": 242,
+  "de": "Rechtliches",
+  "en": "Legal"
+ },
+ {
+  "id": 243,
+  "de": "Impressum",
+  "en": "Imprint"
+ },
+ {
+  "id": 244,
+  "de": "Datenschutz",
+  "en": "Privacy"
+ },
+ {
+  "id": 245,
+  "de": "Made with",
+  "en": "Made with"
+ },
+ {
+  "id": 246,
+  "de": "von",
+  "en": "by"
+ },
+ {
+  "id": 247,
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Diese Seite dient der Information und ersetzt keine ärztliche Beratung, Diagnose oder Behandlung. Erfahrungen sind individuell und stellen keine Zusicherung eines bestimmten Ergebnisses dar. Bei Beschwerden oder Vorerkrankungen sprich bitte mit {{#unless partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/unless}}{{#if partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/if}}.",
+  "en": "All products are food supplements, not medicinal products. This page is for information only and does not replace medical advice, diagnosis or treatment. Individual experiences vary and do not guarantee any specific outcome. If you have any concerns or pre-existing conditions, please talk to your doctor."
+ },
+ {
+  "id": 248,
+  "de": "Deine Privatsphäre",
+  "en": "Your privacy"
+ },
+ {
+  "id": 249,
+  "de": "Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "en": "We only set essential cookies to make the site work. For statistics or marketing we need your consent — your choice. Details in our <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">privacy policy</a>."
+ },
+ {
+  "id": 250,
+  "de": "Technisch notwendig",
+  "en": "Essential"
+ },
+ {
+  "id": 251,
+  "de": "Grundfunktionen wie Sprachwahl und Kontaktformular — immer aktiv.",
+  "en": "Basic functions like language choice and contact form — always on."
+ },
+ {
+  "id": 252,
+  "de": "Statistik",
+  "en": "Statistics"
+ },
+ {
+  "id": 253,
+  "de": "Anonyme Auswertung, wie Besucher die Seite nutzen (z.&nbsp;B. Aufrufe, Verweildauer).",
+  "en": "Anonymous analytics on how visitors use the site (e.g. pageviews, time on page)."
+ },
+ {
+  "id": 254,
+  "de": "Für personalisierte Werbung und Retargeting (z.&nbsp;B. Meta Pixel).",
+  "en": "Personalized ads and retargeting (e.g. Meta Pixel)."
+ },
+ {
+  "id": 255,
+  "de": "Alles ablehnen",
+  "en": "Reject all"
+ },
+ {
+  "id": 256,
+  "de": "Alles akzeptieren",
+  "en": "Accept all"
+ },
+ {
+  "id": 257,
+  "de": "Einstellungen anpassen ›",
+  "en": "Adjust settings ›"
+ },
+ {
+  "id": 258,
+  "de": "Auswahl speichern ›",
+  "en": "Save selection ›"
+ },
+ {
+  "id": 259,
+  "de": "Da ist etwas schiefgegangen. Bitte versuch es noch einmal.",
+  "en": "Something went wrong. Please try again."
+ }
+]

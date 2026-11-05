@@ -1,0 +1,476 @@
+[
+ {
+  "de": "Mit vorbereiteter Nachricht, direkt im Chat",
+  "alt": "Hazır mesajla, direkt sohbette",
+  "neu": "Hazır bir mesajla, doğrudan sohbete",
+  "grund": "natürlicher, Artikel ergänzt"
+ },
+ {
+  "de": "Kurzer Selbst-Check, dann melde ich mich",
+  "alt": "Kısa bir öz kontrol, sonra sana dönerim",
+  "neu": "Kısa bir test, sonra sana dönerim",
+  "grund": "„öz kontrol“ klingt hölzern; „test“ einheitlich"
+ },
+ {
+  "de": "Kurzer Selbst-Check, dann melden wir uns",
+  "alt": "Kısa bir öz kontrol, sonra sana döneriz",
+  "neu": "Kısa bir test, sonra sana döneriz",
+  "grund": "wie oben, einheitlich"
+ },
+ {
+  "de": "Der Stoffwechsel-Reset in 4 Phasen",
+  "alt": "4 aşamada metabolizma reseti",
+  "neu": "4 aşamada metabolizma resetleme",
+  "grund": "Reset einheitlich „metabolizma resetleme“"
+ },
+ {
+  "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+  "alt": "Daha fazla enerji. Daha net bir kafa. <span class=\"mark\">Daha hafif bir his.</span>",
+  "neu": "Daha fazla enerji. Berrak bir zihin. <span class=\"mark\">Daha hafif bir his.</span>",
+  "grund": "„net bir kafa“ wörtlich, „berrak zihin“ idiomatisch"
+ },
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "<strong>Metabolizma resetine</strong> başla. Diyet yok, shake yok, saymak yok. Bunun yerine <strong>4 sabit öğün</strong> ve <strong>patentli takviyeler</strong> var, günlük hayatında <strong>kendini gerçekten iyi hissetmen için.</strong>",
+  "neu": "<strong>Metabolizma resetlemeye</strong> başla. Diyet yok, shake yok, hesap kitap yok. Onun yerine <strong>4 sabit öğün</strong> ve <strong>patentli takviyeler</strong>, böylece günlük hayatın <strong>gerçekten iyi hissettirir.</strong>",
+  "grund": "Reset-Begriff einheitlich; „saymak yok“ unnatürlich; Satzbau flüssiger"
+ },
+ {
+  "de": "Austausch mit Gleichgesinnten",
+  "alt": "Benzer düşünenlerle paylaşım",
+  "neu": "Aynı yoldaki insanlarla paylaşım",
+  "grund": "„benzer düşünenler“ wörtlich"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+  "alt": "{{#unless partner_modus=duo}}Bu sayfa <b>{{vorname}} {{nachname}}</b> tarafından işletilmektedir, PM-International (FitLine®) bağımsız satış ortağı. PM-International AG’nin resmi web sitesi değildir.{{/unless}}{{#if partner_modus=duo}}Bu sayfa <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> tarafından işletilmektedir, PM-International (FitLine®) bağımsız satış ortakları. PM-International AG’nin resmi web sitesi değildir.{{/if}}",
+  "neu": "{{#unless partner_modus=duo}}Bu sayfa, PM-International (FitLine®) bağımsız {{#if geschlecht=weiblich}}satış ortağı{{/if}}{{#if geschlecht=maennlich}}satış ortağı{{/if}} <b>{{vorname}} {{nachname}}</b> tarafından işletilmektedir. PM-International AG’nin resmi web sitesi değildir.{{/unless}}{{#if partner_modus=duo}}Bu sayfa, PM-International (FitLine®) bağımsız satış ortakları <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> tarafından işletilmektedir. PM-International AG’nin resmi web sitesi değildir.{{/if}}",
+  "grund": "nachgestellte Apposition ungrammatisch; Name jetzt ohne Suffix vor „tarafından“ ; fehlende Geschlechtsblöcke wiederhergestellt (beide Formen gleich, TR unterscheidet nicht)"
+ },
+ {
+  "de": "Was wir geben",
+  "alt": "Ne veriyoruz?",
+  "neu": "Neler ekliyoruz?",
+  "grund": "„Ne veriyoruz?“ klingt nach Verkauf; Sinn = was wir ergänzen"
+ },
+ {
+  "de": "Unser Nährstoffkonzept",
+  "alt": "Besin konseptimiz",
+  "neu": "Besin öğeleri konseptimiz",
+  "grund": "„besin öğeleri“ einheitlich für Nährstoffe"
+ },
+ {
+  "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+  "alt": "Patentli bir konseptten gelen kaliteli vital maddeler. Süpermarket rafından değil.",
+  "neu": "Patentli bir konseptten gelen kaliteli besin öğeleri. Süpermarket rafından değil.",
+  "grund": "„vital maddeler“ unüblich; einheitlich „besin öğeleri“"
+ },
+ {
+  "de": "<b>Warum wichtig:</b> Nur was der Körper aufnehmen kann, wirkt auch.",
+  "alt": "<b>Neden önemli:</b> Sadece vücudun alıp kullanabildiği şey etki gösterebilir.",
+  "neu": "<b>Neden önemli:</b> Sadece vücudun emebildiği şey gerçekten işe yarar.",
+  "grund": "knapper, natürlicher"
+ },
+ {
+  "de": "4× feste Mahlzeiten",
+  "alt": "4× sabit öğün",
+  "neu": "4 sabit öğün",
+  "grund": "„4×“ liest sich im Türkischen holprig"
+ },
+ {
+  "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+  "alt": "Aralarda atıştırma yok, öğün atlama yok. Net bir düzen, bir sonraki öğüne kadar tok kalmak.",
+  "neu": "Arada atıştırmak yok, öğün atlamak yok. Net bir düzen ve bir sonraki öğüne kadar tok kalırsın.",
+  "grund": "„satt bis zum nächsten Mal“ natürlich als Satz"
+ },
+ {
+  "de": "Was wir weglassen",
+  "alt": "Neleri bırakıyoruz?",
+  "neu": "Neleri çıkarıyoruz?",
+  "grund": "„bırakmak“ klingt nach Aufgeben; „çıkarmak“ = vom Speiseplan streichen"
+ },
+ {
+  "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+  "alt": "Birkaç haftalığına çıkarıyoruz ki vücudun sakinleşsin. Sonsuza kadar değil, sadece ana aşamada.",
+  "neu": "Vücudun biraz dinlensin diye birkaç haftalığına çıkıyor. Sonsuza kadar değil, sadece ana aşamada.",
+  "grund": "„…ki“-Konstruktion holprig"
+ },
+ {
+  "de": "<span class=\"essence-star\">*</span> Probiotischer Joghurt am Morgen bleibt drin, der baut deine Darmflora auf.",
+  "alt": "<span class=\"essence-star\">*</span> Sabah probiyotik yoğurt kalıyor, bağırsak floranın oluşmasına destek olur.",
+  "neu": "<span class=\"essence-star\">*</span> Sabahki probiyotik yoğurt kalıyor, bağırsak floranı destekler.",
+  "grund": "flüssiger; Aussage nicht stärker als DE"
+ },
+ {
+  "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+  "alt": "<b>Bu üç yapı taşı birlikte çalışır.</b> Reset etkisi ancak üçünü bir araya getirdiğinde ortaya çıkar.",
+  "neu": "<b>Bu üç yapı taşı birlikte işe yarar.</b> Resetleme etkisi ancak üçünü bir arada uyguladığında ortaya çıkar.",
+  "grund": "Reset einheitlich; natürlicher"
+ },
+ {
+  "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+  "alt": "Aktivasyon aşamasında <b>ketojenik beslenme</b> prensibinden yola çıkarsın. Kulağa karmaşık geliyor ama değil: prensip olarak <b>klasik keto</b> gibi, sadece <b>aşırı yağ kaşıklamak</b> yok ve <b>sürekli kendini kısıtlamak</b> yok.",
+  "neu": "Aktivasyon aşamasında <b>ketojenik beslenme</b> prensibini esas alırsın. Kulağa karmaşık geliyor ama değil: <b>klasik ketoya</b> benzer bir prensip, sadece <b>kaşık kaşık yağ yemeden</b> ve <b>sürekli kendini kısıtlamadan</b>.",
+  "grund": "„yağ kaşıklamak yok“ wörtlich/unidiomatisch"
+ },
+ {
+  "de": "Energie schnell hoch, schnell wieder weg. Nach 2–3 Stunden wieder Hunger.",
+  "alt": "Enerji hızla yükselir, hızla yine düşer. 2–3 saat sonra yine acıkırsın.",
+  "neu": "Enerji hızla yükselir, aynı hızla düşer. 2–3 saat sonra yine acıkırsın.",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Konstant",
+  "alt": "Sabit",
+  "neu": "Dengeli",
+  "grund": "„sabit“ klingt technisch; „dengeli“ = gleichmäßig"
+ },
+ {
+  "de": "Wieder wohl in dir",
+  "alt": "Kendinle yeniden iyi",
+  "neu": "Yeniden kendini iyi hissetmek",
+  "grund": "„Kendinle yeniden iyi“ ist kein Türkisch"
+ },
+ {
+  "de": "Ohne Kaffee-Krücke",
+  "alt": "Kahveyi koltuk değneği yapmadan",
+  "neu": "Kahveye muhtaç olmadan",
+  "grund": "„koltuk değneği“ wörtliches Bild"
+ },
+ {
+  "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+  "alt": "Sabahlar farklı hissettirir. Daha az ağırlık, daha hızlı kendine gelme.",
+  "neu": "Sabahlar farklı geçer. Daha az mahmurluk, daha çabuk kendine gelirsin.",
+  "grund": "natürlicher Ausdruck für „schwerfällig/sofort da“"
+ },
+ {
+  "de": "Kein Ess-Rollercoaster",
+  "alt": "Yeme konusunda iniş çıkış yok",
+  "neu": "Yemekle ilgili gelgitler yok",
+  "grund": "„Ess-Rollercoaster“ idiomatisch"
+ },
+ {
+  "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+  "alt": "Sürekli bir sonraki öğünü düşünmek yok. Saat üçte tatlıya saldırma zorunluluğu yok. Sesi sadece kısılır.",
+  "neu": "Sürekli bir sonraki öğünü düşünmek yok. Saat üçte tatlı krizi yok. Hepsi kendiliğinden sakinleşir.",
+  "grund": "„tatlıya saldırma zorunluluğu“ und „Sesi sadece kısılır“ wörtlich"
+ },
+ {
+  "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+  "alt": "Kısaca {{#unless partner_modus=duo}}{{vorname}} ile{{/unless}}{{#if partner_modus=duo}}bizimle{{/if}} yazış",
+  "neu": "{{#unless partner_modus=duo}}{{vorname}} ile{{/unless}}{{#if partner_modus=duo}}Bizimle{{/if}} kısaca yazış",
+  "grund": "Knopf: natürliche Wortstellung, Name ohne Suffix vorne"
+ },
+ {
+  "de": "In <span class=\"mark\">4 Phasen</span> zu deinem neuen Alltag.",
+  "alt": "<span class=\"mark\">4 fazda</span> yeni günlük düzenine.",
+  "neu": "<span class=\"mark\">4 aşamada</span> yeni günlük düzenine.",
+  "grund": "Phase einheitlich „aşama“ (vorher faz/aşama gemischt)"
+ },
+ {
+  "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+  "alt": "1. haftadan kalıcı günlük rutinine kadar, dört net faz.",
+  "neu": "1. haftadan kalıcı günlük düzenine kadar, dört net aşama.",
+  "grund": "„aşama“ einheitlich"
+ },
+ {
+  "de": "Phase 1",
+  "alt": "Faz 1",
+  "neu": "1. aşama",
+  "grund": "„aşama“ einheitlich, türkische Ordinalstellung"
+ },
+ {
+  "de": "Phase 2",
+  "alt": "Faz 2",
+  "neu": "2. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Phase 3",
+  "alt": "Faz 3",
+  "neu": "3. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Phase 4",
+  "alt": "Faz 4",
+  "neu": "4. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Phase 01",
+  "alt": "Faz 01",
+  "neu": "1. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Phase 02",
+  "alt": "Faz 02",
+  "neu": "2. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Phase 03",
+  "alt": "Faz 03",
+  "neu": "3. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Phase 04",
+  "alt": "Faz 04",
+  "neu": "4. aşama",
+  "grund": "dto."
+ },
+ {
+  "de": "Dein Körper tankt Kraft für das, was kommt.",
+  "alt": "Vücudun, gelecek aşama için güç toplar.",
+  "neu": "Vücudun önündeki süreç için güç toplar.",
+  "grund": "überflüssiges Komma, natürlicher"
+ },
+ {
+  "de": "Du isst 4× am Tag nach klarem Plan, ohne Zucker und Weißmehl.",
+  "alt": "Günde 4× kez net bir plana göre yersin, şeker ve beyaz un yok.",
+  "neu": "Günde 4 kez net bir plana göre yersin; şeker ve beyaz un yok.",
+  "grund": "Fehler „4× kez“ doppelt"
+ },
+ {
+  "de": "So bleibt es dauerhaft, ohne Verzicht.",
+  "alt": "Böylece kalıcı olur, vazgeçmek zorunda kalmadan.",
+  "neu": "Böylece kalıcı olur, kendini mahrum bırakmadan.",
+  "grund": "„vazgeçmek zorunda kalmadan“ steif"
+ },
+ {
+  "de": "So sieht ein Tag aus",
+  "alt": "Bir gün böyle görünür",
+  "neu": "Bir gün böyle geçer",
+  "grund": "„görünür“ wörtlich"
+ },
+ {
+  "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+  "alt": "Sadece protein, iyi yağlar, sabah probiyotik yoğurt ve besin konsantreleri. Sebze bile yok. Kulağa katı geliyor, ama ana fazın bir parçası.",
+  "neu": "Sadece protein, iyi yağlar, sabahki probiyotik yoğurt ve besin konsantreleri. Sebze bile yok. Kulağa katı geliyor ama ana aşamanın bir parçası.",
+  "grund": "„aşama“ einheitlich"
+ },
+ {
+  "de": "Eine Beispiel-Woche pro Phase.",
+  "alt": "Her faz için örnek bir hafta.",
+  "neu": "Her aşama için örnek bir hafta.",
+  "grund": "„aşama“ einheitlich"
+ },
+ {
+  "de": "Nährstoffe",
+  "alt": "Besin maddeleri",
+  "neu": "Besin öğeleri",
+  "grund": "„besin öğeleri“ einheitlich"
+ },
+ {
+  "de": "Wie ein weißer Tag, plus Gemüse und Salat. Der Standard-Tag im Programm.",
+  "alt": "Beyaz gün gibi, ek olarak sebze ve salata var. Programdaki standart gün.",
+  "neu": "Beyaz gün gibi, üstüne sebze ve salata. Programdaki standart gün.",
+  "grund": "knapper, natürlicher"
+ },
+ {
+  "de": "Wochen",
+  "alt": "Hafta",
+  "neu": "hafta",
+  "grund": "steht hinter „×2“, daher klein"
+ },
+ {
+  "de": "Woche",
+  "alt": "Hafta",
+  "neu": "hafta",
+  "grund": "dto."
+ },
+ {
+  "de": "Woche 2 bis 4",
+  "alt": "2. haftadan 4. haftaya kadar",
+  "neu": "2. ile 4. hafta arası",
+  "grund": "kürzer, natürlicher"
+ },
+ {
+  "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+  "alt": "<span class=\"mark\">Günde 4× lezzetli yemek.</span> Oruç tutmak ya da sadece shake içmek yerine.",
+  "neu": "<span class=\"mark\">Günde 4 lezzetli öğün.</span> Aç kalmak ya da sadece shake içmek yerine.",
+  "grund": "„oruç“ religiös konnotiert; „4×“ holprig"
+ },
+ {
+  "de": "Neben den Mahlzeiten: <span class=\"mark\">die richtigen Nährstoffe.</span>",
+  "alt": "Öğünlerin yanında: <span class=\"mark\">doğru besin maddeleri.</span>",
+  "neu": "Öğünlerin yanında: <span class=\"mark\">doğru besin öğeleri.</span>",
+  "grund": "„besin öğeleri“ einheitlich"
+ },
+ {
+  "de": "Geschützte Forschung im Nährstoff-Transport",
+  "alt": "Besin maddesi taşınmasına yönelik korumalı araştırma",
+  "neu": "Besin öğesi taşınımında patentle korunan araştırmalar",
+  "grund": "sperrig; „korumalı“ unklar"
+ },
+ {
+  "de": "Auf Dopingstoffe geprüft, offiziell gelistet",
+  "alt": "Doping maddelerine karşı test edilmiş, resmi listede yer alır",
+  "neu": "Doping maddeleri açısından test edilmiş, resmi olarak listede",
+  "grund": "„-e karşı test“ falsche Kollokation"
+ },
+ {
+  "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+  "alt": "Dünya şampiyonları ve olimpiyat profesyonelleri güveniyor",
+  "neu": "Dünya şampiyonları ve olimpiyat sporcuları güveniyor",
+  "grund": "„olimpiyat profesyonelleri“ unüblich"
+ },
+ {
+  "de": "Ein Vitamin bringt nichts, wenn dein Körper es nicht aufnimmt. Genau da haben viele Präparate ihr Problem. FitLine ist exakt dafür gemacht: dass die Nährstoffe <b>wirklich dort ankommen, wo sie gebraucht werden</b>. In deinen Zellen.",
+  "alt": "Bir vitamini vücudun almıyorsa, pek bir anlamı yok. Birçok takviyenin sorunu tam da burada. FitLine tam bunun için geliştirildi: Besinlerin <b>gerçekten ihtiyaç duyulan yere ulaşması</b> için. Hücrelerine.",
+  "neu": "Vücudun emmediği bir vitaminin hiçbir faydası yok. Birçok takviyenin sorunu tam da burada. FitLine tam olarak bunun için geliştirildi: besin öğelerinin <b>gerçekten ihtiyaç duyulan yere ulaşması</b> için. Hücrelerine.",
+  "grund": "natürlicher Einstieg; „besin öğeleri“ einheitlich"
+ },
+ {
+  "de": "MicroSolve<sup style=\"font-size: 0.7em;\">®</sup> Q10 Technologie",
+  "alt": "MicroSolve<sup style=\"font-size: 0.7em;\">®</sup> Q10 Teknolojisi",
+  "neu": "MicroSolve<sup style=\"font-size: 0.7em;\">®</sup> Q10 teknolojisi",
+  "grund": "Kleinschreibung"
+ },
+ {
+  "de": "Wie lange dauert der Reset?",
+  "alt": "Reset ne kadar sürer?",
+  "neu": "Metabolizma resetleme ne kadar sürer?",
+  "grund": "Reset einheitlich"
+ },
+ {
+  "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+  "alt": "Aktif reset birkaç hafta sürer. Ardından daha uzun bir stabilizasyon dönemi gelir, sonra da uzun vadeli günlük düzen. Seçtiğin seçeneğe göre net takvim değişir.",
+  "neu": "Aktif resetleme birkaç hafta sürer. Ardından daha uzun bir stabilizasyon aşaması gelir, sonra da uzun vadeli günlük düzen. Kesin zaman planı, seçtiğin versiyona göre değişir.",
+  "grund": "Reset einheitlich; „seçtiğin seçeneğe“ doppelt"
+ },
+ {
+  "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+  "alt": "Hayır. Bu konsept bir kalori diyeti değil. Güzel, doğal öğünler yersin, yanında seçilmiş besin öğeleri gelir. Odak noktası vazgeçmek değil, daha iyi beslenmek.",
+  "neu": "Hayır. Bu konsept bir kalori diyeti değil. İyi, doğal öğünler yersin, bunlara seçilmiş besin öğeleri eklenir. Odak noktası vazgeçmek değil, daha iyi beslenmek.",
+  "grund": "„yanında … gelir“ holprig"
+ },
+ {
+  "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+  "alt": "Ana aşamada, yani aktivasyonda, sütü, peyniri, lor/quarkı ve kremayı bilinçli olarak çıkarırsın &mdash; bağırsak floran kendini yeniden toparlayabilsin diye. <b>İstisna:</b> sabah ilk öğün olarak probiyotik yoğurt, konseptin açıkça bir parçasıdır ve hatta önemlidir. Stabilizasyon aşamasından itibaren sert peynir, quark, mozzarella ve benzerleri tekrar girer &mdash; ölçülü şekilde, protein kaynağı olarak. Kahvede ise az miktarda şekersiz badem ya da soya sütüne izin var.",
+  "neu": "Ana aşamada, yani aktivasyonda, süt, peynir, lor ve kremayı bilinçli olarak çıkarırsın; böylece bağırsak floran kendini yeniden toparlayabilir. <b>İstisna:</b> sabah ilk öğün olarak yediğin probiyotik yoğurt, konseptin açıkça bir parçasıdır, hatta önemlidir. Stabilizasyon aşamasından itibaren sert peynir, lor, mozzarella ve benzerleri yeniden menüye girer: ölçülü olarak, protein kaynağı şeklinde. Kahvene biraz şekersiz badem ya da soya sütü ekleyebilirsin.",
+  "grund": "ENTITY: beide &mdash; durch Semikolon/Doppelpunkt ersetzt; „lor/quark“ vereinheitlicht; natürlicher"
+ },
+ {
+  "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+  "alt": "<b>Hayır.</b> Klasik öğün yerine geçen shake’ler ya da protein shake’leri ana aşamada izinli değildir, sonrasında da önerilmez. Sen gerçek öğünler yersin. Birçok kişinin “shake” sandığı şey ise <b>besin konsantreleri</b>dir, yani Basic-Immun-Mix, Restorate mineralleri, amino asitler &mdash; bunlar vücudunu vitamin ve minerallerle desteklemek için suyla karıştırdığın tozlardır. Öğünün yerine geçmez, onu tamamlar. Hatta konseptin önemli bir parçasıdır.",
+  "neu": "<b>Hayır.</b> Öğün yerine geçen klasik shake’ler ya da protein shake’leri ana aşamada serbest değildir, sonrasında da önerilmez. Gerçek öğünler yersin. Birçok kişinin “shake” sandığı şey ise <b>besin konsantreleri</b> (Basic-Immun-Mix, Restorate mineralleri, amino asitler): vücuduna vitamin ve mineral sağlamak için suya karıştırdığın tozlar. Öğünün yerine geçmezler, onu tamamlarlar. Hatta konseptin önemli bir parçasıdırlar.",
+  "grund": "ENTITY: &mdash; durch Doppelpunkt ersetzt; Klammer wie im DE statt „-dir, yani“"
+ },
+ {
+  "de": "Was ist die Kölner Liste und warum ist die wichtig?",
+  "alt": "Kölner Liste, yani Cologne List nedir ve neden önemli?",
+  "neu": "Kölner Liste (Köln Listesi) nedir ve neden önemli?",
+  "grund": "landesübliche Erklärung statt englischem „Cologne List“"
+ },
+ {
+  "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+  "alt": "NTC, Besin Taşıma Konsepti anlamına gelir. Basitçe söylemek gerekirse: formül, besinlerin tam etki gösterecekleri yere ulaşmasına yardımcı olur. Hücrelerine. Birçok başka takviyede büyük bir kısmı kullanılmadan tekrar dışarı atılır. MicroSolve Q10 da böyle bir teknolojiye örnektir: normal Q10’u vücut zor emer, MicroSolve ile çok daha iyi değerlendirilir. Kulağa teknik geliyor, ama farkı yaratan şey tam da bu.",
+  "neu": "NTC, “Besin Öğesi Taşıma Konsepti” anlamına gelir. Basitçe söylemek gerekirse: formül, besin öğelerinin tam etki gösterdikleri yere ulaşmasını sağlar. Hücrelerine. Birçok başka takviyede büyük bir kısmı kullanılmadan vücuttan atılır. MicroSolve Q10 da böyle bir teknolojiye örnektir: normal Q10’u vücut zor emer, MicroSolve ile çok daha iyi değerlendirilir. Kulağa teknik geliyor ama ürünlerin gerçekten işe yaramasının nedeni tam da bu.",
+  "grund": "„besin öğeleri“ einheitlich; „sorgt dafür“ wie DE (nicht abgeschwächt, nicht verstärkt); Schlusssatz sinngetreu"
+ },
+ {
+  "de": "Für Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis. Bei chronischen Erkrankungen wird ärztliche Begleitung empfohlen.",
+  "alt": "Hamileler, emzirenler ve doktor kontrolünde olan kişiler, bunu yalnızca tedaviyi yürüten sağlık birimine danıştıktan sonra yapmalı. Kronik hastalıklarda doktor eşliği önerilir.",
+  "neu": "Hamileler, emziren anneler ve tedavi gören kişiler yalnızca kendi doktorlarına danıştıktan sonra başlamalı. Kronik hastalıklarda doktor takibi önerilir.",
+  "grund": "„sağlık birimi“ bürokratisch; natürlicher"
+ },
+ {
+  "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+  "alt": "Kısa bir <em>öz kontrol</em>.<br><span class=\"mark\">Sonra konuşuruz.</span>",
+  "neu": "Kısa bir <em>test</em>.<br><span class=\"mark\">Sonra konuşalım.</span>",
+  "grund": "„öz kontrol“ hölzern; „konuşalım“ einladender"
+ },
+ {
+  "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+  "alt": "Yemekten sonra canın en çok biraz mola vermek istiyor",
+  "neu": "Yemekten sonra en çok mola vermek istiyorsun",
+  "grund": "„canın en çok … istiyor“ doppelt gemoppelt"
+ },
+ {
+  "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+  "alt": "Sana uyanların hepsini işaretle. Sonra {{#unless partner_modus=duo}}ben{{/unless}}{{#if partner_modus=duo}}biz{{/if}} sana somut olarak ne gösterebilece{{#unless partner_modus=duo}}ğimi{{/unless}}{{#if partner_modus=duo}}ğimizi{{/if}} anlat{{#unless partner_modus=duo}}ayım{{/unless}}{{#if partner_modus=duo}}alım{{/if}}.",
+  "neu": "Sana uyan her şeyi işaretle. Sonra {{#unless partner_modus=duo}}ben{{/unless}}{{#if partner_modus=duo}}biz{{/if}} sana somut olarak neler {{#unless partner_modus=duo}}sunabileceğimi{{/unless}}{{#if partner_modus=duo}}sunabileceğimizi{{/if}} {{#unless partner_modus=duo}}göstereyim{{/unless}}{{#if partner_modus=duo}}gösterelim{{/if}}.",
+  "grund": "3+3 Blöcke wie im DE, aber ganze Wörter statt an Silben zerschnittener Suffixe; „anlatayım“ passte nicht zu „zeigen“"
+ },
+ {
+  "de": "Kein Newsletter, keine Weitergabe. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} persönlich bei dir zurück.",
+  "alt": "Bülten yok, bilgilerinin paylaşılması yok. {{#unless partner_modus=duo}}Sana bizzat geri döneceğim{{/unless}}{{#if partner_modus=duo}}Sana bizzat geri döneceğiz{{/if}}.",
+  "neu": "Bülten yok, bilgilerin kimseyle paylaşılmaz. {{#unless partner_modus=duo}}Sana bizzat geri döneceğim{{/unless}}{{#if partner_modus=duo}}Sana bizzat geri döneceğiz{{/if}}.",
+  "grund": "„paylaşılması yok“ holprig"
+ },
+ {
+  "de": "Angekommen",
+  "alt": "Ulaştı",
+  "neu": "Alındı",
+  "grund": "natürlicher Bestätigungsstatus"
+ },
+ {
+  "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+  "alt": "Kahveyle kruvasana verdiğin para kadar. Ama karşılığında sadece kısa süreliğine ayılmak yerine <b>3 ay boyunca beslenmeni tamamen değiştiriyorsun</b>.",
+  "neu": "Bir kahve ve kruvasan parası kadar. Ama karşılığında, sadece kısa süreliğine ayılmak yerine <b>3 ay boyunca beslenmeni tamamen değiştiriyorsun</b>.",
+  "grund": "idiomatischer Einstieg"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}Bei mir{{/unless}}{{#if partner_modus=duo}}Bei uns{{/if}} sogar noch günstiger.",
+  "alt": "{{#unless partner_modus=duo}}Benimle{{/unless}}{{#if partner_modus=duo}}Bizimle{{/if}} daha da uygun.",
+  "neu": "{{#unless partner_modus=duo}}Benden{{/unless}}{{#if partner_modus=duo}}Bizden{{/if}} alırsan daha da uygun.",
+  "grund": "„Benimle daha uygun“ unklar; gemeint: Bezug über mich"
+ },
+ {
+  "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+  "alt": "<b>Uygun değildir</b>: Hamileler, emzirenler ve doktor kontrolünde olan kişiler için, tedaviyi yürüten sağlık birimine danışılmadan.",
+  "neu": "<b>Uygun değildir:</b> hamileler ve emziren anneler için; tedavi gören kişiler ise yalnızca kendi doktorlarına danıştıktan sonra.",
+  "grund": "Satzbau war unverständlich; Doppelpunkt in den Tag"
+ },
+ {
+  "de": "Jetzt anfragen",
+  "alt": "Şimdi yaz",
+  "neu": "Hemen bilgi al",
+  "grund": "„Şimdi yaz“ passt nicht zum Formular-Knopf"
+ },
+ {
+  "de": "Was ist das",
+  "alt": "Bu nedir?",
+  "neu": "Nedir?",
+  "grund": "Nav kürzer"
+ },
+ {
+  "de": "Nutzen",
+  "alt": "Faydası",
+  "neu": "Faydaları",
+  "grund": "Plural wie Abschnitt (sechs Vorteile)"
+ },
+ {
+  "de": "Made with",
+  "alt": "Sevgiyle hazırlandı",
+  "neu": "Sevgiyle",
+  "grund": "Wortstellung um das Herz: „Sevgiyle ♥ hazırlayan: finestsites“"
+ },
+ {
+  "de": "von",
+  "alt": "tarafından",
+  "neu": "hazırlayan:",
+  "grund": "dto.; „tarafından“ vor dem Logo ergab keinen Satz"
+ },
+ {
+  "de": "Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "alt": "Sayfanın çalışması için sadece teknik olarak gerekli çerezleri kullanıyoruz. İstatistik veya pazarlama için onayına ihtiyacımız var, seçim tamamen sende. Detaylar <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Gizlilik Politikamızda</a>.",
+  "neu": "Sayfanın çalışması için sadece teknik olarak gerekli çerezleri kullanıyoruz. İstatistik veya pazarlama için onayına ihtiyacımız var, seçim tamamen sende. Detaylar için <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Gizlilik Politikamıza</a> göz at.",
+  "grund": "letzter Satz ohne Verb unnatürlich"
+ },
+ {
+  "de": "Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)",
+  "alt": "Bu görsel yapay zekâ ile oluşturuldu (AB işareti)",
+  "neu": "Bu görsel yapay zekâ ile oluşturuldu (AB etiketlemesi)",
+  "grund": "„işaret“ = Zeichen; gemeint Kennzeichnungspflicht"
+ },
+ {
+  "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+  "alt": "Günlük hayatına uygun bir reset programı. Dört aşamada daha fazla enerjiye ve daha berrak bir zihne dönüş.",
+  "neu": "Günlük hayatın için bir metabolizma resetleme programı. Dört aşamada daha fazla enerjiye ve berrak bir zihne.",
+  "grund": "Reset einheitlich; „dönüş“ überflüssig"
+ }
+]

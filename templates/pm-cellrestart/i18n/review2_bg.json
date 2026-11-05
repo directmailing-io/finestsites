@@ -1,0 +1,344 @@
+[
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "Кратък самооценъчен тест, после ще се свържа с теб",
+    "neu": "Кратка самопроверка, после ще се свържа с теб",
+    "grund": "„самооценъчен тест“ sperrig; einheitlich „самопроверка“"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "Кратък самооценъчен тест, после ще се свържем с теб",
+    "neu": "Кратка самопроверка, после ще се свържем с теб",
+    "grund": "wie oben"
+  },
+  {
+    "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+    "alt": "Повече енергия. По-ясна глава. <span class=\"mark\">С повече лекота.</span>",
+    "neu": "Повече енергия. Бистра глава. <span class=\"mark\">С повече лекота.</span>",
+    "grund": "„бистра глава“ ist die übliche Wendung"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Започни своя <strong>рестарт на метаболизма</strong>. Без диета, без шейкове, без броене. Вместо това <strong>4 фиксирани хранения</strong> и <strong>патентовани добавки</strong>, за да се чувстваш <strong>наистина добре в ежедневието си.</strong>",
+    "neu": "Започни своя <strong>рестарт на метаболизма</strong>. Без диети, без шейкове, без броене. Вместо това <strong>4 редовни хранения</strong> и <strong>патентовани добавки</strong>, за да се чувстваш <strong>наистина добре в ежедневието си.</strong>",
+    "grund": "„фиксирани“ technisch; „Без диети“ natürlicher"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Обмен с хора на същата вълна",
+    "neu": "Общност от хора на една вълна",
+    "grund": "Redewendung „на една вълна“, natürlicher"
+  },
+  {
+    "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+    "alt": "Толкова е просто <span class=\"mark\">цялото нещо.</span>",
+    "neu": "Всичко е <span class=\"mark\">толкова просто.</span>",
+    "grund": "Wortstellung natürlicher"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Висококачествени vital вещества от патентована концепция. Не от рафта в супермаркета.",
+    "neu": "Висококачествени хранителни вещества от патентована концепция. Не от рафта в супермаркета.",
+    "grund": "lateinisches „vital“ entfernt"
+  },
+  {
+    "de": "<b>Warum wichtig:</b> Nur was der Körper aufnehmen kann, wirkt auch.",
+    "alt": "<b>Защо е важно:</b> Само това, което тялото може да усвои, може и да подейства.",
+    "neu": "<b>Защо е важно:</b> само това, което тялото може да усвои, наистина действа.",
+    "grund": "„може и да подейства“ schwächer als DE; Kleinschreibung nach Doppelpunkt"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4× фиксирани хранения",
+    "neu": "4× редовни хранения",
+    "grund": "„фиксирани“ technisch"
+  },
+  {
+    "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+    "alt": "Без похапване между храненията, без пропускане. Ясна структура, сит си до следващото хранене.",
+    "neu": "Без похапване между храненията, без пропускане. Ясна структура и не огладняваш до следващото хранене.",
+    "grund": "„сит си“ männlich; geschlechtsneutral"
+  },
+  {
+    "de": "<b>Warum wichtig:</b> Regelmäßigkeit gibt dem Körper den Rhythmus zurück.",
+    "alt": "<b>Защо е важно:</b> Редовността връща ритъма на тялото.",
+    "neu": "<b>Защо е важно:</b> редовността връща ритъма на тялото.",
+    "grund": "Kleinschreibung nach Doppelpunkt"
+  },
+  {
+    "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+    "alt": "Във фазата на активиране се водиш по принципа на <b>кетогенното хранене</b>. Звучи сложно, но не е: подобно е на <b>класическото кето</b>, само че <b>без крайности с мазнините на лъжица</b> и <b>без постоянно лишаване</b>.",
+    "neu": "Във фазата на активиране следваш принципа на <b>кетогенното хранене</b>. Звучи сложно, но не е: подобно е на <b>класическото кето</b>, само че <b>без да ядеш мазнина с лъжица</b> и <b>без постоянно лишаване</b>.",
+    "grund": "„крайности с мазнините на лъжица“ holprig; „се водиш по“ → „следваш“"
+  },
+  {
+    "de": "Energie schnell hoch, schnell wieder weg. Nach 2–3 Stunden wieder Hunger.",
+    "alt": "Енергията бързо се качва и бързо пак пада. След 2–3 часа пак си гладен.",
+    "neu": "Енергията бързо се качва и бързо пак пада. След 2–3 часа пак огладняваш.",
+    "grund": "„гладен“ männlich; neutral"
+  },
+  {
+    "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+    "alt": "Енергията остава стабилна. Сит си по-дълго и тялото ти използва собствените си резерви.",
+    "neu": "Енергията остава стабилна. Засищаш се за по-дълго и тялото ти използва собствените си резерви.",
+    "grund": "„Сит си“ männlich; neutral"
+  },
+  {
+    "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+    "alt": "Специалният термин за това състояние е: <b style=\"color:var(--ink);\">кетоза</b>. Затова се нарича и „кетогенно хранене“.",
+    "neu": "Терминът за това състояние е <b style=\"color:var(--ink);\">кетоза</b>. Затова се нарича и „кетогенно хранене“.",
+    "grund": "Doppelpunkt nach „е“ falsch"
+  },
+  {
+    "de": "Klarer Kopf",
+    "alt": "Ясна глава",
+    "neu": "Бистра глава",
+    "grund": "einheitlich mit Hero"
+  },
+  {
+    "de": "Ohne Kaffee-Krücke",
+    "alt": "Без кафето като патерица",
+    "neu": "Без да се крепиш на кафе",
+    "grund": "Bild „патерица“ wörtlich; idiomatisch"
+  },
+  {
+    "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+    "alt": "Сутринта се усеща различно. По-малко мудност, по-бързо си на линия.",
+    "neu": "Сутринта се усеща различно. По-малко мудност, по-бързо се разсънваш.",
+    "grund": "„на линия“ unpassend; natürlicher"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Без хранително влакче на ужасите",
+    "neu": "Без влакче на ужасите с храната",
+    "grund": "natürlichere Wortstellung"
+  },
+  {
+    "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+    "alt": "Без постоянно мислене за следващото ядене. Без онзи напън за нещо сладко към три. Просто утихва.",
+    "neu": "Не мислиш постоянно за следващото хранене. Без онзи глад за сладко в три следобед. Просто затихва.",
+    "grund": "„напън“ unpassend; natürlicher"
+  },
+  {
+    "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+    "alt": "Пиши набързо на {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}нас{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Пиши набързо на {{vorname}}{{/unless}}{{#if partner_modus=duo}}Пиши ни набързо{{/if}}",
+    "grund": "„на нас“ falsch, Duo „Пиши ни“; Name unverändert nach Präposition"
+  },
+  {
+    "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+    "alt": "Четири ясни фази, от първата седмица до трайните ти навици.",
+    "neu": "Четири ясни фази, от първата седмица до ежедневието, което остава.",
+    "grund": "„трайните ти навици“ ungenau; näher am DE"
+  },
+  {
+    "de": "Kein Sport nötig",
+    "alt": "Не ти трябва спорт",
+    "neu": "Не е нужен спорт",
+    "grund": "natürlicher als Listenpunkt"
+  },
+  {
+    "de": "Der Normal-Tag",
+    "alt": "Нормалният ден",
+    "neu": "Обикновеният ден",
+    "grund": "„нормален“ wörtlich"
+  },
+  {
+    "de": "Wichtig: Jede Zeile zeigt nur eine Woche. Rechts siehst du wie oft sich das wiederholt.",
+    "alt": "Важно: Всеки ред показва само една седмица. Вдясно виждаш колко пъти се повтаря.",
+    "neu": "Важно: всеки ред показва само една седмица. Вдясно виждаш колко пъти се повтаря.",
+    "grund": "Kleinschreibung nach Doppelpunkt"
+  },
+  {
+    "de": "Woche 2 bis 4",
+    "alt": "Седмица 2 до 4",
+    "neu": "Седмици 2 до 4",
+    "grund": "Plural nötig"
+  },
+  {
+    "de": "dauerhaft",
+    "alt": "дългосрочно",
+    "neu": "за постоянно",
+    "grund": "passt als Wiederholungsangabe neben ∞"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "Съзнателно използваме <strong>концепцията с продуктите на FitLine</strong>. Причината: само добрата храна често не стига. А това, от което имаш нужда допълнително, трябва наистина да стигне до тялото.",
+    "neu": "Съзнателно използваме <strong>продуктовата концепция на FitLine</strong>. Причината: само добрата храна често не стига. А това, от което имаш нужда допълнително, трябва наистина да стигне до тялото.",
+    "grund": "natürlichere Wortfolge"
+  },
+  {
+    "de": "Patente weltweit",
+    "alt": "Патенти по света",
+    "neu": "Патенти в целия свят",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Geschützte Forschung im Nährstoff-Transport",
+    "alt": "Защитени изследвания в транспорта на хранителни вещества",
+    "neu": "Защитени изследвания в областта на транспорта на хранителни вещества",
+    "grund": "„в транспорта“ missverständlich"
+  },
+  {
+    "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+    "alt": "Световни шампиони и олимпийски професионалисти му се доверяват",
+    "neu": "Световни шампиони и олимпийци се доверяват на продуктите",
+    "grund": "„олимпийски професионалисти“ unüblich; Bezug klar"
+  },
+  {
+    "de": "Ein Vitamin bringt nichts, wenn dein Körper es nicht aufnimmt. Genau da haben viele Präparate ihr Problem. FitLine ist exakt dafür gemacht: dass die Nährstoffe <b>wirklich dort ankommen, wo sie gebraucht werden</b>. In deinen Zellen.",
+    "alt": "Един витамин няма полза, ако тялото ти не го усвои. Точно тук много добавки имат проблем. FitLine е създаден точно за това: хранителните вещества <b>наистина да стигат там, където са нужни</b>. В клетките ти.",
+    "neu": "Един витамин не носи полза, ако тялото ти не го усвои. Точно тук е проблемът на много добавки. FitLine е създаден точно за това: хранителните вещества <b>наистина да стигат там, където са нужни</b>. В клетките ти.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Wie lange dauert der Reset?",
+    "alt": "Колко време продължава reset-ът?",
+    "neu": "Колко време продължава рестартът?",
+    "grund": "„reset“ lateinisch; einheitlich „рестарт“"
+  },
+  {
+    "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+    "alt": "Активният reset продължава няколко седмици. След това идва по-дълга фаза на стабилизиране и накрая дългосрочното ежедневие. Точният график зависи от избрания вариант.",
+    "neu": "Активният рестарт продължава няколко седмици. След това идва по-дълга фаза на стабилизиране и накрая дългосрочното ежедневие. Точният график зависи от избрания вариант.",
+    "grund": "einheitlich „рестарт“"
+  },
+  {
+    "de": "Nein. Diäten enden und du bist meistens wieder da, wo du vorher warst. Hier geht es um neue Ernährungsgewohnheiten, die auch nach den ersten Phasen bleiben.",
+    "alt": "Не. Диетите свършват и обикновено пак си там, откъдето си тръгнал. Тук става дума за нови хранителни навици, които остават и след първите фази.",
+    "neu": "Не. Диетите свършват и обикновено всичко си идва постарому. Тук става дума за нови хранителни навици, които остават и след първите фази.",
+    "grund": "„тръгнал“ männlich; idiomatisch neutral"
+  },
+  {
+    "de": "Normale Mahlzeiten aus natürlichen Lebensmitteln. Frisches Gemüse, gute Eiweiße, hochwertige Fette. Je nach Phase mehr das Eine oder das Andere. Nichts Ungewöhnliches, nichts Kompliziertes.",
+    "alt": "Нормални ястия от естествени продукти. Пресни зеленчуци, добри източници на протеин, качествени мазнини. В зависимост от фазата, повече от едното или от другото. Нищо странно, нищо сложно.",
+    "neu": "Обикновени ястия от естествени продукти. Пресни зеленчуци, добри източници на протеин, качествени мазнини. В зависимост от фазата повече от едното или от другото. Нищо странно, нищо сложно.",
+    "grund": "„Нормални“ wörtlich; Komma"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "В основната фаза (активация) съзнателно оставяш настрана прясното мляко, сиренето, изварата и сметаната &mdash; за да може чревната ти флора да се изгради наново. <b>Изключение:</b> пробиотичното кисело мляко сутрин като първо хранене е изрична част от концепцията и дори е важно. От фазата на стабилизиране нататък твърдите сирена, изварата, моцарелата и подобни се връщат &mdash; умерено, като източник на протеин. В кафето е позволена малка добавка неподсладено бадемово или соево мляко.",
+    "neu": "В основната фаза (активиране) съзнателно оставяш настрана прясното мляко, сиренето, изварата и сметаната, за да може чревната ти флора да се изгради наново. <b>Изключение:</b> пробиотичното кисело мляко сутрин като първо хранене е изрична част от концепцията и дори е важно. От фазата на стабилизиране нататък твърдите сирена, изварата, моцарелата и подобни се връщат отново, в умерени количества, като източник на протеин. В кафето можеш да сложиш малко неподсладено бадемово или соево мляко.",
+    "grund": "ENTITY: &mdash; durch Komma ersetzt; „активиране“ einheitlich; Kaffee-Satz natürlicher"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>Не.</b> Класическите meal-replacement или протеинови шейкове не са позволени в основната фаза и не се препоръчват и след това. Ядеш истински хранения. Това, което много хора бъркат с „шейкове“: <b>концентратите с хранителни вещества</b> (Basic-Immun-Mix, Restorate минерали, аминокиселини) &mdash; това са прахове, които разбъркваш във вода, за да снабдиш тялото си с витамини и минерали. Те не заместват хранене, а го допълват. Дори са важна част от концепцията.",
+    "neu": "<b>Не.</b> Класическите шейкове за заместване на храненето или протеиновите шейкове не са позволени в основната фаза и не се препоръчват и след това. Ядеш истинска храна. Това, което много хора бъркат с „шейкове“: <b>концентратите с хранителни вещества</b> (Basic-Immun-Mix, Restorate минерали, аминокиселини). Това са прахове, които разбъркваш във вода, за да снабдиш тялото си с витамини и минерали. Те не заместват хранене, а го допълват. Дори са важна част от концепцията.",
+    "grund": "ENTITY: &mdash; durch Punkt ersetzt; „meal-replacement“ übersetzt; „истински хранения“ holprig"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Да. Концепцията може да се приложи и вегетариански или веган. Има подходящи алтернативи на всички препоръки с животински продукти.",
+    "neu": "Да. Концепцията може да се приложи и във вегетариански или вегански вариант. Има подходящи алтернативи на всички препоръки с животински продукти.",
+    "grund": "grammatisch sauberer"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Преходът към дългосрочното ежедневие е плавен. Вече имаш нови навици и познаваш тялото си по-добре. Който иска, поддържа ефекта с отделни осъзнати дни през месеца.",
+    "neu": "Преходът към дългосрочното ежедневие е плавен. Вече имаш нови навици и познаваш тялото си по-добре. Ако искаш, поддържаш ефекта с няколко осъзнати дни в месеца.",
+    "grund": "natürlichere Du-Form"
+  },
+  {
+    "de": "Was ist die Kölner Liste und warum ist die wichtig?",
+    "alt": "Какво е Kölner Liste и защо е важен?",
+    "neu": "Какво е Kölner Liste и защо е важно това?",
+    "grund": "„важен“ Genus unklar; neutral"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "Kölner Liste е независима база данни. Там хранителните добавки се тестват за забранени субстанции и допинг вещества. Ако един продукт е в списъка, можеш да си сигурен: вътре няма нищо скрито. Точно затова много професионални спортисти използват FitLine. За теб това означава: знаеш какво приемаш. Без неприятни изненади.",
+    "neu": "Kölner Liste („Кьолнският списък“) е независима база данни. Там хранителните добавки се тестват за забранени вещества и допинг. Ако един продукт е в списъка, можеш да бъдеш спокоен: вътре няма нищо скрито. Точно затова много професионални спортисти използват FitLine. За теб това означава: знаеш какво приемаш. Без неприятни изненади.",
+    "grund": "einmalige Erklärung; „сигурен“ männlich → neutral; „субстанции“ → „вещества“"
+  },
+  {
+    "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+    "alt": "ELAB е независима лаборатория. Те постоянно проверяват дали продуктите на FitLine наистина съдържат това, което пише на етикета, и че вътре няма нещо, което не трябва да бъде там. Звучи като нещо нормално, но за съжаление не е така при всички хранителни добавки. При FitLine това се контролира постоянно. За теб: можеш да разчиташ на това.",
+    "neu": "ELAB е независима лаборатория. Там постоянно проверяват дали продуктите на FitLine наистина съдържат това, което пише на етикета, и дали вътре няма нещо, което не трябва да е там. Звучи очевидно, но за съжаление не е така при всички хранителни добавки. При FitLine това се контролира постоянно. За теб: можеш да разчиташ на това.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+    "alt": "NTC означава Nutrient Transport Concept, концепция за транспорт на хранителни вещества. Казано просто: формулата помага хранителните вещества да стигнат точно там, където действат. В клетките ти. При много други добавки голяма част излиза от тялото неизползвана. MicroSolve Q10 е пример за такава технология: обикновеният Q10 се усвоява трудно от тялото, а с MicroSolve се използва много по-добре. Звучи технически, но това е причината това нещо наистина да има ефект.",
+    "neu": "NTC означава Nutrient Transport Concept, концепция за транспорт на хранителни вещества. Казано просто: формулата помага хранителните вещества да стигнат точно там, където действат. В клетките ти. При много други добавки голяма част излиза от тялото неизползвана. MicroSolve Q10 е пример за такава технология: обикновеният Q10 се усвоява трудно от тялото, а с MicroSolve се използва много по-добре. Звучи технически, но точно затова продуктите наистина вършат работа.",
+    "grund": "Schluss holprig („това нещо да има ефект“)"
+  },
+  {
+    "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+    "alt": "Да, и то много. Над 500 световни шампиони и участници в олимпийски игри вече са работили с FitLine, включително Германската ски федерация и Германската федерация по хокей на лед. Защо? Професионалните спортисти са изключително внимателни какво влиза в тялото им, защото трябва да разчитат на 100 процента на чистотата. Това е доста добър знак за качество, дори ти самият изобщо да не се занимаваш с професионален спорт.",
+    "neu": "Да, и то много. Над 500 световни шампиони и участници в олимпийски игри вече са работили с FitLine, включително Германската ски федерация и Германската федерация по хокей на лед. Защо? Професионалните спортисти са изключително внимателни какво влиза в тялото им, защото трябва да разчитат на 100 процента на чистотата. Това е доста добър знак за качество, дори изобщо да не се занимаваш с професионален спорт.",
+    "grund": "„ти самият“ männlich; neutral"
+  },
+  {
+    "de": "Passt das zu dir?",
+    "alt": "Пасва ли ти?",
+    "neu": "Подходящо ли е за теб?",
+    "grund": "„Пасва ли ти“ zu wörtlich"
+  },
+  {
+    "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+    "alt": "Кратък <em>самотест</em>.<br><span class=\"mark\">После си говорим.</span>",
+    "neu": "Кратка <em>самопроверка</em>.<br><span class=\"mark\">После ще поговорим.</span>",
+    "grund": "einheitlich „самопроверка“; natürlicher"
+  },
+  {
+    "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+    "alt": "Сложи отметки. Заедно ще видим дали и как това пасва на теб.",
+    "neu": "Сложи отметки. Заедно ще видим дали и как това е подходящо за теб.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "Кликни всичко, което се отнася за теб. После {{#unless partner_modus=duo}}ще ти покажа какво конкретно мога да ти покажа{{/unless}}{{#if partner_modus=duo}}ще ти покажем какво конкретно можем да ти покажем{{/if}}.",
+    "neu": "Кликни всичко, което се отнася за теб. После {{#unless partner_modus=duo}}ще ти покажа{{/unless}}{{#if partner_modus=duo}}ще ти покажем{{/if}} какво конкретно {{#unless partner_modus=duo}}мога{{/unless}}{{#if partner_modus=duo}}можем{{/if}} да {{#unless partner_modus=duo}}направя{{/unless}}{{#if partner_modus=duo}}направим{{/if}} за теб.",
+    "grund": "Doppelung „покажа … покажа“ aufgelöst; Bedingungsblöcke wieder 3+3 wie im DE (vorher nur 1+1)"
+  },
+  {
+    "de": "Wie soll {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}einer von uns{{/if}} dich erreichen?",
+    "alt": "{{#unless partner_modus=duo}}Как да се свържа{{/unless}}{{#if partner_modus=duo}}Как един от нас да се свърже{{/if}} с теб?",
+    "neu": "{{#unless partner_modus=duo}}Как да се свържа{{/unless}}{{#if partner_modus=duo}}Как някой от нас да се свърже{{/if}} с теб?",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Deine Anfrage ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} innerhalb von 24 Stunden persönlich bei dir.",
+    "alt": "Твоето запитване стигна до {{#unless partner_modus=duo}}мен{{/unless}}{{#if partner_modus=duo}}нас{{/if}}. {{#unless partner_modus=duo}}Ще се свържа с теб лично{{/unless}}{{#if partner_modus=duo}}Ще се свържем с теб лично{{/if}} в рамките на 24 часа.",
+    "neu": "Запитването ти стигна до {{#unless partner_modus=duo}}мен{{/unless}}{{#if partner_modus=duo}}нас{{/if}}. {{#unless partner_modus=duo}}Ще се свържа с теб лично{{/unless}}{{#if partner_modus=duo}}Ще се свържем с теб лично{{/if}} в рамките на 24 часа.",
+    "grund": "natürlichere Wortstellung"
+  },
+  {
+    "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+    "alt": "Колкото кафе с кроасан. Само че срещу това <b>за 3 месеца променяш изцяло храненето си</b>, вместо просто да се събудиш за малко.",
+    "neu": "Колкото кафе с кроасан. Само че за тези пари <b>за 3 месеца променяш изцяло храненето си</b>, вместо просто да се събудиш за малко.",
+    "grund": "„срещу това“ holprig"
+  },
+  {
+    "de": "Jetzt anfragen",
+    "alt": "Попитай сега",
+    "neu": "Свържи се сега",
+    "grund": "natürlicher Knopftext"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Diese Seite dient der Information und ersetzt keine ärztliche Beratung, Diagnose oder Behandlung. Erfahrungen sind individuell und stellen keine Zusicherung eines bestimmten Ergebnisses dar. Bei Beschwerden oder Vorerkrankungen sprich bitte mit {{#unless partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/unless}}{{#if partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/if}}.",
+    "alt": "Всички продукти са хранителни добавки, а не лекарства. Тази страница е само с информационна цел и не замества лекарски съвет, диагноза или лечение. Резултатите са индивидуални и не са гаранция за конкретен резултат. При оплаквания или предишни заболявания, моля, поговори с {{#unless partner_modus=duo}}лекаря си{{/unless}}{{#if partner_modus=duo}}лекаря си{{/if}}.",
+    "neu": "Всички продукти са хранителни добавки, а не лекарства. Тази страница е само с информационна цел и не замества лекарски съвет, диагноза или лечение. Резултатите са индивидуални и не са гаранция за конкретен резултат. При оплаквания или вече съществуващи заболявания, моля, поговори с {{#unless partner_modus=duo}}лекаря си{{/unless}}{{#if partner_modus=duo}}лекаря си{{/if}}.",
+    "grund": "„Vorerkrankungen“ = bestehende Erkrankungen"
+  },
+  {
+    "de": "Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Използваме само технически необходими бисквитки, за да работи страницата. За статистика или маркетинг ни трябва твоето съгласие, ти решаваш свободно. Подробности има в нашата <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">политика за поверителност</a>.",
+    "neu": "Използваме само технически необходими бисквитки, за да работи страницата. За статистика или маркетинг ни трябва твоето съгласие, а изборът е твой. Подробности има в нашата <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">политика за поверителност</a>.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Anonyme Auswertung, wie Besucher die Seite nutzen (z.&nbsp;B. Aufrufe, Verweildauer).",
+    "alt": "Анонимен анализ как посетителите използват страницата (напр.&nbsp;посещения, време на престой).",
+    "neu": "Анонимен анализ на това как посетителите използват страницата (напр.&nbsp;посещения, време на престой).",
+    "grund": "grammatisch vollständig"
+  },
+  {
+    "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+    "alt": "Reset програма за твоето ежедневие. В четири фази обратно към повече енергия и бистра глава.",
+    "neu": "Програма за рестарт, създадена за твоето ежедневие. В четири фази обратно към повече енергия и бистра глава.",
+    "grund": "„Reset“ lateinisch; einheitlich „рестарт“"
+  }
+]

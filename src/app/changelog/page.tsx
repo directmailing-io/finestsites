@@ -36,13 +36,15 @@ const PLANNED: Planned[] = [
   { title: 'Visitenkarten-Generator', status: 'Geplant', visual: 'card',
     text: 'Damit erstellst du eine Visitenkarte, die zu deiner Webseite passt, mit QR-Code darauf. Du lädst sie als Druckdatei herunter.' },
   { title: 'Mehr Sprachen', status: 'Geplant', visual: 'flags',
-    text: 'Die Business-Seite gibt es in 13, die Optimalset-Seite in 8 Sprachen, die übrigen Vorlagen auf Deutsch und Englisch. Wir wollen alle Vorlagen in möglichst vielen Landessprachen anbieten.' },
+    text: 'Die Business-Seite, die Optimalset-Seite und die cellRESET-Seite gibt es in 13 Sprachen, die übrigen Vorlagen auf Deutsch und Englisch. Wir wollen alle Vorlagen in möglichst vielen Landessprachen anbieten.' },
   { title: 'Weitere Vorlagen', status: 'In Arbeit', visual: 'templates',
     text: 'Wir arbeiten an neuen Vorlagen für weitere Produkte und Anlässe. Du findest sie dann direkt bei „Neue Webseite“.' },
 ]
 
 const HISTORY: Month[] = [
   { label: 'November 2026', entries: [
+    { date: '6. Nov', title: 'cellRESET-Seite in 13 Sprachen', visual: 'flags',
+      text: 'Die cellRESET-Seite gibt es jetzt auf Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch, Hindi, Türkisch, Serbisch, Spanisch, Chinesisch und Koreanisch. Besucher sehen automatisch ihre Sprache; das Sprachmenü ist auf allen Vorlagen jetzt ein alphabetisches Raster.' },
     { date: '5. Nov', title: 'Optimalset-Seite in 13 Sprachen', visual: 'flags',
       text: 'Auch die Optimalset-Seite gibt es jetzt auf Türkisch, Serbisch, Spanisch, Chinesisch und Koreanisch, inklusive Darm-Video mit der vertrauten Sprecherstimme. Der Besucher-Chat spricht auf allen Vorlagen die Sprache der Seite.' },
     { date: '5. Nov', title: 'Business-Seite in 13 Sprachen', visual: 'flags',

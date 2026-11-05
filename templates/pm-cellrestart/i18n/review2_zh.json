@@ -1,0 +1,398 @@
+[
+ {
+  "de": "Wofür?",
+  "alt": "适合什么情况？",
+  "neu": "有什么用？",
+  "grund": "näher am DE „Wofür?“, kürzer"
+ },
+ {
+  "de": "Kontakt",
+  "alt": "联系我",
+  "neu": "联系",
+  "grund": "neutral für Einzel- und Duo-Modus"
+ },
+ {
+  "de": "Folge mir auf",
+  "alt": "关注我的",
+  "neu": "关注我",
+  "grund": "Titel über den Social-Pills, „我的“ hing in der Luft"
+ },
+ {
+  "de": "Folgt uns auf",
+  "alt": "关注我们的",
+  "neu": "关注我们",
+  "grund": "Titel über den Social-Pills, „我们的“ hing in der Luft"
+ },
+ {
+  "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+  "alt": "更有能量。脑子更清醒。<span class=\"mark\">感觉更轻松。</span>",
+  "neu": "精力更充沛。头脑更清醒。<span class=\"mark\">身心更轻松。</span>",
+  "grund": "natürlichere Headline, Parallelismus"
+ },
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "开始你的<strong>代谢重启</strong>。不是节食，不喝代餐奶昔，也不用算来算去。你要做的是<strong>每天4顿固定正餐</strong>，配合<strong>专利营养补充品</strong>，让你的日常状态<strong>真的更舒服。</strong>",
+  "neu": "开始你的<strong>代谢重启</strong>。不节食，不喝代餐奶昔，也不用算来算去。只要<strong>每天4顿固定正餐</strong>，再配合<strong>专利营养补充品</strong>，让你每天都<strong>过得更舒服。</strong>",
+  "grund": "„日常状态真的更舒服“ hölzern"
+ },
+ {
+  "de": "Wie es funktioniert",
+  "alt": "它是怎么进行的",
+  "neu": "具体怎么做",
+  "grund": "„它是怎么进行的“ wörtlich/hölzern"
+ },
+ {
+  "de": "Austausch mit Gleichgesinnten",
+  "alt": "和同路的人一起交流",
+  "neu": "和志同道合的人交流",
+  "grund": "feste Wendung statt „同路的人“"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+  "alt": "{{#unless partner_modus=duo}}本页面由<b>{{vorname}}{{nachname}}</b>运营，PM-International（FitLine®）的{{#if geschlecht=weiblich}}独立销售伙伴{{/if}}{{#if geschlecht=maennlich}}独立销售伙伴{{/if}}。本页面不是PM-International AG的官方网站。{{/unless}}{{#if partner_modus=duo}}本页面由<b>{{vorname}}{{nachname}}&amp;{{vorname2}}{{nachname2}}</b>运营，PM-International（FitLine®）的独立销售伙伴。本页面不是PM-International AG的官方网站。{{/if}}",
+  "neu": "{{#unless partner_modus=duo}}本页面由PM-International（FitLine®）{{#if geschlecht=weiblich}}独立销售伙伴{{/if}}{{#if geschlecht=maennlich}}独立销售伙伴{{/if}}<b>{{vorname}} {{nachname}}</b>运营，并非PM-International AG官方网站。{{/unless}}{{#if partner_modus=duo}}本页面由PM-International（FitLine®）独立销售伙伴<b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>运营，并非PM-International AG官方网站。{{/if}}",
+  "grund": "Leerzeichen zwischen {{vorname}} {{nachname}} und um &amp; wiederhergestellt (Namen sonst zusammengeklebt); nachgestellte Apposition umgestellt; beide geschlecht-Blöcke erhalten"
+ },
+ {
+  "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+  "alt": "来自专利方案的高品质活力营养素。不是超市货架上随便拿的那种。",
+  "neu": "高品质营养素，来自专利配方。不是超市货架上随手拿的那种。",
+  "grund": "„来自专利方案的…活力营养素“ wörtlich"
+ },
+ {
+  "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+  "alt": "中间不加餐，也不跳过。结构清楚，饱到下一餐。",
+  "neu": "两餐之间不吃零食，也不跳餐。安排清楚，一顿管饱到下一顿。",
+  "grund": "„satt bis zum nächsten Mal“ idiomatisch; „跳过“ unklar"
+ },
+ {
+  "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+  "alt": "先暂停几周，让你的身体安静下来。不是永远不吃，只是在核心阶段。",
+  "neu": "先停几周，让身体缓一缓。不是永远不吃，只在核心阶段。",
+  "grund": "„身体安静下来“ wörtlich"
+ },
+ {
+  "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+  "alt": "<b>这三个部分是一起发挥作用的。</b>只有把三者结合起来，重启效果才会展开。",
+  "neu": "<b>这三个部分要一起发挥作用。</b>只有三者结合，代谢重启的效果才会显现。",
+  "grund": "„重启效果才会展开“ hölzern; Reset einheitlich 代谢重启"
+ },
+ {
+  "de": "Das Ziel: <em>Ketose</em>.",
+  "alt": "目标：进入<em>酮症状态</em>。",
+  "neu": "目标：进入<em>生酮状态</em>。",
+  "grund": "„酮症状态“ klingt medizinisch (Verwechslung mit Ketoazidose); Alltagsbegriff, Fachbegriff 酮症 bleibt in der Erklärung"
+ },
+ {
+  "de": "Energie schnell hoch, schnell wieder weg. Nach 2–3 Stunden wieder Hunger.",
+  "alt": "能量上来得快，掉下去也快。2–3小时后又饿了。",
+  "neu": "能量来得快，去得也快。2到3小时后又饿了。",
+  "grund": "Halbgeviertstrich entfernt; natürlicher"
+ },
+ {
+  "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+  "alt": "这个状态的专业说法是：<b style=\"color:var(--ink);\">酮症状态</b>。所以也叫“生酮饮食”。",
+  "neu": "这种状态的专业说法叫<b style=\"color:var(--ink);\">酮症</b>，所以才叫“生酮饮食”。",
+  "grund": "Fachbegriff ohne „状态“, flüssiger"
+ },
+ {
+  "de": "Sechs Dinge, die sich <span class=\"mark\">wirklich ändern</span> können.",
+  "alt": "六件<span class=\"mark\">真的可能改变</span>的事。",
+  "neu": "这六点，<span class=\"mark\">真的可能会改变</span>。",
+  "grund": "„六件…的事“ hölzern"
+ },
+ {
+  "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+  "alt": "这些是我们一次又一次听到的反馈。当然，每个人的身体反应都不一样。",
+  "neu": "这些都是最常听到的反馈。当然，每个人的身体反应都不一样。",
+  "grund": "kein „我们“ (Einzelmodus), natürlicher"
+ },
+ {
+  "de": "Von morgens bis abends. Ohne dass der Kaffee die Hauptrolle spielt.",
+  "alt": "从早到晚。不再让咖啡当主角。",
+  "neu": "从早到晚，咖啡不再是主角。",
+  "grund": "flüssiger, ein Satz"
+ },
+ {
+  "de": "Wieder wohl in dir",
+  "alt": "重新觉得自己状态舒服",
+  "neu": "重新找回自在感",
+  "grund": "„重新觉得自己状态舒服“ hölzern"
+ },
+ {
+  "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+  "alt": "不再有那种往下坠的感觉。你会再次感觉到，身体是在配合你，而不是跟你作对。",
+  "neu": "不再总觉得身体沉沉的、被什么拖着。你会重新感觉到，身体在配合你，而不是跟你作对。",
+  "grund": "„往下坠的感觉“ wörtlich"
+ },
+ {
+  "de": "Kein Ess-Rollercoaster",
+  "alt": "不再坐饮食过山车",
+  "neu": "告别饮食过山车",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+  "alt": "不用一直想着下一顿吃什么。下午三点也不再被零食牵着走。那些念头会慢慢变小声。",
+  "neu": "不用总想着下一顿吃什么。下午三点也不再被零食牵着走。这些念头自然就淡了。",
+  "grund": "„wird einfach leiser“ war wörtlich (变小声)"
+ },
+ {
+  "de": "Klingt nach dem was du suchst? <span class=\"accent\">{{#unless partner_modus=duo}}Ich erklär{{/unless}}{{#if partner_modus=duo}}Wir erklären{{/if}} dir alles.</span>",
+  "alt": "听起来像你在找的东西吗？<span class=\"accent\">{{#unless partner_modus=duo}}我来{{/unless}}{{#if partner_modus=duo}}我们来{{/if}}给你讲清楚。</span>",
+  "neu": "这正是你想要的吗？<span class=\"accent\">{{#unless partner_modus=duo}}我来{{/unless}}{{#if partner_modus=duo}}我们来{{/if}}给你讲清楚。</span>",
+  "grund": "„听起来像你在找的东西吗“ wörtlich"
+ },
+ {
+  "de": "In <span class=\"mark\">4 Phasen</span> zu deinem neuen Alltag.",
+  "alt": "用<span class=\"mark\">4个阶段</span>，走进新的日常。",
+  "neu": "分<span class=\"mark\">4个阶段</span>，过上新的日常。",
+  "grund": "„用…走进“ hölzern"
+ },
+ {
+  "de": "Jetzt stellt dein Körper wirklich um.",
+  "alt": "这一步，身体才真正开始切换。",
+  "neu": "这时，身体才真正开始转换模式。",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Du isst 4× am Tag nach klarem Plan, ohne Zucker und Weißmehl.",
+  "alt": "你每天按清晰计划吃4×，不吃糖和精白面粉。",
+  "neu": "你每天按明确的计划吃4顿，不吃糖和精白面粉。",
+  "grund": "„吃4×“ unidiomatisch"
+ },
+ {
+  "de": "Du bringst mehr Vielfalt auf den Teller und hältst die Struktur.",
+  "alt": "你会让餐盘更丰富，同时保留这个结构。",
+  "neu": "你会吃得更多样，同时保持原有的节奏。",
+  "grund": "„让餐盘更丰富“ wörtlich"
+ },
+ {
+  "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+  "alt": "只吃蛋白质、好脂肪，早上的益生菌酸奶，还有营养浓缩品。连蔬菜也不吃。听起来很严格，但这是核心阶段的一部分。",
+  "neu": "只吃蛋白质、好脂肪、早上的益生菌酸奶和营养浓缩粉。连蔬菜也不吃。听起来很严格，但这是核心阶段的一部分。",
+  "grund": "Begriff einheitlich „营养浓缩粉“ (wie FAQ)"
+ },
+ {
+  "de": "Milch",
+  "alt": "奶类",
+  "neu": "乳制品",
+  "grund": "einheitlich mit „糖、盐、乳制品“"
+ },
+ {
+  "de": "Wie ein weißer Tag, plus Gemüse und Salat. Der Standard-Tag im Programm.",
+  "alt": "像白色日一样，再加蔬菜和沙拉。这是项目里的标准日。",
+  "neu": "和白色日一样，再加蔬菜和沙拉。这是计划里的标准日。",
+  "grund": "„项目“ → „计划“ wie im übrigen Text"
+ },
+ {
+  "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+  "alt": "食谱很多，也很丰富，素食者也适合。重点不是靠挨饿快速减重，而是更有意识地吃。",
+  "neu": "丰富多样的食谱，也适合素食者。重点不是靠挨饿快速减重，而是更有意识地吃。",
+  "grund": "flüssiger"
+ },
+ {
+  "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+  "alt": "我们会有意识地使用<strong>FitLine产品体系</strong>。原因很简单：光吃得好，很多时候还不够。你额外需要的东西，也要真的到达身体里。",
+  "neu": "我们特意选择了<strong>FitLine产品体系</strong>。原因很简单：光吃得好，很多时候还不够。额外补充的东西，也得真的被身体吸收才行。",
+  "grund": "„有意识地使用“ wörtlich; „到达身体里“ hölzern"
+ },
+ {
+  "de": "Geschützte Forschung im Nährstoff-Transport",
+  "alt": "营养素传输领域的受保护研究",
+  "neu": "营养素输送研究，受专利保护",
+  "grund": "„受保护研究“ unklar"
+ },
+ {
+  "de": "Auf Dopingstoffe geprüft, offiziell gelistet",
+  "alt": "经过兴奋剂物质检测，并正式列入名单",
+  "neu": "经过兴奋剂检测，正式列入名单",
+  "grund": "„兴奋剂物质“ umständlich"
+ },
+ {
+  "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+  "alt": "世界冠军和奥运级职业选手都信赖它",
+  "neu": "世界冠军和奥运选手都信赖它",
+  "grund": "„奥运级职业选手“ hölzern"
+ },
+ {
+  "de": "Kurz und <span class=\"mark\">ehrlich.</span>",
+  "alt": "简单说，<span class=\"mark\">也说实话。</span>",
+  "neu": "简短，<span class=\"mark\">也坦诚。</span>",
+  "grund": "„简单说，也说实话“ holprig"
+ },
+ {
+  "de": "Wie lange dauert der Reset?",
+  "alt": "Reset要多久？",
+  "neu": "代谢重启要多久？",
+  "grund": "Reset einheitlich 代谢重启"
+ },
+ {
+  "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+  "alt": "主动Reset会持续几周。之后是更长的稳定期，最后进入长期的日常模式。具体时间表会根据你选择的方案有所不同。",
+  "neu": "主动重启阶段持续几周。之后是更长的稳定期，最后进入长期的日常。具体时间安排因你选择的方案而异。",
+  "grund": "Reset einheitlich; „Reset“ nicht lateinisch stehen lassen"
+ },
+ {
+  "de": "Ist das eine Diät?",
+  "alt": "这算减肥节食吗？",
+  "neu": "这是节食吗？",
+  "grund": "„减肥节食“ fügt „abnehmen“ hinzu"
+ },
+ {
+  "de": "Normale Mahlzeiten aus natürlichen Lebensmitteln. Frisches Gemüse, gute Eiweiße, hochwertige Fette. Je nach Phase mehr das Eine oder das Andere. Nichts Ungewöhnliches, nichts Kompliziertes.",
+  "alt": "就是用天然食材做的正常正餐。新鲜蔬菜、优质蛋白、好脂肪。不同阶段侧重点会不一样。有时多一点这个，有时多一点那个。没有奇怪的东西，也不复杂。",
+  "neu": "就是用天然食材做的家常饭菜。新鲜蔬菜、优质蛋白、好脂肪。不同阶段，侧重点会有所不同。没什么特别的，也不复杂。",
+  "grund": "„正常正餐“ doppelt; Satzfolge gestrafft"
+ },
+ {
+  "de": "Muss ich wirklich auf Milch verzichten? Was ist mit dem Joghurt?",
+  "alt": "真的要不喝奶吗？那酸奶怎么办？",
+  "neu": "真的要戒掉奶制品吗？那酸奶呢？",
+  "grund": "„不喝奶“ zu eng, natürlicher"
+ },
+ {
+  "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+  "alt": "在核心阶段（激活期），你会有意识地先不吃奶、奶酪、Quark凝乳奶酪和奶油 &mdash; 这样是为了让你的肠道菌群重新建立起来。<b>例外：</b>早上的益生菌酸奶作为第一餐，是方案里明确包含的一部分，而且还很重要。从稳定期开始，硬质奶酪、Quark凝乳奶酪、马苏里拉等可以再加回来 &mdash; 适量作为蛋白质来源。咖啡里可以加一点无糖杏仁奶或豆奶。",
+  "neu": "在核心阶段（激活期），你会特意不吃牛奶、奶酪、凝乳奶酪和奶油，好让肠道菌群重新建立起来。<b>例外：</b>早上作为第一餐的益生菌酸奶，是方案里明确包含的，而且很重要。从稳定期开始，硬质奶酪、凝乳奶酪、马苏里拉等可以重新加回来，适量作为蛋白质来源。咖啡里可以加一点无糖杏仁奶或豆奶。",
+  "grund": "ENTITY: beide &mdash; durch Komma ersetzt; „Quark凝乳奶酪“ vereinfacht"
+ },
+ {
+  "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+  "alt": "可以喝代餐奶昔吗？我是喝正餐吗？",
+  "neu": "可以喝奶昔吗？要用喝的代替吃饭吗？",
+  "grund": "„我是喝正餐吗“ unverständlich"
+ },
+ {
+  "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+  "alt": "<b>不可以。</b>经典的代餐奶昔或蛋白奶昔，在核心阶段不允许，之后也不建议。你吃的是正经饭。很多人误以为是“奶昔”的，其实是<b>营养素浓缩粉</b>（Basic-Immun-Mix、Restorate矿物质、氨基酸）&mdash; 这些是加在水里搅开喝的粉，用来给身体补充维生素和矿物质。它们不替代正餐，而是作为补充。它们甚至是这个方案里很重要的一部分。",
+  "neu": "<b>不可以。</b>常见的代餐奶昔或蛋白奶昔，在核心阶段不允许，之后也不建议。你吃的是正经饭菜。很多人会误以为是“奶昔”的，其实是<b>营养浓缩粉</b>（Basic-Immun-Mix、Restorate矿物质、氨基酸）：这些粉末用水冲开，为身体补充维生素和矿物质。它们不能代替正餐，而是补充。它们甚至是这个方案里很重要的一部分。",
+  "grund": "ENTITY: &mdash; durch Doppelpunkt ersetzt; Begriff „营养浓缩粉“ einheitlich; „经典的“ wörtlich"
+ },
+ {
+  "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+  "alt": "过渡到长期日常状态是慢慢来的，不是一下子切换。你已经有了新的习惯，也更了解自己的身体。如果你愿意，可以每个月安排几个有意识的日子，来维持这种效果。",
+  "neu": "向长期日常的过渡是循序渐进的。你已经有了新的习惯，也更了解自己的身体。愿意的话，每个月安排几天特别注意饮食，就能维持这种效果。",
+  "grund": "„有意识的日子“ wörtlich; flüssiger"
+ },
+ {
+  "de": "Was ist die Kölner Liste und warum ist die wichtig?",
+  "alt": "Kölner Liste（Cologne List）是什么，为什么重要？",
+  "neu": "Kölner Liste（科隆清单）是什么？为什么重要？",
+  "grund": "landesübliche Erklärung statt englischem Namen"
+ },
+ {
+  "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+  "alt": "Kölner Liste是一个独立数据库。里面会对膳食补充剂进行违禁物质和兴奋剂物质检测。如果一个产品在名单上，你就可以更放心：里面没有藏着不该有的东西。也正因为这样，很多职业运动员会使用FitLine。对你来说就是：你知道自己吃进身体的是什么。没有糟心的意外。",
+  "neu": "Kölner Liste是一个独立的数据库，会对膳食补充剂做违禁物质和兴奋剂检测。如果一个产品在名单上，你就可以放心：里面没有藏着不该有的东西。也正因为这样，很多职业运动员都在用FitLine。对你来说就是：你知道自己吃进去的是什么，不会有不好的意外。",
+  "grund": "„糟心的意外“ zu salopp; Satzfluss"
+ },
+ {
+  "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+  "alt": "NTC代表营养素运输概念。简单说：这个配方是为了让营养素到达真正发挥作用的地方。也就是你的细胞里。很多其他产品里，相当一部分最后没有被利用，就又排出去了。MicroSolve Q10就是这种技术的一个例子：普通Q10身体不太好吸收，有了MicroSolve之后，利用率会好很多。听起来有点技术，但这正是它真的有用的原因。",
+  "neu": "NTC指的是“营养素输送概念”。简单说：这个配方让营养素到达真正发挥作用的地方，也就是你的细胞里。很多其他产品，有相当一部分没被利用就排出去了。MicroSolve Q10就是这类技术的一个例子：普通Q10身体不太好吸收，有了MicroSolve，利用率会好很多。听起来有点技术，但这正是它真正有用的原因。",
+  "grund": "„NTC代表…“ wörtlich; Satzfluss"
+ },
+ {
+  "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+  "alt": "是的，而且很多。已经有500多位世界冠军和奥运参赛选手使用或合作过FitLine，包括德国滑雪协会和德国冰球联盟。为什么？职业运动员对吃进身体的东西非常谨慎，因为他们必须百分之百相信产品的纯净度。这是一个相当好的质量参考，哪怕你自己并不是竞技运动员。",
+  "neu": "是的，而且很多。已有500多位世界冠军和奥运选手与FitLine合作过，其中包括德国滑雪协会和德国冰球协会。为什么？职业运动员对吃进身体的东西非常谨慎，因为他们必须100%信得过产品的纯净度。这是一个相当好的质量参考，哪怕你自己根本不搞竞技运动。",
+  "grund": "„100%“ laut Sprachregel; „使用或合作过“ geht über DE hinaus (nur „gearbeitet“)"
+ },
+ {
+  "de": "Für Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis. Bei chronischen Erkrankungen wird ärztliche Begleitung empfohlen.",
+  "alt": "孕期、哺乳期，以及正在接受医生治疗的人，请先和你的主治诊所沟通。若有慢性疾病，建议在医生陪同指导下进行。",
+  "neu": "孕期、哺乳期以及正在接受治疗的人，请先咨询主治医生。如有慢性疾病，建议在医生指导下进行。",
+  "grund": "„主治诊所“ unüblich; „陪同指导“ schief"
+ },
+ {
+  "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+  "alt": "勾一下。我们一起看看它是否适合你，以及怎么适合你。",
+  "neu": "勾选符合你的选项。我们一起看看它适不适合你，又该怎么安排。",
+  "grund": "„勾一下“ zu knapp/unklar; „怎么适合你“ holprig"
+ },
+ {
+  "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+  "alt": "吃完饭后，你最想先歇一会儿",
+  "neu": "一吃完饭就只想歇一会儿",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Deine Klamotten sitzen nicht mehr so wie du willst",
+  "alt": "衣服穿起来已经不是你想要的感觉了",
+  "neu": "衣服穿着不像你想要的那么合身了",
+  "grund": "„不是你想要的感觉“ vage"
+ },
+ {
+  "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+  "alt": "把符合你的都点上。然后{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}会告诉你，接下来{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}具体能给你看些什么。",
+  "neu": "把符合你的都勾上。然后{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}会告诉你，{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}具体{{#unless partner_modus=duo}}可以{{/unless}}{{#if partner_modus=duo}}可以{{/if}}为你介绍些什么。",
+  "grund": "3+3 Bedingungsblöcke wie im DE (vorher nur 2+2); „给你看些什么“ wörtlich"
+ },
+ {
+  "de": "Wie soll {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}einer von uns{{/if}} dich erreichen?",
+  "alt": "你希望{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们中的一个人{{/if}}怎么联系你？",
+  "neu": "你希望{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们其中一位{{/if}}怎么联系你？",
+  "grund": "„我们中的一个人“ hölzern"
+ },
+ {
+  "de": "Kein Newsletter, keine Weitergabe. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} persönlich bei dir zurück.",
+  "alt": "没有新闻邮件，不会转给别人。{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}会亲自回复你。",
+  "neu": "不发订阅邮件，也不转给别人。{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}会亲自回复你。",
+  "grund": "„新闻邮件“ unüblich für Newsletter"
+ },
+ {
+  "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+  "alt": "差不多就是一杯咖啡加一个羊角包的钱。不同的是，你用这笔钱<b>把饮食完整调整3个月</b>，而不只是短暂清醒一下。",
+  "neu": "差不多就是一杯咖啡加一个牛角包的钱。不同的是，这笔钱能让你<b>用3个月彻底调整饮食</b>，而不只是提一下神。",
+  "grund": "„短暂清醒一下“ wörtlich; 牛角包 gängiger"
+ },
+ {
+  "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+  "alt": "<b>不适合</b>孕期、哺乳期，以及正在接受医生治疗的人，请先和你的主治诊所沟通后再决定。",
+  "neu": "<b>不适合</b>孕期、哺乳期以及正在接受治疗的人，除非事先咨询过主治医生。",
+  "grund": "„主治诊所“ unüblich; Satzlogik wie DE"
+ },
+ {
+  "de": "Technisch notwendig",
+  "alt": "技术必需",
+  "neu": "必要",
+  "grund": "Cookie-Kategorie, landesüblich kurz"
+ },
+ {
+  "de": "Technisch notwendig (immer aktiv)",
+  "alt": "技术上必需（始终启用）",
+  "neu": "必要Cookie（始终开启）",
+  "grund": "Cookie-Kategorie landesüblich; einheitlich „始终开启“"
+ },
+ {
+  "de": "Vielfalt an Nährstoff-Formaten",
+  "alt": "多种营养形式",
+  "neu": "多种形式的营养产品",
+  "grund": "Bildbeschreibung verständlicher"
+ },
+ {
+  "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+  "alt": "一个适合你日常生活的重启计划。分四个阶段，回到更有能量、头脑更清楚的状态。",
+  "neu": "一套融入日常的代谢重启计划。分四个阶段，找回更多活力和清醒的头脑。",
+  "grund": "Reset einheitlich 代谢重启; „回到…状态“ hölzern"
+ },
+ {
+  "de": "Tag 1–14",
+  "alt": "第1–14天",
+  "neu": "第1～14天",
+  "grund": "Halbgeviertstrich durch chinesische Bereichs-Tilde ersetzt"
+ },
+ {
+  "de": "Tag 15–42",
+  "alt": "第15–42天",
+  "neu": "第15～42天",
+  "grund": "Halbgeviertstrich durch chinesische Bereichs-Tilde ersetzt"
+ },
+ {
+  "de": "Tag 43–90",
+  "alt": "第43–90天",
+  "neu": "第43～90天",
+  "grund": "Halbgeviertstrich durch chinesische Bereichs-Tilde ersetzt"
+ }
+]

@@ -1,0 +1,716 @@
+[
+ {
+  "de": "Die 4 Phasen",
+  "alt": "4 चरण",
+  "neu": "4 फेज़",
+  "grund": "„फेज़“ seitenweit einheitlich statt Mischung चरण/फेज़"
+ },
+ {
+  "de": "4 Phasen",
+  "alt": "4 चरण",
+  "neu": "4 फेज़",
+  "grund": "„फेज़“ einheitlich (Nav)"
+ },
+ {
+  "de": "Der Stoffwechsel-Reset in 4 Phasen",
+  "alt": "4 चरणों में मेटाबॉलिज़्म रीसेट",
+  "neu": "4 फेज़ में मेटाबॉलिज़्म रीसेट",
+  "grund": "„फेज़“ einheitlich"
+ },
+ {
+  "de": "Schreib mir auf WhatsApp",
+  "alt": "मुझे WhatsApp पर लिखो",
+  "neu": "मुझे WhatsApp पर मैसेज करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „मैसेज करें“ statt wörtlichem „लिखो“"
+ },
+ {
+  "de": "Beratung anfragen",
+  "alt": "सलाह के लिए पूछो",
+  "neu": "सलाह लें",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Knopf kürzer und natürlicher"
+ },
+ {
+  "de": "Kurzer Selbst-Check, dann melde ich mich",
+  "alt": "छोटा-सा सेल्फ-चेक, फिर मैं तुमसे संपर्क करूँगा",
+  "neu": "छोटा-सा सेल्फ़-चेक, फिर मेरी तरफ़ से आपसे संपर्क होगा",
+  "grund": "तुम-Form durch höfliches आप ersetzt; geschlechtsneutral (Betreiber kann m/w sein)"
+ },
+ {
+  "de": "Kurzer Selbst-Check, dann melden wir uns",
+  "alt": "छोटा-सा सेल्फ-चेक, फिर हम तुमसे संपर्क करेंगे",
+  "neu": "छोटा-सा सेल्फ़-चेक, फिर हम आपसे संपर्क करेंगे",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Folge mir auf",
+  "alt": "मुझे फॉलो करो",
+  "neu": "मुझे यहाँ फ़ॉलो करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Überschrift über den Kanal-Knöpfen"
+ },
+ {
+  "de": "Folgt uns auf",
+  "alt": "हमें फॉलो करो",
+  "neu": "हमें यहाँ फ़ॉलो करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Jetzt loslegen",
+  "alt": "अभी शुरू करो",
+  "neu": "अभी शुरू करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Schreib mir direkt",
+  "alt": "मुझे सीधे लिखो",
+  "neu": "मुझे सीधे मैसेज करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Schreib uns direkt",
+  "alt": "हमें सीधे लिखो",
+  "neu": "हमें सीधे मैसेज करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "अपना <strong>मेटाबॉलिज़्म रीसेट</strong> शुरू करो। न कोई डाइट, न शेक, न गिनती। इसके बजाय <strong>4 तय मील्स</strong> और <strong>पेटेंटेड सप्लीमेंट्स</strong>, ताकि रोज़मर्रा में तुम <strong>सच में अच्छा महसूस करो।</strong>",
+  "neu": "अपना <strong>मेटाबॉलिज़्म रीसेट</strong> शुरू कीजिए। न कोई डाइट, न शेक, न गिनती का झंझट। इसके बजाय <strong>4 तय मील्स</strong> और <strong>पेटेंटेड सप्लीमेंट्स</strong>, ताकि आपकी रोज़ की ज़िंदगी <strong>सच में अच्छी लगे।</strong>",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Bezug „dein Alltag“ wiederhergestellt"
+ },
+ {
+  "de": "Ohne Hungern",
+  "alt": "भूखे रहे बिना",
+  "neu": "बिना भूखे रहे",
+  "grund": "natürliche Wortstellung"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+  "alt": "{{#unless partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}}</b> द्वारा चलाया जाता है, PM-International (FitLine®) की {{#if geschlecht=weiblich}}स्वतंत्र वितरिका{{/if}}{{#if geschlecht=maennlich}}स्वतंत्र वितरक{{/if}}। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/unless}}{{#if partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> द्वारा चलाया जाता है, PM-International (FitLine®) के स्वतंत्र वितरक। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/if}}",
+  "neu": "{{#unless partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}}</b> द्वारा चलाया जाता है, PM-International (FitLine®) {{#if geschlecht=weiblich}}की स्वतंत्र डिस्ट्रीब्यूटर{{/if}}{{#if geschlecht=maennlich}}के स्वतंत्र डिस्ट्रीब्यूटर{{/if}}। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/unless}}{{#if partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> द्वारा चलाया जाता है, PM-International (FitLine®) के स्वतंत्र डिस्ट्रीब्यूटर। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/if}}",
+  "grund": "Genus-Postposition (की/का) stand außerhalb der Bedingung und war für Männer falsch; „वितरिका“ ungebräuchlich, „डिस्ट्रीब्यूटर“ ist in Indien üblich"
+ },
+ {
+  "de": "Unser Nährstoffkonzept",
+  "alt": "हमारा पोषक तत्व कॉन्सेप्ट",
+  "neu": "हमारा न्यूट्रिएंट कॉन्सेप्ट",
+  "grund": "„पोषक तत्व कॉन्सेप्ट“ holprige Mischung"
+ },
+ {
+  "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+  "alt": "पेटेंटेड कॉन्सेप्ट से बने हाई-क्वालिटी वाइटल न्यूट्रिएंट्स। सुपरमार्केट की शेल्फ से नहीं।",
+  "neu": "हाई-क्वालिटी पोषक तत्व, एक पेटेंटेड कॉन्सेप्ट से। सुपरमार्केट की शेल्फ़ से नहीं।",
+  "grund": "„वाइटल न्यूट्रिएंट्स“ unüblich"
+ },
+ {
+  "de": "<b>Warum wichtig:</b> Nur was der Körper aufnehmen kann, wirkt auch.",
+  "alt": "<b>यह क्यों ज़रूरी है:</b> असर वही करता है जिसे शरीर ग्रहण कर पाए।",
+  "neu": "<b>यह क्यों ज़रूरी है:</b> असर वही करता है, जिसे शरीर सच में सोख पाए।",
+  "grund": "„ग्रहण कर पाए“ zu förmlich"
+ },
+ {
+  "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+  "alt": "बीच-बीच में स्नैकिंग नहीं, मील छोड़ना नहीं। साफ स्ट्रक्चर, अगली बार तक पेट भरा हुआ।",
+  "neu": "बीच-बीच में स्नैकिंग नहीं, कोई मील स्किप नहीं। साफ़ स्ट्रक्चर, और अगले खाने तक पेट भरा रहता है।",
+  "grund": "„satt bis zum nächsten Mal“ natürlich; „अगली बार तक“ war wörtlich"
+ },
+ {
+  "de": "Was wir weglassen",
+  "alt": "हम क्या हटाते हैं",
+  "neu": "हम क्या छोड़ते हैं",
+  "grund": "„हटाते“ klingt technisch"
+ },
+ {
+  "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+  "alt": "कुछ हफ्तों के लिए बाहर, ताकि तुम्हारा शरीर शांत हो सके। हमेशा के लिए नहीं, सिर्फ कोर फेज़ में।",
+  "neu": "कुछ हफ़्तों के लिए बंद, ताकि आपके शरीर को आराम मिल सके। हमेशा के लिए नहीं, सिर्फ़ कोर फेज़ में।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „बाहर“ wörtlich"
+ },
+ {
+  "de": "<span class=\"essence-star\">*</span> Probiotischer Joghurt am Morgen bleibt drin, der baut deine Darmflora auf.",
+  "alt": "<span class=\"essence-star\">*</span> सुबह वाला प्रोबायोटिक दही रहेगा, वह तुम्हारी आंतों की फ्लोरा को बनाता है।",
+  "neu": "<span class=\"essence-star\">*</span> सुबह का प्रोबायोटिक दही चलता रहेगा, यह आपके गट फ्लोरा को मज़बूत बनाता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „आंतों की फ्लोरा“ unidiomatisch, „गट फ्लोरा“ gängig"
+ },
+ {
+  "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+  "alt": "<b>ये तीनों हिस्से साथ मिलकर काम करते हैं।</b> जब तुम तीनों को साथ जोड़ते हो, तभी रीसेट-इफेक्ट खुलकर सामने आता है।",
+  "neu": "<b>ये तीनों हिस्से साथ मिलकर काम करते हैं।</b> जब आप तीनों को साथ अपनाते हैं, तभी रीसेट का पूरा असर दिखता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „खुलकर सामने आता है“ wörtlich"
+ },
+ {
+  "de": "Das Ziel: <em>Ketose</em>.",
+  "alt": "लक्ष्य: <em>कीटोसिस</em>.",
+  "neu": "लक्ष्य: <em>कीटोसिस</em>।",
+  "grund": "Satzzeichen ।"
+ },
+ {
+  "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+  "alt": "एक्टिवेशन फेज़ में तुम <b>कीटोजेनिक खान-पान</b> के सिद्धांत पर चलते हो। सुनने में मुश्किल लगता है, पर है नहीं: <b>क्लासिक Keto</b> जैसा ही सिद्धांत, बस <b>चम्मच-चम्मच फैट खाने वाली अति नहीं</b> और <b>हर समय परहेज़ भी नहीं</b>.",
+  "neu": "एक्टिवेशन फेज़ में आप <b>कीटोजेनिक डाइट</b> के सिद्धांत को फ़ॉलो करते हैं। सुनने में मुश्किल लगता है, पर है नहीं: <b>क्लासिक कीटो</b> जैसा ही सिद्धांत, बस <b>चम्मच भर-भरकर फैट खाने की ज़रूरत नहीं</b> और <b>हर वक़्त परहेज़ भी नहीं</b>।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Keto in Devanagari; „अति“ holprig; Satzzeichen ।"
+ },
+ {
+  "de": "Zucker-Energie",
+  "alt": "शुगर वाली ऊर्जा",
+  "neu": "शुगर से ऊर्जा",
+  "grund": "natürlicher („वाली“ holprig)"
+ },
+ {
+  "de": "Fett-Energie",
+  "alt": "फैट वाली ऊर्जा",
+  "neu": "फैट से ऊर्जा",
+  "grund": "natürlicher, parallel zu „शुगर से ऊर्जा“"
+ },
+ {
+  "de": "Energie schnell hoch, schnell wieder weg. Nach 2–3 Stunden wieder Hunger.",
+  "alt": "ऊर्जा जल्दी ऊपर जाती है, और जल्दी खत्म भी हो जाती है। 2–3 घंटे बाद फिर भूख लगती है।",
+  "neu": "ऊर्जा जल्दी ऊपर, और उतनी ही जल्दी नीचे। 2–3 घंटे बाद फिर भूख।",
+  "grund": "knapper, wie im Deutschen"
+ },
+ {
+  "de": "Konstant",
+  "alt": "लगातार",
+  "neu": "स्थिर",
+  "grund": "„लगातार“ heißt „ununterbrochen“, gemeint ist gleichbleibend"
+ },
+ {
+  "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+  "alt": "ऊर्जा स्थिर रहती है। तुम ज़्यादा देर तक भरे रहते हो और तुम्हारा शरीर अपनी ही रिज़र्व ऊर्जा का इस्तेमाल करता है।",
+  "neu": "ऊर्जा स्थिर रहती है। आपका पेट ज़्यादा देर तक भरा रहता है और शरीर अपने ही जमा भंडार का इस्तेमाल करता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „भरे रहते हो“ unidiomatisch"
+ },
+ {
+  "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+  "alt": "इस अवस्था का तकनीकी नाम: <b style=\"color:var(--ink);\">कीटोसिस</b>. इसलिए इसे “कीटोजेनिक खान-पान” भी कहा जाता है।",
+  "neu": "इस अवस्था का वैज्ञानिक नाम: <b style=\"color:var(--ink);\">कीटोसिस</b>। इसीलिए इसे “कीटोजेनिक डाइट” भी कहते हैं।",
+  "grund": "Satzzeichen ।; „डाइट“ einheitlich mit dem Absatz davor"
+ },
+ {
+  "de": "Was du davon hast",
+  "alt": "तुम्हें इससे क्या मिलता है",
+  "neu": "आपको इससे क्या मिलेगा",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+  "alt": "ये वही फीडबैक हैं जो बार-बार मिलते हैं। हाँ, हर शरीर अलग तरह से प्रतिक्रिया करता है।",
+  "neu": "यही फीडबैक बार-बार मिलता है। बेशक, हर शरीर अलग तरह से रिएक्ट करता है।",
+  "grund": "„हाँ“ passt nicht als „klar“; natürlicher"
+ },
+ {
+  "de": "Von morgens bis abends. Ohne dass der Kaffee die Hauptrolle spielt.",
+  "alt": "सुबह से शाम तक। बिना इसके कि कॉफी ही मुख्य सहारा बने।",
+  "neu": "सुबह से शाम तक। बिना कॉफ़ी को मुख्य सहारा बनाए।",
+  "grund": "holprige Konstruktion „बिना इसके कि“"
+ },
+ {
+  "de": "Wieder wohl in dir",
+  "alt": "अपने अंदर फिर से अच्छा महसूस करना",
+  "neu": "फिर से अपने आप में सहज",
+  "grund": "„अपने अंदर … महसूस करना“ wörtlich, als Überschrift zu lang"
+ },
+ {
+  "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+  "alt": "अब वह नीचे खींचने वाला भारीपन नहीं। तुम्हें फिर महसूस होता है कि तुम्हारा शरीर तुम्हारे साथ काम कर रहा है, तुम्हारे खिलाफ नहीं।",
+  "neu": "अब वो भारीपन नहीं, जो आपको नीचे खींचता था। आपको फिर महसूस होता है कि आपका शरीर आपके साथ काम कर रहा है, आपके ख़िलाफ़ नहीं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; erster Satz natürlicher"
+ },
+ {
+  "de": "Ohne Kaffee-Krücke",
+  "alt": "कॉफी की बैसाखी के बिना",
+  "neu": "कॉफ़ी के सहारे के बिना",
+  "grund": "„बैसाखी“ wörtliches Bild"
+ },
+ {
+  "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+  "alt": "सुबह अलग महसूस होती है। कम भारीपन, और ज़्यादा तुरंत तैयार।",
+  "neu": "सुबह कुछ अलग लगती है। कम सुस्ती, और आप तुरंत एक्टिव।",
+  "grund": "„तुरंत तैयार“ wörtlich/holprig"
+ },
+ {
+  "de": "Kein Ess-Rollercoaster",
+  "alt": "खाने का रोलरकोस्टर नहीं",
+  "neu": "खाने को लेकर उतार-चढ़ाव नहीं",
+  "grund": "Bild „Ess-Rollercoaster“ natürlich umgesetzt"
+ },
+ {
+  "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+  "alt": "अगले खाने के बारे में लगातार सोचते रहना नहीं। तीन बजे मीठा खाने की मजबूरी नहीं। बस शोर कम हो जाता है।",
+  "neu": "हर वक़्त अगले खाने के बारे में सोचना नहीं। दोपहर तीन बजे मीठे की तलब नहीं। यह सब बस अपने आप हल्का पड़ने लगता है।",
+  "grund": "„मजबूरी“/„शोर कम हो जाता है“ wörtlich; „तलब“ ist das gängige Wort für Heißhunger"
+ },
+ {
+  "de": "Was du in den Phasen lernst, nimmst du in den Alltag mit.",
+  "alt": "फेज़ में जो तुम सीखते हो, उसे रोज़मर्रा की जिंदगी में साथ ले जाते हो।",
+  "neu": "फेज़ में जो आप सीखते हैं, वह रोज़ की ज़िंदगी में आपके साथ रहता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Klingt nach dem was du suchst? <span class=\"accent\">{{#unless partner_modus=duo}}Ich erklär{{/unless}}{{#if partner_modus=duo}}Wir erklären{{/if}} dir alles.</span>",
+  "alt": "लगता है यही तुम ढूंढ रहे हो? <span class=\"accent\">{{#unless partner_modus=duo}}मैं तुम्हें सब समझा दूंगा{{/unless}}{{#if partner_modus=duo}}हम तुम्हें सब समझा देंगे{{/if}}.</span>",
+  "neu": "लगता है, आपको इसी की तलाश थी? <span class=\"accent\">{{#unless partner_modus=duo}}मुझसे सब कुछ समझ लीजिए{{/unless}}{{#if partner_modus=duo}}हमसे सब कुछ समझ लीजिए{{/if}}।</span>",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „समझा दूंगा“ nur männlich, jetzt geschlechtsneutral; Satzzeichen ।"
+ },
+ {
+  "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+  "alt": "{{#unless partner_modus=duo}}{{vorname}} से{{/unless}}{{#if partner_modus=duo}}हमसे{{/if}} छोटा-सा मैसेज करो",
+  "neu": "{{#unless partner_modus=duo}}{{vorname}} को मैसेज करें{{/unless}}{{#if partner_modus=duo}}हमें मैसेज करें{{/if}}",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Knopf kürzer; Name bleibt unverändert (Postposition getrennt)"
+ },
+ {
+  "de": "Und wie kommst du dahin?",
+  "alt": "और वहाँ तक पहुंचोगे कैसे?",
+  "neu": "और वहाँ तक पहुँचेंगे कैसे?",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "In <span class=\"mark\">4 Phasen</span> zu deinem neuen Alltag.",
+  "alt": "<span class=\"mark\">4 फेज़</span> में अपने नए रोज़मर्रा तक।",
+  "neu": "<span class=\"mark\">4 फेज़</span> में आपके नए रूटीन तक।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „रोज़मर्रा तक“ unvollständig"
+ },
+ {
+  "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+  "alt": "चार साफ़ फेज़, हफ़्ता 1 से लेकर तुम्हारी स्थायी रोज़मर्रा की रूटीन तक।",
+  "neu": "चार साफ़ फेज़: पहले हफ़्ते से लेकर आपके स्थायी रूटीन तक।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Keine Kalorien tracken",
+  "alt": "कैलोरी ट्रैक नहीं करनी",
+  "neu": "कैलोरी ट्रैकिंग नहीं",
+  "grund": "als Merkmal-Chip knapper"
+ },
+ {
+  "de": "Kein Sport nötig",
+  "alt": "स्पोर्ट की ज़रूरत नहीं",
+  "neu": "वर्कआउट ज़रूरी नहीं",
+  "grund": "„स्पोर्ट“ in Indien unüblich für Training"
+ },
+ {
+  "de": "Kein Hunger",
+  "alt": "भूख नहीं",
+  "neu": "भूखे नहीं रहना",
+  "grund": "„भूख नहीं“ klang absolut (keinerlei Hunger), gemeint: man muss nicht hungern"
+ },
+ {
+  "de": "Aktivieren",
+  "alt": "एक्टिवेट करना",
+  "neu": "एक्टिवेशन",
+  "grund": "Phasennamen einheitlich als Nomen (तैयारी, एक्टिवेशन, स्टेबिलाइज़ेशन, रोज़मर्रा)"
+ },
+ {
+  "de": "Stabilisieren",
+  "alt": "स्थिर करना",
+  "neu": "स्टेबिलाइज़ेशन",
+  "grund": "Phasennamen einheitlich, passend zur FAQ"
+ },
+ {
+  "de": "Dein Körper tankt Kraft für das, was kommt.",
+  "alt": "तुम्हारा शरीर आगे आने वाले समय के लिए ताकत जुटाता है।",
+  "neu": "आपका शरीर आगे के लिए ताक़त जुटाता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Du isst wie gewohnt und fügst zusätzlich gute Nährstoffe hinzu.",
+  "alt": "तुम्हारा खाना पहले जैसा ही रहता है, बस साथ में अच्छे पोषक तत्व जुड़ते हैं।",
+  "neu": "आप पहले की तरह खाते हैं और साथ में अच्छे पोषक तत्व जोड़ते हैं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Subjekt „du“ wie im Deutschen"
+ },
+ {
+  "de": "Jetzt stellt dein Körper wirklich um.",
+  "alt": "अब तुम्हारा शरीर सच में बदलाव शुरू करता है।",
+  "neu": "अब आपका शरीर सच में ख़ुद को बदलता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Du isst 4× am Tag nach klarem Plan, ohne Zucker und Weißmehl.",
+  "alt": "तुम साफ़ प्लान के हिसाब से दिन में 4 बार खाते हो, बिना चीनी और सफेद आटे के।",
+  "neu": "आप एक साफ़ प्लान के हिसाब से दिन में 4 बार खाते हैं, बिना चीनी और मैदे के।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Weißmehl = मैदा (landesüblich)"
+ },
+ {
+  "de": "Der neue Rhythmus wird zur Gewohnheit.",
+  "alt": "नई रिदम आदत बनने लगती है।",
+  "neu": "नया रिदम आदत बन जाता है।",
+  "grund": "Genus (रिदम m.) und „wird zur“ statt „बनने लगती“"
+ },
+ {
+  "de": "Du bringst mehr Vielfalt auf den Teller und hältst die Struktur.",
+  "alt": "तुम अपनी प्लेट में ज़्यादा वैरायटी लाते हो और स्ट्रक्चर बनाए रखते हो।",
+  "neu": "आप प्लेट में ज़्यादा वैरायटी लाते हैं और स्ट्रक्चर बनाए रखते हैं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "So bleibt es dauerhaft, ohne Verzicht.",
+  "alt": "इस तरह यह लंबे समय तक बना रहता है, बिना खुद को रोकने-टोकने के।",
+  "neu": "ऐसे यह लंबे समय तक बना रहता है, बिना किसी चीज़ को छोड़े।",
+  "grund": "„रोकने-टोकने“ passt nicht zu „Verzicht“"
+ },
+ {
+  "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+  "alt": "तुम सोच-समझकर खाते हो, और कभी-कभी अपवाद भी इसका हिस्सा हैं।",
+  "neu": "आप सोच-समझकर खाते हैं, और कभी-कभार छूट भी इसका हिस्सा है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „अपवाद“ zu förmlich"
+ },
+ {
+  "de": "Im Programm ist jeder Tag entweder <b>weiß</b>, <b>grün</b> oder <b>rot</b>. Die Farbe verrät dir sofort, was heute auf den Teller kommt. Kein Grübeln, kein Rechnen.",
+  "alt": "प्रोग्राम में हर दिन या तो <b>सफेद</b>, <b>हरा</b> या <b>लाल</b> होता है। रंग तुम्हें तुरंत बता देता है कि आज प्लेट में क्या आएगा। न सोच-विचार, न हिसाब-किताब।",
+  "neu": "प्रोग्राम में हर दिन या तो <b>सफ़ेद</b>, <b>हरा</b> या <b>लाल</b> होता है। रंग से आपको तुरंत पता चल जाता है कि आज प्लेट में क्या आएगा। न सोच-विचार, न हिसाब-किताब।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Alles erlaubt",
+  "alt": "सब कुछ चल सकता है",
+  "neu": "सब कुछ चलेगा",
+  "grund": "umgangssprachlich natürlicher"
+ },
+ {
+  "de": "Wochenende, Feier, Geburtstag. An diesen Tagen darfst du essen was du willst. Aber halt nicht jeden Tag.",
+  "alt": "वीकेंड, पार्टी, जन्मदिन। इन दिनों तुम जो चाहो खा सकते हो। बस हर दिन नहीं।",
+  "neu": "वीकेंड, पार्टी, जन्मदिन। इन दिनों आप जो चाहें खा सकते हैं। बस हर दिन नहीं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Eine Beispiel-Woche pro Phase.",
+  "alt": "हर फेज़ के लिए एक नमूना हफ्ता।",
+  "neu": "हर फेज़ का एक सैंपल हफ़्ता।",
+  "grund": "„नमूना“ klingt nach Warenprobe"
+ },
+ {
+  "de": "Wichtig: Jede Zeile zeigt nur eine Woche. Rechts siehst du wie oft sich das wiederholt.",
+  "alt": "ज़रूरी: हर लाइन सिर्फ एक हफ्ता दिखाती है। दाईं तरफ दिखता है कि यह कितनी बार दोहराया जाता है।",
+  "neu": "ज़रूरी: हर लाइन सिर्फ़ एक हफ़्ता दिखाती है। दाईं तरफ़ आप देख सकते हैं कि यह कितनी बार दोहराया जाता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt (Ansprache ergänzt)"
+ },
+ {
+  "de": "Di",
+  "alt": "मं",
+  "neu": "मंगल",
+  "grund": "„मं“ unübliche Abkürzung; Wochentage in Indien als सोम, मंगल, बुध …"
+ },
+ {
+  "de": "Du wirst satt",
+  "alt": "तुम्हारा पेट भरेगा",
+  "neu": "आपका पेट भरा रहेगा",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+  "alt": "<span class=\"mark\">4× स्वादिष्ट खाना।</span> उपवास या सिर्फ शेक्स की जगह।",
+  "neu": "<span class=\"mark\">दिन में 4 बार स्वादिष्ट खाना।</span> उपवास या सिर्फ़ शेक की जगह।",
+  "grund": "„4×“ im Hindi-Fließtext unüblich"
+ },
+ {
+  "de": "Rezepte anfragen",
+  "alt": "रेसिपी के लिए पूछो",
+  "neu": "रेसिपी मँगाएँ",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Knopf"
+ },
+ {
+  "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+  "alt": "हम जान-बूझकर <strong>FitLine-Produktkonzept</strong> इस्तेमाल करते हैं। वजह: अक्सर सिर्फ अच्छा खाना काफी नहीं होता। तुम्हें जो अतिरिक्त चाहिए, वह सच में शरीर तक पहुँचना भी चाहिए।",
+  "neu": "हम जान-बूझकर <strong>FitLine प्रोडक्ट कॉन्सेप्ट</strong> इस्तेमाल करते हैं। वजह: अक्सर सिर्फ़ अच्छा खाना काफ़ी नहीं होता। आपको जो अतिरिक्त चाहिए, उसका सच में शरीर तक पहुँचना भी ज़रूरी है।",
+  "grund": "deutsches „Produktkonzept“ stand unübersetzt; तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Ein Vitamin bringt nichts, wenn dein Körper es nicht aufnimmt. Genau da haben viele Präparate ihr Problem. FitLine ist exakt dafür gemacht: dass die Nährstoffe <b>wirklich dort ankommen, wo sie gebraucht werden</b>. In deinen Zellen.",
+  "alt": "कोई विटामिन तब बेकार है, अगर तुम्हारा शरीर उसे ले ही न पाए। कई सप्लीमेंट्स की दिक्कत ठीक यही होती है। FitLine इसी के लिए बनाया गया है: ताकि पोषक तत्व <b>सच में वहीं पहुँचें, जहाँ उनकी जरूरत है</b>। तुम्हारी कोशिकाओं में।",
+  "neu": "कोई भी विटामिन बेकार है, अगर आपका शरीर उसे सोख ही न पाए। कई सप्लीमेंट्स की दिक्कत ठीक यही होती है। FitLine इसी के लिए बना है: ताकि पोषक तत्व <b>सच में वहीं पहुँचें, जहाँ उनकी ज़रूरत है</b>। आपकी कोशिकाओं में।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Mehr erfahren",
+  "alt": "और जानो",
+  "neu": "और जानें",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Kurz und <span class=\"mark\">ehrlich.</span>",
+  "alt": "छोटा और <span class=\"mark\">ईमानदार।</span>",
+  "neu": "सीधी और <span class=\"mark\">सच्ची बात।</span>",
+  "grund": "„छोटा और ईमानदार“ wörtlich"
+ },
+ {
+  "de": "Wie lange dauert der Reset?",
+  "alt": "Reset में कितना समय लगता है?",
+  "neu": "रीसेट में कितना समय लगता है?",
+  "grund": "„रीसेट“ einheitlich in Devanagari"
+ },
+ {
+  "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+  "alt": "एक्टिव Reset कुछ हफ्तों का होता है। उसके बाद लंबा स्टैबिलाइजेशन फेज आता है और फिर लंबी अवधि वाला रोजमर्रा का रूटीन। तुम कौन-सा विकल्प चुनते हो, उसी के हिसाब से सही टाइम प्लान थोड़ा बदलता है।",
+  "neu": "एक्टिव रीसेट कुछ हफ़्तों का होता है। उसके बाद एक लंबा स्टेबिलाइज़ेशन फेज़ आता है और फिर लंबे समय का रोज़मर्रा का रूटीन। आप कौन-सा वेरिएंट चुनते हैं, उसके हिसाब से सटीक टाइम प्लान बदलता है।",
+  "grund": "„रीसेट“ einheitlich; तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Muss ich hungern?",
+  "alt": "क्या भूखा रहना पड़ेगा?",
+  "neu": "क्या भूखे रहना पड़ेगा?",
+  "grund": "„भूखा“ männlich, jetzt neutral"
+ },
+ {
+  "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+  "alt": "नहीं। यह कॉन्सेप्ट कैलोरी-डाइट नहीं है। तुम अच्छी, प्राकृतिक मील्स खाते हो, साथ में चुने हुए पोषक तत्व आते हैं। फोकस बेहतर खान-पान पर है, चीजें छोड़ने पर नहीं।",
+  "neu": "नहीं। यह कॉन्सेप्ट कोई कैलोरी-डाइट नहीं है। आप अच्छी, नेचुरल मील्स खाते हैं, और साथ में चुने हुए पोषक तत्व लेते हैं। फ़ोकस बेहतर खान-पान पर है, चीज़ें छोड़ने पर नहीं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Nein. Diäten enden und du bist meistens wieder da, wo du vorher warst. Hier geht es um neue Ernährungsgewohnheiten, die auch nach den ersten Phasen bleiben.",
+  "alt": "नहीं। डाइट खत्म हो जाती है और ज्यादातर तुम फिर वहीं पहुँच जाते हो, जहाँ पहले थे। यहाँ बात नई खाने की आदतों की है, जो शुरुआती फेज के बाद भी बनी रहें।",
+  "neu": "नहीं। डाइट ख़त्म होती है और ज़्यादातर आप फिर वहीं पहुँच जाते हैं, जहाँ पहले थे। यहाँ बात खाने की नई आदतों की है, जो शुरुआती फेज़ के बाद भी बनी रहती हैं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Was esse ich denn dann?",
+  "alt": "तो फिर मैं खाऊँगा क्या?",
+  "neu": "तो फिर खाएँ क्या?",
+  "grund": "„खाऊँगा“ nur männlich, jetzt neutral"
+ },
+ {
+  "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+  "alt": "कोर फेज (Activation) में तुम दूध, चीज़, Quark और क्रीम को जान-बूझकर छोड़ते हो &mdash; ताकि तुम्हारी आंतों की फ्लोरा फिर से बन सके। <b>अपवाद:</b> सुबह पहली मील के रूप में प्रोबायोटिक दही इस कॉन्सेप्ट का साफ तौर पर हिस्सा है और बल्कि जरूरी भी है। Stabilisation फेज से हार्ड चीज़, Quark, Mozzarella वगैरह फिर से आते हैं &mdash; सीमित मात्रा में, प्रोटीन स्रोत के रूप में। कॉफी में थोड़ी-सी बिना चीनी वाली बादाम या सोया मिल्क की अनुमति है।",
+  "neu": "कोर फेज़ (एक्टिवेशन) में आप दूध, चीज़, क्वार्क और क्रीम जान-बूझकर छोड़ देते हैं, ताकि आपका गट फ्लोरा फिर से बन सके। <b>अपवाद:</b> सुबह पहली मील के तौर पर प्रोबायोटिक दही इस कॉन्सेप्ट का साफ़ तौर पर हिस्सा है, और ज़रूरी भी। स्टेबिलाइज़ेशन फेज़ से हार्ड चीज़, क्वार्क, मोज़रेला वगैरह फिर से शामिल हो जाते हैं: सीमित मात्रा में, प्रोटीन के स्रोत के तौर पर। कॉफ़ी में थोड़ा-सा बिना चीनी वाला बादाम या सोया मिल्क चल सकता है।",
+  "grund": "ENTITY: beide &mdash; durch Komma/Doppelpunkt ersetzt; lateinische Begriffe (Activation, Quark, Mozzarella, Stabilisation) in Devanagari; तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+  "alt": "क्या Shakes की अनुमति है? क्या मैं मील्स पीता हूँ?",
+  "neu": "क्या शेक ले सकते हैं? क्या मील्स पीनी होती हैं?",
+  "grund": "„Shakes“ lateinisch, „पीता हूँ“ männlich und wörtlich"
+ },
+ {
+  "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+  "alt": "<b>नहीं।</b> क्लासिक Meal-Replacement या Protein-Shakes कोर फेज में अनुमति नहीं हैं और उसके बाद भी उन्हें रिकमेंड नहीं किया जाता। तुम सही मील्स खाते हो। जिसे बहुत लोग “Shakes” समझ लेते हैं: वे <b>न्यूट्रिएंट कॉन्सन्ट्रेट्स</b> हैं (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; ये पाउडर होते हैं जिन्हें तुम पानी में मिलाते हो, ताकि शरीर को विटामिन और मिनरल्स मिलें। ये किसी मील की जगह नहीं लेते, बल्कि उसे पूरा करते हैं। ये तो कॉन्सेप्ट का एक जरूरी हिस्सा हैं।",
+  "neu": "<b>नहीं।</b> क्लासिक मील-रिप्लेसमेंट या प्रोटीन शेक कोर फेज़ में नहीं चलते और उसके बाद भी इनकी सलाह नहीं दी जाती। आप असली मील्स खाते हैं। जिन्हें बहुत लोग “शेक” समझ लेते हैं, वे हैं <b>न्यूट्रिएंट कॉन्सन्ट्रेट्स</b> (Basics इम्यून-मिक्स, Restorate मिनरल्स, अमीनो एसिड)। ये पाउडर हैं, जिन्हें आप पानी में घोलते हैं, ताकि शरीर को विटामिन और मिनरल्स मिलें। ये किसी मील की जगह नहीं लेते, बल्कि उसके साथ लिए जाते हैं। ये कॉन्सेप्ट का एक अहम हिस्सा हैं।",
+  "grund": "ENTITY: &mdash; durch Punkt ersetzt; deutsche Produktbezeichnungen (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) standen unübersetzt; तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Was passiert nach den ersten Phasen?",
+  "alt": "पहले फेज के बाद क्या होता है?",
+  "neu": "शुरुआती फेज़ के बाद क्या होता है?",
+  "grund": "Plural „erste Phasen“; „फेज़“ einheitlich"
+ },
+ {
+  "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+  "alt": "लंबी अवधि वाले रोजमर्रा के रूटीन में बदलाव धीरे-धीरे होता है। तुम्हारी नई आदतें बन चुकी होती हैं और तुम अपने शरीर को बेहतर समझने लगते हो। जो चाहे, महीने में कुछ सोच-समझकर चुने हुए दिनों से असर को बनाए रख सकता है।",
+  "neu": "लंबे समय के रोज़मर्रा के रूटीन में बदलाव धीरे-धीरे होता है। आपकी नई आदतें बन चुकी होती हैं और आप अपने शरीर को बेहतर जानते हैं। जो चाहे, महीने में कुछ सोच-समझकर चुने दिनों से असर बनाए रख सकता है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+  "alt": "Kölner Liste एक स्वतंत्र डेटाबेस है। वहाँ फूड सप्लीमेंट्स को प्रतिबंधित पदार्थों और डोपिंग पदार्थों के लिए टेस्ट किया जाता है। अगर कोई प्रोडक्ट उस लिस्ट में है, तो तुम निश्चिंत हो सकते हो: उसमें कुछ छिपा हुआ नहीं है। इसी वजह से बहुत से प्रोफेशनल खिलाड़ी FitLine इस्तेमाल करते हैं। तुम्हारे लिए इसका मतलब है: तुम्हें पता है कि तुम क्या ले रहे हो। बिना बुरे सरप्राइज के।",
+  "neu": "Kölner Liste (कोलोन लिस्ट) एक स्वतंत्र डेटाबेस है। इसमें फ़ूड सप्लीमेंट्स को प्रतिबंधित पदार्थों और डोपिंग पदार्थों के लिए टेस्ट किया जाता है। अगर कोई प्रोडक्ट इस लिस्ट में है, तो आप निश्चिंत रह सकते हैं: उसमें कुछ छिपा हुआ नहीं है। इसी वजह से बहुत से प्रोफ़ेशनल खिलाड़ी FitLine इस्तेमाल करते हैं। आपके लिए इसका मतलब: आपको पता है कि आप क्या ले रहे हैं। बिना किसी बुरे सरप्राइज़ के।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Kölner Liste einmal landesüblich erklärt"
+ },
+ {
+  "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+  "alt": "ELAB एक स्वतंत्र लैब है। वे लगातार जाँचते हैं कि FitLine प्रोडक्ट्स में सच में वही है जो लेबल पर लिखा है, और उसमें ऐसा कुछ नहीं है जो नहीं होना चाहिए। सुनने में यह सामान्य लगता है, लेकिन दुख की बात है कि सभी फूड सप्लीमेंट्स में ऐसा नहीं होता। FitLine में यह लगातार कंट्रोल किया जाता है। तुम्हारे लिए: तुम इस पर भरोसा कर सकते हो।",
+  "neu": "ELAB एक स्वतंत्र लैब है। वे लगातार जाँचते हैं कि FitLine प्रोडक्ट्स में सच में वही है जो लेबल पर लिखा है, और उनमें ऐसा कुछ नहीं है जो नहीं होना चाहिए। सुनने में यह आम बात लगती है, लेकिन अफ़सोस, सभी फ़ूड सप्लीमेंट्स में ऐसा नहीं होता। FitLine में इसकी लगातार जाँच होती है। आपके लिए: आप इस पर भरोसा कर सकते हैं।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „दुख की बात“ zu schwer"
+ },
+ {
+  "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+  "alt": "NTC का मतलब है न्यूट्रिएंट ट्रांसपोर्ट कॉन्सेप्ट। आसान भाषा में: यह फॉर्मूला यह सुनिश्चित करता है कि पोषक तत्व ठीक वहीं पहुँचें, जहाँ उन्हें काम करना है। तुम्हारी कोशिकाओं में। कई दूसरे सप्लीमेंट्स में बड़ा हिस्सा बिना इस्तेमाल हुए फिर बाहर निकल जाता है। MicroSolve Q10 ऐसी टेक्नोलॉजी का एक उदाहरण है: सामान्य Q10 को शरीर ठीक से नहीं ले पाता, MicroSolve के साथ उसका इस्तेमाल कहीं बेहतर होता है। सुनने में तकनीकी लगता है, लेकिन यही वजह है कि यह चीज़ सच में फायदा देती है।",
+  "neu": "NTC का मतलब है न्यूट्रिएंट ट्रांसपोर्ट कॉन्सेप्ट। आसान शब्दों में: यह फ़ॉर्मूला पक्का करता है कि पोषक तत्व ठीक वहीं पहुँचें, जहाँ उन्हें असर करना है। आपकी कोशिकाओं में। कई दूसरे सप्लीमेंट्स में बड़ा हिस्सा बिना इस्तेमाल हुए बाहर निकल जाता है। MicroSolve Q10 ऐसी ही एक टेक्नोलॉजी का उदाहरण है: सामान्य Q10 को शरीर ठीक से नहीं सोख पाता, MicroSolve के साथ उसका इस्तेमाल कहीं बेहतर होता है। सुनने में तकनीकी लगता है, लेकिन यही वजह है कि यह चीज़ सच में काम करती है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+  "alt": "हाँ, और बहुत सारे। 500 से ज्यादा विश्व चैंपियन और ओलंपिक प्रतिभागी FitLine के साथ काम कर चुके हैं, जिनमें Deutscher Skiverband और Deutscher Eishockey-Bund भी शामिल हैं। क्यों? प्रोफेशनल खिलाड़ी इस बात को लेकर बेहद सावधान रहते हैं कि उनके शरीर में क्या जा रहा है, क्योंकि उन्हें शुद्धता पर 100 प्रतिशत भरोसा होना चाहिए। यह क्वालिटी का काफी अच्छा संकेत है, भले ही तुम खुद परफॉर्मेंस स्पोर्ट न करते हो।",
+  "neu": "हाँ, और काफ़ी सारे। 500 से ज़्यादा वर्ल्ड चैंपियन और ओलंपिक खिलाड़ी FitLine के साथ काम कर चुके हैं, जिनमें जर्मन स्की फ़ेडरेशन और जर्मन आइस हॉकी फ़ेडरेशन भी शामिल हैं। क्यों? प्रोफ़ेशनल खिलाड़ी इस बात को लेकर बेहद सावधान रहते हैं कि उनके शरीर में क्या जा रहा है, क्योंकि उन्हें शुद्धता पर 100 प्रतिशत भरोसा करना होता है। यह क्वालिटी का काफ़ी अच्छा संकेत है, भले ही आप ख़ुद प्रोफ़ेशनल स्पोर्ट्स न करते हों।",
+  "grund": "deutsche Verbandsnamen standen unübersetzt; तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Für Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis. Bei chronischen Erkrankungen wird ärztliche Begleitung empfohlen.",
+  "alt": "गर्भवती, स्तनपान कराने वाली महिलाएँ और डॉक्टर की देखरेख में इलाज करा रहे लोग, इसे सिर्फ़ अपने इलाज कर रहे डॉक्टर या क्लिनिक से बात करने के बाद ही करें। पुरानी बीमारियों में डॉक्टर की निगरानी की सलाह दी जाती है।",
+  "neu": "गर्भवती या स्तनपान कराने वाली महिलाएँ और जिनका डॉक्टरी इलाज चल रहा है, वे इसे सिर्फ़ अपने डॉक्टर से बात करने के बाद ही शुरू करें। पुरानी बीमारियों में डॉक्टर की निगरानी की सलाह दी जाती है।",
+  "grund": "flüssiger; „डॉक्टर या क्लिनिक“ doppelt"
+ },
+ {
+  "de": "Passt das zu dir?",
+  "alt": "क्या यह तुम्हारे लिए सही है?",
+  "neu": "क्या यह आपके लिए सही है?",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+  "alt": "छोटा सा <em>सेल्फ-चेक</em>.<br><span class=\"mark\">फिर बात करते हैं।</span>",
+  "neu": "छोटा-सा <em>सेल्फ़-चेक</em>।<br><span class=\"mark\">फिर बात करते हैं।</span>",
+  "grund": "Satzzeichen ।"
+ },
+ {
+  "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+  "alt": "बस टिक लगाओ। हम साथ में देखेंगे कि यह तुम्हारे लिए सही है या नहीं, और कैसे।",
+  "neu": "बस टिक लगाइए। हम साथ मिलकर देखेंगे कि यह आपके लिए सही है या नहीं, और कैसे।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Kennst du das?",
+  "alt": "क्या तुम्हारे साथ भी ऐसा होता है?",
+  "neu": "क्या आपके साथ भी ऐसा होता है?",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Nachmittags greifst du oft zu Kaffee oder Süßem",
+  "alt": "दोपहर के बाद तुम अक्सर कॉफ़ी या मीठे की तरफ़ हाथ बढ़ाते हो",
+  "neu": "दोपहर बाद अक्सर आपका हाथ कॉफ़ी या मीठे की तरफ़ जाता है",
+  "grund": "तुम-Form durch höfliches आप ersetzt; geschlechtsneutral"
+ },
+ {
+  "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+  "alt": "खाने के बाद मन करता है कि बस थोड़ा रुक जाओ",
+  "neu": "खाने के बाद मन करता है कि बस थोड़ा आराम कर लें",
+  "grund": "„रुक जाओ“ तुम-Form; „Pause“ = sich ausruhen"
+ },
+ {
+  "de": "Deine Klamotten sitzen nicht mehr so wie du willst",
+  "alt": "तुम्हारे कपड़े अब मनचाहे तरीके से फिट नहीं होते",
+  "neu": "आपके कपड़े अब आपकी मर्ज़ी के मुताबिक़ फ़िट नहीं होते",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Du würdest morgens gern mit mehr Schwung starten",
+  "alt": "तुम सुबह ज़्यादा जोश के साथ दिन शुरू करना चाहते हो",
+  "neu": "आपका मन करता है कि सुबह की शुरुआत ज़्यादा जोश से हो",
+  "grund": "तुम-Form durch höfliches आप ersetzt; geschlechtsneutral"
+ },
+ {
+  "de": "Du wünschst dir mehr Fokus im Alltag",
+  "alt": "तुम रोज़मर्रा में ज़्यादा फोकस चाहते हो",
+  "neu": "काश, रोज़मर्रा में ज़्यादा फ़ोकस रहता",
+  "grund": "तुम-Form durch höfliches आप ersetzt; geschlechtsneutral, natürlicher Wunschsatz"
+ },
+ {
+  "de": "Setz dein erstes Häkchen",
+  "alt": "अपना पहला टिक लगाओ",
+  "neu": "अपना पहला टिक लगाइए",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+  "alt": "जो भी तुम पर लागू होता है, सब क्लिक करो। फिर {{#unless partner_modus=duo}}मेरे लिए{{/unless}}{{#if partner_modus=duo}}हमारे लिए{{/if}} साफ़ होगा कि {{#unless partner_modus=duo}}मैं{{/unless}}{{#if partner_modus=duo}}हम{{/if}} तुम्हें ठोस तौर पर क्या दिखा {{#unless partner_modus=duo}}सकूँ{{/unless}}{{#if partner_modus=duo}}सकें{{/if}}।",
+  "neu": "जो भी बातें आप पर लागू होती हैं, उन सब पर क्लिक कीजिए, ताकि {{#unless partner_modus=duo}}मैं{{/unless}}{{#if partner_modus=duo}}हम{{/if}} आपको ठोस रूप से दिखा {{#unless partner_modus=duo}}सकूँ{{/unless}}{{#if partner_modus=duo}}सकें{{/if}} कि {{#unless partner_modus=duo}}मेरे{{/unless}}{{#if partner_modus=duo}}हमारे{{/if}} पास आपके लिए क्या है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; 3+3 Bedingungsblöcke wie im Deutschen; „मेरे लिए साफ़ होगा“ verschob die Aussage; Konjunktiv सकूँ/सकें geschlechtsneutral"
+ },
+ {
+  "de": "Dein Name",
+  "alt": "तुम्हारा नाम",
+  "neu": "आपका नाम",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Deine E-Mail",
+  "alt": "तुम्हारी ई-मेल",
+  "neu": "आपकी ई-मेल",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Wie soll {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}einer von uns{{/if}} dich erreichen?",
+  "alt": "{{#unless partner_modus=duo}}मैं{{/unless}}{{#if partner_modus=duo}}हम में से कोई{{/if}} तुमसे कैसे संपर्क करे?",
+  "neu": "{{#unless partner_modus=duo}}मैं आपसे कैसे संपर्क करूँ{{/unless}}{{#if partner_modus=duo}}हम में से कोई आपसे कैसे संपर्क करे{{/if}}?",
+  "grund": "Grammatikfehler „मैं … करे“ (Verbform passte nur zu „कोई“); तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Anfrage absenden",
+  "alt": "रिक्वेस्ट भेजो",
+  "neu": "रिक्वेस्ट भेजें",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Kein Newsletter, keine Weitergabe. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} persönlich bei dir zurück.",
+  "alt": "कोई न्यूज़लेटर नहीं, कोई जानकारी आगे नहीं दी जाएगी। {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} तुम्हें व्यक्तिगत जवाब मिलेगा।",
+  "neu": "कोई न्यूज़लेटर नहीं, आपकी जानकारी किसी और को नहीं दी जाएगी। {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपको व्यक्तिगत जवाब मिलेगा।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Deine Anfrage ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} innerhalb von 24 Stunden persönlich bei dir.",
+  "alt": "तुम्हारी रिक्वेस्ट {{#unless partner_modus=duo}}मेरे{{/unless}}{{#if partner_modus=duo}}हमारे{{/if}} पास पहुँच गई है। अगले 24 घंटों में {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} तुम्हें व्यक्तिगत जवाब मिलेगा।",
+  "neu": "आपकी रिक्वेस्ट {{#unless partner_modus=duo}}मेरे{{/unless}}{{#if partner_modus=duo}}हमारे{{/if}} पास पहुँच गई है। अगले 24 घंटों में {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपको व्यक्तिगत जवाब मिलेगा।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "<b>Check dein Postfach.</b> Eine Bestätigung ist unterwegs.",
+  "alt": "<b>अपना इनबॉक्स देखो।</b> कन्फर्मेशन रास्ते में है।",
+  "neu": "<b>अपना इनबॉक्स देखिए।</b> कन्फ़र्मेशन मेल रास्ते में है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "<b>Persönlicher Kontakt.</b> {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} — ohne Verkaufsdruck.",
+  "alt": "<b>व्यक्तिगत संपर्क.</b> {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} तुमसे संपर्क होगा, बिना किसी सेल्स प्रेशर के।",
+  "neu": "<b>व्यक्तिगत संपर्क।</b> {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपसे संपर्क होगा, बिना किसी सेल्स प्रेशर के।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Satzzeichen ।"
+ },
+ {
+  "de": "<b>Du entscheidest.</b> Nur wenn es wirklich passt.",
+  "alt": "<b>फैसला तुम्हारा.</b> सिर्फ़ तब, जब यह सच में सही लगे।",
+  "neu": "<b>फ़ैसला आपका।</b> सिर्फ़ तब, जब यह सच में सही लगे।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Satzzeichen ।"
+ },
+ {
+  "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+  "alt": "कॉफ़ी और क्रोइसां जितना ही। फर्क बस इतना है कि इसके बदले तुम सिर्फ़ थोड़ी देर अलर्ट होने के बजाय <b>3 महीने तक अपना खान-पान पूरी तरह बदलते हो</b>।",
+  "neu": "उतना ही, जितना एक कॉफ़ी और क्रोइसां। फ़र्क बस इतना है कि इसमें आप सिर्फ़ थोड़ी देर जागने के बजाय <b>3 महीने तक अपना खान-पान पूरी तरह बदलते हैं</b>।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+  "alt": "<b>इन लोगों के लिए उपयुक्त नहीं</b> गर्भवती, स्तनपान कराने वाली महिलाएँ और डॉक्टर की देखरेख में इलाज करा रहे लोग, अपनी इलाज करने वाली प्रैक्टिस से बात करने के बाद ही।",
+  "neu": "<b>उपयुक्त नहीं</b> गर्भवती और स्तनपान कराने वाली महिलाओं के लिए; जिनका डॉक्टरी इलाज चल रहा है, वे सिर्फ़ अपने डॉक्टर से बात करने के बाद।",
+  "grund": "Satz war grammatisch abgebrochen und „प्रैक्टिस“ wörtlich"
+ },
+ {
+  "de": "Jetzt anfragen",
+  "alt": "अभी पूछो",
+  "neu": "अभी संपर्क करें",
+  "grund": "तुम-Form durch höfliches आप ersetzt; Knopf"
+ },
+ {
+  "de": "Impressum",
+  "alt": "इम्प्रेसम",
+  "neu": "प्रकाशक की जानकारी",
+  "grund": "„इम्प्रेसम“ in Indien unverständlich"
+ },
+ {
+  "de": "Made with",
+  "alt": "बनाया गया",
+  "neu": "Made with",
+  "grund": "auf indischen Websites üblich englisch, Hindi-Wortstellung passt nicht um das Herz"
+ },
+ {
+  "de": "von",
+  "alt": "द्वारा",
+  "neu": "by",
+  "grund": "passend zu „Made with ♥ by“"
+ },
+ {
+  "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Diese Seite dient der Information und ersetzt keine ärztliche Beratung, Diagnose oder Behandlung. Erfahrungen sind individuell und stellen keine Zusicherung eines bestimmten Ergebnisses dar. Bei Beschwerden oder Vorerkrankungen sprich bitte mit {{#unless partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/unless}}{{#if partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/if}}.",
+  "alt": "सभी उत्पाद फूड सप्लीमेंट हैं, दवाइयाँ नहीं। यह पेज जानकारी के लिए है और डॉक्टर की सलाह, जाँच या इलाज की जगह नहीं लेता। अनुभव हर व्यक्ति के अलग हो सकते हैं और किसी खास नतीजे की गारंटी नहीं हैं। अगर कोई परेशानी हो या पहले से कोई बीमारी हो, तो कृपया {{#unless partner_modus=duo}}अपनी डॉक्टर या अपने डॉक्टर से{{/unless}}{{#if partner_modus=duo}}अपनी डॉक्टर या अपने डॉक्टर से{{/if}} बात कर लेना।",
+  "neu": "सभी प्रोडक्ट्स फ़ूड सप्लीमेंट हैं, दवाइयाँ नहीं। यह पेज सिर्फ़ जानकारी के लिए है और डॉक्टर की सलाह, जाँच या इलाज की जगह नहीं लेता। अनुभव हर व्यक्ति के अलग होते हैं और किसी खास नतीजे की गारंटी नहीं हैं। अगर कोई परेशानी हो या पहले से कोई बीमारी हो, तो कृपया {{#unless partner_modus=duo}}अपने डॉक्टर से{{/unless}}{{#if partner_modus=duo}}अपने डॉक्टर से{{/if}} बात करें।",
+  "grund": "„अपनी डॉक्टर या अपने डॉक्टर“ unnatürlich (डॉक्टर ist neutral); तुम-Imperativ „कर लेना“"
+ },
+ {
+  "de": "Deine Privatsphäre",
+  "alt": "तुम्हारी प्राइवेसी",
+  "neu": "आपकी प्राइवेसी",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "alt": "हम सिर्फ तकनीकी रूप से ज़रूरी कुकीज़ इस्तेमाल करते हैं, ताकि साइट ठीक से चले। आँकड़ों या मार्केटिंग के लिए हमें तुम्हारी सहमति चाहिए, तुम अपनी पसंद खुद चुन सकते हो। जानकारी हमारी <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">डेटा सुरक्षा नीति</a> में है।",
+  "neu": "हम सिर्फ़ तकनीकी रूप से ज़रूरी कुकीज़ इस्तेमाल करते हैं, ताकि साइट ठीक से चले। आँकड़ों या मार्केटिंग के लिए हमें आपकी सहमति चाहिए, चुनना पूरी तरह आप पर है। जानकारी हमारी <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">डेटा सुरक्षा नीति</a> में है।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Da ist etwas schiefgegangen. Bitte versuch es noch einmal.",
+  "alt": "कुछ गड़बड़ हो गई। कृपया फिर से कोशिश करो।",
+  "neu": "कुछ गड़बड़ हो गई। कृपया फिर से कोशिश करें।",
+  "grund": "तुम-Form durch höfliches आप ersetzt"
+ },
+ {
+  "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+  "alt": "तुम्हारी रोज़मर्रा की ज़िंदगी के लिए एक रीसेट प्रोग्राम। चार चरणों में फिर से ज़्यादा ऊर्जा और साफ़ दिमाग की ओर।",
+  "neu": "आपकी रोज़मर्रा की ज़िंदगी के लिए एक रीसेट प्रोग्राम। चार फेज़ में फिर से ज़्यादा ऊर्जा और साफ़ दिमाग़ की ओर।",
+  "grund": "तुम-Form durch höfliches आप ersetzt; „फेज़“ einheitlich (Meta-Beschreibung)"
+ }
+]

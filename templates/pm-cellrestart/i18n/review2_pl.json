@@ -1,0 +1,326 @@
+[
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "Krótki self-check, potem się odezwę",
+    "neu": "Krótki test, potem się odezwę",
+    "grund": "Anglizismus „self-check“ durch gängiges „test“ ersetzt"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "Krótki self-check, potem się odezwiemy",
+    "neu": "Krótki test, potem się odezwiemy",
+    "grund": "Anglizismus „self-check“ ersetzt"
+  },
+  {
+    "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+    "alt": "Więcej energii. Jaśniejsza głowa. <span class=\"mark\">Więcej lekkości.</span>",
+    "neu": "Więcej energii. Jasny umysł. <span class=\"mark\">Więcej lekkości.</span>",
+    "grund": "„jasny umysł“ ist die idiomatische Wendung für „klarer Kopf“"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Zacznij swój <strong>reset metabolizmu</strong>. To nie dieta, żadnych shake’ów, żadnego liczenia. Za to <strong>4 stałe posiłki</strong> i <strong>opatentowane suplementy</strong>, żeby codzienność <strong>naprawdę dobrze ci służyła.</strong>",
+    "neu": "Zacznij swój <strong>reset metabolizmu</strong>. Bez diety, bez shake’ów, bez liczenia. Za to <strong>4 stałe posiłki</strong> i <strong>opatentowane suplementy</strong>, żeby na co dzień było ci <strong>naprawdę dobrze.</strong>",
+    "grund": "Parallele Aufzählung natürlicher; „codzienność dobrze ci służyła“ war schief"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Wymiana z ludźmi, którzy chcą tego samego",
+    "neu": "Wymiana z osobami o podobnych celach",
+    "grund": "Natürlichere Entsprechung für „Gleichgesinnte“, kürzer"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+    "alt": "{{#unless partner_modus=duo}}Tę stronę prowadzi <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}niezależna partnerka dystrybucyjna{{/if}}{{#if geschlecht=maennlich}}niezależny partner dystrybucyjny{{/if}} PM-International (FitLine®). To nie jest oficjalna strona PM-International AG.{{/unless}}{{#if partner_modus=duo}}Tę stronę prowadzą <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, niezależni partnerzy dystrybucyjni PM-International (FitLine®). To nie jest oficjalna strona PM-International AG.{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Tę stronę prowadzi <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}niezależna partnerka handlowa{{/if}}{{#if geschlecht=maennlich}}niezależny partner handlowy{{/if}} PM-International (FitLine®). To nie jest oficjalna strona PM-International AG.{{/unless}}{{#if partner_modus=duo}}Tę stronę prowadzą <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, niezależni partnerzy handlowi PM-International (FitLine®). To nie jest oficjalna strona PM-International AG.{{/if}}",
+    "grund": "Einheitlich mit Wellpreneur-Template: „partner handlowy“"
+  },
+  {
+    "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+    "alt": "Całość jest <span class=\"mark\">taka prosta.</span>",
+    "neu": "Wszystko jest <span class=\"mark\">bardzo proste.</span>",
+    "grund": "„Całość jest taka prosta“ klang steif"
+  },
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Nasza koncepcja składników odżywczych",
+    "neu": "Nasze podejście do składników odżywczych",
+    "grund": "„koncepcja składników odżywczych“ hölzern"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Wysokiej jakości składniki witalne z opatentowanej koncepcji. Nie z półki w supermarkecie.",
+    "neu": "Wysokiej jakości mikroskładniki z opatentowanej koncepcji. Nie z półki w supermarkecie.",
+    "grund": "„składniki witalne“ ist im Polnischen unüblich"
+  },
+  {
+    "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+    "alt": "Bez podjadania między posiłkami, bez pomijania. Jasna struktura, sytość do następnego posiłku.",
+    "neu": "Bez podjadania między posiłkami, bez pomijania. Jasna struktura i uczucie sytości aż do kolejnego posiłku.",
+    "grund": "„sytość do następnego posiłku“ wörtlich/abgehackt"
+  },
+  {
+    "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+    "alt": "Na kilka tygodni je odstawiasz, żeby twoje ciało mogło się wyciszyć. Nie na zawsze, tylko w fazie głównej.",
+    "neu": "Na kilka tygodni je odstawiasz, żeby twój organizm mógł odpocząć. Nie na zawsze, tylko w fazie głównej.",
+    "grund": "„ciało się wyciszyć“ wörtlich; „zur Ruhe kommen“ = odpocząć"
+  },
+  {
+    "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+    "alt": "<b>Te trzy elementy działają razem.</b> Dopiero kiedy połączysz wszystkie trzy, efekt resetu może się rozwinąć.",
+    "neu": "<b>Te trzy elementy działają razem.</b> Dopiero kiedy połączysz wszystkie trzy, pojawia się efekt resetu.",
+    "grund": "Aussage wie im DE (ohne zusätzliches „może“), natürlicher"
+  },
+  {
+    "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+    "alt": "W fazie aktywacji trzymasz się zasady <b>diety ketogenicznej</b>. Brzmi skomplikowanie, ale takie nie jest: podobna zasada jak przy <b>klasycznym keto</b>, tylko <b>bez przesady z tłuszczem łyżkami</b> i <b>bez ciągłych wyrzeczeń</b>.",
+    "neu": "W fazie aktywacji trzymasz się zasady <b>diety ketogenicznej</b>. Brzmi skomplikowanie, ale wcale takie nie jest: zasada podobna do <b>klasycznego keto</b>, tylko <b>bez jedzenia tłuszczu łyżkami</b> i <b>bez ciągłych wyrzeczeń</b>.",
+    "grund": "„bez przesady z tłuszczem łyżkami“ ungrammatisch"
+  },
+  {
+    "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+    "alt": "Fachowy termin na ten stan to: <b style=\"color:var(--ink);\">ketoza</b>. Dlatego mówi się też „dieta ketogeniczna”.",
+    "neu": "Fachowo ten stan nazywa się <b style=\"color:var(--ink);\">ketozą</b>. Dlatego mówi się też „dieta ketogeniczna”.",
+    "grund": "„Fachowy termin na ten stan to:“ steif"
+  },
+  {
+    "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+    "alt": "To są informacje zwrotne, które wracają raz po raz. Jasne, każdy organizm reaguje inaczej.",
+    "neu": "To opinie, które słyszymy raz po raz. Jasne, każdy organizm reaguje inaczej.",
+    "grund": "„informacje zwrotne, które wracają“ wörtlich"
+  },
+  {
+    "de": "Klarer Kopf",
+    "alt": "Jasna głowa",
+    "neu": "Jasny umysł",
+    "grund": "Idiomatisch, konsistent mit Hero"
+  },
+  {
+    "de": "Wieder wohl in dir",
+    "alt": "Znów dobrze w swoim ciele",
+    "neu": "Znów dobrze we własnej skórze",
+    "grund": "Polnische Redewendung „dobrze we własnej skórze“"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Bez jedzeniowego rollercoastera",
+    "neu": "Bez huśtawek apetytu",
+    "grund": "„jedzeniowy rollercoaster“ wörtlich; natürliches Bild"
+  },
+  {
+    "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+    "alt": "Bez ciągłego myślenia o kolejnym jedzeniu. Bez przymusu na coś słodkiego o trzeciej po południu. To po prostu cichnie.",
+    "neu": "Bez ciągłego myślenia o następnym posiłku. Bez nieodpartej ochoty na słodkie o piętnastej. Po prostu robi się spokojniej.",
+    "grund": "„przymus na coś słodkiego“ / „to cichnie“ wörtlich"
+  },
+  {
+    "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+    "alt": "Napisz krótko do {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}nas{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Kontakt: {{vorname}}{{/unless}}{{#if partner_modus=duo}}Napisz do nas{{/if}}",
+    "grund": "„do {{vorname}}“ verlangt Genitiv am Namen; Name jetzt per Doppelpunkt im Nominativ, Knopf kurz"
+  },
+  {
+    "de": "Auch vegetarisch",
+    "alt": "Także wegetariańsko",
+    "neu": "Także w wersji wegetariańskiej",
+    "grund": "„wegetariańsko“ allein unidiomatisch"
+  },
+  {
+    "de": "Kein Sport nötig",
+    "alt": "Bez konieczności uprawiania sportu",
+    "neu": "Sport niekonieczny",
+    "grund": "Chip kürzer"
+  },
+  {
+    "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+    "alt": "Jesz świadomie, a wyjątki są w to wpisane.",
+    "neu": "Jesz świadomie, a wyjątki są normalną częścią tego.",
+    "grund": "„są w to wpisane“ unnatürlich"
+  },
+  {
+    "de": "Im Programm ist jeder Tag entweder <b>weiß</b>, <b>grün</b> oder <b>rot</b>. Die Farbe verrät dir sofort, was heute auf den Teller kommt. Kein Grübeln, kein Rechnen.",
+    "alt": "W programie każdy dzień jest albo <b>biały</b>, <b>zielony</b>, albo <b>czerwony</b>. Kolor od razu mówi ci, co dziś trafia na talerz. Bez zastanawiania się i bez liczenia.",
+    "neu": "W programie każdy dzień jest <b>biały</b>, <b>zielony</b> albo <b>czerwony</b>. Kolor od razu mówi ci, co dziś trafia na talerz. Bez zastanawiania się i bez liczenia.",
+    "grund": "„albo …, …, albo“ grammatisch unsauber"
+  },
+  {
+    "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+    "alt": "Tylko białko, dobre tłuszcze, probiotyczny jogurt rano i koncentraty składników odżywczych. Bez warzyw. Brzmi restrykcyjnie, ale należy do fazy głównej.",
+    "neu": "Tylko białko, dobre tłuszcze, probiotyczny jogurt rano i koncentraty składników odżywczych. Nawet bez warzyw. Brzmi restrykcyjnie, ale tak wygląda faza główna.",
+    "grund": "„Auch kein Gemüse“ = „nawet bez warzyw“; Schluss natürlicher"
+  },
+  {
+    "de": "Wie ein weißer Tag, plus Gemüse und Salat. Der Standard-Tag im Programm.",
+    "alt": "Jak biały dzień, plus warzywa i sałatka. Standardowy dzień w programie.",
+    "neu": "Jak biały dzień, plus warzywa i sałata. Standardowy dzień w programie.",
+    "grund": "Salat = sałata (Blattsalat), nicht sałatka"
+  },
+  {
+    "de": "Wichtig: Jede Zeile zeigt nur eine Woche. Rechts siehst du wie oft sich das wiederholt.",
+    "alt": "Ważne: każdy wiersz pokazuje tylko jeden tydzień. Po prawej widzisz, ile razy się powtarza.",
+    "neu": "Ważne: każdy wiersz pokazuje tylko jeden tydzień. Po prawej widzisz, ile razy się to powtarza.",
+    "grund": "Fehlendes Objekt „to“"
+  },
+  {
+    "de": "Wochen",
+    "alt": "tygodnie",
+    "neu": "tyg.",
+    "grund": "Steht nach ×2, ×3 und ×12+; Abkürzung passt zu allen Zahlformen (tygodnie/tygodni)"
+  },
+  {
+    "de": "Woche",
+    "alt": "tydzień",
+    "neu": "tyg.",
+    "grund": "Konsistent mit „Wochen“, Abkürzung"
+  },
+  {
+    "de": "Woche 2 bis 4",
+    "alt": "Tydzień 2 do 4",
+    "neu": "Od 2. do 4. tygodnia",
+    "grund": "„Tydzień 2 do 4“ ungrammatisch"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4× jesz smacznie.</span> Zamiast pościć albo pić tylko shake’i.",
+    "neu": "<span class=\"mark\">4× smaczny posiłek.</span> Zamiast głodówki albo samych shake’ów.",
+    "grund": "„4× jesz smacznie“ holprig"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "Celowo korzystamy z <strong>koncepcji produktów FitLine</strong>. Powód: samo dobre jedzenie często nie wystarcza. To, czego dodatkowo potrzebujesz, musi też naprawdę dotrzeć do organizmu.",
+    "neu": "Świadomie stawiamy na <strong>koncepcję produktów FitLine</strong>. Powód: samo dobre jedzenie często nie wystarcza. To, czego dodatkowo potrzebujesz, musi też naprawdę dotrzeć do organizmu.",
+    "grund": "„Celowo korzystamy“ steif; „bewusst“ = świadomie"
+  },
+  {
+    "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+    "alt": "Ufają temu mistrzowie świata i olimpijczycy",
+    "neu": "Ufają im mistrzowie świata i olimpijczycy",
+    "grund": "Bezug auf Produkte"
+  },
+  {
+    "de": "Muss ich hungern?",
+    "alt": "Czy będę chodzić głodny?",
+    "neu": "Czy będę głodować?",
+    "grund": "„chodzić głodny“ männliche Form, jetzt neutral"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "Nie. To nie jest dieta kaloryczna. Jesz dobre, naturalne posiłki, a do tego dochodzą wybrane składniki odżywcze. Chodzi o lepsze odżywianie, nie o wyrzeczenia.",
+    "neu": "Nie. To nie jest dieta oparta na liczeniu kalorii. Jesz dobre, naturalne posiłki, a do tego dochodzą wybrane składniki odżywcze. Chodzi o lepsze odżywianie, nie o wyrzeczenia.",
+    "grund": "„dieta kaloryczna“ missverständlich"
+  },
+  {
+    "de": "Nein. Diäten enden und du bist meistens wieder da, wo du vorher warst. Hier geht es um neue Ernährungsgewohnheiten, die auch nach den ersten Phasen bleiben.",
+    "alt": "Nie. Diety się kończą i najczęściej wracasz tam, gdzie byłeś wcześniej. Tutaj chodzi o nowe nawyki żywieniowe, które zostają także po pierwszych fazach.",
+    "neu": "Nie. Diety się kończą i najczęściej wracasz do punktu wyjścia. Tutaj chodzi o nowe nawyki żywieniowe, które zostają także po pierwszych fazach.",
+    "grund": "„gdzie byłeś“ männliche Form, jetzt neutral"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "W fazie głównej (aktywacji) świadomie odstawiasz mleko, ser, twaróg i śmietanę &mdash; po to, żeby twoja flora jelitowa mogła odbudować się na nowo. <b>Wyjątek:</b> probiotyczny jogurt rano jako pierwszy posiłek jest wyraźnie częścią koncepcji i jest nawet ważny. Od fazy stabilizacji wracają twarde sery, twaróg, mozzarella i podobne produkty &mdash; z umiarem, jako źródło białka. Do kawy można dodać odrobinę niesłodzonego mleka migdałowego albo sojowego.",
+    "neu": "W fazie głównej (aktywacji) świadomie odstawiasz mleko, ser, twaróg i śmietanę, żeby twoja flora jelitowa mogła się odbudować. <b>Wyjątek:</b> probiotyczny jogurt rano jako pierwszy posiłek jest wprost częścią koncepcji, a nawet jej ważnym elementem. Od fazy stabilizacji wracają twarde sery, twaróg, mozzarella i podobne produkty, z umiarem, jako źródło białka. Do kawy można dodać odrobinę niesłodzonego mleka migdałowego albo sojowego.",
+    "grund": "ENTITY: &mdash; durch Komma ersetzt; „jest wyraźnie… i jest nawet ważny“ holprig"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>Nie.</b> Klasyczne shake’i zastępujące posiłek albo proteinowe nie są dozwolone w fazie głównej, a później też nie są zalecane. Jesz normalne posiłki. To, co wiele osób myli z „shake’ami”: <b>koncentraty składników odżywczych</b> (Basic-Immun-Mix, minerały Restorate, aminokwasy) &mdash; to proszki, które mieszasz z wodą, żeby dostarczyć organizmowi witaminy i składniki mineralne. Nie zastępują posiłku, tylko go uzupełniają. Są wręcz ważną częścią tej koncepcji.",
+    "neu": "<b>Nie.</b> Klasyczne shake’i zastępujące posiłek albo proteinowe nie są dozwolone w fazie głównej, a później też nie są zalecane. Jesz normalne posiłki. To, co wiele osób myli z „shake’ami”, to <b>koncentraty składników odżywczych</b> (Basic-Immun-Mix, minerały Restorate, aminokwasy): proszki, które mieszasz z wodą, żeby dostarczyć organizmowi witaminy i składniki mineralne. Nie zastępują posiłku, tylko go uzupełniają. Są wręcz ważną częścią tej koncepcji.",
+    "grund": "ENTITY: &mdash; durch Doppelpunkt ersetzt"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Tak. Tę koncepcję da się zrealizować także wegetariańsko albo wegańsko. Do wszystkich zaleceń odzwierzęcych są odpowiednie alternatywy.",
+    "neu": "Tak. Tę koncepcję da się stosować także w wersji wegetariańskiej albo wegańskiej. Do wszystkich zaleceń dotyczących produktów odzwierzęcych są odpowiednie zamienniki.",
+    "grund": "„zaleceń odzwierzęcych“ unsinnig; „zrealizować wegetariańsko“ steif"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "Kölner Liste to niezależna baza danych. Suplementy diety są tam badane pod kątem zakazanych substancji i substancji dopingujących. Jeśli produkt jest na tej liście, możesz mieć pewność: nie ma w nim nic ukrytego. Właśnie dlatego wielu zawodowych sportowców korzysta z FitLine. Dla ciebie oznacza to jedno: wiesz, co trafia do twojego organizmu. Bez niemiłych niespodzianek.",
+    "neu": "Kölner Liste (tzw. Lista Kolońska) to niezależna baza danych. Suplementy diety są tam badane pod kątem zakazanych substancji i substancji dopingujących. Jeśli produkt jest na tej liście, możesz mieć pewność: nie ma w nim nic ukrytego. Właśnie dlatego wielu zawodowych sportowców korzysta z FitLine. Dla ciebie oznacza to jedno: wiesz, co trafia do twojego organizmu. Bez niemiłych niespodzianek.",
+    "grund": "Einmalige landesübliche Erklärung der Kölner Liste"
+  },
+  {
+    "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+    "alt": "ELAB to niezależne laboratorium. Regularnie sprawdzają, czy produkty FitLine naprawdę zawierają to, co jest napisane na etykiecie, i czy nie ma w nich niczego, czego być nie powinno. Brzmi jak oczywistość, ale niestety nie przy wszystkich suplementach diety tak jest. W FitLine jest to kontrolowane na bieżąco. Dla ciebie: możesz na tym polegać.",
+    "neu": "ELAB to niezależne laboratorium. Na bieżąco sprawdza, czy produkty FitLine naprawdę zawierają to, co jest napisane na etykiecie, i czy nie ma w nich niczego, czego być nie powinno. Brzmi jak oczywistość, ale niestety nie przy wszystkich suplementach diety tak jest. W przypadku FitLine jest to stale kontrolowane. Dla ciebie: możesz na tym polegać.",
+    "grund": "Subjekt-Verb-Kongruenz (laboratorium → sprawdza)"
+  },
+  {
+    "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+    "alt": "Tak, i to wielu. Ponad 500 mistrzów świata i uczestników igrzysk olimpijskich pracowało już z FitLine, między innymi Niemiecki Związek Narciarski i Niemiecki Związek Hokeja na Lodzie. Dlaczego? Zawodowi sportowcy bardzo uważają na to, co trafia do ich organizmu, bo muszą mieć 100 procent pewności co do czystości. To całkiem dobry wskaźnik jakości, nawet jeśli ty sam wcale nie uprawiasz sportu wyczynowo.",
+    "neu": "Tak, i to wielu. Ponad 500 mistrzów świata i uczestników igrzysk olimpijskich pracowało już z FitLine, między innymi Niemiecki Związek Narciarski i Niemiecki Związek Hokeja na Lodzie. Dlaczego? Zawodowi sportowcy bardzo uważają na to, co trafia do ich organizmu, bo muszą mieć 100 procent pewności co do czystości. To całkiem dobry wskaźnik jakości, nawet jeśli sport wyczynowy to nie twoja bajka.",
+    "grund": "„ty sam“ männliche Form, jetzt neutral und idiomatisch"
+  },
+  {
+    "de": "Passt das zu dir?",
+    "alt": "Czy to pasuje do ciebie?",
+    "neu": "Czy to coś dla ciebie?",
+    "grund": "Idiomatischer"
+  },
+  {
+    "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+    "alt": "Zaznacz, co pasuje. Wspólnie sprawdzimy, czy i jak to może pasować do ciebie.",
+    "neu": "Zaznacz, co się zgadza. Wspólnie sprawdzimy, czy i jak to do ciebie pasuje.",
+    "grund": "Doppeltes „pasować“ vermieden"
+  },
+  {
+    "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+    "alt": "Po jedzeniu najchętniej zrobił(a)byś sobie przerwę",
+    "neu": "Po jedzeniu masz ochotę tylko na przerwę",
+    "grund": "„zrobił(a)byś“ Schrägstrich-Genderform verboten, jetzt neutral"
+  },
+  {
+    "de": "Du würdest morgens gern mit mehr Schwung starten",
+    "alt": "Rano chętnie ruszał(a)byś z większą energią",
+    "neu": "Chcesz zaczynać poranki z większą energią",
+    "grund": "„ruszał(a)byś“ Genderform, jetzt neutral"
+  },
+  {
+    "de": "Setz dein erstes Häkchen",
+    "alt": "Zaznacz pierwszą rzecz",
+    "neu": "Zaznacz pierwszy punkt",
+    "grund": "Natürlicher für Checkliste"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "Zaznacz wszystko, co do ciebie pasuje. {{#unless partner_modus=duo}}Pokażę{{/unless}}{{#if partner_modus=duo}}Pokażemy{{/if}} ci potem, co konkretnie {{#unless partner_modus=duo}}mogę{{/unless}}{{#if partner_modus=duo}}możemy{{/if}} ci pokazać.",
+    "neu": "Zaznacz wszystko, co do ciebie pasuje. {{#unless partner_modus=duo}}Pokażę{{/unless}}{{#if partner_modus=duo}}Pokażemy{{/if}} ci potem, co konkretnie {{#unless partner_modus=duo}}mogę{{/unless}}{{#if partner_modus=duo}}możemy{{/if}} ci zaproponować.",
+    "grund": "Doppeltes „pokazać“ vermieden"
+  },
+  {
+    "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+    "alt": "Tyle co kawa z croissantem. Tyle że za to <b>przez 3 miesiące całkowicie zmieniasz sposób odżywiania</b>, zamiast tylko na chwilę się rozbudzić.",
+    "neu": "Tyle, ile kawa z croissantem. Z tą różnicą, że <b>przez 3 miesiące całkowicie zmieniasz sposób odżywiania</b>, zamiast tylko na chwilę się rozbudzić.",
+    "grund": "Wiederholung „Tyle… Tyle że“ vermieden"
+  },
+  {
+    "de": "Kein Abo-Zwang",
+    "alt": "Bez przymusu abonamentu",
+    "neu": "Bez przymusowego abonamentu",
+    "grund": "„przymus abonamentu“ unidiomatisch"
+  },
+  {
+    "de": "Impressum",
+    "alt": "Stopka redakcyjna",
+    "neu": "Nota prawna",
+    "grund": "„Stopka redakcyjna“ ist Presse-Impressum; konsistent mit Wellpreneur"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Diese Seite dient der Information und ersetzt keine ärztliche Beratung, Diagnose oder Behandlung. Erfahrungen sind individuell und stellen keine Zusicherung eines bestimmten Ergebnisses dar. Bei Beschwerden oder Vorerkrankungen sprich bitte mit {{#unless partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/unless}}{{#if partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/if}}.",
+    "alt": "Wszystkie produkty są suplementami diety, a nie lekami. Ta strona ma charakter informacyjny i nie zastępuje porady lekarskiej, diagnozy ani leczenia. Doświadczenia są indywidualne i nie są gwarancją konkretnego wyniku. Jeśli masz dolegliwości albo choroby współistniejące, porozmawiaj proszę ze {{#unless partner_modus=duo}}swoją lekarką lub swoim lekarzem{{/unless}}{{#if partner_modus=duo}}swoją lekarką lub swoim lekarzem{{/if}}.",
+    "neu": "Wszystkie produkty są suplementami diety, a nie lekami. Ta strona ma charakter informacyjny i nie zastępuje porady lekarskiej, diagnozy ani leczenia. Doświadczenia są indywidualne i nie są gwarancją konkretnego wyniku. Jeśli masz dolegliwości lub choroby przewlekłe, porozmawiaj o tym ze {{#unless partner_modus=duo}}swoją lekarką lub swoim lekarzem{{/unless}}{{#if partner_modus=duo}}swoją lekarką lub swoim lekarzem{{/if}}.",
+    "grund": "„choroby współistniejące“ = Komorbiditäten, Vorerkrankungen natürlicher; „proszę“ ohne Kommas"
+  },
+  {
+    "de": "Wir setzen nur technisch notwendige Cookies, damit die Seite funktioniert. Für Statistiken oder Marketing brauchen wir deine Einwilligung — du kannst frei wählen. Details in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Używamy tylko technicznie niezbędnych plików cookie, żeby strona działała. Na statystyki albo marketing potrzebujemy twojej zgody, możesz samodzielnie zdecydować. Szczegóły znajdziesz w naszej <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">polityce prywatności</a>.",
+    "neu": "Używamy tylko technicznie niezbędnych plików cookie, żeby strona działała. Na statystyki albo marketing potrzebujemy twojej zgody, a decyzja należy do ciebie. Szczegóły znajdziesz w naszej <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">polityce prywatności</a>.",
+    "grund": "Natürlicher Anschluss statt Komma-Spleißung"
+  },
+  {
+    "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+    "alt": "Program resetu na co dzień. Cztery fazy, by wrócić do większej energii i jasnej głowy.",
+    "neu": "Program resetu dla twojej codzienności. W czterech fazach do większej energii i jasnego umysłu.",
+    "grund": "„jasny umysł“ konsistent, natürlicher"
+  }
+]

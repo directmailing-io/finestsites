@@ -1,0 +1,350 @@
+[
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "Un breve test personal y luego te escribo",
+    "neu": "Un test rápido y luego te contacto",
+    "grund": "„test personal“ ungewöhnlich; einheitlich „test“; „melden“ neutral als contactar"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "Un breve test personal y luego te escribimos",
+    "neu": "Un test rápido y luego te contactamos",
+    "grund": "wie Einzahl-Variante"
+  },
+  {
+    "de": "Jetzt loslegen",
+    "alt": "Empezar ahora",
+    "neu": "Empieza ya",
+    "grund": "Knopf als Aufforderung, natürlicher"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Empieza tu <strong>reset metabólico</strong>. Sin dietas, sin batidos, sin contar. A cambio, <strong>4 comidas fijas</strong> y <strong>suplementos patentados</strong>, para que tu día a día <strong>se sienta de verdad bien.</strong>",
+    "neu": "Empieza tu <strong>reset metabólico</strong>. Sin dietas, sin batidos, sin contar. A cambio, <strong>4 comidas fijas</strong> y <strong>suplementos patentados</strong>, para que en tu día a día <strong>te sientas de maravilla.</strong>",
+    "grund": "„que tu día a día se sienta bien“ ist Lehnübersetzung"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Compartir con personas afines",
+    "neu": "Comparte con gente como tú",
+    "grund": "„personas afines“ steif; natürlicher Chip"
+  },
+  {
+    "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+    "alt": "Así de sencillo es <span class=\"mark\">todo.</span>",
+    "neu": "Es <span class=\"mark\">así de sencillo.</span>",
+    "grund": "„Así de sencillo es todo“ holprig"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Nutrientes de alta calidad dentro de un concepto patentado. No de la estantería del supermercado.",
+    "neu": "Nutrientes de alta calidad basados en un concepto patentado. Nada de la estantería del súper.",
+    "grund": "„dentro de un concepto“ unidiomatisch; lockerer"
+  },
+  {
+    "de": "<b>Warum wichtig:</b> Nur was der Körper aufnehmen kann, wirkt auch.",
+    "alt": "<b>Por qué es importante:</b> Solo puede hacer efecto lo que el cuerpo puede absorber.",
+    "neu": "<b>Por qué es importante:</b> Solo hace efecto lo que el cuerpo puede absorber.",
+    "grund": "Satzstellung natürlicher, Doppelung „puede“ weg"
+  },
+  {
+    "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+    "alt": "Sin picar entre horas, sin saltarte comidas. Una estructura clara, con sensación de saciedad hasta la siguiente.",
+    "neu": "Sin picar entre horas, sin saltarte comidas. Una estructura clara y sin hambre hasta la siguiente comida.",
+    "grund": "„sensación de saciedad“ klinisch; „satt bis zum nächsten Mal“ natürlich"
+  },
+  {
+    "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+    "alt": "<b>Estos tres pilares actúan juntos.</b> Solo cuando combinas los tres se despliega el efecto reset.",
+    "neu": "<b>Estos tres pilares actúan juntos.</b> Solo si combinas los tres consigues el efecto del reset.",
+    "grund": "„se despliega“ wörtlich aus „entfaltet sich“"
+  },
+  {
+    "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+    "alt": "En la fase de activación te guías por el principio de la <b>alimentación cetogénica</b>. Suena complicado, pero no lo es: es un principio parecido al <b>keto clásico</b>, solo que <b>sin cucharadas exageradas de grasa</b> y <b>sin renunciar a todo constantemente</b>.",
+    "neu": "En la fase de activación te guías por el principio de la <b>alimentación cetogénica</b>. Suena complicado, pero no lo es: un principio parecido al <b>keto clásico</b>, pero <b>sin comer grasa a cucharadas</b> y <b>sin estar renunciando a todo</b>.",
+    "grund": "Bilder „Fett-Löffel“/„ständiger Verzicht“ idiomatisch"
+  },
+  {
+    "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+    "alt": "La energía se mantiene estable. Te sientes saciado durante más tiempo y tu cuerpo usa sus propias reservas.",
+    "neu": "La energía se mantiene estable. Aguantas más tiempo sin hambre y tu cuerpo usa sus propias reservas.",
+    "grund": "„saciado“ männlich; geschlechtsneutral"
+  },
+  {
+    "de": "Fachbegriff für diesen Zustand: <b style=\"color:var(--ink);\">Ketose</b>. Deshalb heißt es auch „ketogene Ernährung\".",
+    "alt": "El término técnico para este estado es: <b style=\"color:var(--ink);\">cetosis</b>. Por eso también se llama “alimentación cetogénica\".",
+    "neu": "El término técnico para este estado: <b style=\"color:var(--ink);\">cetosis</b>. Por eso se habla de «alimentación cetogénica».",
+    "grund": "gemischte Anführungszeichen; spanische «»; „es:“ überflüssig"
+  },
+  {
+    "de": "Klarer Kopf",
+    "alt": "Cabeza más despejada",
+    "neu": "Mente despejada",
+    "grund": "einheitlich mit Hero"
+  },
+  {
+    "de": "Wieder wohl in dir",
+    "alt": "Volver a sentirte bien contigo",
+    "neu": "Vuelves a sentirte a gusto",
+    "grund": "„bien contigo“ holprig"
+  },
+  {
+    "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+    "alt": "Dejas de sentir ese lastre. Vuelves a notar que tu cuerpo trabaja contigo, no contra ti.",
+    "neu": "Se acabó esa sensación de pesadez. Vuelves a notar que tu cuerpo trabaja contigo, no contra ti.",
+    "grund": "„lastre“ unnatürlich für „Ziehen nach unten“"
+  },
+  {
+    "de": "Ohne Kaffee-Krücke",
+    "alt": "Sin la muleta del café",
+    "neu": "Sin depender del café",
+    "grund": "„muleta del café“ wörtlich"
+  },
+  {
+    "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+    "alt": "La mañana se siente distinta. Menos pesada, más presente desde el primer momento.",
+    "neu": "Las mañanas se notan distintas. Te cuesta menos arrancar y estás en marcha desde el primer momento.",
+    "grund": "„más presente“ unidiomatisch"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Sin montaña rusa con la comida",
+    "neu": "Sin altibajos con la comida",
+    "grund": "„montaña rusa con la comida“ wörtlich"
+  },
+  {
+    "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+    "alt": "Dejas de pensar todo el rato en la próxima comida. Sin esa necesidad de picar dulce a las tres. Simplemente se va calmando.",
+    "neu": "Dejas de pensar todo el rato en la próxima comida. Adiós al antojo de dulce a media tarde. Simplemente, va perdiendo fuerza.",
+    "grund": "„Nasch-Zwang um drei“ und „wird leiser“ idiomatisch"
+  },
+  {
+    "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+    "alt": "{{#unless partner_modus=duo}}Escribe un momento a {{vorname}}{{/unless}}{{#if partner_modus=duo}}Escríbenos un momento{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Escríbele a {{vorname}}{{/unless}}{{#if partner_modus=duo}}Escríbenos{{/if}}",
+    "grund": "Knopf kürzer, „un momento“ unnatürlich"
+  },
+  {
+    "de": "Fertige Rezepte",
+    "alt": "Recetas listas",
+    "neu": "Recetas listas para usar",
+    "grund": "„recetas listas“ unklar"
+  },
+  {
+    "de": "Auch vegetarisch",
+    "alt": "También en versión vegetariana",
+    "neu": "Opción vegetariana",
+    "grund": "Chip kürzer, natürlich"
+  },
+  {
+    "de": "Hoch",
+    "alt": "Alta",
+    "neu": "Alto",
+    "grund": "Achsenbeschriftung für Energie UND Gewicht: neutral (nivel)"
+  },
+  {
+    "de": "Mittel",
+    "alt": "Media",
+    "neu": "Medio",
+    "grund": "wie oben"
+  },
+  {
+    "de": "Niedrig",
+    "alt": "Baja",
+    "neu": "Bajo",
+    "grund": "wie oben"
+  },
+  {
+    "de": "Vorbereiten",
+    "alt": "Preparar",
+    "neu": "Preparación",
+    "grund": "Phasennamen im Spanischen als Nomen"
+  },
+  {
+    "de": "Aktivieren",
+    "alt": "Activar",
+    "neu": "Activación",
+    "grund": "Phasennamen als Nomen, passt zu „fase de activación“"
+  },
+  {
+    "de": "Stabilisieren",
+    "alt": "Estabilizar",
+    "neu": "Estabilización",
+    "grund": "Phasennamen als Nomen, passt zu „fase de estabilización“"
+  },
+  {
+    "de": "Wochenende, Feier, Geburtstag. An diesen Tagen darfst du essen was du willst. Aber halt nicht jeden Tag.",
+    "alt": "Fin de semana, celebración, cumpleaños. En estos días puedes comer lo que quieras. Pero no cada día, claro.",
+    "neu": "Fin de semana, celebración, cumpleaños. Esos días puedes comer lo que quieras. Eso sí, no todos los días.",
+    "grund": "„no cada día, claro“ holprig"
+  },
+  {
+    "de": "dauerhaft",
+    "alt": "de forma permanente",
+    "neu": "siempre",
+    "grund": "Tabellenzelle kurz"
+  },
+  {
+    "de": "Du wirst satt",
+    "alt": "Vas a saciarte",
+    "neu": "Comes hasta saciarte",
+    "grund": "„Vas a saciarte“ ungelenk"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4× comer bien.</span> En vez de ayunar o tomar solo batidos.",
+    "neu": "<span class=\"mark\">4 comidas ricas al día.</span> En lugar de ayunar o tomar solo batidos.",
+    "grund": "„4× comer bien“ unidiomatisch; „lecker“ = ricas"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "Usamos a propósito el <strong>concepto de productos FitLine</strong>. Motivo: a menudo, comer bien no basta. Lo que necesitas además también tiene que llegar de verdad al cuerpo.",
+    "neu": "Apostamos a conciencia por el <strong>concepto de productos FitLine</strong>. El motivo: muchas veces, comer bien no basta. Lo que necesitas de más también tiene que llegar de verdad a tu cuerpo.",
+    "grund": "„Usamos a propósito“ / „Motivo:“ steif"
+  },
+  {
+    "de": "Auf Dopingstoffe geprüft, offiziell gelistet",
+    "alt": "Analizado en busca de sustancias dopantes y listado oficialmente",
+    "neu": "Controlado frente al dopaje y en la lista oficial",
+    "grund": "„listado oficialmente“ unidiomatisch"
+  },
+  {
+    "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+    "alt": "Campeones del mundo y deportistas olímpicos profesionales confían en ellos",
+    "neu": "Campeones del mundo y deportistas olímpicos confían en ellos",
+    "grund": "„olímpicos profesionales“ doppelt"
+  },
+  {
+    "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+    "alt": "El reset activo dura varias semanas. Después viene una fase de estabilización más larga y, por último, el día a día a largo plazo. Según la variante que elijas, el calendario exacto varía.",
+    "neu": "El reset activo dura varias semanas. Después viene una fase de estabilización más larga y, por último, el día a día a largo plazo. El calendario exacto depende de la variante que elijas.",
+    "grund": "Dopplung „variante … varía“"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "No. El concepto no es una dieta de calorías. Comes comidas buenas y naturales, y además tomas nutrientes seleccionados. El foco está en alimentarte mejor, no en privarte de todo.",
+    "neu": "No. El concepto no es una dieta de contar calorías. Haces comidas buenas y naturales, y además tomas nutrientes seleccionados. El foco está en alimentarte mejor, no en privarte de todo.",
+    "grund": "„dieta de calorías“ unklar; „comes comidas“ doppelt"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "En la fase central (activación) dejas a propósito la leche, el queso, el quark y la nata &mdash; para que tu flora intestinal pueda reconstruirse. <b>Excepción:</b> el yogur probiótico por la mañana como primera comida forma parte expresamente del concepto e incluso es importante. A partir de la fase de estabilización vuelven el queso curado, el quark, la mozzarella y compañía &mdash; con moderación, como fuente de proteína. En el café está permitido un chorrito de bebida de almendra o soja sin azúcar.",
+    "neu": "En la fase central (activación) dejas fuera a propósito la leche, el queso, el queso fresco batido y la nata, para que tu flora intestinal pueda regenerarse. <b>Excepción:</b> el yogur probiótico de la mañana, como primera comida, forma parte expresa del concepto e incluso es importante. A partir de la fase de estabilización vuelven el queso curado, el queso fresco batido, la mozzarella y compañía, con moderación y como fuente de proteína. En el café puedes echar un chorrito de bebida de almendra o soja sin azúcar.",
+    "grund": "ENTITY: beide &mdash; durch Komma ersetzt; „quark“ in Spanien als „queso fresco batido“ geläufig"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "¿Están permitidos los batidos? ¿Voy a beber comidas?",
+    "neu": "¿Se permiten batidos? ¿Las comidas son líquidas?",
+    "grund": "„¿Voy a beber comidas?“ wörtlich"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>No.</b> Los clásicos batidos sustitutivos de comidas o de proteínas no están permitidos en la fase central y tampoco se recomiendan después. Comes comidas de verdad. Lo que mucha gente confunde con «batidos»: los <b>concentrados de nutrientes</b> (Basic-Immun-Mix, minerales Restorate, aminoácidos) &mdash; son polvos que mezclas con agua para aportar vitaminas y minerales a tu cuerpo. No sustituyen ninguna comida, la complementan. De hecho, son una parte importante del concepto.",
+    "neu": "<b>No.</b> Los clásicos batidos sustitutivos de comidas o de proteínas no están permitidos en la fase central y tampoco se recomiendan después. Comes comidas de verdad. Lo que mucha gente confunde con «batidos» son los <b>concentrados de nutrientes</b> (Basic-Immun-Mix, minerales Restorate, aminoácidos). Son polvos que mezclas con agua para aportar vitaminas y minerales a tu cuerpo. No sustituyen ninguna comida, la complementan. De hecho, son una parte importante del concepto.",
+    "grund": "ENTITY: &mdash; durch Punkt ersetzt, Doppelpunkt-Kette aufgelöst"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "El paso al día a día a largo plazo es progresivo. Ya tienes nuevos hábitos y conoces mejor tu cuerpo. Si quieres, puedes mantener el efecto con algunos días conscientes al mes.",
+    "neu": "El paso al día a día a largo plazo es progresivo. Ya tienes nuevos hábitos y conoces mejor tu cuerpo. Si quieres, puedes mantener el efecto con algunos días al mes de alimentación consciente.",
+    "grund": "„días conscientes“ wörtlich"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "La Kölner Liste es una base de datos independiente. Ahí se analizan los complementos alimenticios en busca de sustancias prohibidas y sustancias dopantes. Si un producto aparece allí, puedes tener la seguridad de que no lleva nada escondido. Precisamente por eso muchos deportistas profesionales usan FitLine. Para ti significa esto: sabes lo que estás tomando. Sin sorpresas desagradables.",
+    "neu": "La Kölner Liste es una base de datos independiente. Ahí se analizan los complementos alimenticios en busca de sustancias prohibidas y dopantes. Si un producto aparece en ella, puedes tener la seguridad de que no lleva nada escondido. Precisamente por eso muchos deportistas profesionales usan FitLine. Para ti, eso significa que sabes lo que tomas. Sin sorpresas desagradables.",
+    "grund": "„sustancias … sustancias“ doppelt; „Para ti significa esto:“ wörtlich"
+  },
+  {
+    "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+    "alt": "ELAB es un laboratorio independiente. Comprueban de forma continua si los productos FitLine contienen realmente lo que pone en la etiqueta y que no haya nada que no deba estar. Suena obvio, pero por desgracia no lo es en todos los complementos alimenticios. En FitLine se controla de manera permanente. Para ti: puedes fiarte.",
+    "neu": "ELAB es un laboratorio independiente. Comprueban de forma continua si los productos FitLine contienen realmente lo que pone en la etiqueta y que no haya nada que no deba estar. Suena obvio, pero por desgracia no lo es en todos los complementos alimenticios. En FitLine se controla de manera permanente. ¿Y para ti? Que puedes fiarte.",
+    "grund": "„Para ti: puedes fiarte“ abgehackt"
+  },
+  {
+    "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+    "alt": "NTC significa concepto de transporte de nutrientes. Dicho fácil: la fórmula hace que los nutrientes lleguen justo donde actúan. A tus células. En muchos otros suplementos, una gran parte acaba saliendo otra vez sin usarse. MicroSolve Q10 es un ejemplo de una tecnología así: el cuerpo absorbe mal el Q10 normal; con MicroSolve se aprovecha mucho mejor. Suena técnico, pero es la razón por la que esto de verdad aporta algo.",
+    "neu": "NTC significa concepto de transporte de nutrientes (Nährstoff-Transport-Konzept). En pocas palabras: la fórmula hace que los nutrientes lleguen justo donde actúan. A tus células. En muchos otros suplementos, gran parte se elimina sin aprovecharse. MicroSolve Q10 es un ejemplo de este tipo de tecnología: el cuerpo absorbe mal el Q10 normal; con MicroSolve se aprovecha mucho mejor. Suena técnico, pero es la razón por la que esto de verdad aporta algo.",
+    "grund": "„Dicho fácil“, „acaba saliendo otra vez“ unidiomatisch; Abkürzung NTC erklärt"
+  },
+  {
+    "de": "Nutzen die Produkte wirklich Profisportler?",
+    "alt": "¿De verdad usan los productos deportistas profesionales?",
+    "neu": "¿De verdad los deportistas profesionales usan estos productos?",
+    "grund": "Wortstellung mehrdeutig"
+  },
+  {
+    "de": "Für Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis. Bei chronischen Erkrankungen wird ärztliche Begleitung empfohlen.",
+    "alt": "Para embarazadas, mujeres en periodo de lactancia y personas en tratamiento médico, solo después de consultarlo con la consulta médica que las lleve. En caso de enfermedades crónicas, se recomienda seguimiento médico.",
+    "neu": "Para embarazadas, mujeres en periodo de lactancia y personas en tratamiento médico, solo tras consultarlo con su equipo médico. En caso de enfermedades crónicas, se recomienda seguimiento médico.",
+    "grund": "„consultarlo con la consulta“ doppelt"
+  },
+  {
+    "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+    "alt": "Un <em>auto-chequeo</em> rápido.<br><span class=\"mark\">Y luego hablamos.</span>",
+    "neu": "Un <em>test</em> rápido.<br><span class=\"mark\">Y luego hablamos.</span>",
+    "grund": "„auto-chequeo“ unüblich; einheitlich „test“"
+  },
+  {
+    "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+    "alt": "Marca las casillas. Vemos juntos si encaja contigo y cómo.",
+    "neu": "Marca lo que te pase. Luego vemos juntos si esto encaja contigo y cómo.",
+    "grund": "„Marca las casillas“ technisch"
+  },
+  {
+    "de": "Nachmittags greifst du oft zu Kaffee oder Süßem",
+    "alt": "Por la tarde tiras a menudo de café o de algo dulce",
+    "neu": "Por la tarde sueles tirar de café o de algo dulce",
+    "grund": "Wortstellung natürlicher"
+  },
+  {
+    "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+    "alt": "Después de comer, lo que más te apetece es hacer una pausa",
+    "neu": "Después de comer, lo que te pide el cuerpo es parar un rato",
+    "grund": "„hacer una pausa“ steif"
+  },
+  {
+    "de": "Du wünschst dir mehr Fokus im Alltag",
+    "alt": "Te gustaría tener más foco en tu día a día",
+    "neu": "Te gustaría concentrarte mejor en tu día a día",
+    "grund": "„tener más foco“ Anglizismus"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "Marca todo lo que encaje contigo. Luego {{#unless partner_modus=duo}}yo{{/unless}}{{#if partner_modus=duo}}nosotros{{/if}} te {{#unless partner_modus=duo}}cuento{{/unless}}{{#if partner_modus=duo}}contamos{{/if}} qué {{#unless partner_modus=duo}}puedo{{/unless}}{{#if partner_modus=duo}}podemos{{/if}} enseñarte en concreto.",
+    "neu": "Marca todo lo que te pase. Luego {{#unless partner_modus=duo}}yo{{/unless}}{{#if partner_modus=duo}}nosotros{{/if}} te {{#unless partner_modus=duo}}cuento{{/unless}}{{#if partner_modus=duo}}contamos{{/if}} qué {{#unless partner_modus=duo}}puedo{{/unless}}{{#if partner_modus=duo}}podemos{{/if}} hacer por ti en concreto.",
+    "grund": "„lo que encaje contigo“ passt nicht zu „zutrifft“; „enseñarte“ hölzern; 3+3 Blöcke erhalten"
+  },
+  {
+    "de": "So viel wie ein Kaffee mit Croissant. Nur dass du dafür <b>3 Monate lang deine Ernährung komplett umstellst</b>, statt nur kurz wach zu werden.",
+    "alt": "Como un café con cruasán. Solo que con eso <b>cambias por completo tu alimentación durante 3 meses</b>, en vez de espabilarte solo un rato.",
+    "neu": "Lo que cuesta un café con cruasán. Solo que con eso <b>cambias por completo tu alimentación durante 3 meses</b>, en vez de espabilarte solo un rato.",
+    "grund": "„So viel wie“ = Preisvergleich"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}Bei mir{{/unless}}{{#if partner_modus=duo}}Bei uns{{/if}} sogar noch günstiger.",
+    "alt": "En {{#unless partner_modus=duo}}mi caso{{/unless}}{{#if partner_modus=duo}}nuestro caso{{/if}}, incluso sale más económico.",
+    "neu": "{{#unless partner_modus=duo}}Conmigo{{/unless}}{{#if partner_modus=duo}}Con nosotros{{/if}}, sale incluso más barato.",
+    "grund": "„En mi caso“ steif"
+  },
+  {
+    "de": "Kein Abo-Zwang",
+    "alt": "Sin obligación de suscribirte",
+    "neu": "Sin suscripción obligatoria",
+    "grund": "kürzer, natürlicher"
+  },
+  {
+    "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+    "alt": "<b>No apto para</b> embarazadas, mujeres en periodo de lactancia y personas en tratamiento médico, salvo tras consultarlo con la consulta médica que las lleve.",
+    "neu": "<b>No apto para</b> embarazadas, mujeres en periodo de lactancia y personas en tratamiento médico, salvo tras consultarlo con su equipo médico.",
+    "grund": "„consultarlo con la consulta“ doppelt"
+  },
+  {
+    "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+    "alt": "Un programa de reset para tu día a día. En cuatro fases, para volver a tener más energía y la mente más despejada.",
+    "neu": "Un programa de reset para tu día a día. En cuatro fases, de vuelta a más energía y una mente despejada.",
+    "grund": "flüssiger, einheitlich „mente despejada“"
+  }
+]
