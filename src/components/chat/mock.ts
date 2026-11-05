@@ -31,6 +31,28 @@ export interface AdminChatReport {
   lastMessages: { sender: 'visitor' | 'owner' | 'system'; body: string; createdAt: string }[]
 }
 
+interface AdminReportRow {
+  conversation?: { id?: string; siteHost?: string; status?: string; reportedAt?: string | null; updatedAt?: string }
+  reportReason?: string | null
+  account?: { username?: string | null; email?: string | null }
+  site?: { host?: string | null }
+  messages?: { sender: 'visitor' | 'owner' | 'system'; body: string; createdAt: string }[]
+}
+
+function toAdminReport(r: AdminReportRow): AdminChatReport {
+  const c = r.conversation ?? {}
+  return {
+    conversationId: c.id ?? '',
+    username: r.account?.username ?? r.account?.email ?? '–',
+    siteHost: r.site?.host ?? c.siteHost ?? '',
+    reason: r.reportReason ?? 'other',
+    note: null, // Freitext der Meldung steht nur in der Meldungs-Mail an info@
+    reportedAt: c.reportedAt ?? c.updatedAt ?? new Date().toISOString(),
+    status: c.status ?? 'open',
+    lastMessages: (r.messages ?? []).map(m => ({ sender: m.sender, body: m.body, createdAt: m.createdAt })),
+  }
+}
+
 export class ChatApiError extends Error {
   status: number
   code: string
@@ -151,8 +173,10 @@ const realApi: ChatApi = {
     return call('/api/admin/chat/settings', { method: 'PUT', body: JSON.stringify(s) })
   },
   async adminGetReports() {
-    const r = await call<{ reports: AdminChatReport[] }>('/api/admin/chat/reports')
-    return r.reports ?? []
+    // Server (src/app/api/admin/chat/reports/route.ts) liefert { conversation, reportReason, account, site, messages } –
+    // hier in die flache Form der Admin-Seite übersetzen (vorher 1:1 durchgereicht → Absturz bei der ersten Meldung).
+    const r = await call<{ reports?: AdminReportRow[] }>('/api/admin/chat/reports')
+    return (r.reports ?? []).map(toAdminReport)
   },
 }
 

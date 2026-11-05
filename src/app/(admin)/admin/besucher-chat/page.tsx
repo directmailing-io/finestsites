@@ -178,7 +178,8 @@ export default function AdminVisitorChatPage() {
             {reports.map(r => {
               const fresh = hoursSince(r.reportedAt) < 24
               const open = expanded === r.conversationId
-              const shown = open ? r.lastMessages : r.lastMessages.slice(-3)
+              const msgs = r.lastMessages ?? []
+              const shown = open ? msgs : msgs.slice(-3)
               return (
                 <li key={r.conversationId} className="rounded-2xl p-4" style={{ border: `1px solid ${fresh ? '#FDE68A' : '#E5E7EB'}`, background: fresh ? '#FFFDF5' : '#fff' }}>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
@@ -189,7 +190,7 @@ export default function AdminVisitorChatPage() {
                   </div>
                   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs" style={{ color: '#6B7280' }}>
                     <span>Status: <strong style={{ color: r.status === 'blocked' ? '#991B1B' : '#374151' }}>{r.status === 'blocked' ? 'Besucher gesperrt' : r.status === 'archived' ? 'Archiviert' : 'Offen'}</strong></span>
-                    <span className="font-mono" title="Gesprächs-ID">{r.conversationId.slice(0, 8)}…</span>
+                    <span className="font-mono" title="Gesprächs-ID">{(r.conversationId ?? '').slice(0, 8)}…</span>
                   </div>
                   {r.note && (
                     <p className="text-sm mt-3 m-0 rounded-xl px-3.5 py-2.5" style={{ background: '#F8FAFC', color: '#374151' }}>
@@ -209,9 +210,9 @@ export default function AdminVisitorChatPage() {
                         </div>
                       </div>
                     ))}
-                    {r.lastMessages.length > 3 && (
+                    {msgs.length > 3 && (
                       <button onClick={() => setExpanded(open ? null : r.conversationId)} className="self-start text-xs font-semibold mt-1 underline underline-offset-2" style={{ color: '#374151' }}>
-                        {open ? 'Weniger anzeigen' : `Alle ${r.lastMessages.length} Nachrichten anzeigen`}
+                        {open ? 'Weniger anzeigen' : `Alle ${msgs.length} Nachrichten anzeigen`}
                       </button>
                     )}
                   </div>
