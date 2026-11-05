@@ -1,0 +1,44 @@
+[
+  {
+    "de": "100% Unterstützung von",
+    "alt": "Tvoja podrška na 100%:",
+    "neu": "Puna podrška",
+    "grund": "Vorgabe Auftraggeber: „Tvoja podrška na 100%“ klang holprig; „Puna podrška“ als fette Zeile, Name steht darunter im Nominativ (solo und duo)"
+  },
+  {
+    "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+    "alt": "Od firme. Ne od tebe. Ti s tim nemaš nikakve veze.",
+    "neu": "Od firme. Ne od tebe. O tome ne moraš da brineš.",
+    "grund": "Vorgabe Auftraggeber: „Ti s tim nemaš nikakve veze“ klang abweisend"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "Na početku zarađuješ od onoga što sam preporučiš. Vremenom možeš da povedeš i druge ljude koji rade potpuno isto što i ti. Od onoga što tvoj tim onda postigne, i ti dobijaš deo. Ne zato što zarađuješ na njima, nego zato što ih ti gradiš i obučavaš. Kao trener koji dobija procenat od uspeha svojih sportista.",
+    "neu": "Na početku zarađuješ od onoga što sam preporučiš. Vremenom možeš da povedeš i druge ljude koji rade potpuno isto što i ti. Od onoga što tvoj tim onda postigne, i ti dobijaš deo. Ne zato što zarađuješ na njima, nego zato što im pomažeš da napreduju i obučavaš ih. Kao trener koji dobija procenat od uspeha svojih sportista.",
+    "grund": "Vorgabe Auftraggeber: Menschen werden unterstützt, nicht „gebaut“ („ih gradiš“) → „im pomažeš da napreduju i obučavaš ih“"
+  },
+  {
+    "de": "Wer euch begleitet",
+    "alt": "Ko je uz vas",
+    "neu": "Ko je uz tebe",
+    "grund": "Duo: zwei Anbieter, aber EIN Besucher (Einzahl), daher „uz tebe“ statt „uz vas“"
+  },
+  {
+    "de": "Meldet euch bei uns",
+    "alt": "Javite nam se",
+    "neu": "Javi nam se",
+    "grund": "Duo: Besucher bleibt Einzahl („Javi“), Anbieter Mehrzahl („nam“); passt zu „pa ti se javimo“ in der Unterzeile"
+  },
+  {
+    "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+    "alt": "Sve što inače smara,<br><span class=\"accent\">firma radi umesto tebe.</span>",
+    "neu": "Sve što inače nervira,<br><span class=\"accent\">firma radi umesto tebe.</span>",
+    "grund": "vergleichbare Stelle: „smara“ ist Jugendslang und wirkt flapsig; „nervira“ bleibt locker, aber ruhiger"
+  },
+  {
+    "de": "Muss ich meine Freunde und Familie nerven?",
+    "alt": "Da li moram da smaram prijatelje i porodicu?",
+    "neu": "Da li moram da gnjavim prijatelje i porodicu?",
+    "grund": "vergleichbare Stelle: „smaram“ zu salopp; „gnjavim“ ist die übliche lockere Form für „nerven“"
+  }
+]

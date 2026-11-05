@@ -327,7 +327,12 @@
   "Oman": "Oman",
   "Israel": "Izrael",
   "Marokko": "Maroko",
-  "Marketing": "Marketing"
+  "Marketing": "Marketing",
+  "Ganz sicher nicht. {{#unless partner_modus=duo}}Ich empfehle nur da, wo ich denke{{/unless}}{{#if partner_modus=duo}}Wir empfehlen nur da, wo wir denken{{/if}}, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.": "Na pewno nie. {{#unless partner_modus=duo}}Polecam tylko wtedy, gdy uważam{{/unless}}{{#if partner_modus=duo}}Polecamy tylko wtedy, gdy uważamy{{/if}}, że to pasuje. Wszystko inne byłoby po prostu niezręczne. Jeśli nie chcesz zagadywać nikogo ze swojego otoczenia, jest sporo innych sposobów przez social media albo twoją społeczność. Robimy to tak, jak pasuje do ciebie.",
+  "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. {{#unless partner_modus=duo}}Ich hab{{/unless}}{{#if partner_modus=duo}}Wir haben{{/if}} dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.": "Zdarza się często. Bo wiele rzeczy spod znaku MLM naprawdę było albo jest naciąganiem. {{#unless partner_modus=duo}}Mam{{/unless}}{{#if partner_modus=duo}}Mamy{{/if}} wtedy trzy rzeczy w zanadrzu: firmę, która rośnie od ponad 30 lat. Produkty, które można samemu przetestować i odesłać. I to, że nikt poza tobą nie decyduje, jak daleko z tym pójdziesz. To zwykle wystarcza.",
+  "So {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich": "Tak {{#unless partner_modus=duo}}skontaktuję się{{/unless}}{{#if partner_modus=duo}}skontaktujemy się{{/if}} z tobą",
+  "Wie {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich am besten?": "Jak {{#unless partner_modus=duo}}najlepiej mogę{{/unless}}{{#if partner_modus=duo}}najlepiej możemy{{/if}} się z tobą skontaktować?",
+  "Deine Nachricht ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} zeitnah, meistens noch am selben Tag.": "Twoja wiadomość dotarła do {{#unless partner_modus=duo}}mnie{{/unless}}{{#if partner_modus=duo}}nas{{/if}}. {{#unless partner_modus=duo}}Odezwę się{{/unless}}{{#if partner_modus=duo}}Odezwiemy się{{/if}} niedługo, najczęściej jeszcze tego samego dnia."
  },
  "attrs": {
   "Alleinerziehende": "Samotni rodzice",

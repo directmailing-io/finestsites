@@ -327,7 +327,12 @@
   "Oman": "Оман",
   "Israel": "Израел",
   "Marokko": "Мароко",
-  "Marketing": "Маркетинг"
+  "Marketing": "Маркетинг",
+  "Ganz sicher nicht. {{#unless partner_modus=duo}}Ich empfehle nur da, wo ich denke{{/unless}}{{#if partner_modus=duo}}Wir empfehlen nur da, wo wir denken{{/if}}, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.": "Определено не. {{#unless partner_modus=duo}}Препоръчвам само когато смятам{{/unless}}{{#if partner_modus=duo}}Препоръчваме само когато смятаме{{/if}}, че е подходящо. Всичко друго би било доста неловко. Ако не искаш да заговаряш хора от обкръжението си, има достатъчно други начини през социалните мрежи или твоята общност. Правим го така, както пасва на теб.",
+  "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. {{#unless partner_modus=duo}}Ich hab{{/unless}}{{#if partner_modus=duo}}Wir haben{{/if}} dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.": "Често се случва. Защото много MLM неща наистина са били или са измама. {{#unless partner_modus=duo}}Имам{{/unless}}{{#if partner_modus=duo}}Имаме{{/if}} тогава три неща в ръкава: фирма, която расте вече над 30 години. Продукти, които можеш да пробваш лично и да върнеш. И това, че никой освен теб не решава докъде ще стигнеш с това. Това обикновено е достатъчно.",
+  "So {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich": "Така {{#unless partner_modus=duo}}мога да се свържа{{/unless}}{{#if partner_modus=duo}}можем да се свържем{{/if}} с теб",
+  "Wie {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich am besten?": "Как е най-удобно {{#unless partner_modus=duo}}да се свържа{{/unless}}{{#if partner_modus=duo}}да се свържем{{/if}} с теб?",
+  "Deine Nachricht ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} zeitnah, meistens noch am selben Tag.": "Съобщението ти стигна до {{#unless partner_modus=duo}}мен{{/unless}}{{#if partner_modus=duo}}нас{{/if}}. {{#unless partner_modus=duo}}Ще ти пиша{{/unless}}{{#if partner_modus=duo}}Ще ти пишем{{/if}} скоро, обикновено още същия ден."
  },
  "attrs": {
   "Alleinerziehende": "Самотни родители",

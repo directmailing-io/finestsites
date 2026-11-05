@@ -1,0 +1,32 @@
+[
+ {
+  "de": "Teile deine Erfahrungen und bau dir ein <span class=\"accent\">monatliches Einkommen</span> auf.",
+  "alt": "Comparte tu experiencia y créate unos <span class=\"accent\">ingresos mensuales</span>.",
+  "neu": "Comparte tu experiencia y consigue unos <span class=\"accent\">ingresos extra al mes</span>.",
+  "grund": "Vorgabe Auftraggeber: „Créate unos ingresos mensuales“ klang konstruiert; „consigue unos ingresos extra al mes“ ist die natürliche Wendung."
+ },
+ {
+  "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+  "alt": "Recomienda productos de bienestar de alta calidad y ve creando unos ingresos mensuales extra. Sin vender, sin presión, a tu ritmo.",
+  "neu": "Recomienda productos de bienestar de alta calidad y consigue unos ingresos extra al mes. Sin vender, sin presión, a tu ritmo.",
+  "grund": "Meta-Beschreibung an die neue Hero-Formulierung angeglichen („ve creando unos ingresos mensuales extra“ war holprig)."
+ },
+ {
+  "de": "Wer euch begleitet",
+  "alt": "Quién os acompaña",
+  "neu": "Quién te acompaña",
+  "grund": "Vorgabe Auftraggeber: Duo = zwei Anbieter, aber EIN Besucher; „os“ war falsch, daher wie im Solo-Block „te“."
+ },
+ {
+  "de": "So erreiche ich dich",
+  "alt": "Así puedo contactar contigo",
+  "neu": "Para poder contactar contigo",
+  "grund": "Text gilt auch im Duo-Modus (kein Bedingungsblock); „Así puedo contactar contigo“ war Ich-Form. Infinitiv passt für eine und zwei Personen."
+ },
+ {
+  "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+  "alt": "Ya tengo tu mensaje. Te escribo pronto, normalmente el mismo día.",
+  "neu": "Tu mensaje ha llegado bien. Recibirás respuesta pronto, normalmente el mismo día.",
+  "grund": "Bestätigung erscheint auch im Duo-Modus (kein Bedingungsblock); Ich-Form („Ya tengo tu mensaje. Te escribo“) wäre dort falsch. Neutrale Form passt für beide."
+ }
+]

@@ -4552,7 +4552,7 @@
           <span class="plus">+</span>
         </button>
         <div class="faq-a">
-          <p><span class="l-de">Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.</span><span class="l-en">Definitely not. I only recommend where I think it's a good fit. Anything else would just be awkward. If you don't want to approach anyone you know, there are plenty of other ways through social media or your community. We do this the way that suits you.</span></p>
+          <p><span class="l-de">Ganz sicher nicht. {{#unless partner_modus=duo}}Ich empfehle nur da, wo ich denke{{/unless}}{{#if partner_modus=duo}}Wir empfehlen nur da, wo wir denken{{/if}}, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.</span><span class="l-en">Definitely not. {{#unless partner_modus=duo}}I only recommend where I think{{/unless}}{{#if partner_modus=duo}}We only recommend where we think{{/if}} it's a good fit. Anything else would just be awkward. If you don't want to approach anyone you know, there are plenty of other ways through social media or your community. We do this the way that suits you.</span></p>
         </div>
       </div>
       <div class="faq-item">
@@ -4635,7 +4635,7 @@
           <span class="plus">+</span>
         </button>
         <div class="faq-a">
-          <p><span class="l-de">Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.</span><span class="l-en">Happens a lot. Because plenty of MLM schemes really were or are scams. I have three things up my sleeve: a company that's been growing for over 30 years. Products you can try yourself and send back. And the fact that nobody but you decides how far you take this. That usually does the trick.</span></p>
+          <p><span class="l-de">Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. {{#unless partner_modus=duo}}Ich hab{{/unless}}{{#if partner_modus=duo}}Wir haben{{/if}} dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.</span><span class="l-en">Happens a lot. Because plenty of MLM schemes really were or are scams. {{#unless partner_modus=duo}}I have{{/unless}}{{#if partner_modus=duo}}We have{{/if}} three things up my sleeve: a company that's been growing for over 30 years. Products you can try yourself and send back. And the fact that nobody but you decides how far you take this. That usually does the trick.</span></p>
         </div>
       </div>
     </div>
@@ -4826,7 +4826,7 @@
 
       <div class="form-step" data-step="3">
         <div class="step-label"><span class="l-de">Schritt 3 von 3</span><span class="l-en">Step 3 of 3</span></div>
-        <h3><span class="l-de">So erreiche ich dich</span><span class="l-en">How I can reach you</span></h3>
+        <h3><span class="l-de">So {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich</span><span class="l-en">How {{#unless partner_modus=duo}}I{{/unless}}{{#if partner_modus=duo}}we{{/if}} can reach you</span></h3>
 
         <!-- Personal Card: Wer die Nachricht bekommt (solo vs duo) -->
         {{#unless partner_modus=duo}}<div class="personal-card">
@@ -4850,7 +4850,7 @@
 
         <input type="text" class="form-input" placeholder="Dein vollständiger Name" id="fullname" required>
 
-        <div class="form-question-label"><span class="l-de">Wie erreiche ich dich am besten?</span><span class="l-en">What's the best way to reach you?</span></div>
+        <div class="form-question-label"><span class="l-de">Wie {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich am besten?</span><span class="l-en">What's the best way to reach you?</span></div>
         <div class="contact-radio-group">
           <label class="contact-radio">
             <input type="radio" name="kontaktweg" value="telefon" checked>
@@ -4900,7 +4900,7 @@
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
           <h3><span class="l-de">Gute Wahl!</span><span class="l-en">Great choice!</span></h3>
-          <p><span class="l-de">Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.</span><span class="l-en">Your message just landed in my inbox. I'll get back to you soon, usually the same day.</span></p>
+          <p><span class="l-de">Deine Nachricht ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} zeitnah, meistens noch am selben Tag.</span><span class="l-en">Your message just landed in {{#unless partner_modus=duo}}my{{/unless}}{{#if partner_modus=duo}}our{{/if}} inbox. {{#unless partner_modus=duo}}I'll{{/unless}}{{#if partner_modus=duo}}We'll{{/if}} get back to you soon, usually the same day.</span></p>
 
           {{#if pm_registrierung_url}}<p class="success-reg"><span class="l-de">Du willst nicht warten? <a href="{{pm_registrierung_url}}" data-pm-reg target="_blank" rel="noopener noreferrer">Du kannst dich auch jetzt schon bei PM-International registrieren.</a></span><span class="l-en">Don't want to wait? <a href="{{pm_registrierung_url}}" data-pm-reg target="_blank" rel="noopener noreferrer">You can register with PM-International right now.</a></span></p>{{/if}}
           <div class="success-divider" id="success-social-divider"></div>

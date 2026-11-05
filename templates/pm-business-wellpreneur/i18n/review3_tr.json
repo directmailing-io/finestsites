@@ -1,0 +1,56 @@
+[
+  {
+    "de": "Und alle anderen, die Bock haben.",
+    "alt": "Ve canı isteyen herkes.",
+    "neu": "Ve denemek isteyen herkes.",
+    "grund": "Auftraggeber: „canı isteyen“ wirkt beiläufig"
+  },
+  {
+    "de": "Ein deutsches Familienunternehmen.<br><span class=\"accent\">Und es wächst wie verrückt.</span>",
+    "alt": "Bir Alman aile şirketi.<br><span class=\"accent\">Hem de deli gibi büyüyor.</span>",
+    "neu": "Bir Alman aile şirketi.<br><span class=\"accent\">Hem de müthiş bir hızla büyüyor.</span>",
+    "grund": "„deli gibi“ zu flapsig, Wirkung bleibt ohne Slang erhalten"
+  },
+  {
+    "de": "Ist das dieses Schneeball-Ding?",
+    "alt": "Bu şu saadet zinciri olayı mı?",
+    "neu": "Bu, şu saadet zinciri dedikleri şey mi?",
+    "grund": "„olayı“ flapsig (analog „iş modelimizin olayı“); umgangssprachlich, aber ruhiger"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "Çok iyi. Çünkü burada kimse satış yapmıyor. Sadece sana neyin iyi geldiğini anlatıyorsun. Duymak isteyen dinler. İstemeyen dinlemez, olur biter. Satış konuşması yok, teknik yok. Sadece bir tavsiye, tıpkı iyi bir restoranı tavsiye eder gibi.",
+    "neu": "Çok iyi. Çünkü burada kimse satış yapmıyor. Sadece sana neyin iyi geldiğini anlatıyorsun. Duymak isteyen dinler. İstemeyen de dinlemez, sorun değil. Satış konuşması yok, teknik yok. Sadece bir tavsiye, tıpkı iyi bir restoranı tavsiye eder gibi.",
+    "grund": "„olur biter“ flapsig, freundlicher „sorun değil“"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "Başta kendi tavsiye ettiklerinden kazanırsın. Zamanla senin yaptığının aynısını yapan başka insanları da yanına alabilirsin. Ekibinin yaptığı işten sen de pay alırsın. Onların üzerinden kazandığın için değil, onları yetiştirip eğittiğin için. Tıpkı sporcularının başarısından yüzde alan bir antrenör gibi.",
+    "neu": "Başta kendi tavsiye ettiklerinden kazanırsın. Zamanla senin yaptığının aynısını yapan başka insanları da yanına alabilirsin. Ekibinin yaptığı işten sen de pay alırsın. Onların üzerinden kazandığın için değil, onların gelişmesine yardım edip onları eğittiğin için. Tıpkı sporcularının başarısından yüzde alan bir antrenör gibi.",
+    "grund": "Analog Punkt 3 (Serbisch): Menschen unterstützen statt „yetiştirmek“ (aufziehen/heranziehen)"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "Bazılarının burada gerçekten büyümesinin nedeni bu: Zamanla kendileriyle birlikte büyüyen kendi ekiplerini kuruyorlar. Verdiğin her emeğin karşılığı sana döner. Bir patrona değil.",
+    "neu": "Bazılarının burada işini gerçekten büyütmesinin nedeni bu: Zamanla kendileriyle birlikte büyüyen kendi ekiplerini kuruyorlar. Verdiğin her emeğin karşılığı sana döner. Bir patrona değil.",
+    "grund": "„gerçekten büyümesi“ mehrdeutig (auch „erwachsen werden“), jetzt eindeutig: ihr Geschäft wächst"
+  },
+  {
+    "de": "Wer euch begleitet",
+    "alt": "Yanınızda kim olacak",
+    "neu": "Yanında kim olacak",
+    "grund": "Duo: Besucher bleibt Einzahl (sen), auch wenn DE „euch“ sagt"
+  },
+  {
+    "de": "Alles klar",
+    "alt": "Tamamdır",
+    "neu": "Tamam",
+    "grund": "„Tamamdır“ salopp, als Knopf neutraler"
+  },
+  {
+    "de": "Wumms im Alltag statt Nachmittagstief",
+    "alt": "Öğleden sonra çökmek yerine gün boyu enerji",
+    "neu": "Öğle sonrası halsizlik yerine gün boyu enerji",
+    "grund": "„çökmek“ salopp/drastisch; übliches Wort für Nachmittagstief"
+  }
+]

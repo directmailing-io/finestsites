@@ -1,0 +1,32 @@
+[
+ {
+  "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+  "alt": "直接向公司下单，不是找你。这些事跟你没关系。",
+  "neu": "直接向公司下单，不是找你。这些事不用你操心。",
+  "grund": "Auftraggeber: 跟你没关系 klingt nach „geht dich nichts an“; 不用你操心 = darum musst du dich nicht kümmern"
+ },
+ {
+  "de": "In Elternzeit",
+  "alt": "育儿假中",
+  "neu": "正在休育儿假的父母",
+  "grund": "Auftraggeber: 育儿假中 ist ein Zustand, keine Personengruppe; Kachel benennt Menschen wie die übrigen (单亲家长, 上班族)"
+ },
+ {
+  "de": "Wer euch begleitet",
+  "alt": "谁陪你们一起走",
+  "neu": "谁陪你一起走",
+  "grund": "Duo: zwei Anbieter, aber EIN Besucher, daher 你 statt 你们"
+ },
+ {
+  "de": "Kontakt aufnehmen",
+  "alt": "联系我",
+  "neu": "立即联系",
+  "grund": "Menü-Knopf steht ohne Bedingung in Solo und Duo; 联系我 wäre im Duo falsch, neutral formuliert"
+ },
+ {
+  "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+  "alt": "你的消息我收到了。我会尽快联系你，通常当天就会回复。",
+  "neu": "你的消息已经收到了。会尽快联系你，通常当天就会回复。",
+  "grund": "Bestätigung steht ohne Duo-Bedingung auch auf Duo-Seiten; ohne 我 formuliert (im Chinesischen natürlich), passt so für ich und wir"
+ }
+]

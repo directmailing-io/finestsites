@@ -327,7 +327,12 @@
   "Oman": "Оман",
   "Israel": "Израиль",
   "Marokko": "Марокко",
-  "Marketing": "Маркетинг"
+  "Marketing": "Маркетинг",
+  "Ganz sicher nicht. {{#unless partner_modus=duo}}Ich empfehle nur da, wo ich denke{{/unless}}{{#if partner_modus=duo}}Wir empfehlen nur da, wo wir denken{{/if}}, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.": "Точно нет. {{#unless partner_modus=duo}}Я рекомендую только там, где вижу{{/unless}}{{#if partner_modus=duo}}Мы рекомендуем только там, где видим{{/if}}, что это подходит. Всё остальное было бы просто неловко. Если не хочешь обращаться к людям из своего окружения, есть много других способов — через соцсети или твоё комьюнити. Мы делаем это так, как подходит тебе.",
+  "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. {{#unless partner_modus=duo}}Ich hab{{/unless}}{{#if partner_modus=duo}}Wir haben{{/if}} dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.": "Такое часто бывает. Потому что многие MLM-истории действительно были или остаются разводом. {{#unless partner_modus=duo}}У меня{{/unless}}{{#if partner_modus=duo}}У нас{{/if}} на это есть три аргумента: компания, которая растёт уже больше 30 лет. Продукты, которые можно самостоятельно попробовать и вернуть. И то, что никто, кроме тебя, не решает, как далеко ты в этом пойдёшь. Обычно этого хватает.",
+  "So {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich": "Как {{#unless partner_modus=duo}}мне{{/unless}}{{#if partner_modus=duo}}нам{{/if}} с тобой связаться",
+  "Wie {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich am besten?": "Как {{#unless partner_modus=duo}}мне{{/unless}}{{#if partner_modus=duo}}нам{{/if}} лучше с тобой связаться?",
+  "Deine Nachricht ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} zeitnah, meistens noch am selben Tag.": "Твоё сообщение дошло до {{#unless partner_modus=duo}}меня{{/unless}}{{#if partner_modus=duo}}нас{{/if}}. {{#unless partner_modus=duo}}Я свяжусь с тобой{{/unless}}{{#if partner_modus=duo}}Мы свяжемся с тобой{{/if}} в ближайшее время, обычно в тот же день."
  },
  "attrs": {
   "Alleinerziehende": "Родители-одиночки",

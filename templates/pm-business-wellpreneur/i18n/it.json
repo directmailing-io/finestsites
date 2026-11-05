@@ -327,7 +327,12 @@
   "Oman": "Oman",
   "Israel": "Israele",
   "Marokko": "Marocco",
-  "Marketing": "Marketing"
+  "Marketing": "Marketing",
+  "Ganz sicher nicht. {{#unless partner_modus=duo}}Ich empfehle nur da, wo ich denke{{/unless}}{{#if partner_modus=duo}}Wir empfehlen nur da, wo wir denken{{/if}}, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.": "Assolutamente no. {{#unless partner_modus=duo}}Consiglio solo quando penso{{/unless}}{{#if partner_modus=duo}}Consigliamo solo quando pensiamo{{/if}} che abbia senso. Tutto il resto sarebbe anche imbarazzante. Se non vuoi contattare nessuno della tua cerchia, ci sono tanti altri modi tramite i social media o la tua community. Lo facciamo nel modo che va bene per te.",
+  "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. {{#unless partner_modus=duo}}Ich hab{{/unless}}{{#if partner_modus=duo}}Wir haben{{/if}} dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.": "Succede spesso. Perché molte cose di MLM, in effetti, erano o sono delle fregature. {{#unless partner_modus=duo}}Ho{{/unless}}{{#if partner_modus=duo}}Abbiamo{{/if}} tre assi nella manica: un’azienda che cresce da oltre 30 anni. Prodotti che puoi provare tu stesso e rimandare indietro. E il fatto che nessuno, tranne te, decide fin dove vuoi spingerti. Di solito basta.",
+  "So {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich": "Così {{#unless partner_modus=duo}}posso{{/unless}}{{#if partner_modus=duo}}possiamo{{/if}} contattarti",
+  "Wie {{#unless partner_modus=duo}}erreiche ich{{/unless}}{{#if partner_modus=duo}}erreichen wir{{/if}} dich am besten?": "Qual è il modo migliore per {{#unless partner_modus=duo}}contattarti{{/unless}}{{#if partner_modus=duo}}contattarti{{/if}}?",
+  "Deine Nachricht ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} zeitnah, meistens noch am selben Tag.": "Il tuo messaggio è arrivato {{#unless partner_modus=duo}}a me{{/unless}}{{#if partner_modus=duo}}a noi{{/if}}. {{#unless partner_modus=duo}}Ti rispondo{{/unless}}{{#if partner_modus=duo}}Ti rispondiamo{{/if}} presto, di solito già in giornata."
  },
  "attrs": {
   "Alleinerziehende": "Genitori single",
