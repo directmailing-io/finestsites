@@ -6,7 +6,7 @@
  * Browser wird als weiterer Zugang an das Gespräch gehängt (chat_visitor_tokens) – andere Browser behalten
  * ihren. Der Code bleibt gültig (nicht einmalig), bis 90 Tage nach der letzten Nachricht.
  *
- * Fehler: 400 TOKEN_REQUIRED | VALIDATION_FAILED (kein 8-stelliger Code), 403 BLOCKED | TICKET_*,
+ * Fehler: 400 TOKEN_REQUIRED | VALIDATION_FAILED (kein 8-stelliger Code), 403 TICKET_*,
  *         404 CODE_INVALID (unbekannt auf dieser Seite), 410 CODE_EXPIRED, 429 RATE_LIMITED (5 Eingaben/10 min je IP).
  * Jeder Versuch zählt – 31^8 Möglichkeiten je Seite machen Raten aussichtslos, ohne dass echte Besucher
  * ausgesperrt werden. Fehlversuche verraten nicht, ob ein Gespräch existiert (immer 404).
@@ -37,10 +37,11 @@ export async function POST(req: NextRequest) {
 
   const conv = await findConversationByResumeCode(site.siteId, code)
   if (!conv) return visitorError('CODE_INVALID', 404)
-  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
-  if (!isResumeCodeValid(conv)) return visitorError('CODE_EXPIRED', 410)
+  // Gesperrt: unsichtbare Sperre – Code funktioniert scheinbar, das Gespräch bleibt still (kein Hinweis an den Betreiber)
+  const silenced = conv.status === 'blocked'
+  if (!silenced && !isResumeCodeValid(conv)) return visitorError('CODE_EXPIRED', 410)
 
   const attached = await attachVisitorToken(conv, sha256(visitorToken))
-  if (attached) await addSystemMessage(conv.id, DEVICE_ADDED_TEXT)
+  if (attached && !silenced) await addSystemMessage(conv.id, DEVICE_ADDED_TEXT)
   return visitorJson(await conversationState(conv, site.siteId, visitorToken))
 }

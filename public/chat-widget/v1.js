@@ -1,10 +1,14 @@
-/*! FinestSites Besucher-Chat v1 — docs/chat/konzept.md. Vanilla JS (ES2018), Shadow DOM, kein externes Laden. */
+/*! FinestSites Besucher-Chat v1 — docs/chat/konzept.md. Vanilla JS (ES2018), Shadow DOM. Einziges externes Laden: unsichtbare Cloudflare-Prüfung (iframe app.finestsites.io/api/chat-check) vor einem neuen Gespräch. */
 (function () {
   'use strict';
   if (window.__fsChat) return;
   window.__fsChat = true;
 
   var API = '/.finestsites/chat/';
+  // Unsichtbare Cloudflare-Turnstile-Prüfung vor einem neuen Gespräch (src/app/api/chat-check/route.ts)
+  var CHECK_ORIGIN = 'https://app.finestsites.io';
+  var CHECK_URL = CHECK_ORIGIN + '/api/chat-check';
+  var CHECK_TIMEOUT_MS = 8000, CHECK_MAX_AGE_MS = 240000;
   var TOKEN_KEY = 'fs_chat_token';
   var HO_KEY = 'fs_chat_handoff_dismissed';
   // Sprache = die auf der Seite gewählte (html[data-lang], sonst html[lang]); folgt dem Sprachwechsel live (MutationObserver unten)
@@ -848,6 +852,7 @@
   // ── Zustand ────────────────────────────────────────────────────────────────
   var cfg = null, token = null, tokenStored = false, convId = null, status = 'open';
   var ticket = null, sessionDone = false; // Ticket aus `session` (nur im Speicher), Header X-FS-Ticket bei schreibenden Aufrufen
+  var cfTok = null, cfAt = 0, cfWait = null; // Turnstile-Token (einmal gültig), Zeitpunkt, laufende Prüfung
   var lastActivity = Date.now();          // letzte Interaktion/Nachricht → Polling-Abstand (geschlossen) + Ruhestopp
   var visitor = { name: null, email: null, phone: null, notifyByEmail: false };
   var messages = [];          // {id, sender, body, createdAt, readAt, clientId, state}
@@ -1177,6 +1182,7 @@
     setTimeout(function () { if (!blocked && window.innerWidth >= 640) ta.focus(); else win.focus(); }, REDUCED ? 0 : 80);
     markRead();
     wake(); // Öffnen = sofort eine Anfrage, dann Long-Poll-Schleife
+    preCheck();
   }
   function close() {
     if (!isOpen) return; isOpen = false;
@@ -1502,10 +1508,58 @@
     send(m);
     if (window.innerWidth >= 640) ta.focus();
   }
+  /**
+   * Turnstile-Token holen: unsichtbares iframe auf app.finestsites.io, Antwort per postMessage.
+   * Löst immer auf ('' bei Fehler/Zeitüberschreitung/Prüfung aus) – entschieden wird auf dem Server.
+   */
+  function runCheck() {
+    if (cfWait) return cfWait;
+    cfWait = new Promise(function (resolve) {
+      var done = false, fr = document.createElement('iframe');
+      function finish(tok) {
+        if (done) return; done = true;
+        window.removeEventListener('message', onMsg);
+        clearTimeout(timer);
+        if (fr.parentNode) fr.parentNode.removeChild(fr);
+        cfWait = null;
+        if (tok) { cfTok = tok; cfAt = Date.now(); }
+        resolve(tok || '');
+      }
+      function onMsg(e) {
+        if (e.origin !== CHECK_ORIGIN || e.source !== fr.contentWindow) return;
+        var d = e.data || {};
+        if (d.type !== 'fs-chat-check') return;
+        finish(typeof d.token === 'string' ? d.token : '');
+      }
+      var timer = setTimeout(function () { finish(''); }, CHECK_TIMEOUT_MS);
+      window.addEventListener('message', onMsg);
+      fr.src = CHECK_URL;
+      fr.title = 'Sicherheitsprüfung';
+      fr.setAttribute('aria-hidden', 'true');
+      fr.tabIndex = -1;
+      fr.style.cssText = 'position:fixed;left:-9999px;top:0;width:300px;height:80px;border:0;opacity:0;pointer-events:none';
+      (document.body || document.documentElement).appendChild(fr);
+    });
+    return cfWait;
+  }
+  /** Token für die erste Nachricht: vorab geholtes nehmen (einmal gültig), sonst jetzt prüfen. */
+  function checkToken() {
+    if (convId) return Promise.resolve('');
+    if (cfTok && Date.now() - cfAt < CHECK_MAX_AGE_MS) { var tk = cfTok; cfTok = null; return Promise.resolve(tk); }
+    cfTok = null;
+    return runCheck().then(function () { var tk = cfTok; cfTok = null; return tk || ''; });
+  }
+  /** Beim Öffnen vorab prüfen, damit die erste Nachricht nicht wartet. */
+  function preCheck() {
+    if (convId || blocked || cfWait || (cfTok && Date.now() - cfAt < CHECK_MAX_AGE_MS)) return;
+    runCheck();
+  }
   function send(m) {
     if (!token) token = rnd(32);
-    // Vor der ersten Nachricht holt apiT einmal `session` (Ticket); hp = Honeypot, wd = Automations-Signal
-    apiT('messages', { method: 'POST', body: { body: m.body, clientId: m.clientId, pageUrl: location.href, hp: hp(), wd: !!navigator.webdriver } }).then(function (r) {
+    // Vor der ersten Nachricht holt apiT einmal `session` (Ticket); hp = Honeypot, wd = Automations-Signal, cf = Turnstile
+    checkToken().then(function (cf) {
+      return apiT('messages', { method: 'POST', body: { body: m.body, clientId: m.clientId, pageUrl: location.href, hp: hp(), wd: !!navigator.webdriver, cf: cf || undefined } });
+    }).then(function (r) {
       if (r.ok && r.json.message) {
         if (!tokenStored) storeToken(token);
         var first = !convId;

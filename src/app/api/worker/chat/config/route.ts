@@ -1,22 +1,21 @@
 /**
  * GET /api/worker/chat/config  (Widget: GET /.finestsites/chat/config)
  * → { enabled, owner:{ name, avatarUrl, brandColor }, whatsappUrl, welcome, welcomeDefault, siteHost }
- * Nicht freigeschaltet: 200 { enabled:false }. Gesperrter Besucher: 403 BLOCKED (+ whatsappUrl).
+ * Nicht freigeschaltet: 200 { enabled:false }. Gesperrter Besucher: normale Antwort (unsichtbare Sperre seit 05.11.2026).
  */
 import type { NextRequest } from 'next/server'
-import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
+import { resolveVisitor, visitorJson } from '@/lib/chat/visitor'
 import { ownerNameOf, ownerWhatsappUrlOf, siteHostOf, WELCOME_TEXT } from '@/lib/chat/service'
 import { effectiveBrandColor } from '@/lib/color/brand-palette'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
-  const r = await resolveVisitor(req, { allowDisabled: true, allowBlocked: true })
+  const r = await resolveVisitor(req, { allowDisabled: true })
   if (!r.ok) return r.response
-  const { site, enabled, blocked } = r.ctx
+  const { site, enabled } = r.ctx
   if (!enabled) return visitorJson({ enabled: false })
   const whatsappUrl = ownerWhatsappUrlOf(site.publishedData)
-  if (blocked) return visitorError('BLOCKED', 403, { whatsappUrl })
 
   return visitorJson({
     enabled: true,

@@ -6,6 +6,7 @@
  *   x-fs-site-id     user_sites.id (Pflicht)
  *   x-fs-host        Hostname der Kundenseite
  *   x-fs-ip-hash     gehashte IP (nie Klartext)
+ *   x-fs-ip-net-hash gehashtes Netz (IPv6: /64, IPv4: Adresse) – für Sperren, die IPv6-Adresswechsel überstehen
  *   x-fs-ua          User-Agent, gekürzt
  *   x-fs-visitor     Besucher-Token (optional; wird hier nur gehasht weiterverwendet)
  *
@@ -16,7 +17,7 @@ import { checkWorkerSecret } from '@/lib/tracking/worker-auth'
 import { isVisitorChatEnabledForUsername } from './flags'
 import { allowVisitorRequest } from './rate-limit'
 import {
-  ensureResumeCode, isBlocked, isValidVisitorToken, listMessages, loadSiteContext, ownerReadAtOf, ownerWhatsappUrlOf, sha256,
+  ensureResumeCode, isBlocked, isValidVisitorToken, listMessages, loadSiteContext, ownerReadAtOf, sha256,
   toContractMessage, touchVisitorSeen, type ChatSiteContext, type ConversationState,
 } from './service'
 import { issueTicket, verifyTicket } from './ticket'
@@ -37,6 +38,7 @@ export type VisitorHeaders = {
   siteId: string
   host: string | null
   ipHash: string | null
+  ipNetHash: string | null
   userAgent: string | null
   visitorToken: string | null
   tokenHash: string | null
@@ -54,6 +56,7 @@ export function readVisitorHeaders(req: NextRequest): VisitorHeaders | null {
     siteId,
     host: (req.headers.get('x-fs-host') ?? '').trim().toLowerCase().slice(0, 253) || null,
     ipHash,
+    ipNetHash: (req.headers.get('x-fs-ip-net-hash') ?? '').trim().slice(0, 64) || null,
     userAgent: (req.headers.get('x-fs-ua') ?? '').trim().slice(0, 200) || null,
     visitorToken,
     tokenHash: visitorToken ? sha256(visitorToken) : null,
@@ -65,15 +68,18 @@ export type VisitorContext = {
   h: VisitorHeaders
   site: ChatSiteContext
   enabled: boolean
+  /** Besucher steht auf der Sperrliste – unsichtbare Sperre: Routen antworten normal, nichts erreicht den Betreiber */
   blocked: boolean
 }
 
 /**
  * Prüft Secret, Kopfzeilen, Ratenbremse, Seite, Freischaltung und Sperre.
- * Standard: nicht freigeschaltet → 404 { error: 'disabled' }, gesperrt → 403 { error: 'BLOCKED' }.
- * `config` setzt allowDisabled/allowBlocked und entscheidet selbst.
+ * Standard: nicht freigeschaltet → 404 { error: 'disabled' }. `config` setzt allowDisabled und entscheidet selbst.
+ * Gesperrt (seit 05.11.2026, Daniel): KEIN 403 mehr – unsichtbare Sperre. ctx.blocked = true, die Routen
+ * antworten wie gewohnt, Nachrichten landen still im gesperrten Gespräch (keine Mitteilung, kein Zähler).
+ * Wer nichts merkt, sucht sich keinen neuen Weg (Inkognito, neue IP).
  */
-export async function resolveVisitor(req: NextRequest, opts: { allowDisabled?: boolean; allowBlocked?: boolean; requireTicket?: boolean } = {}):
+export async function resolveVisitor(req: NextRequest, opts: { allowDisabled?: boolean; requireTicket?: boolean } = {}):
   Promise<{ ok: true; ctx: VisitorContext } | { ok: false; response: NextResponse }> {
   if (!checkWorkerSecret(req)) return { ok: false, response: visitorError('unauthorized', 401) }
   const h = readVisitorHeaders(req)
@@ -94,11 +100,13 @@ export async function resolveVisitor(req: NextRequest, opts: { allowDisabled?: b
     if (t !== 'ok') return { ok: false, response: visitorError('TICKET_INVALID', 403) }
   }
 
-  const blocked = enabled && await isBlocked(site.userId, h.tokenHash, h.ipHash)
-  if (blocked && !opts.allowBlocked) {
-    return { ok: false, response: visitorError('BLOCKED', 403, { whatsappUrl: ownerWhatsappUrlOf(site.publishedData) }) }
-  }
+  const blocked = enabled && await isBlocked(site.userId, h.tokenHash, h.ipHash, h.ipNetHash)
   return { ok: true, ctx: { h, site, enabled, blocked } }
+}
+
+/** Status, den der Besucher sieht: eine Sperre bleibt unsichtbar („blocked“ → „open“). */
+export function visibleStatus(status: string): ChatConversationRow['status'] {
+  return status === 'blocked' ? 'open' : status
 }
 
 /** Antwort von `session`/`resume` für ein bekanntes, nicht gesperrtes Gespräch (ConversationState). */
@@ -111,7 +119,7 @@ export async function conversationState(conv: ChatConversationRow, siteId: strin
     ticket: issueTicket(siteId),
     conversationId: conv.id,
     visitorToken,
-    status: conv.status,
+    status: visibleStatus(conv.status),
     visitor: { name: conv.visitorName, email: conv.visitorEmail, phone: conv.visitorPhone, notifyByEmail: conv.notifyByEmail },
     messages: messages.map(m => toContractMessage(m, 'visitor')),
     ownerLastSeenAt: conv.ownerLastSeenAt?.toISOString() ?? null,

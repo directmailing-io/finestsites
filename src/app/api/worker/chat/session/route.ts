@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
       enabled: true, ticket: issueTicket(site.siteId), conversationId: null, visitorToken, status: null, visitor: null, messages: [], ownerLastSeenAt: null, ownerReadAt: null, resumeCode: null,
     } satisfies ConversationState)
   }
-  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
-
+  // Gesperrt: unsichtbare Sperre – Gespräch wie gewohnt zurückgeben (Status erscheint als „open“)
   return visitorJson(await conversationState(conv, site.siteId, visitorToken))
 }

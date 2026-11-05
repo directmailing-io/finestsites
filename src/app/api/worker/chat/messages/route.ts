@@ -5,20 +5,24 @@
  *      wait = Long-Polling: Antwort erst bei Änderung (neue Nachricht, Lesebestätigung, Status) oder nach wait Sekunden
  * POST { body, clientId?, pageUrl? } → { message, conversationId }
  *      Erste Nachricht ohne bekanntes Gespräch legt eines an (Token Pflicht).
- *      422 MESSAGE_REJECTED (Filter), 429 RATE_LIMITED, 403 BLOCKED | TICKET_REQUIRED | TICKET_INVALID, 400 TOKEN_REQUIRED
+ *      422 MESSAGE_REJECTED (Filter), 429 RATE_LIMITED, 403 TICKET_REQUIRED | TICKET_INVALID, 400 TOKEN_REQUIRED
+ *      `cf` = Turnstile-Token (nur für die erste Nachricht eines neuen Gesprächs, src/lib/chat/turnstile.ts)
+ *      Unsichtbare Sperre (05.11.2026): Gesperrte bekommen nie 403 BLOCKED, ihre Nachrichten landen still im
+ *      gesperrten Gespräch – keine Mitteilung, kein Zähler beim Betreiber.
  *      Spam-Schutz: Ticket aus `session` Pflicht, Honigtopf `hp`, `wd` (navigator.webdriver) → engere Grenzen,
  *      Gespräche je Seite begrenzt, automatische Sperre nach wiederholt abgelehnten Nachrichten.
  */
 import type { NextRequest } from 'next/server'
-import { resolveVisitor, visitorError, visitorJson } from '@/lib/chat/visitor'
+import { resolveVisitor, visibleStatus, visitorError, visitorJson } from '@/lib/chat/visitor'
 import {
-  blockConversation, blockVisitor, conversationSnapshot, createConversation, findConversationByToken, findMessageByClientId, listMessages, ownerReadAtOf, pathOf, recentBodies, recordMessage, snapshotChanged,
+  blockConversation, blockVisitor, conversationSnapshot, createConversation, findConversationByToken, findMessageByClientId, listMessages, noteVisitorIp, ownerReadAtOf, pathOf, recentBodies, recordMessage, silenceConversation, snapshotChanged,
   toContractMessage, touchVisitorSeen, formatResumeCode,
 } from '@/lib/chat/service'
 import { checkChatMessage, CHAT_REJECT_MESSAGE } from '@/lib/chat/filter'
 import { allowNewConversation, allowNewConversationForSite, checkMessageRate, countRejection } from '@/lib/chat/rate-limit'
 import { randomUUID } from 'node:crypto'
 import { pushTriggers } from '@/lib/push/triggers'
+import { verifyTurnstile } from '@/lib/chat/turnstile'
 import type { ChatMessageRow } from '@/lib/db/schema'
 
 export const dynamic = 'force-dynamic'
@@ -42,7 +46,6 @@ export async function GET(req: NextRequest) {
 
   let conv = await findConversationByToken(site.siteId, h.tokenHash)
   if (!conv) return visitorJson({ messages: [], status: null, ownerLastSeenAt: null, ownerReadAt: null })
-  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
 
   const afterRaw = req.nextUrl.searchParams.get('after') ?? ''
   const after = UUID_RE.test(afterRaw) ? afterRaw : undefined
@@ -60,7 +63,7 @@ export async function GET(req: NextRequest) {
     if (probe.messages.length === 0 && first) {
       while (Date.now() < deadline) {
         await new Promise(r => setTimeout(r, Math.min(LONGPOLL_STEP_MS, Math.max(0, deadline - Date.now()))))
-        if (req.signal.aborted) return visitorJson({ messages: [], status: conv.status, ownerLastSeenAt: null, ownerReadAt: null })
+        if (req.signal.aborted) return visitorJson({ messages: [], status: visibleStatus(conv.status), ownerLastSeenAt: null, ownerReadAt: null })
         const now = await conversationSnapshot(conv.id)
         if (!now || snapshotChanged(first, now)) break
       }
@@ -72,10 +75,9 @@ export async function GET(req: NextRequest) {
     waitMs > 0 ? findConversationByToken(site.siteId, h.tokenHash) : Promise.resolve(conv),
   ])
   if (fresh) conv = fresh
-  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
   return visitorJson({
     messages: messages.map(m => toContractMessage(m, 'visitor')),
-    status: conv.status,
+    status: visibleStatus(conv.status),
     ownerLastSeenAt: conv.ownerLastSeenAt?.toISOString() ?? null,
     ownerReadAt,
   })
@@ -84,10 +86,10 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const r = await resolveVisitor(req, { requireTicket: true })
   if (!r.ok) return r.response
-  const { h, site } = r.ctx
+  const { h, site, blocked } = r.ctx
   if (!h.tokenHash) return visitorError('TOKEN_REQUIRED', 400)
 
-  let body: { body?: unknown; clientId?: unknown; pageUrl?: unknown; hp?: unknown; wd?: unknown } = {}
+  let body: { body?: unknown; clientId?: unknown; pageUrl?: unknown; hp?: unknown; wd?: unknown; cf?: unknown } = {}
   try { body = await req.json() } catch { body = {} }
   if (typeof body.body !== 'string') return visitorError('VALIDATION_FAILED', 400)
   const clientId = typeof body.clientId === 'string' && body.clientId.length > 0 && body.clientId.length <= 64 ? body.clientId : null
@@ -98,7 +100,6 @@ export async function POST(req: NextRequest) {
   const automation = body.wd === true
 
   let conv = await findConversationByToken(site.siteId, h.tokenHash)
-  if (conv?.status === 'blocked') return visitorError('BLOCKED', 403)
 
   // Idempotenz: dieselbe clientId liefert dieselbe Nachricht (vor Filter und Ratenbremse)
   if (conv && clientId) {
@@ -113,8 +114,7 @@ export async function POST(req: NextRequest) {
     // Wer den Filter wiederholt auslöst, wird automatisch gesperrt (Konto-weit, wie „Besucher sperren“)
     if (countRejection(h.tokenHash)) {
       if (conv) await blockConversation(conv, 'automatisch: Filter mehrfach ausgelöst')
-      else await blockVisitor(site.userId, h.tokenHash, h.ipHash, 'automatisch: Filter mehrfach ausgelöst')
-      return visitorError('BLOCKED', 403)
+      else await blockVisitor(site.userId, h.tokenHash, h.ipHash, 'automatisch: Filter mehrfach ausgelöst', h.ipNetHash)
     }
     return visitorError('MESSAGE_REJECTED', 422, { message: CHAT_REJECT_MESSAGE })
   }
@@ -127,16 +127,31 @@ export async function POST(req: NextRequest) {
       userId: site.userId,
       tokenHash: h.tokenHash,
       ipHash: h.ipHash,
+      ipNetHash: h.ipNetHash,
       userAgent: h.userAgent,
       startedOnPath: pathOf(body.pageUrl),
     })
+    // Neues Gespräch still stellen, wenn der Besucher gesperrt ist (neue Sitzung/Inkognito aus gesperrtem Netz)
+    // oder die Cloudflare-Prüfung nicht bestanden hat – vor dem Speichern der Nachricht, damit keine Mitteilung rausgeht
+    const silence = blocked ? 'gesperrter Besucher (neue Sitzung)'
+      : (await verifyTurnstile(body.cf)) === 'failed' ? 'Cloudflare-Prüfung nicht bestanden' : null
+    if (silence && conv.status !== 'blocked') {
+      await silenceConversation(conv.id, silence)
+      conv = { ...conv, status: 'blocked', blockReason: silence }
+    }
   } else {
     const rate = await checkMessageRate(conv.id, 'visitor', { automation })
     if (rate !== 'ok') return visitorError('RATE_LIMITED', 429)
+    await noteVisitorIp(conv, h.ipHash, h.ipNetHash)
+    // Gesperrt über ein anderes Gespräch (gleiches Netz), schreibt aber in einem älteren offenen weiter
+    if (blocked && conv.status !== 'blocked') {
+      await silenceConversation(conv.id, 'gesperrter Besucher')
+      conv = { ...conv, status: 'blocked', blockReason: 'gesperrter Besucher' }
+    }
   }
 
   const { message, created } = await recordMessage(conv, 'visitor', check.body, clientId)
-  if (created) void pushTriggers.newChatMessage(conv.id)
+  if (created && conv.status !== 'blocked') void pushTriggers.newChatMessage(conv.id)
   // resumeCode: das Widget zeigt nach der ersten Nachricht die Karte „Dein Gesprächs-Code“
   return visitorJson({ message: toContractMessage(message, 'visitor'), conversationId: conv.id, resumeCode: formatResumeCode(conv.resumeCode) })
 }

@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   if (!h.tokenHash) return visitorError('TOKEN_REQUIRED', 400)
   const conv = await findConversationByToken(site.siteId, h.tokenHash)
   if (!conv) return visitorError('not_found', 404)
-  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
+  // Gesperrt: Profil wird trotzdem gespeichert (unsichtbare Sperre); Mails gehen an Gesperrte ohnehin nie
 
   let body: { name?: unknown; email?: unknown; phone?: unknown; notifyByEmail?: unknown; hp?: unknown } = {}
   try { body = await req.json() } catch { body = {} }

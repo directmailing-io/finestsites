@@ -7,7 +7,7 @@
  *   { via: 'link',  pageUrl? } → 200 { url: 'https://<host><pfad>?fs_chat=<token>', expiresAt }
  *   { via: 'email' }           → 200 { ok: true }   (Link an die hinterlegte Besucher-E-Mail)
  *
- * Fehler: 400 TOKEN_REQUIRED | VALIDATION_FAILED | NO_EMAIL, 403 BLOCKED, 404 NO_CONVERSATION,
+ * Fehler: 400 TOKEN_REQUIRED | VALIDATION_FAILED | NO_EMAIL, 404 NO_CONVERSATION,
  *         429 RATE_LIMITED (Links: 20/h je IP-Hash; Mails: HANDOFF_MAILS_PER_DAY je Gespräch), 502 MAIL_FAILED.
  * Der Token ist 7 Tage gültig und einmal einlösbar (session mit resumeToken); der einlösende Browser wird
  * als weiterer Zugang angehängt, der bisherige behält seinen.
@@ -36,7 +36,8 @@ export async function POST(req: NextRequest) {
 
   const conv = await findConversationByToken(site.siteId, h.tokenHash)
   if (!conv) return visitorError('NO_CONVERSATION', 404)
-  if (conv.status === 'blocked') return visitorError('BLOCKED', 403)
+  // Gesperrt: Link ja (zeigt nur aufs eigene, stille Gespräch), Mail nie – unauffällig „ok“
+  const silenced = conv.status === 'blocked'
 
   // Der Link zeigt auf die Seite, auf der der Besucher gerade ist (Host vom Worker geprüft), sonst Standard-Host
   const host = h.host || siteHostOf(site)
@@ -52,6 +53,7 @@ export async function POST(req: NextRequest) {
 
   const email = conv.visitorEmail?.trim()
   if (!email) return visitorError('NO_EMAIL', 400)
+  if (silenced) return visitorJson({ ok: true })
   if ((await countHandoffMails(conv.id)) >= HANDOFF_MAILS_PER_DAY) return visitorError('RATE_LIMITED', 429)
   const token = await createResumeToken(conv.id, 'handoff_mail')
   const result = await sendHandoffMail({

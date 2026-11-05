@@ -531,6 +531,7 @@ export async function createConversation(input: {
   userId: string
   tokenHash: string
   ipHash: string | null
+  ipNetHash?: string | null
   userAgent: string | null
   startedOnPath: string | null
 }): Promise<ChatConversationRow> {
@@ -543,6 +544,7 @@ export async function createConversation(input: {
         visitorTokenHash: input.tokenHash,
         visitorKey: visitorKeyFromHash(input.tokenHash),
         ipHash: input.ipHash,
+        ipNetHash: input.ipNetHash ?? null,
         userAgent: input.userAgent,
         startedOnPath: input.startedOnPath,
         resumeCode: generateResumeCode(),
@@ -670,38 +672,69 @@ export async function markReported(conversationId: string, reason: string): Prom
 
 // ─── Sperren ──────────────────────────────────────────────────────────────────
 
-export async function isBlocked(userId: string, tokenHash: string | null, ipHash: string | null): Promise<boolean> {
+export async function isBlocked(userId: string, tokenHash: string | null, ipHash: string | null, ipNetHash: string | null = null): Promise<boolean> {
   const conds = []
   if (tokenHash) conds.push(eq(chatBlocks.visitorTokenHash, tokenHash))
   if (ipHash) conds.push(eq(chatBlocks.ipHash, ipHash))
+  // IPv6 wechselt die Adresse innerhalb des /64-Netzes laufend → Netz sperren (Daniel 05.11.2026)
+  if (ipNetHash) conds.push(eq(chatBlocks.ipNetHash, ipNetHash))
   if (conds.length === 0) return false
   const [row] = await db.select({ id: chatBlocks.id }).from(chatBlocks)
     .where(and(eq(chatBlocks.userId, userId), or(...conds))).limit(1)
   return !!row
 }
 
-/** Sperrt den Besucher (Token-Hash + IP-Hash) für alle Seiten dieses Kontos; Gespräch → blocked. */
+/**
+ * Sperrt den Besucher für alle Seiten dieses Kontos; Gespräch → blocked. Erfasst alle Token-Hashes,
+ * die erste und die letzte IP sowie deren Netze (IPv6 /64). Die Sperre ist für den Besucher unsichtbar
+ * (src/lib/chat/visitor.ts): er schreibt weiter, beim Betreiber landet alles still unter „Gesperrt“.
+ */
 export async function blockConversation(conv: ChatConversationRow, reason: string | null): Promise<void> {
   const hashes = await tokenHashesOf(conv)
-  await db.insert(chatBlocks).values(hashes.map((h, i) => ({
-    userId: conv.userId,
-    visitorTokenHash: h,
-    ipHash: i === 0 ? conv.ipHash : null,
-    reason: reason?.slice(0, 200) ?? null,
-  })))
-  await setConversationStatus(conv.id, 'blocked')
+  const why = reason?.slice(0, 200) ?? null
+  const ips = [...new Set([conv.ipHash, conv.lastIpHash].filter((x): x is string => !!x))]
+  const nets = [...new Set([conv.ipNetHash, conv.lastIpNetHash].filter((x): x is string => !!x))]
+  await db.insert(chatBlocks).values([
+    ...hashes.map((h, i) => ({ userId: conv.userId, visitorTokenHash: h, ipHash: i === 0 ? (ips[0] ?? null) : null, ipNetHash: i === 0 ? (nets[0] ?? null) : null, reason: why })),
+    ...ips.slice(1).map(ip => ({ userId: conv.userId, visitorTokenHash: null, ipHash: ip, ipNetHash: null, reason: why })),
+    ...nets.slice(1).map(n => ({ userId: conv.userId, visitorTokenHash: null, ipHash: null, ipNetHash: n, reason: why })),
+  ])
+  await db.update(chatConversations).set({ status: 'blocked', blockReason: why, updatedAt: new Date() })
+    .where(eq(chatConversations.id, conv.id))
+}
+
+/**
+ * Nur das Gespräch still stellen (ohne Sperreintrag), z. B. wenn die Cloudflare-Prüfung beim Start fehlschlägt
+ * oder der Besucher bereits gesperrt ist. Der Betreiber sieht es unter „Gesperrt“ und kann es freigeben.
+ */
+export async function silenceConversation(conversationId: string, reason: string): Promise<void> {
+  await db.update(chatConversations).set({ status: 'blocked', blockReason: reason.slice(0, 200), updatedAt: new Date() })
+    .where(eq(chatConversations.id, conversationId))
 }
 
 /** Sperre ohne Gespräch (z. B. automatische Sperre vor der ersten gespeicherten Nachricht). */
-export async function blockVisitor(userId: string, tokenHash: string, ipHash: string | null, reason: string | null): Promise<void> {
-  await db.insert(chatBlocks).values({ userId, visitorTokenHash: tokenHash, ipHash, reason: reason?.slice(0, 200) ?? null })
+export async function blockVisitor(userId: string, tokenHash: string, ipHash: string | null, reason: string | null, ipNetHash: string | null = null): Promise<void> {
+  await db.insert(chatBlocks).values({ userId, visitorTokenHash: tokenHash, ipHash, ipNetHash, reason: reason?.slice(0, 200) ?? null })
 }
 
 export async function unblockConversation(conv: ChatConversationRow): Promise<void> {
   const conds = [inArray(chatBlocks.visitorTokenHash, await tokenHashesOf(conv))]
-  if (conv.ipHash) conds.push(eq(chatBlocks.ipHash, conv.ipHash))
+  const ips = [conv.ipHash, conv.lastIpHash].filter((x): x is string => !!x)
+  const nets = [conv.ipNetHash, conv.lastIpNetHash].filter((x): x is string => !!x)
+  if (ips.length) conds.push(inArray(chatBlocks.ipHash, ips))
+  if (nets.length) conds.push(inArray(chatBlocks.ipNetHash, nets))
   await db.delete(chatBlocks).where(and(eq(chatBlocks.userId, conv.userId), or(...conds)))
-  await setConversationStatus(conv.id, 'open')
+  await db.update(chatConversations).set({ status: 'open', blockReason: null, updatedAt: new Date() })
+    .where(eq(chatConversations.id, conv.id))
+}
+
+/** Zuletzt benutzte IP/Netz des Besuchers merken (für eine spätere Sperre); schreibt nur bei Änderung. */
+export async function noteVisitorIp(conv: ChatConversationRow, ipHash: string | null, ipNetHash: string | null): Promise<void> {
+  if ((!ipHash || ipHash === (conv.lastIpHash ?? conv.ipHash)) && (!ipNetHash || ipNetHash === (conv.lastIpNetHash ?? conv.ipNetHash))) return
+  await db.update(chatConversations).set({
+    ...(ipHash ? { lastIpHash: ipHash } : {}),
+    ...(ipNetHash ? { lastIpNetHash: ipNetHash } : {}),
+  }).where(eq(chatConversations.id, conv.id))
 }
 
 // ─── Resume-Tokens (Link aus der Antwort-Mail) ────────────────────────────────

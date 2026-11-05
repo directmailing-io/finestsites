@@ -38,6 +38,23 @@ export function chatJson(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS })
 }
 
+/**
+ * IPv6 → „net6:<erste 4 Blöcke>/64“ (ausgeschrieben, Kleinbuchstaben), IPv4 → Adresse unverändert.
+ * Ein Anschluss bekommt sein /64 fest zugeteilt, die Adressen darin wechseln (Privacy Extensions).
+ */
+export function ipNetOf(ip: string): string {
+  if (!ip.includes(':')) return ip
+  const addr = ip.split('%')[0].toLowerCase()
+  const [head, tail = ''] = addr.split('::')
+  const h = head ? head.split(':') : []
+  const t = addr.includes('::') && tail ? tail.split(':') : []
+  // eingebettete IPv4 (::ffff:1.2.3.4) zählt als zwei Blöcke
+  const blocks = [...h, ...t].flatMap(b => b.includes('.') ? ['0', '0'] : [b])
+  const missing = addr.includes('::') ? 8 - blocks.length : 0
+  const full = [...h, ...Array(Math.max(0, missing)).fill('0'), ...t].map(b => b.includes('.') ? b : (parseInt(b || '0', 16) || 0).toString(16))
+  return `net6:${full.slice(0, 4).join(':')}/64`
+}
+
 export async function handleChatRequest(request: Request, pathname: string, meta: SiteMeta, env: Env, hostname: string): Promise<Response> {
   if (!meta.chat?.enabled) return chatJson(404, { error: 'NOT_FOUND' })
   const name = pathname.slice(CHAT_PREFIX.length).replace(/\/+$/, '')
@@ -71,6 +88,8 @@ export async function handleChatRequest(request: Request, pathname: string, meta
     'x-fs-site-id': meta.siteId,
     'x-fs-host': hostname,
     'x-fs-ip-hash': ip ? await hashIP(ip) : '',
+    // Netz für Sperren (IPv6 wechselt die Adresse innerhalb des /64 laufend), IPv4 = Adresse
+    'x-fs-ip-net-hash': ip ? await hashIP(ipNetOf(ip)) : '',
     'x-fs-ua': ua,
     'x-fs-visitor': visitor,
     'x-fs-ticket': ticket,

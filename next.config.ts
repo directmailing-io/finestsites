@@ -53,6 +53,15 @@ const nextConfig: NextConfig = {
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
         ],
       },
+      // Turnstile-Prüfseite des Besucher-Chats: wird vom Widget auf Kundenseiten unsichtbar eingebettet
+      // (überschreibt die beiden Rahmen-Header oben – bei gleichem Schlüssel gewinnt die spätere Regel)
+      {
+        source: '/api/chat-check',
+        headers: [
+          { key: 'X-Frame-Options', value: 'ALLOWALL' },
+          { key: 'Content-Security-Policy', value: 'frame-ancestors *' },
+        ],
+      },
       // CORS for static assets (fonts, images) so they work cross-origin.
       // finestsites.io → app.finestsites.io redirect requires CORS or
       // the browser blocks font/resource loading.

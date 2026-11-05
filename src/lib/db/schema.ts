@@ -1043,6 +1043,10 @@ export const chatConversations = pgTable('chat_conversations', {
   startedOnPath: text('started_on_path'),
   userAgent: text('user_agent'),
   ipHash: varchar('ip_hash', { length: 64 }),
+  ipNetHash: varchar('ip_net_hash', { length: 64 }), // Netz beim Start (IPv6 /64, IPv4 = Adresse), Migration 20261105180000
+  lastIpHash: varchar('last_ip_hash', { length: 64 }),
+  lastIpNetHash: varchar('last_ip_net_hash', { length: 64 }),
+  blockReason: text('block_reason'),
   ownerUnread: integer('owner_unread').notNull().default(0),
   visitorUnread: integer('visitor_unread').notNull().default(0),
   lastMessageAt: timestamp('last_message_at', { withTimezone: true }),
@@ -1079,11 +1083,13 @@ export const chatBlocks = pgTable('chat_blocks', {
   userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   visitorTokenHash: varchar('visitor_token_hash', { length: 64 }),
   ipHash: varchar('ip_hash', { length: 64 }),
+  ipNetHash: varchar('ip_net_hash', { length: 64 }), // ganzes Netz (IPv6 /64)
   reason: text('reason'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [
   index('idx_chat_blocks_user_token').on(t.userId, t.visitorTokenHash),
   index('idx_chat_blocks_user_ip').on(t.userId, t.ipHash),
+  index('idx_chat_blocks_user_net').on(t.userId, t.ipNetHash),
 ])
 
 export const chatResumeTokens = pgTable('chat_resume_tokens', {
