@@ -1,0 +1,356 @@
+[
+ {
+  "de": "Gutes tun und dauerhaft profitieren",
+  "alt": "Haz algo bueno y benefíciate a largo plazo",
+  "neu": "Haz el bien y sal ganando a largo plazo",
+  "grund": "„benefíciate“ steif; „salir ganando“ idiomatisch"
+ },
+ {
+  "de": "Teile deine Erfahrungen und bau dir ein <span class=\"accent\">monatliches Einkommen</span> auf.",
+  "alt": "Comparte tu experiencia y crea un <span class=\"accent\">ingreso mensual</span>.",
+  "neu": "Comparte tu experiencia y créate unos <span class=\"accent\">ingresos mensuales</span>.",
+  "grund": "„ingresos“ im Plural ist in Spanien üblich"
+ },
+ {
+  "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+  "alt": "Conoces <strong>productos de bienestar y salud de alta calidad</strong>, los usas <strong>tú mismo</strong> y compartes tu experiencia con otras personas. Cada persona que los prueba y <strong>sigue pidiendo</strong> hace que <strong>cada mes entre algo en tu cuenta</strong>.",
+  "neu": "Descubres <strong>productos de bienestar y salud de alta calidad</strong>, los usas <strong>tú</strong> y compartes tu experiencia con los demás. Cada persona que los prueba y <strong>sigue pidiéndolos</strong> hace que <strong>cada mes te entre algo en la cuenta</strong>.",
+  "grund": "flüssiger, „te entre algo en la cuenta“ umgangssprachlich"
+ },
+ {
+  "de": "Zeit frei einteilen",
+  "alt": "Organiza tu tiempo como quieras",
+  "neu": "Tú eliges tu horario",
+  "grund": "kürzer, natürlicher für Badge"
+ },
+ {
+  "de": "30 Tage Rückgabe",
+  "alt": "30 días de devolución",
+  "neu": "30 días para devolverlo",
+  "grund": "„30 días de devolución“ hölzern"
+ },
+ {
+  "de": "<strong>Egal wo du gerade stehst.</strong> Weil es <strong>nichts gibt, was du erst lernen müsstest</strong>. Kein Studium, keine Erfahrung, kein besonderes Talent. <strong>Alles was du brauchst, hast du längst dabei.</strong>",
+  "alt": "<strong>Da igual en qué punto estés ahora.</strong> Porque <strong>no hay nada que tengas que aprender primero</strong>. Ni estudios, ni experiencia, ni un talento especial. <strong>Todo lo que necesitas ya lo tienes contigo.</strong>",
+  "neu": "<strong>Da igual en qué punto estés ahora.</strong> Porque <strong>no hay nada que tengas que aprender primero</strong>. Ni estudios, ni experiencia, ni un talento especial. <strong>Todo lo que necesitas ya lo llevas contigo.</strong>",
+  "grund": "„llevar contigo“ idiomatischer"
+ },
+ {
+  "de": "Berufstätige",
+  "alt": "Personas que trabajan",
+  "neu": "Trabajadores",
+  "grund": "Kachel kürzer und natürlicher"
+ },
+ {
+  "de": "Und alle anderen, die Bock haben.",
+  "alt": "Y cualquiera que tenga ganas.",
+  "neu": "Y cualquiera con ganas.",
+  "grund": "lockerer, kürzer"
+ },
+ {
+  "de": "So einfach funktioniert<br><span class=\"accent\">dieses Business.</span>",
+  "alt": "Así de sencillo funciona<br><span class=\"accent\">este negocio.</span>",
+  "neu": "Así de fácil es<br><span class=\"accent\">este negocio.</span>",
+  "grund": "Vorgabe Auftraggeber"
+ },
+ {
+  "de": "Du verdienst mit",
+  "alt": "Tú ganas tu parte",
+  "neu": "Te llevas tu parte",
+  "grund": "idiomatischer als „Tú ganas tu parte“"
+ },
+ {
+  "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+  "alt": "Tu comisión llega automáticamente a tu cuenta. Cada mes, mientras se siga pidiendo.",
+  "neu": "Tu comisión llega automáticamente a tu cuenta. Cada mes, mientras sigan pidiendo.",
+  "grund": "„mientras se siga pidiendo“ steif"
+ },
+ {
+  "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+  "alt": "Todo lo que suele dar pereza,<br>lo hace <span class=\"accent\">la empresa por ti.</span>",
+  "neu": "Todo lo que es un rollo,<br>lo hace <span class=\"accent\">la empresa por ti.</span>",
+  "grund": "„nervt“ = „es un rollo“ (umgangssprachlich Spanien)"
+ },
+ {
+  "de": "Eigene Erfahrung teilen",
+  "alt": "Compartir tu propia experiencia",
+  "neu": "Compartir tu experiencia",
+  "grund": "„propia“ überflüssig"
+ },
+ {
+  "de": "Anwender und Partner unterstützen",
+  "alt": "Apoyar a usuarios y partners",
+  "neu": "Ayudar a clientes y socios",
+  "grund": "„partners“ Anglizismus; einheitlich „socios“"
+ },
+ {
+  "de": "Deine Provisionen berechnen und überweisen",
+  "alt": "Calcular y transferirte tus comisiones",
+  "neu": "Calcular tus comisiones y pagártelas",
+  "grund": "„transferirte tus comisiones“ holprig"
+ },
+ {
+  "de": "Marketing-Material und Videos bereitstellen",
+  "alt": "Proporcionar material de marketing y vídeos",
+  "neu": "Preparar material de marketing y vídeos",
+  "grund": "„Proporcionar“ bürokratisch"
+ },
+ {
+  "de": "Business-Akademie, PowerDays und Reisen organisieren",
+  "alt": "Organizar la Business Academy, los PowerDays y viajes",
+  "neu": "Organizar la Business Academy, los PowerDays y los viajes",
+  "grund": "Artikel ergänzt, parallel"
+ },
+ {
+  "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+  "alt": "Productos de bienestar y salud para el día a día. Desde cócteles de vitaminas hasta refuerzos para el sistema inmunitario. Todos producidos siguiendo los mismos estándares estrictos. Aquí ves, como ejemplo, nuestro producto estrella: el PowerCocktail.",
+  "neu": "Productos de bienestar y salud para el día a día. Desde cócteles de vitaminas hasta refuerzos para el sistema inmunitario. Todos fabricados con los mismos estándares estrictos. Aquí ves, como ejemplo, nuestro producto estrella: el PowerCocktail.",
+  "grund": "„producidos siguiendo“ steif"
+ },
+ {
+  "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+  "alt": "No vendes un producto.<br><span class=\"accent\">Compartes un pedacito de calidad de vida.</span>",
+  "neu": "No vendes un producto.<br><span class=\"accent\">Lo que compartes es calidad de vida.</span>",
+  "grund": "„un pedacito de calidad de vida“ wörtlich aus dem Deutschen"
+ },
+ {
+  "de": "Wumms im Alltag statt Nachmittagstief",
+  "alt": "Energía en el día a día en vez del bajón de la tarde",
+  "neu": "Energía a tope en vez del bajón de media tarde",
+  "grund": "„Wumms“ natürlich wiedergegeben"
+ },
+ {
+  "de": "Ausgleich nach stressigen Tagen",
+  "alt": "Desconectar después de días estresantes",
+  "neu": "Desconectar tras un día de estrés",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+  "alt": "Alguien lleva años levantándose de la cama por las mañanas a duras penas. Y tú eres quien le enseña que puede ser de otra manera. <span class=\"accent\">Ese es el trabajo. No vender.</span>",
+  "neu": "Alguien lleva años arrastrándose fuera de la cama cada mañana. Y tú eres quien le demuestra que hay otra forma. <span class=\"accent\">Ese es el trabajo. No vender.</span>",
+  "grund": "„sich quälen“ bildhafter, „hay otra forma“ natürlicher"
+ },
+ {
+  "de": "Ich will das machen",
+  "alt": "Quiero hacerlo",
+  "neu": "¡Me apunto!",
+  "grund": "typischer spanischer CTA"
+ },
+ {
+  "de": "Jahresumsatz in Milliarden US-Dollar",
+  "alt": "Facturación anual en miles de millones de dólares estadounidenses",
+  "neu": "Facturación anual en miles de millones de dólares (USD)",
+  "grund": "„dólares estadounidenses“ zu lang"
+ },
+ {
+  "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+  "alt": "La salud interesa más que nunca.<br><span class=\"accent\">Y nosotros, justo en el centro.</span>",
+  "neu": "La salud interesa más que nunca.<br><span class=\"accent\">Y nosotros, de lleno en ello.</span>",
+  "grund": "„justo en el centro“ wörtlich"
+ },
+ {
+  "de": "Ich will dabei sein",
+  "alt": "Quiero sumarme",
+  "neu": "Quiero formar parte",
+  "grund": "natürlicher als „sumarme“"
+ },
+ {
+  "de": "Weltweit<span class=\"accent\">Kunden &amp; Partner.</span>",
+  "alt": "En todo el mundo<span class=\"accent\">Clientes y partners.</span>",
+  "neu": "Clientes &amp; socios<span class=\"accent\">en todo el mundo.</span>",
+  "grund": "Vorgabe: natürliche Reihenfolge, „socios“ statt „partners“"
+ },
+ {
+  "de": "VAE",
+  "alt": "EAU",
+  "neu": "Emiratos",
+  "grund": "„EAU“ in Spanien kaum gebräuchlich"
+ },
+ {
+  "de": "Warum du <span class=\"accent\">so viel Qualität</span> für dein Geld kriegst.",
+  "alt": "Por qué recibes <span class=\"accent\">tanta calidad</span> por tu dinero.",
+  "neu": "Por qué te llevas <span class=\"accent\">tanta calidad</span> por tu dinero.",
+  "grund": "„recibes“ steif"
+ },
+ {
+  "de": "Das willst du <span class=\"accent\">wahrscheinlich wissen.</span>",
+  "alt": "Esto <span class=\"accent\">seguramente te lo estarás preguntando.</span>",
+  "neu": "Lo que <span class=\"accent\">seguramente quieres saber.</span>",
+  "grund": "kürzer, natürlicher"
+ },
+ {
+  "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+  "alt": "Para nada. Yo solo recomiendo cuando creo que encaja. Lo otro, además, sería incómodo. Si no quieres hablar con nadie de tu entorno, hay muchas otras formas a través de redes sociales o de tu comunidad. Lo hacemos de la manera que encaje contigo.",
+  "neu": "Para nada. Yo solo recomiendo cuando creo que encaja. Lo contrario, además, daría vergüenza. Si no quieres hablar con nadie de tu entorno, hay muchas otras formas a través de redes sociales o de tu comunidad. Lo hacemos como mejor te encaje.",
+  "grund": "„peinlich“ richtig getroffen, Schluss natürlicher"
+ },
+ {
+  "de": "Ich bin kein Verkäufertyp. Geht das trotzdem?",
+  "alt": "No soy de vender. ¿Aun así se puede?",
+  "neu": "No soy muy de vender. ¿Puedo hacerlo igualmente?",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+  "alt": "¿No puedo comprarlo más barato en una droguería?",
+  "neu": "¿No puedo comprarlo más barato en el súper o en la parafarmacia?",
+  "grund": "„droguería“ verkauft in Spanien Putzmittel, keine Vitamine"
+ },
+ {
+  "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+  "alt": "Puedes. Pero entonces compras otra cosa. Las vitaminas estándar suelen dosificarse por separado. Nuestros productos están pensados para combinar entre sí y se fabrican en Alemania bajo estándares farmacéuticos. Es como comparar café soluble con un espresso de verdad.",
+  "neu": "Claro que puedes. Pero estarás comprando otra cosa. Las vitaminas estándar suelen dosificarse por separado. Nuestros productos están pensados para combinar entre sí y se fabrican en Alemania bajo estándares farmacéuticos. Es como comparar café soluble con un espresso de verdad.",
+  "grund": "Einstieg natürlicher"
+ },
+ {
+  "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+  "alt": "No. Pides cuando quieras y la cantidad que quieras. Pero existe un sistema de entrega automática con el que ahorras en cada pedido. La mayoría lo elige de forma voluntaria, porque usa los productos de todos modos y quiere ahorrar. No porque tenga que hacerlo, sino porque quiere. Sin permanencia mínima, modificable o cancelable en cualquier momento. Sin riesgo.",
+  "neu": "No. Pides cuando quieras y la cantidad que quieras. Pero existe un sistema de entrega automática con el que ahorras en cada pedido. La mayoría lo elige de forma voluntaria, porque usa los productos de todos modos y quiere ahorrar. No porque tenga que hacerlo, sino porque quiere. Sin permanencia, y puedes cambiarlo o cancelarlo cuando quieras. Sin riesgo.",
+  "grund": "Aufzählung „modificable o cancelable“ steif"
+ },
+ {
+  "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+  "alt": "Respuesta sincera: depende muchísimo. Algunos ganan 100 al mes, otros unos cuantos miles, y otros viven completamente de esto.",
+  "neu": "Respuesta sincera: depende muchísimo. Algunos ganan 100 euros al mes, otros unos cuantos miles, y otros viven completamente de esto.",
+  "grund": "Währung ausdrücklich (Vorgabe)"
+ },
+ {
+  "de": "Die Anmeldung selbst kostet nichts. Um wirklich starten zu können, brauchst du ein kleines Startpaket mit Arbeitsmaterial (unter 20 Euro) und im Idealfall ein Produktset zum selbst Testen, damit du weißt, was du empfiehlst. Beides zusammen ist überschaubar, und das Produktset kannst du innerhalb von 30 Tagen zurückschicken, auch angebrochen. Kein Kursgeld, keine Ausbildungskosten, keine versteckten Gebühren.",
+  "alt": "El registro en sí no cuesta nada. Para poder empezar de verdad, necesitas un pequeño pack de inicio con material de trabajo (menos de 20 euros) y, idealmente, un set de productos para probarlo tú mismo y saber qué recomiendas. Las dos cosas juntas son asumibles, y el set de productos puedes devolverlo en un plazo de 30 días, incluso abierto. Sin cuotas de cursos, sin costes de formación, sin cargos ocultos.",
+  "neu": "El registro en sí no cuesta nada. Para poder empezar de verdad, necesitas un pequeño paquete de inicio con material de trabajo (menos de 20 euros) y, idealmente, un set de productos para probarlo tú mismo y saber qué recomiendas. Las dos cosas juntas son asumibles, y el set de productos puedes devolverlo en un plazo de 30 días, incluso abierto. Sin cuotas de cursos, sin costes de formación, sin cargos ocultos.",
+  "grund": "einheitlich „paquete de inicio“ wie im Registrierungsteil"
+ },
+ {
+  "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+  "alt": "Entonces lo dejas. Sin contrato, sin preaviso, sin facturas pendientes, sin discusiones. Aquí la norma es: quien quiere puede, nadie está obligado.",
+  "neu": "Entonces lo dejas. Sin contrato, sin preaviso, sin facturas pendientes, sin discusiones. Aquí la regla es sencilla: quien quiera, puede; nadie está obligado.",
+  "grund": "Spruch natürlicher"
+ },
+ {
+  "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+  "alt": "Pasa a menudo. Porque muchas cosas de MLM realmente fueron o son estafas. En esos casos, yo tengo tres ases en la manga: una empresa que lleva más de 30 años creciendo. Productos que puedes probar tú mismo y devolver. Y que nadie salvo tú decide hasta dónde llevas esto. Eso suele bastar.",
+  "neu": "Pasa a menudo. Porque muchos negocios multinivel han sido, o son, una estafa de verdad. En esos casos, yo tengo tres ases en la manga: una empresa que lleva más de 30 años creciendo. Productos que puedes probar tú mismo y devolver. Y que solo tú decides hasta dónde quieres llegar. Eso suele bastar.",
+  "grund": "„cosas de MLM“ und Schlusssatz holprig"
+ },
+ {
+  "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+  "alt": "Tu mensaje me ha llegado. Te responderé pronto, normalmente el mismo día.",
+  "neu": "Ya tengo tu mensaje. Te escribo pronto, normalmente el mismo día.",
+  "grund": "persönlicher, lockerer"
+ },
+ {
+  "de": "Häufige Fragen",
+  "alt": "FAQ",
+  "neu": "Preguntas frecuentes",
+  "grund": "„FAQ“ wirkt technisch"
+ },
+ {
+  "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "alt": "Usamos cookies para ofrecerte la mejor experiencia. Las cookies técnicamente necesarias están siempre activas — hacen que la página funcione. Las demás cookies (p.&nbsp;ej., estadísticas) solo las usamos con tu consentimiento. Más información en nuestra <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">política de privacidad</a>.",
+  "neu": "Usamos cookies para ofrecerte la mejor experiencia. Las cookies técnicamente necesarias siempre están activas, porque hacen que la página funcione. Las demás cookies (p.&nbsp;ej., estadísticas) solo las usamos con tu consentimiento. Más información en nuestra <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">política de privacidad</a>.",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Grundlegende Funktionen der Website — immer aktiv.",
+  "alt": "Funciones básicas de la web — siempre activas.",
+  "neu": "Funciones básicas de la web, siempre activas.",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Teampartner werden",
+  "alt": "Hacerte team partner",
+  "neu": "Hazte socio",
+  "grund": "„team partner“ unverständlich; „socio“ ist im Direktvertrieb in Spanien üblich"
+ },
+ {
+  "de": "Direkt als Teampartner starten",
+  "alt": "Empezar directamente como team partner",
+  "neu": "Empieza ya como socio del equipo",
+  "grund": "einheitlich „socio“"
+ },
+ {
+  "de": "Direkt starten",
+  "alt": "Empezar ya",
+  "neu": "Empieza ya",
+  "grund": "Imperativ wie die übrigen Knöpfe"
+ },
+ {
+  "de": "Dann registrier dich direkt bei PM-International als Teampartner. Drei Schritte, ein paar Minuten, und {{#unless partner_modus=duo}}{{vorname}} begleitet dich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} begleiten dich{{/if}} von Anfang an.",
+  "alt": "Entonces regístrate directamente en PM-International como team partner. Tres pasos, unos minutos, y {{#unless partner_modus=duo}}{{vorname}} te acompaña{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} te acompañan{{/if}} desde el principio.",
+  "neu": "Entonces regístrate directamente en PM-International como socio del equipo. Tres pasos, unos minutos, y {{#unless partner_modus=duo}}{{vorname}} te acompaña{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} te acompañan{{/if}} desde el principio.",
+  "grund": "einheitlich „socio del equipo“; Name steht als Subjekt unverändert"
+ },
+ {
+  "de": "Dein Sponsor",
+  "alt": "Tu sponsor",
+  "neu": "Tu patrocinador",
+  "grund": "„Sponsor“ heißt im spanischen Direktvertrieb „patrocinador“"
+ },
+ {
+  "de": "Wird automatisch eingetragen, du musst nichts suchen.",
+  "alt": "Se rellena automáticamente, no tienes que buscar nada.",
+  "neu": "Es la persona que te acompaña. Se rellena solo, no tienes que buscar nada.",
+  "grund": "„patrocinador“ beim ersten Vorkommen kurz erklärt"
+ },
+ {
+  "de": "Land, Name und E-Mail. Dein Sponsor steht schon drin.",
+  "alt": "País, nombre y e-mail. Tu sponsor ya viene puesto.",
+  "neu": "País, nombre y e-mail. Tu patrocinador ya viene puesto.",
+  "grund": "einheitlich „patrocinador“"
+ },
+ {
+  "de": "Startpaket wählen, oder nicht",
+  "alt": "Elegir paquete de inicio, o no",
+  "neu": "Elige un paquete de inicio, o no",
+  "grund": "Imperativ wie Schritt „Introduce tus datos“"
+ },
+ {
+  "de": "Du bekommst deine Zugangsdaten von PM, und {{#unless partner_modus=duo}}{{vorname}} meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich{{/if}} bei dir.",
+  "alt": "Recibirás tus datos de acceso de PM, y {{#unless partner_modus=duo}}{{vorname}} se pondrá{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} se pondrán{{/if}} en contacto contigo.",
+  "neu": "PM te envía tus datos de acceso, y {{#unless partner_modus=duo}}{{vorname}} se pondrá{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} se pondrán{{/if}} en contacto contigo.",
+  "grund": "aktiv statt „recibirás … de PM“"
+ },
+ {
+  "de": "PM-Registrierung läuft im neuen Tab",
+  "alt": "El registro de PM está abierto en la pestaña nueva",
+  "neu": "El registro de PM sigue abierto en otra pestaña",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Deine Teampartner-Nummer",
+  "alt": "Tu número de team partner",
+  "neu": "Tu número de socio",
+  "grund": "einheitlich „socio“"
+ },
+ {
+  "de": "Steht in der Bestätigungs-Mail von PM, geht auch später.",
+  "alt": "Aparece en el e-mail de confirmación de PM; también puedes añadirlo más tarde.",
+  "neu": "Viene en el e-mail de confirmación de PM. También puedes ponerlo más tarde.",
+  "grund": "lockerer, ohne Semikolon"
+ },
+ {
+  "de": "Die Teampartner-Nummer besteht nur aus Ziffern.",
+  "alt": "El número de team partner solo contiene cifras.",
+  "neu": "El número de socio solo lleva cifras.",
+  "grund": "einheitlich „socio“"
+ },
+ {
+  "de": "Gespräch vereinbaren",
+  "alt": "Concertar una charla",
+  "neu": "Reserva una charla",
+  "grund": "„Concertar“ förmlich"
+ },
+ {
+  "de": "Sponsor",
+  "alt": "Sponsor",
+  "neu": "Patrocinador",
+  "grund": "einheitlich „patrocinador“"
+ },
+ {
+  "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+  "alt": "Recomienda productos de bienestar de alta calidad y ve creando un ingreso mensual extra. Sin vender, sin presión, a tu ritmo.",
+  "neu": "Recomienda productos de bienestar de alta calidad y ve creando unos ingresos mensuales extra. Sin vender, sin presión, a tu ritmo.",
+  "grund": "„ingresos“ im Plural üblich"
+ }
+]

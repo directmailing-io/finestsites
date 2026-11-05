@@ -119,7 +119,11 @@ html=html.replace(old_detect.group(0), """var SUP = %s;
 # 4) fsApplyLang: Attribute, Video, Titel; Ländernamen über Intl.DisplayNames je Sprache
 js=json.load(open(os.path.join(HERE,'js-strings.json')))
 js_keys=list(js)+[k for k in JS_EXTRA if k not in js]
-i18n={'attrs':{l:tr[l]['attrs'] for l in tr}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js_keys} for l in tr}, 'names':NAMES, 'langs':ALL}
+ATTRS_EN={'Erde aus dem All':'Earth from space','Schließen':'Close','Technisch notwendig (immer aktiv)':'Technically necessary (always active)','Statistik-Cookies erlauben':'Allow statistics cookies','Marketing-Cookies erlauben':'Allow marketing cookies','Cookie-Einstellungen':'Cookie settings','Cookie-Einstellungen öffnen':'Open cookie settings','Menü öffnen':'Open menu','Menü schließen':'Close menu','Video abspielen':'Play video','Ton':'Sound','Vollbild':'Fullscreen','Land suchen…':'Search country…','Dein vollständiger Name':'Your full name','Deine Nummer':'Your number','Sponsor':'Sponsor','Und noch viel mehr …':'And much more …'}
+src_en={x['de']:x['en'] for x in json.load(open(os.path.join(HERE,'source.json')))}
+attrs_de=json.load(open(os.path.join(HERE,'attrs.json')))
+attrs_en={a:(ATTRS_EN.get(a) or re.sub(r'<[^>]+>','',src_en.get(a,a))) for a in attrs_de}
+i18n={'attrs':{**{l:tr[l]['attrs'] for l in tr}, 'en':attrs_en}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js_keys} for l in tr}, 'names':NAMES, 'langs':ALL}
 old_apply="  function fsApplyLang(l) {\n    const en = l === 'en';"
 assert old_apply in html
 html=html.replace(old_apply,
@@ -134,9 +138,32 @@ html=html.replace(old_apply,
     return h;
   }
   window.fsJsSpans = fsJsSpans; window.fsJ = fsJ; window.fsT = fsT; window.fsPick = fsPick;
+  var FS_ATTR_NAMES = ['alt', 'aria-label', 'placeholder', 'title'];
+  /* Alle Attribute mit Text (alt/aria-label/placeholder/title) in die Sprache l; Original (DE) wird beim ersten Lauf in data-fs-de-* gemerkt */
+  function fsAttrAll(l) {
+    var dict = l === 'de' ? null : (FS_I18N.attrs[l] || null);
+    if (l !== 'de' && !dict) return;
+    document.querySelectorAll('[alt],[aria-label],[placeholder],[title]').forEach(function(el) {
+      FS_ATTR_NAMES.forEach(function(a) {
+        if (!el.hasAttribute(a)) return;
+        var k = 'data-fs-de-' + a, de = el.getAttribute(k);
+        if (de === null) { de = el.getAttribute(a); el.setAttribute(k, de); }
+        var v = dict ? (dict[de] || de) : de;
+        if (el.getAttribute(a) !== v) el.setAttribute(a, v);
+      });
+    });
+  }
+  (function() {
+    var pending = false;
+    function run() { pending = false; var l = document.documentElement.getAttribute('data-lang') || 'de'; if (l !== 'de') fsAttrAll(l); }
+    function arm() { if (!pending) { pending = true; requestAnimationFrame(run); } }
+    function start() { new MutationObserver(arm).observe(document.body, { childList: true, subtree: true }); run(); }
+    if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+  })();
   function fsApplyLang(l) {
     const en = l === 'en';
     const other = FS_I18N.langs.indexOf(l) > 1;
+    fsAttrAll(l);
     if (l === 'zh' || l === 'ko') fsCjkFonts(l);""" % json.dumps(i18n, ensure_ascii=False).replace('</', '<\\/'))
 # Noto Sans SC/KR nur laden, wenn Chinesisch/Koreanisch aktiv ist (Google Fonts liefert Unicode-Range-Slices, lädt also nur benötigte Zeichen)
 rep_fonts="""  window.fsJsSpans = fsJsSpans; window.fsJ = fsJ; window.fsT = fsT; window.fsPick = fsPick;"""

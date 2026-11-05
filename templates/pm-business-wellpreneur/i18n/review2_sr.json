@@ -1,0 +1,404 @@
+[
+  {
+    "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+    "alt": "{{#unless partner_modus=duo}}Ovu stranicu vodi <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}nezavisna distributerka{{/if}}{{#if geschlecht=maennlich}}nezavisni distributer{{/if}} PM-International (FitLine®). Ovo nije zvanična stranica PM-International AG.{{/unless}}{{#if partner_modus=duo}}Ovu stranicu vode <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, nezavisni distributeri PM-International (FitLine®). Ovo nije zvanična stranica PM-International AG.{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Ovu stranicu vodi <strong>{{vorname}} {{nachname}}</strong>, {{#if geschlecht=weiblich}}nezavisna distributerka{{/if}}{{#if geschlecht=maennlich}}nezavisni distributer{{/if}} kompanije PM-International (FitLine®). Ovo nije zvanični sajt kompanije PM-International AG.{{/unless}}{{#if partner_modus=duo}}Ovu stranicu vode <strong>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</strong>, nezavisni distributeri kompanije PM-International (FitLine®). Ovo nije zvanični sajt kompanije PM-International AG.{{/if}}",
+    "grund": "Name steht schon im Nominativ (Subjekt), passt; „kompanije“ ergänzt, damit der undeklinierbare Markenname grammatisch sauber angeschlossen ist, einheitlich mit id 230"
+  },
+  {
+    "de": "Über {{vorname}}",
+    "alt": "O {{vorname}}",
+    "neu": "O meni",
+    "grund": "„O {{vorname}}“ verlangt Lokativ (O Marku), Platzhalter bleibt aber Nominativ; Nav-Link aus Sicht des Seitenbetreibers"
+  },
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "Radi nešto dobro i dugoročno profitiraj",
+    "neu": "Čini dobro i zarađuj dugoročno",
+    "grund": "„Radi nešto dobro … profitiraj“ klingt übersetzt; gilt auch für den Seitentitel (attrs)"
+  },
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "Upoznaješ <strong>visokokvalitetne wellness i zdravstvene proizvode</strong>, koristiš ih <strong>lično</strong> i deliš svoje iskustvo sa drugima. Ko ih proba i <strong>nastavi da poručuje</strong>, doprinosi tome da <strong>svakog meseca nešto legne na tvoj račun</strong>.",
+    "neu": "Upoznaješ <strong>visokokvalitetne velnes i zdravstvene proizvode</strong>, koristiš ih <strong>lično</strong> i deliš svoje iskustvo sa drugima. Kad ih neko proba i <strong>nastavi da poručuje</strong>, <strong>svakog meseca ti nešto legne na račun</strong>.",
+    "grund": "„doprinosi tome da“ ist steifer Calque von „sorgt dafür“; „velnes“ einheitlich wie id 55"
+  },
+  {
+    "de": "100% Unterstützung von",
+    "alt": "100% podrška od",
+    "neu": "Tvoja podrška na 100%:",
+    "grund": "„podrška od“ + Name verlangt Genitiv; als Beschriftung mit Doppelpunkt steht der Name darunter im Nominativ (solo und duo), Sinn: diese Person ist deine Unterstützung"
+  },
+  {
+    "de": "Zeit frei einteilen",
+    "alt": "Vreme biraš samostalno",
+    "neu": "Slobodno raspoređuješ vreme",
+    "grund": "natürlicher als „Vreme biraš samostalno“"
+  },
+  {
+    "de": "30 Tage Rückgabe",
+    "alt": "30 dana za vraćanje",
+    "neu": "30 dana za povrat",
+    "grund": "„za vraćanje“ holprig; „povrat“ ist der übliche Begriff"
+  },
+  {
+    "de": "Selbstständige",
+    "alt": "Samostalci",
+    "neu": "Samozaposleni",
+    "grund": "„Samostalci“ ist unklar; „Samozaposleni“ ist der gängige Begriff für Selbstständige (auch attrs)"
+  },
+  {
+    "de": "Und alle anderen, die Bock haben.",
+    "alt": "I svi ostali koji su za.",
+    "neu": "I svi ostali koji imaju volje.",
+    "grund": "„koji su za“ klingt abgehackt; „imaju volje“ trifft „Bock haben“ locker"
+  },
+  {
+    "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+    "alt": "Od firme. Ne od tebe. Ti s tim nemaš ništa.",
+    "neu": "Od firme. Ne od tebe. Ti s tim nemaš nikakve veze.",
+    "grund": "„nemaš ništa“ ist unvollständig; „nemaš nikakve veze“ ist die feste Wendung"
+  },
+  {
+    "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+    "alt": "Tvoja provizija automatski leže na račun. Svakog meseca, dokle god se poručuje.",
+    "neu": "Provizija ti automatski stiže na račun. Svakog meseca, dok god ima porudžbina.",
+    "grund": "„leže na račun“ ist grammatisch falsch (ležati/leći); natürlicher Satzbau"
+  },
+  {
+    "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+    "alt": "Sve što inače smara,<br><span class=\"accent\">firma obavlja za tebe.</span>",
+    "neu": "Sve što inače smara,<br><span class=\"accent\">firma radi umesto tebe.</span>",
+    "grund": "„obavlja za tebe“ steif; „radi umesto tebe“ natürlicher"
+  },
+  {
+    "de": "fast alles erledigt",
+    "alt": "skoro sve završeno",
+    "neu": "skoro sve rešeno",
+    "grund": "„rešeno“ passt für eine To-do-Liste besser"
+  },
+  {
+    "de": "Kundengelder einziehen und auszahlen",
+    "alt": "Obrađuje uplate i isplate kupaca",
+    "neu": "Naplaćuje od kupaca i vrši isplate",
+    "grund": "„Obrađuje uplate i isplate kupaca“ verfälscht den Sinn (Firma zieht ein und zahlt aus)"
+  },
+  {
+    "de": "Business-Akademie, PowerDays und Reisen organisieren",
+    "alt": "Organizuje biznis akademiju, PowerDays i putovanja",
+    "neu": "Organizuje Biznis akademiju, PowerDays i putovanja",
+    "grund": "Business-Akademie als Eigenname großgeschrieben"
+  },
+  {
+    "de": "Natürliche Rohstoffe, keine Ersatz-Chemie",
+    "alt": "Prirodne sirovine, bez zamenske hemije",
+    "neu": "Prirodne sirovine, bez veštačkih zamena",
+    "grund": "„zamenska hemija“ ist ein Calque, so sagt das niemand"
+  },
+  {
+    "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+    "alt": "Ne prodaješ proizvod.<br><span class=\"accent\">Deliš deo kvaliteta života.</span>",
+    "neu": "Ne prodaješ proizvod.<br><span class=\"accent\">Pomažeš ljudima da žive bolje.</span>",
+    "grund": "„Deliš deo kvaliteta života“ ist wörtlich übertragen („ein Stück Lebensqualität verteilen“)"
+  },
+  {
+    "de": "Wumms im Alltag statt Nachmittagstief",
+    "alt": "Energija tokom dana umesto popodnevnog pada",
+    "neu": "Puna energija umesto popodnevne krize",
+    "grund": "„Wumms“ natürlich wiedergegeben; „popodnevna kriza“ ist die übliche Wendung für das Nachmittagstief"
+  },
+  {
+    "de": "Aktiv bleiben in jedem Alter",
+    "alt": "Ostati aktivan u svakom uzrastu",
+    "neu": "Aktivan život u svakim godinama",
+    "grund": "„Ostati aktivan“ ist maskulin; neutral formuliert, „u svakim godinama“ idiomatischer als „uzrastu“"
+  },
+  {
+    "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+    "alt": "Neko se godinama ujutru jedva izvlači iz kreveta. A ti si taj ko mu pokaže da može i drugačije. <span class=\"accent\">To je posao. Ne prodaja.</span>",
+    "neu": "Neko se godinama ujutru jedva izvlači iz kreveta. A ti mu pokažeš da može i drugačije. <span class=\"accent\">To je posao. Ne prodaja.</span>",
+    "grund": "„ti si taj ko“ maskulin und schwerfällig; neutral und direkt"
+  },
+  {
+    "de": "30 Tage ausprobieren. Passt nicht? 100 % Geld zurück. Ohne Papierkram.",
+    "alt": "Probaj 30 dana. Ne odgovara? 100 % novca nazad. Bez papirologije.",
+    "neu": "Probaj 30 dana. Ne odgovara ti? Dobijaš 100 % novca nazad. Bez papirologije.",
+    "grund": "„100 % novca nazad“ allein klingt abgehackt"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg je osnovao firmu 1993. Nema akcionara, nema investitora za vratom. Samo njegova porodica i tim koji već preko 30 godina uči i napreduje. Evo do čega to dovodi:",
+    "neu": "Rolf Sorg je osnovao firmu 1993. Nema akcionara, nema investitora za vratom. Samo njegova porodica i tim koji već preko 30 godina uči i napreduje. Rezultat vidiš ovde:",
+    "grund": "„Evo do čega to dovodi“ steif"
+  },
+  {
+    "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+    "alt": "Zdravlje je traženije nego ikad.<br><span class=\"accent\">A mi smo usred toga.</span>",
+    "neu": "Zdravlje je traženije nego ikad.<br><span class=\"accent\">A mi smo u samom centru.</span>",
+    "grund": "„usred toga“ klingt holprig"
+  },
+  {
+    "de": "Du arbeitest von zu Hause aus. Deine Kunden können trotzdem in Tokio, Miami oder Dubai ihre Produkte genießen.",
+    "alt": "Radiš od kuće. Tvoji kupci i dalje mogu da uživaju u svojim proizvodima u Tokiju, Majamiju ili Dubaiju.",
+    "neu": "Radiš od kuće. Tvoji kupci svejedno mogu da uživaju u svojim proizvodima u Tokiju, Majamiju ili Dubaiju.",
+    "grund": "„trotzdem“ = „svejedno“, nicht „i dalje“ (weiterhin)"
+  },
+  {
+    "de": "Bosnien",
+    "alt": "Bosna",
+    "neu": "BiH",
+    "grund": "landesübliche Kurzform für Bosnien und Herzegowina"
+  },
+  {
+    "de": "Dom. Republik",
+    "alt": "Dom. Republika",
+    "neu": "Dominikana",
+    "grund": "landesübliche Kurzform statt Abkürzung"
+  },
+  {
+    "de": "+65 weitere Länder",
+    "alt": "+65 drugih zemalja",
+    "neu": "+65 zemalja više",
+    "grund": "natürlicher für die Erweiterungszeile"
+  },
+  {
+    "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+    "alt": "Hajde da brzo izračunamo. Uzmi cipele od 100 evra u radnji. Gde završi tvoj novac?",
+    "neu": "Hajde da malo računamo. Uzmi cipele od 100 evra u radnji. Gde završava tvoj novac?",
+    "grund": "„brzo izračunamo“ wörtlich; lockerer"
+  },
+  {
+    "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+    "alt": "Ne. U piramidalnoj šemi zarađuje se na novim ljudima koji uplaćuju novac. Kod nas zarađuješ samo kada se proizvodi kupe i nastave da se koriste. Nema porudžbina, nema novca. Razlika je jasno regulisana zakonom (vidi <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG dodatak br. 14</a>) i isto je definiše i <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Savezno udruženje za direktnu prodaju</a>. A firma postoji od 1993. i ima 4 milijarde prometa. Piramidalne šeme propadnu posle nekoliko godina. Mi smo prešli 30.",
+    "neu": "Ne. U piramidalnoj šemi zarađuje se na novim ljudima koji uplaćuju novac. Kod nas zarađuješ samo kada se proizvodi kupe i nastave da se koriste. Nema porudžbina, nema novca. Razlika je jasno regulisana zakonom (vidi <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG, prilog br. 14</a>), a tako je definiše i <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Savezno udruženje za direktnu prodaju</a>. A firma postoji od 1993. i ima 4 milijarde prometa. Piramidalne šeme propadnu posle nekoliko godina. Mi smo tu već više od 30.",
+    "grund": "„isto je definiše i“ holprig; „Mi smo prešli 30“ unklar; „prilog“ ist der juristische Begriff"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "Super. Jer ovde niko ne prodaje. Samo pričaš o onome što je tebi značilo. Ko želi da čuje, sluša. Ko ne želi, ništa. Nema sales pitch-a, nema tehnika. Samo preporuka, kao kad preporučiš dobar restoran.",
+    "neu": "Tim bolje. Ovde ionako niko ne prodaje. Samo pričaš šta je tebi pomoglo. Ko želi da čuje, slušaće. Ko ne želi, ništa strašno. Bez prodajnog nastupa, bez tehnika. Samo preporuka, kao kad preporučiš dobar restoran.",
+    "grund": "Anglizismus „sales pitch“ ersetzt; „Gut so“ = „Tim bolje“; „Ko ne želi, ništa“ unvollständig"
+  },
+  {
+    "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+    "alt": "Ne. Poručuješ kad hoćeš i koliko hoćeš. Postoji automatski sistem isporuke uz koji štediš pri svakoj porudžbini. Većina se dobrovoljno odluči za to, jer ionako koristi proizvode i želi da uštedi. Ne zato što mora, nego zato što želi. Nema minimalnog trajanja, možeš da prilagodiš ili otkažeš kad god. Bez rizika.",
+    "neu": "Ne. Poručuješ kad hoćeš i koliko hoćeš. Ali postoji automatska isporuka uz koju štediš pri svakoj porudžbini. Većina se dobrovoljno odluči za to, jer ionako koristi proizvode i želi da uštedi. Ne zato što mora, nego zato što želi. Bez minimalnog trajanja, menjaš ili otkazuješ kad god hoćeš. Bez rizika.",
+    "grund": "„aber“ fehlte; „sistem isporuke uz koji“ steif; Schluss lockerer"
+  },
+  {
+    "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+    "alt": "Iskren odgovor: skroz različito. Neko napravi 100 mesečno, neko par hiljada, a neko živi potpuno od toga.",
+    "neu": "Iskren odgovor: skroz različito. Neko zaradi 100 evra mesečno, neko par hiljada evra, a neko od toga potpuno živi.",
+    "grund": "Währung ausdrücklich genannt; „napravi 100“ umgangssprachlich unklar"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "Na početku zarađuješ od onoga što sam preporučiš. Vremenom možeš da uključiš i druge ljude koji rade potpuno isto što i ti. Od onoga što tvoj tim onda pokrene, i ti dobiješ deo. Ne zato što zarađuješ na njima, nego zato što si pomogao da se izgrade i obuče. Kao trener koji dobija procenat od uspeha svojih sportista.",
+    "neu": "Na početku zarađuješ od onoga što sam preporučiš. Vremenom možeš da povedeš i druge ljude koji rade potpuno isto što i ti. Od onoga što tvoj tim onda postigne, i ti dobijaš deo. Ne zato što zarađuješ na njima, nego zato što ih ti gradiš i obučavaš. Kao trener koji dobija procenat od uspeha svojih sportista.",
+    "grund": "„mit ins Boot holen“ natürlicher als „uključiš“; „si pomogao“ maskulin, neutral umformuliert"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "To je razlog zašto neki ovde stvarno porastu: vremenom izgrade svoj tim koji raste zajedno s njima. I sve što uložiš vraća se tebi. Ne nekom šefu.",
+    "neu": "Zato neki ovde stvarno daleko dogure: vremenom izgrade svoj tim koji raste zajedno s njima. I sve što uložiš vraća se tebi. Ne nekom šefu.",
+    "grund": "„To je razlog zašto … porastu“ ist ein Calque"
+  },
+  {
+    "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+    "alt": "Za malo dodatnog novca: par sati mesečno. Za pravi dodatni prihod: 4 do 6 sati nedeljno. Za nešto baš veliko: više. U prvom razgovoru ćemo videti šta se uklapa u tvoj svakodnevni život i šta možeš da zamisliš za sebe.",
+    "neu": "Za malo dodatnog novca: par sati mesečno. Za pravi dodatni prihod: 4 do 6 sati nedeljno. Za nešto baš veliko: više. U prvom razgovoru ćemo videti šta se uklapa u tvoju svakodnevicu i šta možeš sebi da zamisliš.",
+    "grund": "„svakodnevni život“ und Wortstellung „možeš da zamisliš za sebe“ steif"
+  },
+  {
+    "de": "Die Anmeldung selbst kostet nichts. Um wirklich starten zu können, brauchst du ein kleines Startpaket mit Arbeitsmaterial (unter 20 Euro) und im Idealfall ein Produktset zum selbst Testen, damit du weißt, was du empfiehlst. Beides zusammen ist überschaubar, und das Produktset kannst du innerhalb von 30 Tagen zurückschicken, auch angebrochen. Kein Kursgeld, keine Ausbildungskosten, keine versteckten Gebühren.",
+    "alt": "Sama registracija ne košta ništa. Da bi stvarno mogao da kreneš, treba ti mali startni paket sa radnim materijalom (ispod 20 evra) i, u idealnom slučaju, set proizvoda da ih sam testiraš, da znaš šta preporučuješ. Oboje zajedno je prihvatljivo, a set proizvoda možeš da vratiš u roku od 30 dana, čak i ako je otvoren. Nema plaćanja kursa, nema troškova obuke, nema skrivenih naknada.",
+    "neu": "Sama registracija ne košta ništa. Za pravi start treba ti mali startni paket sa radnim materijalom (ispod 20 evra) i, idealno, set proizvoda da ih isprobaš, da znaš šta preporučuješ. Sve to zajedno nije veliki trošak, a set proizvoda možeš da vratiš u roku od 30 dana, čak i otvoren. Nema naplate kurseva, nema troškova obuke, nema skrivenih naknada.",
+    "grund": "„mogao“/„sam testiraš“ maskulin, neutral umformuliert; „Oboje zajedno je prihvatljivo“ steif für „überschaubar“"
+  },
+  {
+    "de": "Was sag ich, wenn mein Umfeld denkt das ist Abzocke?",
+    "alt": "Šta da kažem ako moje okruženje misli da je ovo prevara?",
+    "neu": "Šta da kažem ako ljudi oko mene misle da je ovo prevara?",
+    "grund": "„moje okruženje misli“ ist wörtlich aus „mein Umfeld“"
+  },
+  {
+    "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+    "alt": "To se često dešava. Jer su mnoge MLM stvari stvarno bile ili jesu prevara. Ja tad imam tri stvari u rukavu: firmu koja raste više od 30 godina. Proizvode koje možeš sam da testiraš i vratiš. I to da niko osim tebe ne odlučuje koliko daleko ćeš s tim ići. To je uglavnom dovoljno.",
+    "neu": "To se često dešava. Jer su mnoge MLM priče stvarno bile ili jesu prevara. Ja tad imam tri aduta: firmu koja raste više od 30 godina. Proizvode koje svako može da isproba i vrati. I to da niko osim tebe ne odlučuje koliko daleko ćeš s tim ići. To je uglavnom dovoljno.",
+    "grund": "„tri stvari u rukavu“ wörtlich; „tri aduta“ idiomatisch; „sam“ maskulin, „man“ neutral als „svako“"
+  },
+  {
+    "de": "Ein bisschen was nebenbei",
+    "alt": "Malo nešto sa strane",
+    "neu": "Malo zarade sa strane",
+    "grund": "„Malo nešto sa strane“ unklar"
+  },
+  {
+    "de": "Zweites Standbein aufbauen",
+    "alt": "Napraviti dodatni izvor prihoda",
+    "neu": "Drugi izvor prihoda",
+    "grund": "Infinitiv als Auswahloption steif; „zweites Standbein“ = zweiter Einkommenszweig"
+  },
+  {
+    "de": "Wie viel Zeit hättest du?",
+    "alt": "Koliko vremena bi mogao/la da izdvojiš?",
+    "neu": "Koliko vremena možeš da izdvojiš?",
+    "grund": "„mogao/la“ entfernt, neutral"
+  },
+  {
+    "de": "Mehr, ich meine es ernst",
+    "alt": "Više, ozbiljno mislim",
+    "neu": "Više, ovo mi je ozbiljno",
+    "grund": "„ozbiljno mislim“ klingt übersetzt"
+  },
+  {
+    "de": "So erreiche ich dich",
+    "alt": "Ovako me možeš kontaktirati",
+    "neu": "Gde da ti se javim",
+    "grund": "„Ovako me možeš kontaktirati“ hatte die Richtung vertauscht (gemeint: so erreiche ICH dich)"
+  },
+  {
+    "de": "Du schreibst direkt an",
+    "alt": "Pišeš direktno",
+    "neu": "Poruka stiže direktno:",
+    "grund": "„Pišeš direktno“ + Name verlangt Dativ; als Beschriftung mit Doppelpunkt steht der Name darunter im Nominativ (solo und duo)"
+  },
+  {
+    "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+    "alt": "Tvoja poruka je stigla do mene. Javljam ti se uskoro, najčešće još istog dana.",
+    "neu": "Tvoja poruka je stigla do mene. Javiću ti se uskoro, najčešće još istog dana.",
+    "grund": "Futur natürlicher als „Javljam ti se“"
+  },
+  {
+    "de": "Rechtliches",
+    "alt": "Pravno",
+    "neu": "Pravne informacije",
+    "grund": "„Pravno“ allein wirkt abgeschnitten"
+  },
+  {
+    "de": "von",
+    "alt": "od",
+    "neu": "by",
+    "grund": "„od FinestSites“ verlangt Genitiv am Markennamen; „Made with ♥ by“ als durchgehend englische Wendung, Logo folgt"
+  },
+  {
+    "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Koristimo kolačiće da bi ti iskustvo na sajtu bilo što bolje. Tehnički neophodni kolačići su uvek aktivni — oni omogućavaju da sajt radi. Ostale kolačiće (npr. za statistiku) postavljamo samo uz tvoju saglasnost. Više informacija je u našoj <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">politici privatnosti</a>.",
+    "neu": "Koristimo kolačiće da bi ti iskustvo na sajtu bilo što bolje. Tehnički neophodni kolačići su uvek aktivni, jer bez njih sajt ne radi. Ostale kolačiće (npr.&nbsp;za statistiku) postavljamo samo uz tvoju saglasnost. Više informacija je u našoj <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">politici privatnosti</a>.",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Grundlegende Funktionen der Website — immer aktiv.",
+    "alt": "Osnovne funkcije sajta — uvek aktivne.",
+    "neu": "Osnovne funkcije sajta, uvek aktivne.",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Bitte deinen vollständigen Namen eingeben.",
+    "alt": "Unesi svoje puno ime.",
+    "neu": "Unesi ime i prezime.",
+    "grund": "natürlicher als „svoje puno ime“"
+  },
+  {
+    "de": "30 Tage Widerruf",
+    "alt": "30 dana za odustajanje",
+    "neu": "30 dana za odustanak",
+    "grund": "„odustanak“ ist der übliche Begriff (Widerrufsrecht)"
+  },
+  {
+    "de": "Startpaket wählen, oder nicht",
+    "alt": "Izaberi start paket, ili nemoj",
+    "neu": "Izaberi startni paket, ili ne",
+    "grund": "„start paket“ → „startni paket“ wie id 192; „ili nemoj“ klingt schroff"
+  },
+  {
+    "de": "Du bekommst deine Zugangsdaten von PM, und {{#unless partner_modus=duo}}{{vorname}} meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich{{/if}} bei dir.",
+    "alt": "Dobijaš svoje pristupne podatke od PM, i {{#unless partner_modus=duo}}{{vorname}} ti se javlja{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} ti se javljaju{{/if}}.",
+    "neu": "PM ti šalje pristupne podatke, a {{#unless partner_modus=duo}}{{vorname}} ti se javlja{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} ti se javljaju{{/if}}.",
+    "grund": "„od PM“ ohne Kasus holprig; Name bleibt Subjekt im Nominativ, Verb solo/duo korrekt"
+  },
+  {
+    "de": "Lieber erst Fragen stellen? <a href=\"#kontakt\">Zum Kontaktformular</a>",
+    "alt": "Radije bi prvo da pitaš nešto? <a href=\"#kontakt\">Do kontakt forme</a>",
+    "neu": "Imaš prvo neka pitanja? <a href=\"#kontakt\">Na kontakt formu</a>",
+    "grund": "„Radije bi prvo da pitaš nešto?“ und „Do kontakt forme“ holprig"
+  },
+  {
+    "de": "Schon registriert? <strong>Nummer hinterlassen</strong>",
+    "alt": "Već si registrovan? <strong>Ostavi broj</strong>",
+    "neu": "Registracija završena? <strong>Ostavi broj</strong>",
+    "grund": "„registrovan“ maskulin, neutral umformuliert"
+  },
+  {
+    "de": "Wie {{#unless partner_modus=duo}}kann {{vorname}}{{/unless}}{{#if partner_modus=duo}}können {{vorname}} &amp; {{vorname2}}{{/if}} dich erreichen?",
+    "alt": "Kako {{#unless partner_modus=duo}}{{vorname}} može da te kontaktira{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} mogu da te kontaktiraju{{/if}}?",
+    "neu": "Kako {{#unless partner_modus=duo}}{{vorname}} može da ti se javi{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} mogu da ti se jave{{/if}}?",
+    "grund": "Name als Subjekt im Nominativ; „da ti se javi“ natürlicher als „da te kontaktira“"
+  },
+  {
+    "de": "Hinterlass hier kurz deine Nummer, sobald du dich registriert hast. {{#unless partner_modus=duo}}{{vorname}} meldet sich dann bei dir und hilft{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich dann bei dir und helfen{{/if}} dir beim Start.",
+    "alt": "Ostavi ovde kratko svoj broj čim se registruješ. {{#unless partner_modus=duo}}{{vorname}} će ti se onda javiti i pomoći ti da kreneš{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} će ti se onda javiti i pomoći ti da kreneš{{/if}}.",
+    "neu": "Samo ostavi ovde svoj broj čim se registruješ. {{#unless partner_modus=duo}}{{vorname}} će ti se onda javiti i pomoći da kreneš{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} će ti se onda javiti i pomoći da kreneš{{/if}}.",
+    "grund": "„Ostavi ovde kratko“ ist ein Calque von „kurz“; doppeltes „ti“ entfernt; Name im Nominativ"
+  },
+  {
+    "de": "Steht in der Bestätigungs-Mail von PM, geht auch später.",
+    "alt": "Piše u imejlu sa potvrdom od PM, može i kasnije.",
+    "neu": "Nalazi se u PM imejlu sa potvrdom, može i kasnije.",
+    "grund": "„Piše u imejlu … od PM“ holprig"
+  },
+  {
+    "de": "Am liebsten per",
+    "alt": "Najradije preko",
+    "neu": "Najviše mi odgovara:",
+    "grund": "„Najradije preko“ verlangt Genitiv bei den Optionen („Poziv“); mit Doppelpunkt stehen die Optionen im Nominativ"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}{{vorname}} hat deine Nachricht und meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} haben deine Nachricht und melden sich{{/if}} bei dir, meistens noch am selben Tag. Willkommen im Team!",
+    "alt": "{{#unless partner_modus=duo}}{{vorname}} ima tvoju poruku i javiće ti se{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} imaju tvoju poruku i javiće ti se{{/if}}, uglavnom još istog dana. Dobro došao/la u tim!",
+    "neu": "{{#unless partner_modus=duo}}{{vorname}} ima tvoju poruku i javiće ti se{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} imaju tvoju poruku i javiće ti se{{/if}}, uglavnom još istog dana. Sada si deo tima!",
+    "grund": "„Dobro došao/la“ durch neutrale, warme Form ersetzt; Namen im Nominativ"
+  },
+  {
+    "de": "Schon entschieden? <a href=\"#teampartner\">Direkt bei PM-International registrieren</a>",
+    "alt": "Već si odlučio/la? <a href=\"#teampartner\">Registruj se direktno kod PM-International</a>",
+    "neu": "Odluka je već pala? <a href=\"#teampartner\">Registruj se direktno kod PM-International</a>",
+    "grund": "„odlučio/la“ durch neutrale Form ersetzt"
+  },
+  {
+    "de": "3 kurze Fragen, dann melde ich mich per Telefon oder WhatsApp",
+    "alt": "3 kratka pitanja, pa ti se javljam telefonom ili preko WhatsApp-a",
+    "neu": "3 kratka pitanja, pa ti se javim telefonom ili preko WhatsApp-a",
+    "grund": "perfektives „javim“ natürlicher"
+  },
+  {
+    "de": "3 kurze Fragen, dann melden wir uns per Telefon oder WhatsApp",
+    "alt": "3 kratka pitanja, pa ti se javljamo telefonom ili preko WhatsApp-a",
+    "neu": "3 kratka pitanja, pa ti se javimo telefonom ili preko WhatsApp-a",
+    "grund": "perfektives „javimo“ natürlicher"
+  },
+  {
+    "de": "Schreib uns auf",
+    "alt": "Pišite nam na",
+    "neu": "Piši nam na",
+    "grund": "Besucher wird geduzt (eine Person), einheitlich mit id 301"
+  },
+  {
+    "de": "Dein vollständiger Name",
+    "alt": "Tvoje puno ime",
+    "neu": "Ime i prezime",
+    "grund": "natürliche Platzhalter-Beschriftung, wie id 248"
+  },
+  {
+    "de": "Land suchen…",
+    "alt": "Pretraži zemlju…",
+    "neu": "Potraži zemlju…",
+    "grund": "„Potraži“ ist im Suchfeld üblicher"
+  },
+  {
+    "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+    "alt": "Preporučuj kvalitetne wellness proizvode i usput gradi mesečni prihod. Bez prodaje, bez pritiska, svojim tempom.",
+    "neu": "Preporučuj kvalitetne velnes proizvode i usput izgradi mesečni prihod. Bez prodaje, bez pritiska, svojim tempom.",
+    "grund": "„velnes“ einheitlich, perfektives „izgradi“"
+  }
+]

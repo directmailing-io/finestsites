@@ -1,0 +1,398 @@
+[
+  {
+    "de": "Gutes tun und dauerhaft profitieren",
+    "alt": "İyi bir şey yap, uzun vadede kazanç sağla",
+    "neu": "İyilik yap, uzun vadede kazan",
+    "grund": "Kürzer und natürlicher, „kazanç sağla“ klingt steif"
+  },
+  {
+    "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+    "alt": "<strong>Kaliteli wellness ve sağlık ürünlerini</strong> tanırsın, <strong>kendin</strong> kullanırsın ve deneyimlerini başkalarıyla paylaşırsın. Deneyen ve <strong>sipariş vermeye devam eden</strong> herkes, <strong>her ay hesabına bir şeyler yatmasını</strong> sağlar.",
+    "neu": "<strong>Kaliteli wellness ve sağlık ürünlerini</strong> tanıyorsun, <strong>kendin</strong> kullanıyorsun ve deneyimlerini başkalarıyla paylaşıyorsun. Onları deneyip <strong>sipariş vermeye devam eden</strong> herkes sayesinde <strong>her ay hesabına para yatıyor</strong>.",
+    "grund": "„hesabına bir şeyler yatmasını sağlar“ ist wörtlich und holprig; Präsens lebendiger"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}Zeig{{/unless}}{{#if partner_modus=duo}}Zeigt{{/if}} mir, wie das läuft",
+    "alt": "{{#unless partner_modus=duo}}Nasıl olduğunu göster{{/unless}}{{#if partner_modus=duo}}Nasıl olduğunu gösterin{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}Bana nasıl işlediğini göster{{/unless}}{{#if partner_modus=duo}}Bana nasıl işlediğini gösterin{{/if}}",
+    "grund": "„nasıl işlediği“ passt zu „wie das läuft“, „bana“ wie im DE"
+  },
+  {
+    "de": "100% Unterstützung von",
+    "alt": "%100 destek",
+    "neu": "Sana %100 destek veren:",
+    "grund": "Beschriftung im Stil „Hazırlayan:“, Name darunter ohne Suffix; passt für eine und zwei Personen"
+  },
+  {
+    "de": "Zeit frei einteilen",
+    "alt": "Zamanını özgürce ayarla",
+    "neu": "Zamanını kendin belirle",
+    "grund": "„özgürce ayarla“ ist Übersetzungstürkisch"
+  },
+  {
+    "de": "Vom Handy aus",
+    "alt": "Telefondan",
+    "neu": "Telefonundan",
+    "grund": "Persönlicher (dein Handy)"
+  },
+  {
+    "de": "Keine Verpflichtung",
+    "alt": "Zorunluluk yok",
+    "neu": "Taahhüt yok",
+    "grund": "Üblicher Ausdruck für „keine Verpflichtung“"
+  },
+  {
+    "de": "Bist du geeignet?",
+    "alt": "Sana uygun mu?",
+    "neu": "Bu iş sana göre mi?",
+    "grund": "Natürlicher als „Sana uygun mu?“"
+  },
+  {
+    "de": "<strong>Egal wo du gerade stehst.</strong> Weil es <strong>nichts gibt, was du erst lernen müsstest</strong>. Kein Studium, keine Erfahrung, kein besonderes Talent. <strong>Alles was du brauchst, hast du längst dabei.</strong>",
+    "alt": "<strong>Şu an hayatının neresinde olursan ol.</strong> Çünkü <strong>önce öğrenmen gereken hiçbir şey yok</strong>. Üniversite diploması yok, deneyim yok, özel bir yetenek yok. <strong>İhtiyacın olan her şey zaten sende.</strong>",
+    "neu": "<strong>Şu an hayatının neresinde olursan ol.</strong> Çünkü <strong>önce öğrenmen gereken hiçbir şey yok</strong>. Üniversite diploması, deneyim ya da özel bir yetenek gerekmez. <strong>İhtiyacın olan her şey zaten sende.</strong>",
+    "grund": "Sinnfehler: gemeint ist „nicht nötig“, nicht „fehlt“"
+  },
+  {
+    "de": "In Elternzeit",
+    "alt": "Ebeveyn izninde olanlar",
+    "neu": "Doğum izninde olanlar",
+    "grund": "„Doğum izni“ ist der gängige Begriff in der Türkei"
+  },
+  {
+    "de": "Selbstständige",
+    "alt": "Serbest çalışanlar",
+    "neu": "Kendi işini yapanlar",
+    "grund": "„Serbest çalışan“ = Freelancer, zu eng für Selbstständige"
+  },
+  {
+    "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+    "alt": "Firmadan. Senden değil. Bu işlerle sen uğraşmazsın.",
+    "neu": "Firmadan. Senden değil. O kısımla hiç uğraşmazsın.",
+    "grund": "Lockerer und klarer"
+  },
+  {
+    "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+    "alt": "Komisyonun otomatik olarak hesabına yatar. Sipariş verilmeye devam edildiği sürece, her ay.",
+    "neu": "Komisyonun otomatik olarak hesabına yatar. Siparişler devam ettiği sürece, her ay.",
+    "grund": "Passivkonstruktion „verilmeye devam edildiği“ war steif"
+  },
+  {
+    "de": "Anwender und Partner unterstützen",
+    "alt": "Kullanıcıları ve partnerleri desteklemek",
+    "neu": "Ürünü kullananlara ve partnerlere destek olmak",
+    "grund": "„Kullanıcıları desteklemek“ klingt nach Technik-Support"
+  },
+  {
+    "de": "Firma",
+    "alt": "Şirket",
+    "neu": "Firma",
+    "grund": "Einheitlich mit „firma“ in den übrigen Texten"
+  },
+  {
+    "de": "Marketing-Material und Videos bereitstellen",
+    "alt": "Pazarlama materyalleri ve videolar sağlamak",
+    "neu": "Pazarlama materyalleri ve videolar hazırlamak",
+    "grund": "„sağlamak“ wirkt wörtlich, „hazırlamak“ üblich"
+  },
+  {
+    "de": "Business-Akademie, PowerDays und Reisen organisieren",
+    "alt": "Business-Akademie, PowerDays ve seyahatleri organize etmek",
+    "neu": "İş akademisini, PowerDays etkinliklerini ve seyahatleri organize etmek",
+    "grund": "Business-Akademie landesüblich übersetzt, Akkusativ korrekt"
+  },
+  {
+    "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+    "alt": "Günlük hayat için wellness ve sağlık ürünleri. Vitamin kokteylinden bağışıklık desteğine kadar. Hepsi aynı sıkı standartlara göre üretiliyor. Burada örnek olarak en önemli ürünümüzü görüyorsun: PowerCocktail.",
+    "neu": "Günlük hayat için wellness ve sağlık ürünleri. Vitamin kokteylinden bağışıklık güçlendiricilere kadar. Hepsi aynı sıkı standartlara göre üretiliyor. Burada örnek olarak gözbebeğimizi görüyorsun: PowerCocktail.",
+    "grund": "„Herzstück“ idiomatisch als „gözbebeği“"
+  },
+  {
+    "de": "Damit du beim ersten Schluck merkst: das ist anders",
+    "alt": "İlk yudumda şunu fark etmen için: bu farklı",
+    "neu": "İlk yudumda anlayasın diye: Bu farklı.",
+    "grund": "„şunu fark etmen için“ ist Übersetzungstürkisch"
+  },
+  {
+    "de": "Beim ersten Schluck spürbar anders",
+    "alt": "İlk yudumdan itibaren farkı hissedilir",
+    "neu": "İlk yudumda farkı hissedersin",
+    "grund": "Natürlicher, persönliche Ansprache"
+  },
+  {
+    "de": "20+ Vitamine, 25+ Extrakte",
+    "alt": "20+ vitamin, 25+ öz",
+    "neu": "20+ vitamin, 25+ ekstrakt",
+    "grund": "„öz“ allein ist unklar"
+  },
+  {
+    "de": "Mehr als weiterempfehlen",
+    "alt": "Önermekten daha fazlası",
+    "neu": "Tavsiye etmekten fazlası",
+    "grund": "„Önermek“ hier zu technisch, konsistent mit „tavsiye“"
+  },
+  {
+    "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+    "alt": "Bir ürün satmıyorsun.<br><span class=\"accent\">Yaşam kalitesinden bir parça paylaşıyorsun.</span>",
+    "neu": "Bir ürün satmıyorsun.<br><span class=\"accent\">İnsanların hayatına kalite katıyorsun.</span>",
+    "grund": "Deutsches Bild „Stück Lebensqualität verteilen“ natürlich gemacht"
+  },
+  {
+    "de": "Fit für Job und Familie gleichzeitig",
+    "alt": "İş ve aile için aynı anda zinde olmak",
+    "neu": "Hem iş hem aile için zinde olmak",
+    "grund": "„aynı anda“ wörtlich, so natürlicher"
+  },
+  {
+    "de": "Ausgleich nach stressigen Tagen",
+    "alt": "Stresli günlerden sonra dengeyi bulmak",
+    "neu": "Stresli günlerin ardından rahatlamak",
+    "grund": "„dengeyi bulmak“ wörtlich für „Ausgleich“"
+  },
+  {
+    "de": "Nach der Schwangerschaft zurück zu sich",
+    "alt": "Hamilelikten sonra yeniden kendine dönmek",
+    "neu": "Doğumdan sonra yeniden kendini bulmak",
+    "grund": "„kendine dönmek“ ist unidiomatisch"
+  },
+  {
+    "de": "Klar im Kopf, konzentriert im Job",
+    "alt": "Kafan net, işte odaklısın",
+    "neu": "Berrak bir zihin, işte tam odak",
+    "grund": "Stil der übrigen Listenpunkte, natürlicher"
+  },
+  {
+    "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+    "alt": "Biri yıllardır sabahları yataktan sürüne sürüne kalkıyor. Ve ona bunun başka türlü de olabileceğini gösteren kişi sensin. <span class=\"accent\">İş bu. Satış yapmak değil.</span>",
+    "neu": "Biri yıllardır sabahları yataktan sürüne sürüne kalkıyor. Ve ona bunun başka türlü de olabileceğini gösteren kişi sensin. <span class=\"accent\">Asıl iş bu. Satış yapmak değil.</span>",
+    "grund": "„Asıl iş bu“ trifft die Pointe besser"
+  },
+  {
+    "de": "Kein Risiko. <span class=\"accent\">Für keinen.</span>",
+    "alt": "Risk yok. <span class=\"accent\">Kimse için.</span>",
+    "neu": "Risk yok. <span class=\"accent\">Hiç kimse için.</span>",
+    "grund": "Betonter, natürlicher"
+  },
+  {
+    "de": "Was hinter allem steht",
+    "alt": "Her şeyin arkasında ne var",
+    "neu": "Her şeyin arkasında kim var",
+    "grund": "Gemeint ist die Firma, also „kim“"
+  },
+  {
+    "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+    "alt": "Rolf Sorg şirketi 1993’te kurdu. Hissedar yok, ensesinde soluyan yatırımcılar yok. Sadece ailesi ve 30 yılı aşkın süredir öğrenmeye devam eden bir ekip var. Ortaya ne çıktığını burada görüyorsun:",
+    "neu": "Rolf Sorg şirketi 1993’te kurdu. Hissedar yok, ensesinde soluyan yatırımcı yok. Sadece ailesi ve 30 yılı aşkın süredir kendini geliştirmeye devam eden bir ekip. Ortaya ne çıktığını burada görebilirsin:",
+    "grund": "„var“ am Satzende überflüssig, „öğrenmeye devam eden“ wörtlich"
+  },
+  {
+    "de": "Wer dich begleitet",
+    "alt": "Yanında kim var",
+    "neu": "Yanında kim olacak",
+    "grund": "Natürlicher als Kicker"
+  },
+  {
+    "de": "Wer euch begleitet",
+    "alt": "Yanınızda kim var",
+    "neu": "Yanınızda kim olacak",
+    "grund": "Natürlicher als Kicker"
+  },
+  {
+    "de": "Du arbeitest von zu Hause aus. Deine Kunden können trotzdem in Tokio, Miami oder Dubai ihre Produkte genießen.",
+    "alt": "Evden çalışıyorsun. Müşterilerin yine de Tokyo, Miami veya Dubai’de ürünlerinin keyfini çıkarabilir.",
+    "neu": "Sen evden çalışıyorsun. Ama müşterilerin Tokyo’da, Miami’de ya da Dubai’de ürünlerinin keyfini çıkarabilir.",
+    "grund": "Ortssuffixe je Stadt, flüssiger"
+  },
+  {
+    "de": "Warum das geht",
+    "alt": "Bu nasıl oluyor",
+    "neu": "Bu nasıl mümkün",
+    "grund": "„nasıl oluyor“ zu umgangssprachlich-unklar"
+  },
+  {
+    "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+    "alt": "Hadi kısa bir hesap yapalım. Mağazadan 100 Euro’luk bir ayakkabı aldığını düşün. Paran nereye gidiyor?",
+    "neu": "Kısaca bir hesap yapalım. Mağazada 100 Euro’luk bir ayakkabı düşün. Paran nereye gidiyor?",
+    "grund": "Flüssiger, „aldığını düşün“ war umständlich"
+  },
+  {
+    "de": "Muss ich meine Freunde und Familie nerven?",
+    "alt": "Arkadaşlarımı ve ailemi darlamam mı gerekiyor?",
+    "neu": "Arkadaşlarımı ve ailemi bıktırmam mı gerekiyor?",
+    "grund": "„darlamak“ ist regional/derb, „bıktırmak“ trifft „nerven“"
+  },
+  {
+    "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+    "alt": "Kesinlikle hayır. Ben sadece gerçekten uygun olduğunu düşündüğüm yerde tavsiye ederim. Aksi zaten ayıp olurdu. Çevrenden kimseye bahsetmek istemiyorsan, sosyal medya ya da kendi topluluğun üzerinden başka bir sürü yol var. Bunu sana nasıl uyuyorsa öyle yapıyoruz.",
+    "neu": "Kesinlikle hayır. Ben sadece gerçekten uygun olduğunu düşündüğüm yerde tavsiye ederim. Başka türlüsü zaten tuhaf kaçardı. Çevrenden kimseye bahsetmek istemiyorsan, sosyal medya ya da kendi topluluğun üzerinden bir sürü başka yol var. Bunu sana nasıl uyuyorsa öyle yaparız.",
+    "grund": "„ayıp olurdu“ = unanständig, gemeint ist peinlich"
+  },
+  {
+    "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+    "alt": "Çok iyi. Çünkü burada kimse satış yapmıyor. Sadece sana neyin iyi geldiğini anlatıyorsun. Duymak isteyen dinler. İstemeyen de dinlemez, olur biter. Satış konuşması yok, teknik yok. İyi bir restoranı nasıl tavsiye ediyorsan öyle, sadece bir tavsiye.",
+    "neu": "Çok iyi. Çünkü burada kimse satış yapmıyor. Sadece sana neyin iyi geldiğini anlatıyorsun. Duymak isteyen dinler. İstemeyen dinlemez, olur biter. Satış konuşması yok, teknik yok. Sadece bir tavsiye, tıpkı iyi bir restoranı tavsiye eder gibi.",
+    "grund": "Letzter Satz war verdreht"
+  },
+  {
+    "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+    "alt": "İlk bakışta belki. Ama fiyatın nasıl oluştuğuna bir bak. Çoğu markada paranın yüzde 60’ı reklam ve aracı ticarete gider. Bizde büyük kısmı kaliteye gider. Fiyatın daha yüksek olmasının nedeni bu. İnsanların tekrar tekrar sipariş vermesinin nedeni de tam olarak bu.",
+    "neu": "İlk bakışta belki. Ama fiyatın nasıl oluştuğuna bir bak. Çoğu markada paranın yüzde 60’ı reklama ve aracılara gider. Bizde büyük kısmı kaliteye gider. Fiyatın daha yüksek olmasının nedeni bu. İnsanların tekrar tekrar sipariş vermesinin nedeni de tam olarak bu.",
+    "grund": "„aracı ticaret“ ist Fachjargon"
+  },
+  {
+    "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+    "alt": "Alabilirsin. Ama o zaman başka bir şey almış olursun. Standart vitaminler çoğu zaman tek tek dozlanır. Bizim ürünlerimiz birbiriyle uyumlu olacak şekilde hazırlanır ve Almanya’da farmasötik standartlara göre üretilir. Bu, hazır kahveyle gerçek espresso arasındaki fark gibi.",
+    "neu": "Alabilirsin. Ama o zaman başka bir şey almış olursun. Standart vitaminler çoğu zaman tek tek dozlanır. Bizim ürünlerimiz birbiriyle uyumlu olacak şekilde hazırlanır ve Almanya’da ilaç standartlarında üretilir. Bu, hazır kahveyle gerçek bir espresso arasındaki fark gibi.",
+    "grund": "„farmasötik standart“ steif"
+  },
+  {
+    "de": "Was verdient man realistisch?",
+    "alt": "Gerçekçi olarak ne kadar kazanılır?",
+    "neu": "Gerçekçi bakarsak ne kadar kazanılır?",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+    "alt": "Dürüst cevap: Çok değişir. Kimi ayda 100 kazanır, kimi birkaç bin, kimisi de tamamen bununla geçinir.",
+    "neu": "Dürüst cevap: Çok değişir. Kimi ayda 100 Euro kazanır, kimi birkaç bin Euro, kimi de tamamen bununla geçinir.",
+    "grund": "Währung ausdrücklich genannt"
+  },
+  {
+    "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+    "alt": "Başta kendi tavsiye ettiklerinden kazanırsın. Zamanla senin yaptığının aynısını yapan başka insanları da yanına alabilirsin. Ekibinin ortaya çıkardığı işten sen de pay alırsın. Onların üzerinden kazandığın için değil, onları yetiştirip eğittiğin için. Sporcularının başarısından belli bir yüzde alan antrenör gibi.",
+    "neu": "Başta kendi tavsiye ettiklerinden kazanırsın. Zamanla senin yaptığının aynısını yapan başka insanları da yanına alabilirsin. Ekibinin yaptığı işten sen de pay alırsın. Onların üzerinden kazandığın için değil, onları yetiştirip eğittiğin için. Tıpkı sporcularının başarısından yüzde alan bir antrenör gibi.",
+    "grund": "„ortaya çıkardığı işten“ steif, Vergleich flüssiger"
+  },
+  {
+    "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+    "alt": "Bazılarının burada gerçekten büyümesinin nedeni bu: Zamanla kendileriyle birlikte büyüyen kendi ekiplerini kuruyorlar. Ve harcadığın her emeğin karşılığı sana gelir. Bir patrona değil.",
+    "neu": "Bazılarının burada gerçekten büyümesinin nedeni bu: Zamanla kendileriyle birlikte büyüyen kendi ekiplerini kuruyorlar. Verdiğin her emeğin karşılığı sana döner. Bir patrona değil.",
+    "grund": "„harcadığın emek“ negativ konnotiert"
+  },
+  {
+    "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+    "alt": "O zaman bırakırsın. Sözleşme yok, ihbar süresi yok, açık fatura yok, tartışma yok. Bizde kural şu: isteyen yapar, kimse yapmak zorunda değildir.",
+    "neu": "O zaman bırakırsın. Sözleşme yok, ihbar süresi yok, açık fatura yok, tartışma yok. Bizde kural şu: İsteyen yapar, kimse zorunda değil.",
+    "grund": "Knapper, wie ein Motto"
+  },
+  {
+    "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+    "alt": "Bu sık oluyor. Çünkü birçok MLM işi gerçekten dolandırıcılıktı ya da hâlâ öyle. Benim o zaman elimde üç şey var: 30 yılı aşkın süredir büyüyen bir şirket. Kendin deneyip geri gönderebileceğin ürünler. Ve bunu ne kadar ileri götüreceğine senden başka kimsenin karar vermemesi. Genelde bu yeterli oluyor.",
+    "neu": "Bu sık oluyor. Çünkü birçok MLM işi gerçekten dolandırıcılıktı ya da hâlâ öyle. O zaman cebimde hep üç koz var: 30 yılı aşkın süredir büyüyen bir şirket. Kendin deneyip geri gönderebileceğin ürünler. Ve bunu ne kadar ileri götüreceğine senden başka kimsenin karar vermemesi. Genelde bu yeterli oluyor.",
+    "grund": "„im Ärmel haben“ idiomatisch („cebimde koz“)"
+  },
+  {
+    "de": "Passt das zu dir?<br><span class=\"accent\">Lass es uns herausfinden.</span>",
+    "alt": "Bu sana uyar mı?<br><span class=\"accent\">Hadi birlikte öğrenelim.</span>",
+    "neu": "Bu iş sana göre mi?<br><span class=\"accent\">Gel, birlikte öğrenelim.</span>",
+    "grund": "Konsistent mit „Bu iş sana göre mi?“, wärmer"
+  },
+  {
+    "de": "Mehr, ich meine es ernst",
+    "alt": "Daha fazla, ciddiyim",
+    "neu": "Daha fazla, bu işte ciddiyim",
+    "grund": "Klarer"
+  },
+  {
+    "de": "So erreiche ich dich",
+    "alt": "Sana böyle ulaşabilirim",
+    "neu": "İletişim bilgilerin",
+    "grund": "„Sana böyle ulaşabilirim“ klingt unnatürlich als Überschrift"
+  },
+  {
+    "de": "Du schreibst direkt an",
+    "alt": "Doğrudan yazacağın kişi",
+    "neu": "Mesajını doğrudan okuyacak:",
+    "grund": "Beschriftung über dem Namen, funktioniert für eine und zwei Personen ohne Suffix"
+  },
+  {
+    "de": "Wie erreiche ich dich am besten?",
+    "alt": "Sana en iyi nasıl ulaşırım?",
+    "neu": "Sana en kolay nasıl ulaşırım?",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+    "alt": "Mesajın bana ulaştı. En kısa zamanda dönüş yaparım, çoğu zaman aynı gün içinde.",
+    "neu": "Mesajın bana ulaştı. En kısa sürede dönerim, çoğu zaman aynı gün.",
+    "grund": "Lockerer"
+  },
+  {
+    "de": "von",
+    "alt": "tarafından",
+    "neu": "by",
+    "grund": "„Made with ♥ tarafından FinestSites“ ist falsche Wortstellung; Rest der Zeile ist Englisch"
+  },
+  {
+    "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+    "alt": "Sana en iyi deneyimi sunmak için çerez kullanıyoruz. Teknik olarak gerekli çerezler her zaman aktiftir — sitenin çalışmasını sağlarlar. Diğer çerezleri (ör.&nbsp;istatistikler) sadece senin onayınla kullanırız. Daha fazla bilgi <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">gizlilik politikamızda</a>.",
+    "neu": "Sana en iyi deneyimi sunmak için çerezler kullanıyoruz. Teknik olarak gerekli çerezler her zaman aktiftir, sitenin çalışmasını onlar sağlar. Diğer çerezleri (örn.&nbsp;istatistik) yalnızca onay verirsen kullanırız. Daha fazla bilgiyi <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">gizlilik politikamızda</a> bulabilirsin.",
+    "grund": "Gedankenstrich entfernt, „ör.“ einheitlich „örn.“, letzter Satz vollständig"
+  },
+  {
+    "de": "Grundlegende Funktionen der Website — immer aktiv.",
+    "alt": "Web sitesinin temel işlevleri — her zaman aktif.",
+    "neu": "Web sitesinin temel işlevleri, her zaman aktif.",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Das siehst du bei PM-International",
+    "alt": "PM-International’da karşına çıkacaklar",
+    "neu": "PM-International’da seni neler bekliyor",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Startpaket wählen, oder nicht",
+    "alt": "Başlangıç paketi seç, ya da seçme",
+    "neu": "Başlangıç paketi seç ya da seçme",
+    "grund": "Komma unnötig"
+  },
+  {
+    "de": "PM zeigt dir zwei Pakete zum Loslegen. Du kannst dich aber auch ohne Bestellung registrieren.",
+    "alt": "PM başlaman için sana iki paket gösterir. Ama hiçbir şey sipariş etmeden de kayıt olabilirsin.",
+    "neu": "PM sana başlangıç için iki paket gösterir. Ama hiç sipariş vermeden de kayıt olabilirsin.",
+    "grund": "Flüssiger"
+  },
+  {
+    "de": "Lieber erst Fragen stellen? <a href=\"#kontakt\">Zum Kontaktformular</a>",
+    "alt": "Önce birkaç soru mu sormak istersin? <a href=\"#kontakt\">İletişim formuna git</a>",
+    "neu": "Önce soru sormayı mı tercih edersin? <a href=\"#kontakt\">İletişim formuna git</a>",
+    "grund": "„Lieber“ = tercih"
+  },
+  {
+    "de": "Hinterlass hier kurz deine Nummer, sobald du dich registriert hast. {{#unless partner_modus=duo}}{{vorname}} meldet sich dann bei dir und hilft{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich dann bei dir und helfen{{/if}} dir beim Start.",
+    "alt": "Kayıt olduktan sonra numaranı buraya kısaca bırak. {{#unless partner_modus=duo}}{{vorname}} sonra seninle iletişime geçip başlarken sana yardımcı olur{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} sonra seninle iletişime geçip başlarken sana yardımcı olurlar{{/if}}.",
+    "neu": "Kayıt olur olmaz numaranı buraya bırak. {{#unless partner_modus=duo}}{{vorname}} seninle iletişime geçip başlangıçta sana yardımcı olur{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} seninle iletişime geçip başlangıçta sana yardımcı olurlar{{/if}}.",
+    "grund": "„kısaca bırak“ unnatürlich, „sobald“ = olur olmaz; Name ohne Suffix"
+  },
+  {
+    "de": "Noch nicht sicher?<br><span class=\"accent\">Lass uns kurz sprechen.</span>",
+    "alt": "Henüz emin değil misin?<br><span class=\"accent\">Kısaca konuşalım.</span>",
+    "neu": "Henüz emin değil misin?<br><span class=\"accent\">Gel, kısaca konuşalım.</span>",
+    "grund": "Wärmer"
+  },
+  {
+    "de": "Du willst nicht warten? <a href=\"{{pm_registrierung_url}}\" data-pm-reg target=\"_blank\" rel=\"noopener noreferrer\">Du kannst dich auch jetzt schon bei PM-International registrieren.</a>",
+    "alt": "Beklemek istemiyor musun? <a href=\"{{pm_registrierung_url}}\" data-pm-reg target=\"_blank\" rel=\"noopener noreferrer\">PM-International’a hemen şimdi de kayıt olabilirsin.</a>",
+    "neu": "Beklemek istemiyor musun? <a href=\"{{pm_registrierung_url}}\" data-pm-reg target=\"_blank\" rel=\"noopener noreferrer\">PM-International’a şimdiden kayıt olabilirsin.</a>",
+    "grund": "„hemen şimdi de“ holprig"
+  },
+  {
+    "de": "Meldet euch bei uns",
+    "alt": "Bize ulaşın",
+    "neu": "Bize ulaş",
+    "grund": "Besucher wird überall mit „sen“ angesprochen"
+  },
+  {
+    "de": "Erde aus dem All",
+    "alt": "Uzaydan Dünya",
+    "neu": "Uzaydan görünen Dünya",
+    "grund": "Bildbeschreibung natürlicher"
+  },
+  {
+    "de": "Empfiehl hochwertige Wellness-Produkte weiter und bau dir nebenbei ein monatliches Einkommen auf. Ohne Verkaufen, ohne Druck, in deinem Tempo.",
+    "alt": "Kaliteli wellness ürünlerini tavsiye et ve bir yandan kendine aylık bir gelir oluştur. Satış yok, baskı yok; kendi hızında.",
+    "neu": "Kaliteli wellness ürünlerini tavsiye et ve bir yandan kendine aylık bir gelir kur. Satış yok, baskı yok, kendi temponda.",
+    "grund": "Semikolon entfernt, „temponda“ natürlicher"
+  }
+]

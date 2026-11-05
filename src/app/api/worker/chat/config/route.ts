@@ -1,6 +1,6 @@
 /**
  * GET /api/worker/chat/config  (Widget: GET /.finestsites/chat/config)
- * → { enabled, owner:{ name, avatarUrl, brandColor }, whatsappUrl, welcome, siteHost }
+ * → { enabled, owner:{ name, avatarUrl, brandColor }, whatsappUrl, welcome, welcomeDefault, siteHost }
  * Nicht freigeschaltet: 200 { enabled:false }. Gesperrter Besucher: 403 BLOCKED (+ whatsappUrl).
  */
 import type { NextRequest } from 'next/server'
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
     },
     whatsappUrl,
     welcome: WELCOME_TEXT,
+    welcomeDefault: true,   // Standardtext: das Widget zeigt ihn in der Seitensprache (public/chat-widget/i18n)
     siteHost: siteHostOf(site),
   })
 }

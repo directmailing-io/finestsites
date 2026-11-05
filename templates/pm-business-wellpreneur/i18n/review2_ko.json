@@ -1,0 +1,350 @@
+[
+ {
+  "de": "Über uns",
+  "alt": "우리 소개",
+  "neu": "저희 소개",
+  "grund": "Ich-/Wir-Perspektive höflich: 저희 statt 우리"
+ },
+ {
+  "de": "Gutes tun und dauerhaft profitieren",
+  "alt": "좋은 일 하고 꾸준히 혜택받기",
+  "neu": "좋은 일 하면서 꾸준한 수익까지",
+  "grund": "„혜택받기“ klang nach Rabatt; profitieren = Einnahmen"
+ },
+ {
+  "de": "Teile deine Erfahrungen und bau dir ein <span class=\"accent\">monatliches Einkommen</span> auf.",
+  "alt": "경험을 나누고 <span class=\"accent\">월수입</span>을 만들어 보세요.",
+  "neu": "경험을 나누면서 <span class=\"accent\">매달 들어오는 수입</span>을 만들어 보세요.",
+  "grund": "natürlicher, betont „monatlich“"
+ },
+ {
+  "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+  "alt": "먼저 <strong>퀄리티 좋은 웰니스·건강 제품</strong>을 알게 되고, <strong>직접</strong> 써본 다음 그 경험을 다른 사람들과 나눠요. 제품을 테스트해 보고 <strong>계속 주문하는</strong> 사람이 있으면, <strong>매달 계좌에 수익이 들어오게</strong> 돼요.",
+  "neu": "<strong>품질 좋은 웰니스·건강 제품</strong>을 알게 되고, <strong>직접</strong> 써 보면서 그 경험을 다른 사람들과 나눠요. 써 보고 <strong>계속 주문하는</strong> 사람이 생기면 <strong>매달 내 계좌에 돈이 들어와요</strong>.",
+  "grund": "flüssiger, „퀄리티“ durch 품질 ersetzt"
+ },
+ {
+  "de": "Video lädt nicht.",
+  "alt": "동영상이 로드되지 않아요.",
+  "neu": "동영상을 불러올 수 없어요.",
+  "grund": "üblicher UI-Text"
+ },
+ {
+  "de": "100% Unterstützung von",
+  "alt": "100% 지원해 주는",
+  "neu": "100% 든든한 지원군",
+  "grund": "Beschriftung über dem Namen, ohne Partikel; 지원군 passt für eine und zwei Personen"
+ },
+ {
+  "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+  "alt": "네, 당신도 <span class=\"accent\">할 수 있어요.</span>",
+  "neu": "네, 여러분도 <span class=\"accent\">할 수 있어요.</span>",
+  "grund": "당신 vermeiden"
+ },
+ {
+  "de": "<strong>Egal wo du gerade stehst.</strong> Weil es <strong>nichts gibt, was du erst lernen müsstest</strong>. Kein Studium, keine Erfahrung, kein besonderes Talent. <strong>Alles was du brauchst, hast du längst dabei.</strong>",
+  "alt": "<strong>지금 어떤 상황에 있든 괜찮아요.</strong> <strong>먼저 배워야 할 게 없기</strong> 때문이에요. 학위도, 경험도, 특별한 재능도 필요 없어요. <strong>필요한 건 이미 다 가지고 있어요.</strong>",
+  "neu": "<strong>지금 어떤 상황이든 괜찮아요.</strong> <strong>따로 배워야 할 게 없거든요</strong>. 학위도, 경험도, 특별한 재능도 필요 없어요. <strong>필요한 건 이미 다 갖고 있어요.</strong>",
+  "grund": "„때문이에요“-Satz ohne Bezug, natürlicher mit -거든요"
+ },
+ {
+  "de": "Und alle anderen, die Bock haben.",
+  "alt": "그리고 해보고 싶은 마음이 있는 누구나.",
+  "neu": "그 밖에도 해 보고 싶은 분이라면 누구나.",
+  "grund": "natürlicher für „die Bock haben“"
+ },
+ {
+  "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+  "alt": "회사에 직접 주문해요. 나에게 주문하는 게 아니에요. 내가 처리할 일은 없어요.",
+  "neu": "주문은 회사로 바로 들어가요. 직접 받는 게 아니라서 신경 쓸 일이 없어요.",
+  "grund": "wörtliche Dreiteilung mit 나 geglättet"
+ },
+ {
+  "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+  "alt": "귀찮은 나머지는 전부<br><span class=\"accent\">회사에서 대신 해줘요.</span>",
+  "neu": "귀찮은 일은 전부<br><span class=\"accent\">회사가 대신 해 줘요.</span>",
+  "grund": "Fehler: „귀찮은 나머지“ heißt „vor lauter Ärger“; gemeint: alles Lästige"
+ },
+ {
+  "de": "Kundengelder einziehen und auszahlen",
+  "alt": "고객 대금 수금 및 지급하기",
+  "neu": "고객 대금 받고 정산하기",
+  "grund": "natürlicher Fachausdruck"
+ },
+ {
+  "de": "Und was empfiehlst du <span class=\"accent\">eigentlich?</span>",
+  "alt": "그럼 <span class=\"accent\">실제로는</span> 뭘 추천하나요?",
+  "neu": "그럼 추천하는 건 <span class=\"accent\">정확히 뭔가요?</span>",
+  "grund": "natürlichere Frage"
+ },
+ {
+  "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+  "alt": "일상에서 쓰는 웰니스 및 건강 제품이에요. 비타민 칵테일부터 면역 부스터까지요. 모두 같은 엄격한 기준에 따라 생산돼요. 여기서는 그 대표 제품이자 우리의 핵심인 PowerCocktail을 보여드릴게요.",
+  "neu": "일상에서 쓰는 웰니스·건강 제품이에요. 비타민 칵테일부터 면역 부스터까지요. 모두 똑같이 엄격한 기준으로 만들어요. 여기서는 대표로 저희 핵심 제품인 PowerCocktail을 보여 드릴게요.",
+  "grund": "우리→저희, flüssiger"
+ },
+ {
+  "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+  "alt": "제품을 파는 게 아니에요.<br><span class=\"accent\">삶의 질을 조금 나누는 거예요.</span>",
+  "neu": "제품을 파는 게 아니에요.<br><span class=\"accent\">더 좋은 하루를 선물하는 거예요.</span>",
+  "grund": "„삶의 질을 조금 나누는“ war wörtlich"
+ },
+ {
+  "de": "Wumms im Alltag statt Nachmittagstief",
+  "alt": "오후에 처지는 대신 일상에 활력",
+  "neu": "오후의 나른함 대신 하루 종일 활력",
+  "grund": "„Wumms im Alltag“ natürlich"
+ },
+ {
+  "de": "Ausgleich nach stressigen Tagen",
+  "alt": "스트레스 많은 하루 후 균형 찾기",
+  "neu": "스트레스 많은 날 끝에 재충전",
+  "grund": "natürlicher für „Ausgleich“"
+ },
+ {
+  "de": "Klar im Kopf, konzentriert im Job",
+  "alt": "맑은 머리로, 일에 집중해요",
+  "neu": "맑은 머리, 일에 집중",
+  "grund": "Stichwort-Stil wie die übrigen Kacheln"
+ },
+ {
+  "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+  "alt": "누군가는 몇 년째 아침마다 힘겹게 침대에서 일어나요. 그리고 그 사람에게 꼭 그럴 필요는 없다는 걸 보여주는 사람이 바로 당신이에요. <span class=\"accent\">그게 이 일이에요. 판매가 아니고요.</span>",
+  "neu": "누군가는 몇 년째 아침마다 겨우 몸을 일으켜요. 그리고 바로 그 사람에게 다르게 살 수도 있다는 걸 보여 주는 거예요. <span class=\"accent\">그게 이 일이에요. 판매가 아니라요.</span>",
+  "grund": "당신 entfernt, Subjekt weggelassen wie im Koreanischen üblich"
+ },
+ {
+  "de": "Was hinter allem steht",
+  "alt": "이 모든 것의 바탕",
+  "neu": "이 모든 것 뒤에 있는 회사",
+  "grund": "„바탕“ unklar; gemeint ist die Firma"
+ },
+ {
+  "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+  "alt": "건강에 대한 수요는 그 어느 때보다 높아요.<br><span class=\"accent\">그리고 우리는 그 한가운데에 있어요.</span>",
+  "neu": "건강에 대한 수요는 그 어느 때보다 높아요.<br><span class=\"accent\">그리고 저희는 그 한가운데에 있어요.</span>",
+  "grund": "우리→저희"
+ },
+ {
+  "de": "Ganz egal wie's der Wirtschaft gerade geht: Auf <strong>Gesundheit, Fitness und Wohlbefinden</strong> will niemand verzichten. <strong>Die Nachfrage steigt jedes Jahr</strong>, und wir wachsen mit. <strong>Hunderttausende Menschen weltweit</strong> sind längst dabei. <strong>Und jetzt bist du dran.</strong>",
+  "alt": "경제 상황이 어떻든, <strong>건강, 피트니스, 웰빙</strong>은 누구도 포기하고 싶어 하지 않아요. <strong>수요는 매년 늘고 있고</strong>, 우리도 함께 성장하고 있어요. <strong>전 세계 수십만 명</strong>이 이미 함께하고 있어요. <strong>이제 당신 차례예요.</strong>",
+  "neu": "경제 상황이 어떻든, <strong>건강, 피트니스, 웰빙</strong>은 누구도 포기하고 싶어 하지 않아요. <strong>수요는 매년 늘고 있고</strong>, 저희도 함께 성장하고 있어요. <strong>전 세계 수십만 명</strong>이 이미 함께하고 있어요. <strong>이제 직접 함께할 차례예요.</strong>",
+  "grund": "당신 entfernt, 우리→저희"
+ },
+ {
+  "de": "Wer dich begleitet",
+  "alt": "당신을 도와줄 사람",
+  "neu": "곁에서 함께할 사람",
+  "grund": "당신 entfernt, „begleiten“ natürlicher"
+ },
+ {
+  "de": "Wer euch begleitet",
+  "alt": "함께해 줄 두 사람",
+  "neu": "곁에서 함께할 두 사람",
+  "grund": "an Solo-Fassung angeglichen"
+ },
+ {
+  "de": "+65 weitere Länder",
+  "alt": "+65개국 더",
+  "neu": "외 65개국",
+  "grund": "„+65개국 더“ unidiomatisch"
+ },
+ {
+  "de": "Warum das geht",
+  "alt": "왜 가능한지",
+  "neu": "이게 가능한 이유",
+  "grund": "natürlicher Kicker"
+ },
+ {
+  "de": "Unser Weg",
+  "alt": "우리 방식",
+  "neu": "저희 방식",
+  "grund": "우리→저희"
+ },
+ {
+  "de": "Bevor du fragst",
+  "alt": "묻기 전에",
+  "neu": "물어보시기 전에",
+  "grund": "natürlicher Kicker"
+ },
+ {
+  "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+  "alt": "아니요. 피라미드 사기는 새로 들어온 사람들이 돈을 내면 거기서 수익이 나는 구조예요. 여기서는 제품이 구매되고 계속 사용될 때만 수익이 생겨요. 주문이 없으면 수익도 없어요. 이 차이는 독일 법으로 명확히 규정되어 있고(<a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG 부록 14번</a> 참고), <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">독일 직접판매협회</a>에서도 그렇게 정의해요. 그리고 이 회사는 1993년부터 이어져 왔고 연 매출이 40억 달러에 달해요. 피라미드 사기는 몇 년 지나면 무너져요. 우리는 30년이 넘었어요.",
+  "neu": "아니요. 피라미드 사기는 새로 들어온 사람들이 낸 돈으로 수익이 나는 구조예요. 여기서는 제품이 팔리고 계속 쓰일 때만 수익이 생겨요. 주문이 없으면 수익도 없어요. 이 차이는 독일 법으로 명확히 규정되어 있고(<a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG 부록 14번</a> 참고), <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">독일 직접판매협회</a>에서도 그렇게 정의해요. 그리고 이 회사는 1993년부터 이어져 왔고 연 매출이 40억 달러에 달해요. 피라미드 사기는 몇 년 지나면 무너져요. 저희는 벌써 30년이 넘었어요.",
+  "grund": "우리→저희, erster Satz flüssiger"
+ },
+ {
+  "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+  "alt": "절대 아니에요. 저는 잘 맞을 것 같다고 생각될 때만 추천해요. 그게 아니면 솔직히 민망하잖아요. 주변 사람에게 말하고 싶지 않다면, 소셜 미디어나 내 커뮤니티처럼 다른 방법도 충분히 있어요. 본인에게 맞는 방식으로 해요.",
+  "neu": "절대 아니에요. 저는 잘 맞을 것 같을 때만 추천해요. 그게 아니면 솔직히 민망하잖아요. 주변 사람에게 말하고 싶지 않다면 소셜 미디어나 본인 커뮤니티처럼 다른 방법도 충분히 있어요. 본인에게 딱 맞는 방식으로 같이 해 나가요.",
+  "grund": "„내 커뮤니티“ war Perspektivfehler (Besucher), Schluss natürlicher"
+ },
+ {
+  "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+  "alt": "처음 보면 그럴 수도 있어요. 그런데 가격이 어떻게 구성되는지 한번 봐요. 대부분의 브랜드는 60%가 광고와 중간 유통에 들어가요. 우리는 대부분이 품질에 들어가요. 그래서 가격이 더 높아요. 그리고 바로 그 이유 때문에 사람들이 계속 다시 주문해요.",
+  "neu": "처음 보면 그럴 수도 있어요. 그런데 가격이 어떻게 구성되는지 한번 보세요. 대부분의 브랜드는 60%가 광고와 중간 유통에 들어가요. 저희는 대부분이 품질에 들어가요. 그래서 가격이 더 높아요. 그리고 바로 그 이유 때문에 사람들이 계속 다시 주문해요.",
+  "grund": "우리→저희, 봐요→보세요"
+ },
+ {
+  "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+  "alt": "살 수는 있어요. 하지만 그건 다른 걸 사는 거예요. 일반 비타민은 보통 각각 따로 용량이 맞춰져 있어요. 우리 제품은 서로 맞물리도록 설계되어 있고, 독일에서 제약 기준에 맞춰 만들어져요. 인스턴트커피와 진짜 에스프레소의 차이 같은 거예요.",
+  "neu": "살 수는 있어요. 하지만 그건 다른 걸 사는 거예요. 일반 비타민은 보통 성분마다 따로 용량이 맞춰져 있어요. 저희 제품은 서로 잘 맞도록 설계되어 있고, 독일에서 제약 기준에 맞춰 만들어요. 인스턴트커피와 진짜 에스프레소의 차이 같은 거예요.",
+  "grund": "우리→저희, „맞물리도록“ geglättet"
+ },
+ {
+  "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+  "alt": "처음에는 본인이 직접 추천한 것에서 수익이 나요. 시간이 지나면 본인과 똑같이 하는 사람들을 함께할 수 있게 데려올 수도 있어요. 그때 팀이 만들어내는 결과에서도 본인이 일정 부분을 받아요. 그 사람들에게서 돈을 버는 게 아니라, 그 팀을 함께 만들고 트레이닝했기 때문이에요. 선수들의 성과에서 일정 비율을 받는 코치처럼요.",
+  "neu": "처음에는 본인이 직접 추천한 것에서 수익이 나요. 시간이 지나면 본인과 똑같이 하는 사람들을 팀으로 맞이할 수도 있어요. 그러면 팀이 만들어 내는 결과에서도 일정 부분을 받아요. 그 사람들에게서 돈을 버는 게 아니라, 그 팀을 함께 만들고 트레이닝했기 때문이에요. 선수들의 성과에서 일정 비율을 받는 코치처럼요.",
+  "grund": "„mit ins Boot holen“ natürlich übertragen"
+ },
+ {
+  "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+  "alt": "용돈 정도면 한 달에 몇 시간. 제대로 된 부수입을 원한다면 주 4~6시간. 크게 키우고 싶다면 그보다 더요. 첫 대화에서 내 일상에 뭐가 맞는지, 어떤 그림을 그릴 수 있는지 같이 봐요.",
+  "neu": "용돈 정도면 한 달에 몇 시간. 제대로 된 부수입을 원한다면 주 4~6시간. 크게 키우고 싶다면 그보다 더요. 첫 대화에서 일상에 뭐가 맞는지, 어떤 모습을 그리고 있는지 같이 볼게요.",
+  "grund": "„내 일상“ Perspektivfehler entfernt"
+ },
+ {
+  "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+  "alt": "그럼 그만두면 돼요. 계약도, 해지 예고 기간도, 남은 청구서도, 실랑이도 없어요. 우리는 이렇게 생각해요. 누구나 할 수 있지만, 아무도 해야 하는 건 아니에요.",
+  "neu": "그럼 그만두면 돼요. 계약도, 해지 예고 기간도, 남은 청구서도, 실랑이도 없어요. 저희 원칙은 이거예요. 누구나 할 수 있지만, 아무도 해야 하는 건 아니에요.",
+  "grund": "우리→저희, natürlicher"
+ },
+ {
+  "de": "Ein bisschen was nebenbei",
+  "alt": "부담 없이 조금씩",
+  "neu": "부업으로 조금 벌어 보기",
+  "grund": "Bedeutung „nebenbei etwas dazuverdienen“ jetzt klar"
+ },
+ {
+  "de": "Zweites Standbein aufbauen",
+  "alt": "두 번째 수입원 만들기",
+  "neu": "제2의 수입원 만들기",
+  "grund": "idiomatische Wendung"
+ },
+ {
+  "de": "Komplett neuer Weg",
+  "alt": "완전히 새로운 시작",
+  "neu": "완전히 새로운 길",
+  "grund": "näher an „Weg“, beruflicher Neuanfang"
+ },
+ {
+  "de": "Erstmal die Produkte kennenlernen",
+  "alt": "먼저 제품 알아보기",
+  "neu": "먼저 제품부터 알아보기",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Du schreibst direkt an",
+  "alt": "메시지는 바로 이 사람에게 전달돼요:",
+  "neu": "메시지를 직접 받는 사람",
+  "grund": "Beschriftung mit Name darunter, ohne Doppelpunkt-Satz"
+ },
+ {
+  "de": "Deine Nachricht ist bei mir angekommen. Ich melde mich zeitnah, meistens noch am selben Tag.",
+  "alt": "메시지가 저에게 도착했어요. 빠르게 연락드릴게요. 보통 당일에 연락드려요.",
+  "neu": "메시지 잘 받았어요. 곧 연락드릴게요. 보통은 당일에 바로 드려요.",
+  "grund": "Wiederholung von 연락드려요 vermieden"
+ },
+ {
+  "de": "Häufige Fragen",
+  "alt": "FAQ",
+  "neu": "자주 묻는 질문",
+  "grund": "in Korea üblicher als FAQ"
+ },
+ {
+  "de": "von",
+  "alt": "제공",
+  "neu": "by",
+  "grund": "„Made with ♥ 제공 FinestSites“ ungrammatisch; koreanische Seiten lassen die Credit-Zeile englisch"
+ },
+ {
+  "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "alt": "더 나은 이용 경험을 위해 쿠키를 사용해요. 기술적으로 꼭 필요한 쿠키는 항상 활성화되어 있어요 — 사이트가 제대로 작동하게 해주거든요. 그 외 쿠키(예:&nbsp;통계)는 동의하신 경우에만 사용해요. 자세한 내용은 <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">개인정보 처리방침</a>에서 확인하실 수 있어요.",
+  "neu": "더 나은 이용 경험을 위해 쿠키를 사용해요. 기술적으로 꼭 필요한 쿠키는 항상 켜져 있어요. 사이트가 제대로 작동하려면 꼭 필요하거든요. 그 외 쿠키(예:&nbsp;통계)는 동의하신 경우에만 사용해요. 자세한 내용은 <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">개인정보 처리방침</a>에서 확인하실 수 있어요.",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Grundlegende Funktionen der Website — immer aktiv.",
+  "alt": "웹사이트의 기본 기능 — 항상 활성화되어 있어요.",
+  "neu": "웹사이트의 기본 기능이에요. 항상 켜져 있어요.",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Hilft uns zu verstehen, wie Besucher die Seite nutzen (z.&nbsp;B. Google Analytics).",
+  "alt": "방문자가 사이트를 어떻게 이용하는지 이해하는 데 도움이 돼요(예: Google Analytics).",
+  "neu": "방문자가 사이트를 어떻게 이용하는지 이해하는 데 도움이 돼요(예:&nbsp;Google Analytics).",
+  "grund": "&nbsp; wie im DE behalten"
+ },
+ {
+  "de": "Für personalisierte Werbung und Retargeting (z.&nbsp;B. Meta Pixel).",
+  "alt": "맞춤형 광고와 리타게팅에 사용돼요(예: Meta Pixel).",
+  "neu": "맞춤형 광고와 리타게팅에 사용돼요(예:&nbsp;Meta Pixel).",
+  "grund": "&nbsp; wie im DE behalten"
+ },
+ {
+  "de": "Einstellungen anpassen &#8250;",
+  "alt": "설정 조정 &#8250;",
+  "neu": "설정 변경 &#8250;",
+  "grund": "natürlicher Knopftext"
+ },
+ {
+  "de": "Einstellungen anpassen ›",
+  "alt": "설정 조정 ›",
+  "neu": "설정 변경 ›",
+  "grund": "natürlicher Knopftext"
+ },
+ {
+  "de": "Bitte deinen vollständigen Namen eingeben.",
+  "alt": "전체 이름을 입력해 주세요.",
+  "neu": "성과 이름을 모두 입력해 주세요.",
+  "grund": "„전체 이름“ unüblich"
+ },
+ {
+  "de": "Du weißt schon, <span class=\"accent\">dass du das willst?</span>",
+  "alt": "이미 <span class=\"accent\">하고 싶다는 마음이 드나요?</span>",
+  "neu": "이미 <span class=\"accent\">마음을 정했나요?</span>",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Dann registrier dich direkt bei PM-International als Teampartner. Drei Schritte, ein paar Minuten, und {{#unless partner_modus=duo}}{{vorname}} begleitet dich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} begleiten dich{{/if}} von Anfang an.",
+  "alt": "그럼 PM-International에서 바로 팀 파트너로 등록하세요. 3단계, 몇 분이면 되고, {{#unless partner_modus=duo}}{{vorname}}님이{{/unless}}{{#if partner_modus=duo}}{{vorname}}님 &amp; {{vorname2}}님이{{/if}} 처음부터 함께해 드릴 거예요.",
+  "neu": "그럼 PM-International에서 바로 팀 파트너로 등록해 보세요. 3단계, 몇 분이면 끝나요. 그리고 {{#unless partner_modus=duo}}{{vorname}}님이{{/unless}}{{#if partner_modus=duo}}{{vorname}}님 &amp; {{vorname2}}님이{{/if}} 처음부터 곁에서 함께해요.",
+  "grund": "flüssiger; Name nur mit 님(이), funktioniert mit jedem Namen"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}{{vorname}} hat deine Nachricht und meldet sich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} haben deine Nachricht und melden sich{{/if}} bei dir, meistens noch am selben Tag. Willkommen im Team!",
+  "alt": "{{#unless partner_modus=duo}}{{vorname}}님이 메시지를 받았고 연락드릴 거예요{{/unless}}{{#if partner_modus=duo}}{{vorname}}님 &amp; {{vorname2}}님이 메시지를 받았고 연락드릴 거예요{{/if}}. 보통 당일에 연락드려요. 팀에 오신 걸 환영해요!",
+  "neu": "{{#unless partner_modus=duo}}{{vorname}}님이 메시지를 확인하고 연락드릴 거예요{{/unless}}{{#if partner_modus=duo}}{{vorname}}님 &amp; {{vorname2}}님이 메시지를 확인하고 연락드릴 거예요{{/if}}. 대부분 당일에 연락이 가요. 팀에 오신 걸 환영해요!",
+  "grund": "doppeltes 연락드려요 vermieden"
+ },
+ {
+  "de": "Oder schreib mir auf",
+  "alt": "또는 저에게 메시지 보내기:",
+  "neu": "또는 여기서 저에게 메시지 주세요",
+  "grund": "natürlicher vor den Plattform-Kacheln"
+ },
+ {
+  "de": "Oder schreib uns auf",
+  "alt": "또는 저희에게 메시지 보내기:",
+  "neu": "또는 여기서 저희에게 메시지 주세요",
+  "grund": "natürlicher vor den Plattform-Kacheln"
+ },
+ {
+  "de": "Schreib mir auf",
+  "alt": "저에게 메시지 보내기",
+  "neu": "여기서 저에게 메시지 주세요",
+  "grund": "natürlicher vor den Plattform-Kacheln"
+ },
+ {
+  "de": "Schreib uns auf",
+  "alt": "저희에게 메시지 보내기",
+  "neu": "여기서 저희에게 메시지 주세요",
+  "grund": "natürlicher vor den Plattform-Kacheln"
+ },
+ {
+  "de": "Dein vollständiger Name",
+  "alt": "성함",
+  "neu": "성과 이름",
+  "grund": "Platzhalter: vollständiger Name klarer"
+ }
+]

@@ -1,0 +1,668 @@
+[
+ {
+  "de": "So läuft's",
+  "alt": "怎么做",
+  "neu": "怎么运作",
+  "grund": "Nav-Link: „怎么做“ klingt nach Anleitung, „怎么运作“ = wie es läuft"
+ },
+ {
+  "de": "So läuft’s",
+  "alt": "流程是这样",
+  "neu": "怎么运作",
+  "grund": "einheitlich mit id 2"
+ },
+ {
+  "de": "Teile deine Erfahrungen und bau dir ein <span class=\"accent\">monatliches Einkommen</span> auf.",
+  "alt": "分享你的体验，建立一份<span class=\"accent\">每月收入</span>。",
+  "neu": "分享你的体验，为自己打造一份<span class=\"accent\">每月收入</span>。",
+  "grund": "„建立一份收入“ steif, „为自己打造“ natürlicher"
+ },
+ {
+  "de": "Du lernst <strong>hochwertige Wellness- und Gesundheitsprodukte</strong> kennen, nutzt sie <strong>selbst</strong> und teilst deine Erfahrungen mit anderen. Wer sie testet und <strong>weiter bestellt</strong>, sorgt dafür, dass <strong>jeden Monat etwas auf deinem Konto</strong> landet.",
+  "alt": "你会了解<strong>高品质的养生和健康产品</strong>，<strong>自己</strong>使用它们，然后把你的体验分享给别人。有人试用后<strong>继续订购</strong>，就会让<strong>你的账户每个月都有收入到账</strong>。",
+  "neu": "你会接触到<strong>高品质的养生和健康产品</strong>，<strong>自己</strong>先用起来，再把体验分享给别人。谁试过之后<strong>继续订购</strong>，<strong>你的账户每个月就会有钱进来</strong>。",
+  "grund": "flüssiger, weniger wörtlich"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}Zeig{{/unless}}{{#if partner_modus=duo}}Zeigt{{/if}} mir, wie das läuft",
+  "alt": "{{#unless partner_modus=duo}}给我看看{{/unless}}{{#if partner_modus=duo}}给我看看{{/if}}这是怎么做的",
+  "neu": "{{#unless partner_modus=duo}}给我看看{{/unless}}{{#if partner_modus=duo}}给我看看{{/if}}具体怎么做",
+  "grund": "„这是怎么做的“ wörtlich, „具体怎么做“ natürlicher"
+ },
+ {
+  "de": "Video lädt nicht.",
+  "alt": "视频加载不了。",
+  "neu": "视频加载不出来。",
+  "grund": "lockerer, natürlicher"
+ },
+ {
+  "de": "100% Unterstützung von",
+  "alt": "100%支持来自",
+  "neu": "100%支持你的人：",
+  "grund": "Beschriftung mit Doppelpunkt, Name steht darunter; vorher „100%支持来自“ unnatürlich"
+ },
+ {
+  "de": "Keine Verpflichtung",
+  "alt": "没有硬性要求",
+  "neu": "没有任何约束",
+  "grund": "„没有硬性要求“ trifft „Keine Verpflichtung“ nicht"
+ },
+ {
+  "de": "30 Tage Rückgabe",
+  "alt": "30天可退",
+  "neu": "30天可退款",
+  "grund": "Geld zurück deutlicher"
+ },
+ {
+  "de": "Bist du geeignet?",
+  "alt": "你适合吗？",
+  "neu": "这适合你吗？",
+  "grund": "natürliche Frageform"
+ },
+ {
+  "de": "Ja, das kannst du <span class=\"accent\">auch.</span>",
+  "alt": "对，你<span class=\"accent\">也可以。</span>",
+  "neu": "没错，你<span class=\"accent\">也可以。</span>",
+  "grund": "„对“ klingt abgehackt"
+ },
+ {
+  "de": "<strong>Egal wo du gerade stehst.</strong> Weil es <strong>nichts gibt, was du erst lernen müsstest</strong>. Kein Studium, keine Erfahrung, kein besonderes Talent. <strong>Alles was du brauchst, hast du längst dabei.</strong>",
+  "alt": "<strong>不管你现在处在人生的哪个阶段。</strong>因为<strong>没有什么是你必须先学会的</strong>。不需要学历，不需要经验，也不需要特别的天赋。<strong>你需要的一切，其实早就有了。</strong>",
+  "neu": "<strong>不管你现在处于哪个阶段。</strong>因为<strong>没有什么需要你先去学</strong>。不需要学历，不需要经验，也不需要特别的天赋。<strong>你需要的一切，早就都有了。</strong>",
+  "grund": "flüssiger"
+ },
+ {
+  "de": "Selbstständige",
+  "alt": "自由职业者",
+  "neu": "自己当老板的人",
+  "grund": "„自由职业者“ = nur Freiberufler; gemeint: wer ein eigenes Geschäft hat"
+ },
+ {
+  "de": "Paare",
+  "alt": "夫妻档",
+  "neu": "情侣和夫妻",
+  "grund": "„夫妻档“ nur Ehepaare (und eher Geschäftsduo)"
+ },
+ {
+  "de": "Und alle anderen, die Bock haben.",
+  "alt": "还有所有感兴趣的人。",
+  "neu": "还有所有想试一试的人。",
+  "grund": "„Bock haben“ = Lust haben mitzumachen, nicht nur „感兴趣“"
+ },
+ {
+  "de": "Du erzählst davon",
+  "alt": "你和别人聊起它",
+  "neu": "你跟别人聊一聊",
+  "grund": "lockerer"
+ },
+ {
+  "de": "Von einem Produkt, das du selbst nutzt und magst.",
+  "alt": "聊你自己在用、也喜欢的产品。",
+  "neu": "聊聊你自己在用、也很喜欢的产品。",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Bei der Firma. Nicht bei dir. Du hast damit nichts zu tun.",
+  "alt": "在公司那里下单，不是找你。你不用处理这些事。",
+  "neu": "直接向公司下单，不是找你。这些事跟你没关系。",
+  "grund": "„你不用处理这些事“ steif"
+ },
+ {
+  "de": "Du verdienst mit",
+  "alt": "你从中获得收入",
+  "neu": "你也一起赚",
+  "grund": "„Du verdienst mit“ kurz und natürlich"
+ },
+ {
+  "de": "Deine Provision landet automatisch auf dem Konto. Jeden Monat, solange bestellt wird.",
+  "alt": "你的佣金会自动到账。只要订单持续，就每个月到账。",
+  "neu": "你的佣金会自动打到你的账户里。只要有人继续订购，每个月都有。",
+  "grund": "natürlicher, keine Doppelung „到账“"
+ },
+ {
+  "de": "Alles, was sonst nervt,<br>macht <span class=\"accent\">die Firma für dich.</span>",
+  "alt": "所有那些烦人的事，<br><span class=\"accent\">公司都替你搞定。</span>",
+  "neu": "那些麻烦事，<br><span class=\"accent\">公司都帮你搞定。</span>",
+  "grund": "„所有那些烦人的事“ wörtlich"
+ },
+ {
+  "de": "fast alles erledigt",
+  "alt": "几乎全都搞定",
+  "neu": "几乎都搞定了",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Alle Produkte lagern und weltweit versenden",
+  "alt": "储存所有产品，并发往全球",
+  "neu": "所有产品的仓储和全球配送",
+  "grund": "natürliche Nominalform wie die anderen Listenpunkte"
+ },
+ {
+  "de": "Rechnungen schreiben und verschicken",
+  "alt": "开具并发送发票",
+  "neu": "开具并寄出发票",
+  "grund": "präziser"
+ },
+ {
+  "de": "Kundengelder einziehen und auszahlen",
+  "alt": "收取货款并结算佣金",
+  "neu": "收取货款并发放佣金",
+  "grund": "„auszahlen“ = auszahlen, nicht „结算“"
+ },
+ {
+  "de": "Kundenservice per Telefon und Mail leisten",
+  "alt": "通过电话和邮件提供客户服务",
+  "neu": "提供电话和邮件客服",
+  "grund": "kürzer, natürlicher"
+ },
+ {
+  "de": "Produkte weiterentwickeln und Qualität prüfen",
+  "alt": "持续研发产品并检查质量",
+  "neu": "持续改进产品，把好质量关",
+  "grund": "„检查质量“ steif"
+ },
+ {
+  "de": "Business-Akademie, PowerDays und Reisen organisieren",
+  "alt": "组织商业学院培训、PowerDays活动和奖励旅行",
+  "neu": "组织商业学院、PowerDays活动和旅行",
+  "grund": "„奖励旅行“ fügte „Belohnung“ hinzu; „培训“ doppelt"
+ },
+ {
+  "de": "Wellness- und Gesundheitsprodukte für den Alltag. Vom Vitamin-Cocktail bis zum Immunbooster. Alle nach den gleichen strengen Standards produziert. Hier siehst du stellvertretend unser Herzstück: den PowerCocktail.",
+  "alt": "适合日常使用的健康养生产品。从维生素饮品到免疫力支持产品。所有产品都按同样严格的标准生产。这里先拿我们的核心产品PowerCocktail做例子给你看。",
+  "neu": "适合日常使用的健康养生产品。从维生素饮品到免疫力支持产品。所有产品都按同样严格的标准生产。这里拿我们的核心产品PowerCocktail给你举个例子。",
+  "grund": "letzter Satz natürlicher"
+ },
+ {
+  "de": "Transparent in Speyer, geprüfte statt billige Rohstoffe",
+  "alt": "在施派尔透明生产，用经过检测的原料，而不是廉价原料",
+  "neu": "在施派尔透明生产，用经过检测的原料，不用廉价原料",
+  "grund": "„而不是“ steif"
+ },
+ {
+  "de": "Marktführer in Europa, in 40+ Ländern im Einsatz",
+  "alt": "欧洲市场领导者，在40+个国家使用",
+  "neu": "欧洲市场领导者，40+个国家都在用",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Natur pur",
+  "alt": "纯粹自然",
+  "neu": "纯天然",
+  "grund": "übliche Formulierung"
+ },
+ {
+  "de": "Natürliche Rohstoffe statt synthetischer Zusätze",
+  "alt": "天然原料，而不是合成添加剂",
+  "neu": "天然原料，不用合成添加剂",
+  "grund": "„而不是“ steif"
+ },
+ {
+  "de": "Alles perfekt dosiert",
+  "alt": "配比刚刚好",
+  "neu": "剂量恰到好处",
+  "grund": "„配比“ = Mischverhältnis; dosiert = 剂量"
+ },
+ {
+  "de": "Du verkaufst kein Produkt.<br><span class=\"accent\">Du verteilst ein Stück Lebensqualität.</span>",
+  "alt": "你不是在卖产品。<br><span class=\"accent\">你是在分享一份生活品质。</span>",
+  "neu": "你不是在卖产品。<br><span class=\"accent\">你是在把更好的生活带给别人。</span>",
+  "grund": "„分享一份生活品质“ wörtlich"
+ },
+ {
+  "de": "Gut in den Tag starten",
+  "alt": "用好状态开启一天",
+  "neu": "元气满满地开始一天",
+  "grund": "natürlicher, warm"
+ },
+ {
+  "de": "Wumms im Alltag statt Nachmittagstief",
+  "alt": "日常更有劲，不再下午犯困",
+  "neu": "白天精力满满，告别下午犯困",
+  "grund": "„Wumms im Alltag“ natürlich übertragen"
+ },
+ {
+  "de": "Fit für Job und Familie gleichzeitig",
+  "alt": "工作和家庭两边都能保持状态",
+  "neu": "工作家庭两不误",
+  "grund": "gängige Redewendung"
+ },
+ {
+  "de": "Sport & schnellere Regeneration",
+  "alt": "运动和更快恢复",
+  "neu": "运动，恢复更快",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Ausgleich nach stressigen Tagen",
+  "alt": "忙碌有压力的一天后放松一下",
+  "neu": "忙碌一天后放松一下",
+  "grund": "kürzer"
+ },
+ {
+  "de": "Aktiv bleiben in jedem Alter",
+  "alt": "任何年龄都保持活力",
+  "neu": "什么年纪都活力满满",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Jemand quält sich seit Jahren morgens aus dem Bett. Und du bist derjenige, der ihm zeigt, dass es auch anders geht. <span class=\"accent\">Das ist der Job. Nicht das Verkaufen.</span>",
+  "alt": "有人这几年每天早上都痛苦地从床上爬起来。而你，就是那个让他看到其实也可以不一样的人。<span class=\"accent\">这就是这份工作的意义。不是卖东西。</span>",
+  "neu": "有人好几年来，每天早上都得硬撑着爬起床。而你，就是让他看到其实可以不一样的那个人。<span class=\"accent\">这才是这份工作。不是卖东西。</span>",
+  "grund": "flüssiger, näher am Original"
+ },
+ {
+  "de": "Kein Risiko. <span class=\"accent\">Für keinen.</span>",
+  "alt": "没有风险。<span class=\"accent\">对谁都没有。</span>",
+  "neu": "零风险。<span class=\"accent\">对谁都是。</span>",
+  "grund": "knapper, natürlicher"
+ },
+ {
+  "de": "30 Tage ausprobieren. Passt nicht? 100 % Geld zurück. Ohne Papierkram.",
+  "alt": "试用30天。不合适？100%退款。不用繁琐手续。",
+  "neu": "试用30天。不满意？100%退款。没有繁琐手续。",
+  "grund": "„不合适“ → „不满意“, natürlicher"
+ },
+ {
+  "de": "Was hinter allem steht",
+  "alt": "背后是什么",
+  "neu": "这一切背后是谁",
+  "grund": "„背后是什么“ unklar; gemeint die Firma"
+ },
+ {
+  "de": "Ein deutsches Familienunternehmen.<br><span class=\"accent\">Und es wächst wie verrückt.</span>",
+  "alt": "一家德国的家族企业。<br><span class=\"accent\">而且发展得特别快。</span>",
+  "neu": "一家德国的家族企业。<br><span class=\"accent\">而且增长得飞快。</span>",
+  "grund": "„wie verrückt“ lebendiger"
+ },
+ {
+  "de": "Rolf Sorg hat die Firma 1993 gegründet. Keine Aktionäre, keine Investoren im Nacken. Nur seine Familie und ein Team, das seit über 30 Jahren dazulernt. Was dabei rauskommt, siehst du hier:",
+  "alt": "Rolf Sorg在1993年创立了这家公司。没有股东，也没有投资人在背后催着。只有他的家人，还有一个30多年来一直在学习进步的团队。成果就是这些：",
+  "neu": "Rolf Sorg在1993年创立了这家公司。没有股东，也没有投资人在背后施压。只有他的家人，和一个30多年来不断学习的团队。成果就在这里：",
+  "grund": "„im Nacken“ natürlich übertragen"
+ },
+ {
+  "de": "Gesundheit ist gefragt wie nie.<br><span class=\"accent\">Und wir mittendrin.</span>",
+  "alt": "健康的需求从没这么高过。<br><span class=\"accent\">而我们就在其中。</span>",
+  "neu": "健康从来没像现在这么受重视。<br><span class=\"accent\">而我们正好身在其中。</span>",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Ganz egal wie's der Wirtschaft gerade geht: Auf <strong>Gesundheit, Fitness und Wohlbefinden</strong> will niemand verzichten. <strong>Die Nachfrage steigt jedes Jahr</strong>, und wir wachsen mit. <strong>Hunderttausende Menschen weltweit</strong> sind längst dabei. <strong>Und jetzt bist du dran.</strong>",
+  "alt": "不管现在经济怎么样：<strong>健康、健身和身心状态</strong>，谁都不想放弃。<strong>需求每年都在增长</strong>，我们也跟着一起成长。<strong>全球几十万人</strong>早就已经参与进来了。<strong>现在轮到你了。</strong>",
+  "neu": "不管经济形势怎么样，<strong>健康、健身和好状态</strong>，谁都不想放弃。<strong>需求每年都在增长</strong>，我们也跟着一起成长。<strong>全球几十万人</strong>早已加入。<strong>现在轮到你了。</strong>",
+  "grund": "Komma statt Doppelpunkt, flüssiger"
+ },
+ {
+  "de": "Wer dich begleitet",
+  "alt": "谁会陪你一起做",
+  "neu": "谁陪你一起走",
+  "grund": "natürlicher („begleiten“)"
+ },
+ {
+  "de": "Wer euch begleitet",
+  "alt": "谁会陪你们一起做",
+  "neu": "谁陪你们一起走",
+  "grund": "wie id 95"
+ },
+ {
+  "de": "Weltweit<span class=\"accent\">Kunden &amp; Partner.</span>",
+  "alt": "全球都有<span class=\"accent\">客户和伙伴。</span>",
+  "neu": "遍布全球的<span class=\"accent\">客户和伙伴。</span>",
+  "grund": "natürlichere Überschrift"
+ },
+ {
+  "de": "Du arbeitest von zu Hause aus. Deine Kunden können trotzdem in Tokio, Miami oder Dubai ihre Produkte genießen.",
+  "alt": "你在家工作。你的客户也照样可以在东京、迈阿密或迪拜享用他们的产品。",
+  "neu": "你在家工作，你的客户却可以在东京、迈阿密或迪拜享用产品。",
+  "grund": "flüssiger"
+ },
+ {
+  "de": "Dom. Republik",
+  "alt": "多米尼加共和国",
+  "neu": "多米尼加",
+  "grund": "landesübliche Kurzform"
+ },
+ {
+  "de": "+65 weitere Länder",
+  "alt": "+65个其他国家/地区",
+  "neu": "+65个其他国家和地区",
+  "grund": "„国家/地区“ mit Schrägstrich formularhaft"
+ },
+ {
+  "de": "Warum du <span class=\"accent\">so viel Qualität</span> für dein Geld kriegst.",
+  "alt": "为什么你花这份钱，就能得到<span class=\"accent\">这么高的品质</span>。",
+  "neu": "为什么你花的钱，能换来<span class=\"accent\">这么高的品质</span>。",
+  "grund": "„花这份钱“ steif"
+ },
+ {
+  "de": "Rechnen wir kurz. Nimm einen 100 Euro Schuh im Laden. Wo landet dein Geld?",
+  "alt": "我们简单算一下。就拿店里一双100欧元的鞋来说。你的钱最后都到哪儿去了？",
+  "neu": "我们简单算一下。拿店里一双100欧元的鞋来说，你的钱最后都去哪儿了？",
+  "grund": "flüssiger"
+ },
+ {
+  "de": "An die, die empfehlen",
+  "alt": "给推荐的人",
+  "neu": "分给推荐的人",
+  "grund": "„给推荐的人“ unvollständig"
+ },
+ {
+  "de": "<span class=\"accent\">Viel mehr Geld</span> fließt in die Qualität. Deshalb wird nachbestellt.",
+  "alt": "<span class=\"accent\">多得多的钱</span>投入到品质里。所以大家才会复购。",
+  "neu": "<span class=\"accent\">更多的钱</span>投在品质上。所以大家才会复购。",
+  "grund": "„多得多的钱“ holprig"
+ },
+ {
+  "de": "Ist das dieses Schneeball-Ding?",
+  "alt": "这是不是那种传销套路？",
+  "neu": "这不会是传销吧？",
+  "grund": "natürliche Frage"
+ },
+ {
+  "de": "Nein. Beim Schneeballsystem verdient man an neuen Leuten, die einzahlen. Bei uns verdienst du nur, wenn Produkte gekauft und weiter genutzt werden. Keine Bestellungen, kein Geld. Der Unterschied ist gesetzlich klar geregelt (siehe <a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG Anhang Nr. 14</a>) und wird auch vom <a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">Bundesverband Direktvertrieb</a> so definiert. Und die Firma gibts seit 1993 mit 4 Milliarden Umsatz. Schneeballsysteme kollabieren nach ein paar Jahren. Wir sind bei über 30.",
+  "alt": "不是。传销是靠新人交钱来赚钱。我们这里，只有产品被购买并且持续使用，你才会有收入。没有订单，就没有钱。这个区别在德国法律里规定得很清楚（见<a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">UWG附录第14项</a>），<a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">德国直销协会</a>也是这样定义的。而且这家公司从1993年就存在了，营业额达到40亿。传销模式几年后就会崩。我们已经超过30年了。",
+  "neu": "不是。传销是靠新人交钱来赚钱。我们这里，只有产品被购买并且持续使用，你才会有收入。没有订单，就没有钱。这个区别在德国法律里规定得很清楚（见<a href=\"https://www.gesetze-im-internet.de/uwg_2004/anhang.html\" target=\"_blank\" rel=\"noopener\">德国《反不正当竞争法》附录第14项</a>），<a href=\"https://direktvertrieb.de/de/abgrenzung\" target=\"_blank\" rel=\"noopener\">德国直销协会</a>也是这么界定的。而且这家公司1993年就成立了，营业额达到40亿。传销几年就会崩盘。我们已经做了30多年。",
+  "grund": "Gesetz verständlich benannt, flüssigere Sätze"
+ },
+ {
+  "de": "Muss ich meine Freunde und Familie nerven?",
+  "alt": "我是不是得去烦朋友和家人？",
+  "neu": "我是不是得去烦亲朋好友？",
+  "grund": "idiomatisch"
+ },
+ {
+  "de": "Ganz sicher nicht. Ich empfehle nur da, wo ich denke, dass es passt. Alles andere wär ja auch peinlich. Wenn du niemanden aus deinem Umfeld ansprechen willst, gibts genug andere Wege über Social Media oder deine Community. Wir machen das so, wie es zu dir passt.",
+  "alt": "完全不用。我只会在觉得合适的时候推荐。不然也太尴尬了。如果你不想联系身边的人，也有很多其他方式，比如社交媒体，或者你自己的社群。我们会按适合你的方式来做。",
+  "neu": "当然不用。我只在觉得合适的时候才推荐。不然多尴尬啊。如果你不想找身边的人，也有很多别的办法，比如社交媒体或者你自己的圈子。我们会用适合你的方式来做。",
+  "grund": "lockerer"
+ },
+ {
+  "de": "Ich bin kein Verkäufertyp. Geht das trotzdem?",
+  "alt": "我不是那种会卖东西的人。也可以做吗？",
+  "neu": "我不是做销售的料。这样也行吗？",
+  "grund": "idiomatisch"
+ },
+ {
+  "de": "Gut so. Denn hier verkauft niemand. Du erzählst nur, was dir selbst was gebracht hat. Wer das hören will, hört zu. Wer nicht, dann eben nicht. Kein Sales-Pitch, keine Techniken. Sondern eine Empfehlung, wie du sie auch bei einem guten Restaurant weitergibst.",
+  "alt": "这样正好。因为这里没人是在硬卖。你只是讲讲哪些东西对你自己有帮助。想听的人就会听。不想听，那也没关系。没有销售话术，没有套路。就是像你推荐一家好餐厅那样，真心分享一下。",
+  "neu": "那正好。因为这里没人在推销。你只是说说什么东西对你自己真的有用。想听的人自然会听。不想听，那就算了。没有销售话术，没有套路。就像你推荐一家好餐厅一样。",
+  "grund": "lockerer, kürzer"
+ },
+ {
+  "de": "Auf den ersten Blick vielleicht. Aber schau dir mal an, wie sich der Preis zusammensetzt. Bei den meisten Marken gehen 60 Prozent in Werbung und Zwischenhandel. Bei uns fließt der Großteil in die Qualität. Deshalb ist der Preis höher. Und genau deshalb bestellen Menschen immer wieder nach.",
+  "alt": "第一眼看可能会。但你可以看看这个价格是怎么构成的。大多数品牌有60%花在广告和中间渠道上。我们这里，大部分投入到品质里。所以价格会高一些。也正因为这样，大家才会一次次复购。",
+  "neu": "乍一看也许是。但你可以看看价格是怎么构成的。大多数品牌有60%花在广告和中间商上。我们则把大部分投入在品质上。所以价格会高一些。也正因为这样，大家才会一次又一次地复购。",
+  "grund": "Prozent als 60%, natürlicher"
+ },
+ {
+  "de": "Kann ich das nicht günstiger in der Drogerie kaufen?",
+  "alt": "我不能在药妆店买更便宜的吗？",
+  "neu": "在药妆店买不是更便宜吗？",
+  "grund": "natürliche Frage"
+ },
+ {
+  "de": "Kannst du. Aber du kaufst dann was anderes. Standard-Vitamine sind oft einzeln dosiert. Unsere Produkte sind aufeinander abgestimmt und werden nach Pharma-Standard in Deutschland hergestellt. Das ist ein Unterschied wie zwischen Instant-Kaffee und einem echten Espresso.",
+  "alt": "可以。但那你买到的就是别的东西了。普通维生素通常是单一成分。我们的产品是相互搭配设计的，并且在德国按制药标准生产。这就像速溶咖啡和一杯真正的意式浓缩咖啡之间的区别。",
+  "neu": "可以啊。但那样你买到的就是另一种东西了。普通维生素通常是单独补充的。我们的产品是相互搭配的，并且在德国按制药标准生产。这就像速溶咖啡和一杯真正的意式浓缩的区别。",
+  "grund": "lockerer"
+ },
+ {
+  "de": "Muss ich jeden Monat Ware bestellen?",
+  "alt": "我每个月都必须订货吗？",
+  "neu": "我每个月都得订货吗？",
+  "grund": "lockerer"
+ },
+ {
+  "de": "Nein. Du bestellst wann und wie viel du willst. Es gibt aber ein automatisches Belieferungssystem, mit dem du bei jeder Bestellung sparst. Die meisten entscheiden sich freiwillig dafür, weil sie die Produkte eh nutzen und Geld sparen wollen. Nicht weil sie müssen, sondern weil sie es wollen. Keine Mindestlaufzeit, jederzeit anpassbar oder kündbar. Kein Risiko.",
+  "alt": "不用。你想什么时候订、订多少，都由你决定。不过有一个自动配送系统，每次下单都能帮你省钱。大多数人是自愿选择的，因为他们本来就在用这些产品，也想省钱。不是因为必须，而是因为他们愿意。没有最低合约期，随时可以调整或取消。没有风险。",
+  "neu": "不用。你想什么时候订、订多少，都由你决定。不过有一个自动订购计划，每次下单都能省钱。大多数人是自愿选择它的，因为他们本来就在用这些产品，也想省钱。不是因为必须，而是因为想要。没有最低期限，随时可以调整或取消。没有风险。",
+  "grund": "„自动配送系统“ technisch; natürlicher"
+ },
+ {
+  "de": "Was verdient man realistisch?",
+  "alt": "实际能赚多少？",
+  "neu": "实际上能赚多少？",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Ehrliche Antwort: Ganz unterschiedlich. Die einen machen 100 im Monat, die anderen ein paar Tausend, wieder andere leben komplett davon.",
+  "alt": "老实说：差别很大。有人一个月赚100，有人赚几千，也有人完全靠这个生活。",
+  "neu": "说实话：差别很大。有人每月赚100欧元，有人赚几千欧元，也有人完全靠这个生活。",
+  "grund": "Währung Euro ausdrücklich genannt"
+ },
+ {
+  "de": "Am Anfang verdienst du an dem, was du selbst weiterempfiehlst. Mit der Zeit kannst du auch andere Menschen mit ins Boot holen, die genau das Gleiche machen wie du. Aus dem, was dein Team dann bewegt, kriegst du auch was ab. Nicht weil du an denen verdienst, sondern weil du sie mit aufgebaut und trainiert hast. Wie ein Trainer, der einen Prozentsatz vom Erfolg seiner Athleten kriegt.",
+  "alt": "一开始，你赚的是你自己推荐带来的收入。时间久了，你也可以带更多人一起做，他们做的事情和你一样。你的团队之后产生的业绩，你也会拿到一部分。不是因为你从他们身上赚钱，而是因为你参与了搭建和培训他们。就像教练会从自己运动员的成绩里拿到一定比例一样。",
+  "neu": "一开始，你靠自己的推荐来赚钱。慢慢地，你也可以带别人一起加入，他们做的事和你一模一样。你的团队做出的业绩，你也能分到一部分。不是因为你在赚他们的钱，而是因为你帮他们起步，培养和带领了他们。就像教练能从自己运动员的成绩里拿一定比例一样。",
+  "grund": "„mit ins Boot holen“ natürlich, flüssiger"
+ },
+ {
+  "de": "Das ist der Grund, warum manche hier richtig groß werden: Sie bauen sich mit der Zeit ein eigenes Team auf, das mit ihnen wächst. Und alles, was du reinsteckst, kommt bei dir an. Nicht bei einem Chef.",
+  "alt": "这就是为什么有些人在这里能做得很大：他们会慢慢建立起自己的团队，团队和他们一起成长。而你投入进去的一切，最后都会回到你这里。不是到老板那里。",
+  "neu": "这就是为什么有些人在这里能做得很大：他们慢慢建立起自己的团队，和团队一起成长。而你投入的一切，都会回到你自己身上。不是落到老板手里。",
+  "grund": "flüssiger"
+ },
+ {
+  "de": "Für ein bisschen was extra: ein paar Stunden im Monat. Für einen echten Nebenverdienst: 4 bis 6 Stunden die Woche. Für richtig groß: mehr. Wir schauen im ersten Gespräch, was zu deinem Alltag passt und was du dir vorstellen kannst.",
+  "alt": "只是想多一点额外收入：每个月几个小时。想做成真正的副业收入：每周4到6小时。想做得很大：就需要更多。第一次聊的时候，我们会一起看看什么适合你的日常节奏，也看看你能接受什么样的投入。",
+  "neu": "想赚点外快：每月几个小时。想要一份真正的副业收入：每周4到6小时。想做大：那就要更多。第一次聊的时候，我们一起看看什么适合你的日常，也看看你自己想投入多少。",
+  "grund": "kürzer, lockerer"
+ },
+ {
+  "de": "Was, wenn ich aufhören will?",
+  "alt": "如果我想停下来怎么办？",
+  "neu": "如果我不想做了怎么办？",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Dann hörst du auf. Kein Vertrag, keine Kündigungsfrist, keine offenen Rechnungen, keine Diskussionen. Bei uns gilt: jeder kann, keiner muss.",
+  "alt": "那就停。没有合同，没有解约通知期，没有未结账单，也不用多费口舌。我们这里的原则是：谁都可以做，但没人必须做。",
+  "neu": "那就不做。没有合同，没有解约期，没有未付账单，也不用多解释。我们的原则是：谁都可以做，没人非做不可。",
+  "grund": "„jeder kann, keiner muss“ idiomatisch"
+ },
+ {
+  "de": "Was sag ich, wenn mein Umfeld denkt das ist Abzocke?",
+  "alt": "如果身边的人觉得这是骗人的，我该怎么说？",
+  "neu": "如果身边的人觉得这是骗局，我该怎么说？",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Kommt oft vor. Weil viele MLM-Sachen tatsächlich Abzocke waren oder sind. Ich hab dann drei Sachen im Ärmel: Eine Firma, die seit über 30 Jahren wächst. Produkte, die man selbst testen und zurückschicken kann. Und dass niemand außer dir entscheidet, wie weit du das treibst. Das reicht meistens.",
+  "alt": "这很常见。因为很多MLM项目确实曾经是骗局，或者现在就是骗局。我通常会准备好三点：一家公司已经持续增长了30多年。产品可以自己试用，也可以退回。还有，除了你自己，没人能决定你要做到什么程度。通常这些就够了。",
+  "neu": "这很常见。因为很多MLM项目确实曾经是、或者现在仍然是骗局。我手上一般有三张牌：一家持续增长了30多年的公司。可以自己试用、也可以退回的产品。还有，除了你自己，没人能决定你要做到多大。通常这就够了。",
+  "grund": "„im Ärmel“ natürlich übertragen"
+ },
+ {
+  "de": "Zweites Standbein aufbauen",
+  "alt": "建立第二收入来源",
+  "neu": "给自己多一份收入来源",
+  "grund": "„建立第二收入来源“ steif"
+ },
+ {
+  "de": "Komplett neuer Weg",
+  "alt": "完全换条新路",
+  "neu": "换一条全新的路",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Weiter",
+  "alt": "继续",
+  "neu": "下一步",
+  "grund": "üblicher Formularknopf"
+ },
+ {
+  "de": "So erreiche ich dich",
+  "alt": "我可以这样联系你",
+  "neu": "你的联系方式",
+  "grund": "Überschrift des Formularschritts natürlicher"
+ },
+ {
+  "de": "Du schreibst direkt an",
+  "alt": "你的消息会直接发给",
+  "neu": "你的消息会直接发给：",
+  "grund": "Beschriftung mit Doppelpunkt, Name steht darunter"
+ },
+ {
+  "de": "Gute Wahl!",
+  "alt": "不错的选择！",
+  "neu": "选得好！",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "In der Zwischenzeit findest du {{#unless partner_modus=duo}}mich{{/unless}}{{#if partner_modus=duo}}uns{{/if}} auch hier:",
+  "alt": "这段时间，你也可以在这里找到{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}：",
+  "neu": "等待的时候，你也可以在这些地方找到{{#unless partner_modus=duo}}我{{/unless}}{{#if partner_modus=duo}}我们{{/if}}：",
+  "grund": "„这段时间“ unklar"
+ },
+ {
+  "de": "Seite",
+  "alt": "页面",
+  "neu": "网站",
+  "grund": "Footer-Spalte „Seite“ = Website"
+ },
+ {
+  "de": "Impressum",
+  "alt": "网站法律声明",
+  "neu": "法律声明",
+  "grund": "kürzer; „网站法律声明“ doppelt mit Spalte"
+ },
+ {
+  "de": "von",
+  "alt": "来自",
+  "neu": "by",
+  "grund": "steht in „Made with ♥ … FinestSites“; englische Formel, „来自“ wirkte gemischt"
+ },
+ {
+  "de": "Wir nutzen Cookies, um dir das beste Erlebnis zu bieten. Technisch notwendige Cookies sind immer aktiv — sie machen die Seite funktionsfähig. Weitere Cookies (z.&nbsp;B. Statistiken) setzen wir nur mit deiner Zustimmung. Mehr Infos in unserer <a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">Datenschutzerklärung</a>.",
+  "alt": "我们使用Cookie，是为了给你更好的体验。必要Cookie始终启用——它们能让网站正常运行。其他Cookie（比如统计）只有在你同意后才会使用。更多信息见我们的<a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">隐私政策</a>。",
+  "neu": "我们使用Cookie，是为了给你更好的体验。必要Cookie始终开启，它们让网站能正常运行。其他Cookie（比如统计）只有在你同意后才会使用。更多信息见我们的<a href=\"/datenschutz\" target=\"_blank\" rel=\"noopener\">隐私政策</a>。",
+  "grund": "Gedankenstrich entfernt, „开启“ einheitlich"
+ },
+ {
+  "de": "Grundlegende Funktionen der Website — immer aktiv.",
+  "alt": "网站的基础功能——始终启用。",
+  "neu": "网站的基础功能，始终开启。",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Bitte den Datenschutz-Hinweis bestätigen.",
+  "alt": "请勾选同意隐私声明。",
+  "neu": "请先同意隐私声明。",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+  "alt": "出了点问题。请再试一次。",
+  "neu": "出了点问题，请再试一次。",
+  "grund": "Komma statt zwei Sätze"
+ },
+ {
+  "de": "Direkt als Teampartner starten",
+  "alt": "直接开始做团队伙伴",
+  "neu": "直接成为团队伙伴",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Du weißt schon, <span class=\"accent\">dass du das willst?</span>",
+  "alt": "你已经确定<span class=\"accent\">这就是你想要的吗？</span>",
+  "neu": "你已经确定<span class=\"accent\">想做这个了？</span>",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Dann registrier dich direkt bei PM-International als Teampartner. Drei Schritte, ein paar Minuten, und {{#unless partner_modus=duo}}{{vorname}} begleitet dich{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} begleiten dich{{/if}} von Anfang an.",
+  "alt": "那就直接在PM-International注册成为团队伙伴。三个步骤，几分钟搞定，{{#unless partner_modus=duo}}{{vorname}}会从一开始就陪着你{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}会从一开始就陪着你{{/if}}。",
+  "neu": "那就直接在PM-International注册成为团队伙伴。三步，几分钟搞定，{{#unless partner_modus=duo}}{{vorname}}会从第一天起陪着你{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}会从第一天起陪着你{{/if}}。",
+  "grund": "„von Anfang an“ natürlicher"
+ },
+ {
+  "de": "30 Tage Widerruf",
+  "alt": "30天撤销权",
+  "neu": "30天内可撤销",
+  "grund": "„撤销权“ juristisch steif"
+ },
+ {
+  "de": "Startpaket wählen, oder nicht",
+  "alt": "选不选入门套装都可以",
+  "neu": "选不选入门套装都行",
+  "grund": "lockerer"
+ },
+ {
+  "de": "PM zeigt dir zwei Pakete zum Loslegen. Du kannst dich aber auch ohne Bestellung registrieren.",
+  "alt": "PM会给你看两个用来入门的套装。不过你也可以不下单，直接注册。",
+  "neu": "PM会给你看两个入门套装。不过你也可以不下单，直接注册。",
+  "grund": "„用来入门的“ holprig"
+ },
+ {
+  "de": "Schon registriert? <strong>Nummer hinterlassen</strong>",
+  "alt": "已经注册了？<strong>留下电话</strong>",
+  "neu": "已经注册了？<strong>留下你的号码</strong>",
+  "grund": "„Nummer“ wie im Formular"
+ },
+ {
+  "de": "Hinterlass hier kurz deine Nummer, sobald du dich registriert hast. {{#unless partner_modus=duo}}{{vorname}} meldet sich dann bei dir und hilft{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}} melden sich dann bei dir und helfen{{/if}} dir beim Start.",
+  "alt": "注册好之后，在这里简单留下你的电话。{{#unless partner_modus=duo}}{{vorname}}之后会联系你，帮你起步{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}之后会联系你，帮你起步{{/if}}。",
+  "neu": "注册完成后，在这里留下你的号码。{{#unless partner_modus=duo}}{{vorname}}之后会联系你，帮你起步{{/unless}}{{#if partner_modus=duo}}{{vorname}} &amp; {{vorname2}}之后会联系你，帮你起步{{/if}}。",
+  "grund": "„电话“ → „号码“ einheitlich"
+ },
+ {
+  "de": "Steht in der Bestätigungs-Mail von PM, geht auch später.",
+  "alt": "在PM的确认邮件里能看到，之后再补也可以。",
+  "neu": "在PM的确认邮件里，之后再填也行。",
+  "grund": "lockerer"
+ },
+ {
+  "de": "Anruf",
+  "alt": "电话",
+  "neu": "打电话",
+  "grund": "„Anruf“ als Wahl neben WhatsApp"
+ },
+ {
+  "de": "Alles klar",
+  "alt": "明白了",
+  "neu": "好的",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Oder schreib mir auf",
+  "alt": "或者给我发消息：",
+  "neu": "或者在这里给我发消息：",
+  "grund": "darunter folgen Plattform-Kacheln"
+ },
+ {
+  "de": "Oder schreib uns auf",
+  "alt": "或者给我们发消息：",
+  "neu": "或者在这里给我们发消息：",
+  "grund": "wie id 300"
+ },
+ {
+  "de": "Schreib mir auf",
+  "alt": "给我发消息：",
+  "neu": "在这里给我发消息：",
+  "grund": "wie id 300"
+ },
+ {
+  "de": "Schreib uns auf",
+  "alt": "给我们发消息：",
+  "neu": "在这里给我们发消息：",
+  "grund": "wie id 300"
+ },
+ {
+  "de": "Selbstständige",
+  "alt": "自由职业者",
+  "neu": "自己当老板的人",
+  "grund": "wie id 25"
+ },
+ {
+  "de": "Paare",
+  "alt": "夫妻档",
+  "neu": "情侣和夫妻",
+  "grund": "wie id 26"
+ },
+ {
+  "de": "Land suchen…",
+  "alt": "搜索国家/地区……",
+  "neu": "搜索国家或地区……",
+  "grund": "Schrägstrich formularhaft"
+ }
+]
