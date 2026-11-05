@@ -1,0 +1,146 @@
+[
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Započni svoj <strong>reset metabolizma</strong>. Bez dijete, bez šejkova, bez brojanja. Umesto toga <strong>4 fiksna obroka</strong> i <strong>patentirani suplementi</strong>, da se u svakodnevici <strong>osećaš stvarno dobro.</strong>",
+    "neu": "Započni svoj <strong>reset metabolizma</strong>. Bez dijete, bez šejkova, bez brojanja kalorija. Umesto toga <strong>4 redovna obroka dnevno</strong> i <strong>patentirani dodaci ishrani</strong>, da se u svakodnevici <strong>osećaš stvarno dobro.</strong>",
+    "grund": "Auftraggeber Punkt 4: regelmäßige Mahlzeiten, keine festgelegten Gerichte; „kein Zählen“ eindeutig machen (analog es „sin contar calorías“); Anglizismus „suplementi“ durch landesüblichen Begriff ersetzt, einheitlich mit Disclaimer"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4× fiksna obroka",
+    "neu": "4 redovna obroka dnevno",
+    "grund": "Auftraggeber Punkt 4 (gleiches Muster wie im Hero)"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Razmena sa istomišljenicima",
+    "neu": "Razmena iskustava sa ljudima koji imaju slične ciljeve",
+    "grund": "Auftraggeber Punkt 4"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "Ne. Koncept nije kalorijska dijeta. Jedeš kvalitetne, prirodne obroke, a uz to idu odabrane hranljive materije. Fokus je na boljoj ishrani, ne na odricanju.",
+    "neu": "Ne. Koncept nije dijeta zasnovana na brojanju kalorija. Jedeš kvalitetne, prirodne obroke, a uz to idu odabrane hranljive materije. Fokus je na boljoj ishrani, ne na odricanju.",
+    "grund": "Auftraggeber Punkt 4"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Prelazak na dugoročnu svakodnevicu ide postepeno. Imaš nove navike i bolje poznaješ svoje telo. Ko želi, održava efekat uz nekoliko svesnih dana mesečno.",
+    "neu": "Prelazak na novi svakodnevni ritam ide postepeno. Imaš nove navike i bolje poznaješ svoje telo. Ko želi, održava efekat uz poneki dan u mesecu kada posebno paziš na ishranu.",
+    "grund": "„dugoročna svakodnevica“ wörtlich/unklar; „bewusste Tage“ konkret auf Ernährung bezogen (übergreifendes Muster)"
+  },
+  {
+    "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+    "alt": "Jedeš svesno, a izuzeci su deo toga.",
+    "neu": "Paziš šta jedeš, a izuzeci su deo toga.",
+    "grund": "„svesno jesti“ unklar, konkret formuliert"
+  },
+  {
+    "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+    "alt": "Mnogo raznovrsnih recepata, pogodnih i za vegetarijance. Poenta nije brz gubitak kilograma gladovanjem, već svesna ishrana.",
+    "neu": "Mnogo raznovrsnih recepata, pogodnih i za vegetarijance. Poenta nije brz gubitak kilograma gladovanjem, već svesniji odnos prema ishrani.",
+    "grund": "„svesna ishrana“ als Kurzform unklar, natürlicher formuliert"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Da. Koncept može da se sprovede i vegetarijanski ili veganski. Postoje odgovarajuće alternative za sve preporuke životinjskog porekla.",
+    "neu": "Da. Koncept može da se sprovede i vegetarijanski ili veganski. Postoje odgovarajuće alternative za sve preporučene namirnice životinjskog porekla.",
+    "grund": "Sinnverschiebung „tierische Empfehlungen“ korrigiert (analog tr/zh)"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "Da li su šejkovi dozvoljeni? Da li pijem obroke?",
+    "neu": "Da li su šejkovi dozvoljeni? Da li obroke zamenjujem napicima?",
+    "grund": "wörtlich „Mahlzeiten trinken“ (analog bg Punkt 8)"
+  },
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Naš koncept hranljivih materija",
+    "neu": "Naš pristup hranljivim materijama",
+    "grund": "„Nährstoffkonzept“ wörtlich (analog it/ru Punkt 2/6)"
+  },
+  {
+    "de": "Achterbahn",
+    "alt": "Gore-dole",
+    "neu": "Skokovi i padovi",
+    "grund": "Achterbahn-Bild klarer als Energiekurve"
+  },
+  {
+    "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+    "alt": "U četiri jasne faze, od 1. nedelje pa sve do tvoje dugoročne svakodnevice.",
+    "neu": "U četiri jasne faze, od 1. nedelje pa sve do novog ritma koji ti ostaje.",
+    "grund": "„dauerhafter Alltag“ wörtlich (analog uk Punkt 7)"
+  },
+  {
+    "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+    "alt": "Aktivni reset traje nekoliko nedelja. Posle toga ide duža faza stabilizacije, a na kraju dugoročna svakodnevica. Tačan raspored zavisi od varijante koju izabereš.",
+    "neu": "Aktivni reset traje nekoliko nedelja. Posle toga ide duža faza stabilizacije, a na kraju novi ritam koji zadržavaš u svakodnevici. Tačan raspored zavisi od varijante koju izabereš.",
+    "grund": "„dugoročna svakodnevica“ wörtlich"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4× ukusan obrok.</span> Umesto posta ili samo šejkova.",
+    "neu": "<span class=\"mark\">4 ukusna obroka dnevno.</span> Umesto posta ili samo šejkova.",
+    "grund": "„4× ukusan obrok“ grammatisch holprig"
+  },
+  {
+    "de": "Du wünschst dir mehr Fokus im Alltag",
+    "alt": "Želiš više fokusa u svakodnevici",
+    "neu": "Želiš da se lakše koncentrišeš tokom dana",
+    "grund": "Anglizismus „fokus“ im Alltagssatz (analog uk Punkt 7)"
+  },
+  {
+    "de": "Bioverfügbare Nährstoffe machen den Unterschied",
+    "alt": "Biološki dostupni nutrijenti prave razliku",
+    "neu": "Biološki dostupne hranljive materije prave razliku",
+    "grund": "einheitlich „hranljive materije“ statt Mix mit „nutrijenti“"
+  },
+  {
+    "de": "Du isst wie gewohnt und fügst zusätzlich gute Nährstoffe hinzu.",
+    "alt": "Jedeš kao i obično, samo dodaješ dobre nutrijente.",
+    "neu": "Jedeš kao i obično, samo dodaješ kvalitetne hranljive materije.",
+    "grund": "einheitlich „hranljive materije“"
+  },
+  {
+    "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+    "alt": "Samo proteini, dobre masti, probiotski jogurt ujutru i koncentrati nutrijenata. Čak ni povrće. Zvuči strogo, ali je deo glavne faze.",
+    "neu": "Samo proteini, dobre masti, probiotski jogurt ujutru i koncentrati hranljivih materija. Čak ni povrće. Zvuči strogo, ali je deo glavne faze.",
+    "grund": "einheitlich mit FAQ „koncentrati hranljivih materija“"
+  },
+  {
+    "de": "Vielfalt an Nährstoff-Formaten",
+    "alt": "Različiti oblici nutrijenata",
+    "neu": "Različiti oblici hranljivih materija",
+    "grund": "einheitlich „hranljive materije“"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "Kölner Liste (Kelnska lista) je nezavisna baza podataka. Tamo se suplementi testiraju na zabranjene i doping supstance. Ako je proizvod na toj listi, znaš da unutra nema ničeg skrivenog. Baš zato mnogi profesionalni sportisti koriste FitLine. Za tebe to znači: znaš šta unosiš. Bez neprijatnih iznenađenja.",
+    "neu": "Kölner Liste (Kelnska lista) je nezavisna baza podataka. Tamo se dodaci ishrani testiraju na zabranjene i doping supstance. Ako je proizvod na toj listi, znaš da unutra nema ničeg skrivenog. Baš zato mnogi profesionalni sportisti koriste FitLine. Za tebe to znači: znaš šta unosiš. Bez neprijatnih iznenađenja.",
+    "grund": "Anglizismus, einheitlich „dodaci ishrani“"
+  },
+  {
+    "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+    "alt": "ELAB je nezavisna laboratorija. Oni stalno proveravaju da li FitLine proizvodi zaista sadrže ono što piše na deklaraciji i da u njima nema ničega što tu ne treba da bude. Zvuči kao nešto što se podrazumeva, ali nažalost nije tako kod svih suplemenata. Kod FitLine se to stalno kontroliše. Za tebe: možeš da se osloniš na to.",
+    "neu": "ELAB je nezavisna laboratorija. Oni stalno proveravaju da li FitLine proizvodi zaista sadrže ono što piše na deklaraciji i da u njima nema ničega što tu ne treba da bude. Zvuči kao nešto što se podrazumeva, ali nažalost nije tako kod svih dodataka ishrani. Kod FitLine se to stalno kontroliše. Za tebe: možeš da se osloniš na to.",
+    "grund": "Anglizismus, einheitlich „dodaci ishrani“"
+  },
+  {
+    "de": "Kein Newsletter, keine Weitergabe. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} persönlich bei dir zurück.",
+    "alt": "Bez newslettera, bez prosleđivanja podataka. {{#unless partner_modus=duo}}Javiću ti se{{/unless}}{{#if partner_modus=duo}}Javićemo ti se{{/if}} lično.",
+    "neu": "Bez biltena, bez prosleđivanja podataka. {{#unless partner_modus=duo}}Javiću ti se{{/unless}}{{#if partner_modus=duo}}Javićemo ti se{{/if}} lično.",
+    "grund": "unnötiger Anglizismus"
+  },
+  {
+    "de": "AI generated",
+    "alt": "Generisano pomoću AI-ja",
+    "neu": "Generisano pomoću veštačke inteligencije",
+    "grund": "Anglizismus „AI-ja“ in Bildhinweis"
+  },
+  {
+    "de": "Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)",
+    "alt": "Ova slika je napravljena pomoću AI-ja (EU oznaka)",
+    "neu": "Ova slika je napravljena pomoću veštačke inteligencije (EU oznaka)",
+    "grund": "Anglizismus „AI-ja“ in Bildhinweis"
+  }
+]

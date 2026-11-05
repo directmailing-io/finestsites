@@ -1,0 +1,170 @@
+[
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "<strong>대사 리셋</strong>을 시작해 보세요. 다이어트도, 셰이크도, 칼로리 계산도 없어요. 대신 <strong>하루 4번 정해진 식사</strong>와 <strong>특허받은 서플리먼트</strong>로 일상이 <strong>확실히 좋아지는 걸 느낄 수 있게요.</strong>",
+  "neu": "<strong>대사 리셋</strong>을 시작해 보세요. 다이어트도, 셰이크도, 칼로리 계산도 없어요. 대신 <strong>하루 4번 규칙적인 식사</strong>와 <strong>특허받은 영양 보충제</strong>로 일상이 <strong>한결 가뿐해져요.</strong>",
+  "grund": "„feste Mahlzeiten“ = regelmäßige Mahlzeiten (nicht festgelegte Gerichte); 서플리먼트 → 영양 보충제 (Auftraggeber); holpriges Satzende „느낄 수 있게요“ natürlich"
+ },
+ {
+  "de": "<b>Du entscheidest.</b> Nur wenn es wirklich passt.",
+  "alt": "<b>결정은 내가 해요.</b> 정말 맞을 때만요.",
+  "neu": "<b>직접 결정하시면 돼요.</b> 정말 잘 맞을 때만요.",
+  "grund": "Perspektivfehler: „결정은 내가 해요“ klang wie „ich entscheide“; Vorgabe Auftraggeber"
+ },
+ {
+  "de": "Vor- und Nachname",
+  "alt": "성과 이름",
+  "neu": "이름",
+  "grund": "Namensfeld: „성과 이름“ → „이름“ (Vorgabe Auftraggeber, in Korea üblich)"
+ },
+ {
+  "de": "4× feste Mahlzeiten",
+  "alt": "정해진 식사, 하루 4번",
+  "neu": "하루 4번, 규칙적인 식사",
+  "grund": "„feste“ = regelmäßig, nicht „festgelegt“ (wie Punkt 1/4 bei es/sr)"
+ },
+ {
+  "de": "Unser Nährstoffkonzept",
+  "alt": "저희의 영양 콘셉트",
+  "neu": "저희의 영양 보충 방식",
+  "grund": "„영양 콘셉트“ unklar/Anglizismus; wie it/ru: Ansatz zur Nährstoffversorgung"
+ },
+ {
+  "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+  "alt": "특허받은 콘셉트로 만든 고품질 영양소예요. 마트 진열대에서 아무거나 집어 드는 제품이 아니에요.",
+  "neu": "특허 기술을 바탕으로 만든 고품질 영양소예요. 마트 진열대에서 흔히 고르는 제품과는 달라요.",
+  "grund": "„특허받은 콘셉트“ wörtlich; natürlicher formuliert, Aussage gleich"
+ },
+ {
+  "de": "Austausch mit Gleichgesinnten",
+  "alt": "같은 목표를 가진 사람들과 함께해요",
+  "neu": "비슷한 목표를 가진 사람들과 경험을 나눠요",
+  "grund": "Erfahrungsaustausch ausdrücklich (wie sr/pl)"
+ },
+ {
+  "de": "Kein Ess-Rollercoaster",
+  "alt": "식욕 롤러코스터 없이",
+  "neu": "식욕이 들쭉날쭉하지 않아요",
+  "grund": "wörtliche Achterbahn-Metapher ersetzt (wie bg)"
+ },
+ {
+  "de": "Achterbahn",
+  "alt": "롤러코스터",
+  "neu": "오르락내리락",
+  "grund": "Diagramm-Label: Metapher „롤러코스터“ → anschauliches „auf und ab“"
+ },
+ {
+  "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+  "alt": "몸이 축 처지는 느낌이 없어요. 몸이 나를 거스르는 게 아니라, 나와 함께 움직인다는 걸 다시 느껴요.",
+  "neu": "몸이 축 처지는 느낌이 없어요. 몸이 거스르지 않고 함께 움직여 준다는 걸 다시 느낄 수 있어요.",
+  "grund": "Perspektivfehler „나를/나와“ entfernt"
+ },
+ {
+  "de": "Wieder wohl in dir",
+  "alt": "다시 내 몸이 편해져요",
+  "neu": "몸이 다시 편안해져요",
+  "grund": "Perspektivfehler „내 몸“ entfernt"
+ },
+ {
+  "de": "Passt das zu dir?",
+  "alt": "나에게 맞을까요?",
+  "neu": "잘 맞을지 궁금하세요?",
+  "grund": "Perspektivfehler „나에게“; Besucher angesprochen ohne 당신"
+ },
+ {
+  "de": "Häkchen setzen. Wir schauen gemeinsam, ob und wie das zu dir passt.",
+  "alt": "체크해 보세요. 나에게 맞는지, 맞다면 어떻게 맞는지 함께 살펴볼게요.",
+  "neu": "해당되는 항목에 체크해 보세요. 잘 맞는지, 맞다면 어떻게 맞는지 함께 살펴볼게요.",
+  "grund": "Perspektivfehler „나에게“ in Satz des Betreibers"
+ },
+ {
+  "de": "Deine Klamotten sitzen nicht mehr so wie du willst",
+  "alt": "옷 핏이 내가 원하는 대로 나오지 않아요",
+  "neu": "옷 핏이 원하는 대로 나오지 않아요",
+  "grund": "„내가“ entfernt, einheitliche Perspektive"
+ },
+ {
+  "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+  "alt": "해당되는 항목을 모두 눌러 주세요. 그러면 {{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 구체적으로 무엇을 보여 {{#unless partner_modus=duo}}드릴 수 있는지{{/unless}}{{#if partner_modus=duo}}드릴 수 있는지{{/if}} {{#unless partner_modus=duo}}알려 드릴게요{{/unless}}{{#if partner_modus=duo}}알려 드릴게요{{/if}}.",
+  "neu": "해당되는 항목을 모두 눌러 주세요. 그러면 {{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 딱 맞는 방법을 {{#unless partner_modus=duo}}구체적으로{{/unless}}{{#if partner_modus=duo}}구체적으로{{/if}} {{#unless partner_modus=duo}}보여 드릴게요{{/unless}}{{#if partner_modus=duo}}보여 드릴게요{{/if}}.",
+  "grund": "verschachtelte Übertragung („was ich zeigen kann, sage ich“) vereinfacht; Bedingungen gleich, Solo/Duo geprüft"
+ },
+ {
+  "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+  "alt": "장기적인 일상으로 넘어가는 과정은 자연스럽게 이어져요. 새로운 습관이 생기고, 내 몸도 더 잘 알게 되죠. 원한다면 한 달에 며칠 정도 의식적으로 관리하는 날을 두면서 그 효과를 유지할 수 있어요.",
+  "neu": "장기적인 일상으로 넘어가는 과정은 자연스럽게 이어져요. 새로운 습관이 생기고, 몸에 대해서도 더 잘 알게 되죠. 원한다면 한 달에 며칠 정도 식단에 특히 신경 쓰는 날을 두면서 그 효과를 유지할 수 있어요.",
+  "grund": "„의식적으로 관리하는 날“ unklar → Tage mit besonders bewusster Ernährung; „내 몸“ entfernt"
+ },
+ {
+  "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+  "alt": "네. 이 콘셉트는 채식이나 비건 방식으로도 진행할 수 있어요. 동물성 식품 권장 사항마다 알맞은 대안이 있어요.",
+  "neu": "네. 이 프로그램은 채식이나 비건 방식으로도 진행할 수 있어요. 권장되는 동물성 식품마다 알맞은 대안이 있어요.",
+  "grund": "Sinnverschiebung „동물성 식품 권장 사항“ → empfohlene tierische Lebensmittel; 콘셉트 → 프로그램"
+ },
+ {
+  "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+  "alt": "Kölner Liste(쾰른 리스트)는 독립적인 데이터베이스예요. 여기서는 영양 보충제에 금지 성분이나 도핑 물질이 들어 있는지 검사해요. 제품이 이 리스트에 올라 있다면 확신해도 돼요. 숨겨진 성분이 없다는 뜻이니까요. 그래서 많은 프로 선수들이 FitLine을 쓰는 거예요. 결국 내 몸에 무엇이 들어가는지 정확히 알 수 있다는 뜻이에요. 찜찜한 일 없이요.",
+  "neu": "Kölner Liste(쾰른 리스트)는 독립적인 데이터베이스예요. 여기서는 영양 보충제에 금지 성분이나 도핑 물질이 들어 있는지 검사해요. 제품이 이 리스트에 올라 있다면 안심해도 돼요. 숨겨진 성분이 없다는 뜻이니까요. 그래서 많은 프로 선수들이 FitLine을 쓰는 거예요. 결국 몸에 무엇이 들어가는지 정확히 알 수 있다는 뜻이에요. 찜찜한 일 없이요.",
+  "grund": "„내 몸“ entfernt; 확신해도 돼요 → 안심해도 돼요 (natürlicher)"
+ },
+ {
+  "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+  "alt": "아니요. 이 콘셉트는 칼로리를 줄이는 다이어트가 아니에요. 좋은 자연식 식사를 하고, 여기에 선별된 영양소를 더해요. 핵심은 포기가 아니라 더 나은 식습관이에요.",
+  "neu": "아니요. 이 프로그램은 칼로리를 줄이는 다이어트가 아니에요. 좋은 자연식 식사를 하고, 여기에 선별된 영양소를 더해요. 핵심은 참는 게 아니라 더 나은 식습관이에요.",
+  "grund": "콘셉트 → 프로그램 (Anglizismus); „포기“ → „참는 것“ (Verzicht natürlicher)"
+ },
+ {
+  "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+  "alt": "핵심 단계인 활성화 단계에서는 우유, 치즈, 쿼크, 생크림을 일부러 빼요. 장내 환경이 새롭게 자리 잡을 수 있도록요. <b>예외:</b> 아침 첫 끼로 먹는 프로바이오틱 요거트는 이 콘셉트에 분명히 포함되어 있고, 오히려 중요한 부분이에요. 안정화 단계부터는 하드 치즈, 쿼크, 모차렐라 같은 것들을 다시 먹어요. 단백질원으로 적당히요. 커피에는 무가당 아몬드 밀크나 두유를 조금 넣어도 괜찮아요.",
+  "neu": "핵심 단계인 활성화 단계에서는 우유, 치즈, 쿼크, 생크림을 일부러 빼요. 장내 환경이 새롭게 자리 잡을 수 있도록요. <b>예외:</b> 아침 첫 끼로 먹는 프로바이오틱 요거트는 이 프로그램에 분명히 포함되어 있고, 오히려 중요한 부분이에요. 안정화 단계부터는 하드 치즈, 쿼크, 모차렐라 같은 것들을 다시 먹어요. 단백질원으로 적당히요. 커피에는 무가당 아몬드 밀크나 두유를 조금 넣어도 괜찮아요.",
+  "grund": "콘셉트 → 프로그램 (Anglizismus, einheitlich)"
+ },
+ {
+  "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+  "alt": "<b>아니요.</b> 일반적인 식사 대용 셰이크나 단백질 셰이크는 핵심 단계에서 허용되지 않고, 그 이후에도 권장하지 않아요. 제대로 된 식사를 해요. 많은 분들이 ‘셰이크’로 헷갈리는 건 <b>영양소 농축 제품</b>(Basic-Immun-Mix, Restorate 미네랄, 아미노산)이에요. 물에 타서 마시는 분말로, 몸에 비타민과 미네랄을 공급해 줘요. 식사를 대신하는 게 아니라 보완해요. 오히려 이 콘셉트에서 중요한 부분이에요.",
+  "neu": "<b>아니요.</b> 일반적인 식사 대용 셰이크나 단백질 셰이크는 핵심 단계에서 허용되지 않고, 그 이후에도 권장하지 않아요. 제대로 된 식사를 해요. 많은 분들이 ‘셰이크’로 헷갈리는 건 <b>영양소 농축 제품</b>(Basic-Immun-Mix, Restorate 미네랄, 아미노산)이에요. 물에 타서 마시는 분말로, 몸에 비타민과 미네랄을 공급해 줘요. 식사를 대신하는 게 아니라 보완해요. 오히려 이 프로그램에서 중요한 부분이에요.",
+  "grund": "콘셉트 → 프로그램 (einheitlich)"
+ },
+ {
+  "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+  "alt": "셰이크도 괜찮나요? 식사를 마시는 건가요?",
+  "neu": "셰이크도 괜찮나요? 식사를 음료로 대신하나요?",
+  "grund": "„식사를 마시는 건가요?“ wörtlich (wie bg) → Mahlzeiten durch Getränke ersetzen"
+ },
+ {
+  "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+  "alt": "저희는 <strong>FitLine 제품 콘셉트</strong>를 신중하게 골라서 써요. 이유는 간단해요. 좋은 음식만으로는 부족할 때가 많거든요. 추가로 챙기는 것도 몸에 제대로 도달해야 해요.",
+  "neu": "저희는 <strong>FitLine 제품 구성</strong>을 일부러 선택해서 사용해요. 이유는 간단해요. 좋은 음식만으로는 부족할 때가 많거든요. 추가로 챙기는 것도 몸에 제대로 도달해야 해요.",
+  "grund": "„제품 콘셉트를 골라서“ unidiomatisch → Produktsortiment bewusst gewählt"
+ },
+ {
+  "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+  "alt": "다양한 레시피가 많고, 채식하는 분들에게도 잘 맞아요. 굶어서 빠르게 체중을 줄이는 게 아니라, 의식적으로 식단을 챙기는 것이 핵심이에요.",
+  "neu": "다양한 레시피가 많고, 채식하는 분들에게도 잘 맞아요. 굶어서 빠르게 체중을 줄이는 게 아니라, 식단을 제대로 챙기는 것이 핵심이에요.",
+  "grund": "„의식적으로“ (bewusst) wörtlich → natürlicher"
+ },
+ {
+  "de": "Das Konzept",
+  "alt": "콘셉트",
+  "neu": "프로그램",
+  "grund": "Nav: Anglizismus 콘셉트 → 프로그램 (einheitlich mit FAQ)"
+ },
+ {
+  "de": "Konzept",
+  "alt": "콘셉트",
+  "neu": "프로그램",
+  "grund": "Footer-Nav: einheitlich mit Kopf-Nav"
+ },
+ {
+  "de": "Fragen &amp; Antworten",
+  "alt": "질문 &amp; 답변",
+  "neu": "자주 묻는 질문",
+  "grund": "in Korea übliche FAQ-Überschrift"
+ },
+ {
+  "de": "Danke<span id=\"successNameDe\"></span>!",
+  "alt": "고마워요<span id=\"successNameDe\"></span>!",
+  "neu": "감사해요<span id=\"successNameDe\"></span>!",
+  "grund": "„고마워요“ gegenüber Interessenten zu salopp; 감사해요 bleibt 요-Ton"
+ }
+]

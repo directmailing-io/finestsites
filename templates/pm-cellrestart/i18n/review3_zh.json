@@ -1,0 +1,98 @@
+[
+ {
+  "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+  "alt": "可以。这个方案也可以按素食或纯素方式来做。所有动物性建议都有合适的替代选择。",
+  "neu": "可以。这个方案也可以按素食或纯素方式来做。所有推荐的动物性食品都有合适的替代选择。",
+  "grund": "Auftraggeber Punkt 11: „动物性建议“ = tierische Empfehlungen (Sinnverschiebung), gemeint sind die empfohlenen tierischen Lebensmittel"
+ },
+ {
+  "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+  "alt": "能量保持稳定。你会更久有饱腹感，身体也会动用自己的储备。",
+  "neu": "精力保持稳定。饱腹感会持续更久，身体也会动用自己的储备。",
+  "grund": "Auftraggeber Punkt 11: „饱腹感会持续更久“; „能量“ hier gefühlte Energie → „精力“"
+ },
+ {
+  "de": "Mehr Energie im Alltag",
+  "alt": "日常更有能量",
+  "neu": "日常更有精力",
+  "grund": "Auftraggeber Punkt 11: persönliche Energie = 精力"
+ },
+ {
+  "de": "01 · Energie",
+  "alt": "01·能量",
+  "neu": "01·精力",
+  "grund": "wie Überschrift der Karte: persönliche Energie = 精力"
+ },
+ {
+  "de": "Energie schnell hoch, schnell wieder weg. Nach 2–3 Stunden wieder Hunger.",
+  "alt": "能量来得快，去得也快。2到3小时后又饿了。",
+  "neu": "精力一下子上来，又很快掉下去。2到3小时后又饿了。",
+  "grund": "gefühlte Energie → 精力 (能量 klingt nach Physik/Kalorien)"
+ },
+ {
+  "de": "Energie",
+  "alt": "能量",
+  "neu": "精力",
+  "grund": "Kurvenbeschriftung „Energie ↑“ im Phasen-Diagramm: gefühlte Energie → 精力"
+ },
+ {
+  "de": "Achterbahn",
+  "alt": "过山车",
+  "neu": "大起大落",
+  "grund": "wörtliche Metapher „过山车“ → natürliches „大起大落“ für die Zuckerkurve"
+ },
+ {
+  "de": "Kein Ess-Rollercoaster",
+  "alt": "告别饮食过山车",
+  "neu": "食欲不再忽高忽低",
+  "grund": "wörtliche Metapher „饮食过山车“ ist im Chinesischen unklar; gemeint: kein Auf und Ab beim Essen/Appetit"
+ },
+ {
+  "de": "4× feste Mahlzeiten",
+  "alt": "4×固定正餐",
+  "neu": "每天定时4餐",
+  "grund": "„固定正餐“ kann wie festgelegte Gerichte klingen; gemeint: regelmäßige Mahlzeiten (vgl. Punkt 1/4)"
+ },
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "开始你的<strong>代谢重启</strong>。不节食，不喝代餐奶昔，也不用算来算去。只要<strong>每天4顿固定正餐</strong>，再配合<strong>专利营养补充品</strong>，让你每天都<strong>过得更舒服。</strong>",
+  "neu": "开始你的<strong>代谢重启</strong>。不节食，不喝代餐奶昔，也不用算热量。只要<strong>每天定时吃4顿正餐</strong>，再配合<strong>专利营养补充品</strong>，让你每天都<strong>过得更舒服。</strong>",
+  "grund": "„算来算去“ unklar → „算热量“ (vgl. Punkt 1 „sin contar calorías“); „固定正餐“ → regelmäßige Mahlzeiten"
+ },
+ {
+  "de": "Austausch mit Gleichgesinnten",
+  "alt": "和志同道合的人交流",
+  "neu": "和目标相近的人交流心得",
+  "grund": "wie Punkt 4/5: Erfahrungsaustausch mit Menschen mit ähnlichen Zielen; „志同道合“ klingt zu groß"
+ },
+ {
+  "de": "Unser Nährstoffkonzept",
+  "alt": "我们的营养素方案",
+  "neu": "我们的营养补充方案",
+  "grund": "wie Punkt 6: gemeint ist der Ansatz zur Nährstoffversorgung"
+ },
+ {
+  "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+  "alt": "你会更有意识地吃，偶尔破例也没关系。",
+  "neu": "你会更用心地安排饮食，偶尔破例也没关系。",
+  "grund": "„有意识地吃“ ist Lehnübersetzung („bewusst“); konkret auf Ernährung bezogen"
+ },
+ {
+  "de": "Zahlreiche vielfältige Rezepte, auch für Vegetarier geeignet. Es geht nicht um schnellen Gewichtsverlust durch Hungern, sondern um bewusste Ernährung.",
+  "alt": "丰富多样的食谱，也适合素食者。重点不是靠挨饿快速减重，而是更有意识地吃。",
+  "neu": "丰富多样的食谱，也适合素食者。重点不是靠挨饿快速减重，而是用心吃好每一餐。",
+  "grund": "„有意识地吃“ → natürliches „用心吃好每一餐“"
+ },
+ {
+  "de": "Made with",
+  "alt": "用心制作",
+  "neu": "用",
+  "grund": "Footer lautet „Made with ♥ von [Logo]“; bisher „用心制作 ♥ 由 [Logo]“ ergab keinen Satz → „用 ♥ 制作，来自 [Logo]“"
+ },
+ {
+  "de": "von",
+  "alt": "由",
+  "neu": "制作，来自",
+  "grund": "siehe „Made with“"
+ }
+]

@@ -1,0 +1,410 @@
+[
+ {
+  "de": "Die 4 Phasen",
+  "alt": "4 फेज़",
+  "neu": "4 चरण",
+  "grund": "„चरण“ ist das gängige Hindi-Wort; Anglizismus „फेज़“ seitenweit ersetzt"
+ },
+ {
+  "de": "4 Phasen",
+  "alt": "4 फेज़",
+  "neu": "4 चरण",
+  "grund": "wie oben (Nav)"
+ },
+ {
+  "de": "Der Stoffwechsel-Reset in 4 Phasen",
+  "alt": "4 फेज़ में मेटाबॉलिज़्म रीसेट",
+  "neu": "4 चरणों में मेटाबॉलिज़्म रीसेट",
+  "grund": "चरण statt फेज़"
+ },
+ {
+  "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+  "alt": "ज़्यादा एनर्जी। साफ दिमाग। <span class=\"mark\">और ज़्यादा हल्कापन।</span>",
+  "neu": "ज़्यादा ऊर्जा। साफ़ दिमाग़। <span class=\"mark\">और ज़्यादा हल्कापन।</span>",
+  "grund": "ऊर्जा statt एनर्जी (seitenweit einheitlich), Nukta-Schreibung"
+ },
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "अपना <strong>मेटाबॉलिज़्म रीसेट</strong> शुरू कीजिए। न कोई डाइट, न शेक, न गिनती का झंझट। इसके बजाय <strong>4 तय मील्स</strong> और <strong>पेटेंटेड सप्लीमेंट्स</strong>, ताकि आपकी रोज़ की ज़िंदगी <strong>सच में अच्छी लगे।</strong>",
+  "neu": "अपना <strong>मेटाबॉलिज़्म रीसेट</strong> शुरू कीजिए। न कोई डाइट, न शेक, न कैलोरी गिनने का झंझट। इसके बजाय <strong>दिन में तय समय पर चार बार खाना</strong> और <strong>पेटेंट से संरक्षित सप्लीमेंट्स</strong>, ताकि आप हर दिन <strong>सच में अच्छा महसूस करें।</strong>",
+  "grund": "Auftraggeber Punkt 9: „4 तय मील्स“ → regelmäßige Mahlzeiten; „Zählen“ = Kalorien zählen; „Alltag fühlt sich gut an“ natürlich als „du fühlst dich gut“"
+ },
+ {
+  "de": "Austausch mit Gleichgesinnten",
+  "alt": "एक जैसी सोच वाले लोगों से बातचीत",
+  "neu": "मिलते-जुलते लक्ष्य वाले लोगों से अनुभव बाँटना",
+  "grund": "Erfahrungsaustausch mit Menschen mit ähnlichen Zielen (wie sr/pl-Punkt)"
+ },
+ {
+  "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+  "alt": "{{#unless partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}}</b> द्वारा चलाया जाता है, PM-International (FitLine®) {{#if geschlecht=weiblich}}की स्वतंत्र डिस्ट्रीब्यूटर{{/if}}{{#if geschlecht=maennlich}}के स्वतंत्र डिस्ट्रीब्यूटर{{/if}}। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/unless}}{{#if partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> द्वारा चलाया जाता है, PM-International (FitLine®) के स्वतंत्र डिस्ट्रीब्यूटर। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/if}}",
+  "neu": "{{#unless partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}}</b> द्वारा चलाया जाता है। {{#if geschlecht=weiblich}}वे PM-International (FitLine®) की स्वतंत्र डिस्ट्रीब्यूटर हैं।{{/if}}{{#if geschlecht=maennlich}}वे PM-International (FitLine®) के स्वतंत्र डिस्ट्रीब्यूटर हैं।{{/if}} यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/unless}}{{#if partner_modus=duo}}यह पेज <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> द्वारा चलाया जाता है। दोनों PM-International (FitLine®) के स्वतंत्र डिस्ट्रीब्यूटर हैं। यह PM-International AG की आधिकारिक वेबसाइट नहीं है।{{/if}}",
+  "grund": "Auftraggeber Punkt 9: Betreiberangabe als vollständige Sätze mit Subjekt (वे/दोनों) und Verb (हैं); की/के je Geschlecht; Name unverändert im Nominativ; Satz 1 bleibt korrekt, auch wenn kein Geschlecht gesetzt ist"
+ },
+ {
+  "de": "Unser Nährstoffkonzept",
+  "alt": "हमारा न्यूट्रिएंट कॉन्सेप्ट",
+  "neu": "पोषक तत्वों को लेकर हमारा तरीका",
+  "grund": "„न्यूट्रिएंट कॉन्सेप्ट“ war Anglizismus und unklar (wie ru-Punkt: unser Ansatz bei Nährstoffen)"
+ },
+ {
+  "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+  "alt": "हाई-क्वालिटी पोषक तत्व, एक पेटेंटेड कॉन्सेप्ट से। सुपरमार्केट की शेल्फ़ से नहीं।",
+  "neu": "उच्च गुणवत्ता वाले पोषक तत्व, पेटेंट से संरक्षित कॉन्सेप्ट पर आधारित। सुपरमार्केट की शेल्फ़ से नहीं।",
+  "grund": "हाई-क्वालिटी/पेटेंटेड → Hindi"
+ },
+ {
+  "de": "4× feste Mahlzeiten",
+  "alt": "4× तय मील्स",
+  "neu": "दिन में 4 बार, तय समय पर खाना",
+  "grund": "„तय मील्स“ wie Punkt 9: regelmäßige Mahlzeiten, keine festgelegten Gerichte"
+ },
+ {
+  "de": "Kein Snacken zwischendurch, kein Weglassen. Klare Struktur, satt bis zum nächsten Mal.",
+  "alt": "बीच-बीच में स्नैकिंग नहीं, कोई मील स्किप नहीं। साफ़ स्ट्रक्चर, और अगले खाने तक पेट भरा रहता है।",
+  "neu": "बीच-बीच में स्नैक्स नहीं, कोई खाना छोड़ना भी नहीं। तय रूटीन, और अगले खाने तक पेट भरा रहता है।",
+  "grund": "मील स्किप/स्ट्रक्चर → Hindi"
+ },
+ {
+  "de": "<b>Warum wichtig:</b> Regelmäßigkeit gibt dem Körper den Rhythmus zurück.",
+  "alt": "<b>यह क्यों ज़रूरी है:</b> नियमितता शरीर को उसका रिदम वापस देती है।",
+  "neu": "<b>यह क्यों ज़रूरी है:</b> नियमितता शरीर को उसकी लय वापस देती है।",
+  "grund": "रिदम → लय"
+ },
+ {
+  "de": "Für ein paar Wochen raus, damit dein Körper zur Ruhe kommt. Nicht für immer, nur in der Kernphase.",
+  "alt": "कुछ हफ़्तों के लिए बंद, ताकि आपके शरीर को आराम मिल सके। हमेशा के लिए नहीं, सिर्फ़ कोर फेज़ में।",
+  "neu": "कुछ हफ़्तों के लिए बंद, ताकि आपके शरीर को आराम मिल सके। हमेशा के लिए नहीं, सिर्फ़ मुख्य चरण में।",
+  "grund": "कोर फेज़ → मुख्य चरण"
+ },
+ {
+  "de": "<span class=\"essence-star\">*</span> Probiotischer Joghurt am Morgen bleibt drin, der baut deine Darmflora auf.",
+  "alt": "<span class=\"essence-star\">*</span> सुबह का प्रोबायोटिक दही चलता रहेगा, यह आपके गट फ्लोरा को मज़बूत बनाता है।",
+  "neu": "<span class=\"essence-star\">*</span> सुबह का प्रोबायोटिक दही चलता रहेगा, यह आपकी आंतों के अच्छे बैक्टीरिया (गट फ्लोरा) को मज़बूत बनाता है।",
+  "grund": "„गट फ्लोरा“ allein ist Fachjargon; Alltagssprache mit Fachwort in Klammern"
+ },
+ {
+  "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+  "alt": "एक्टिवेशन फेज़ में आप <b>कीटोजेनिक डाइट</b> के सिद्धांत को फ़ॉलो करते हैं। सुनने में मुश्किल लगता है, पर है नहीं: <b>क्लासिक कीटो</b> जैसा ही सिद्धांत, बस <b>चम्मच भर-भरकर फैट खाने की ज़रूरत नहीं</b> और <b>हर वक़्त परहेज़ भी नहीं</b>।",
+  "neu": "एक्टिवेशन वाले चरण में आप <b>कीटोजेनिक डाइट</b> के सिद्धांत को फ़ॉलो करते हैं। सुनने में मुश्किल लगता है, पर है नहीं: <b>क्लासिक कीटो</b> जैसा ही सिद्धांत, बस <b>चम्मच भर-भरकर फैट खाने की ज़रूरत नहीं</b> और <b>हर वक़्त परहेज़ भी नहीं</b>।",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Achterbahn",
+  "alt": "रोलरकोस्टर",
+  "neu": "उतार-चढ़ाव",
+  "grund": "wörtliche Achterbahn-Metapher („रोलरकोस्टर“) ersetzt"
+ },
+ {
+  "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+  "alt": "यही फीडबैक बार-बार मिलता है। बेशक, हर शरीर अलग तरह से रिएक्ट करता है।",
+  "neu": "लोग बार-बार यही बताते हैं। बेशक, हर शरीर की प्रतिक्रिया अलग होती है।",
+  "grund": "फीडबैक/रिएक्ट → Hindi"
+ },
+ {
+  "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+  "alt": "जब ज़रूरत हो, बेहतर एकाग्रता और ज़्यादा फोकस।",
+  "neu": "जब ज़रूरत हो, तब बेहतर एकाग्रता और पूरा ध्यान।",
+  "grund": "Doppelung एकाग्रता/फोकस natürlicher"
+ },
+ {
+  "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+  "alt": "सुबह कुछ अलग लगती है। कम सुस्ती, और आप तुरंत एक्टिव।",
+  "neu": "सुबह कुछ अलग लगती है। सुस्ती कम, और उठते ही आप चुस्त।",
+  "grund": "„तुरंत एक्टिव“ → natürliches „उठते ही चुस्त“"
+ },
+ {
+  "de": "Was du in den Phasen lernst, nimmst du in den Alltag mit.",
+  "alt": "फेज़ में जो आप सीखते हैं, वह रोज़ की ज़िंदगी में आपके साथ रहता है।",
+  "neu": "इन चरणों में आप जो सीखते हैं, वह रोज़ की ज़िंदगी में आपके साथ रहता है।",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "In <span class=\"mark\">4 Phasen</span> zu deinem neuen Alltag.",
+  "alt": "<span class=\"mark\">4 फेज़</span> में आपके नए रूटीन तक।",
+  "neu": "<span class=\"mark\">4 चरणों</span> में आपकी नई दिनचर्या तक।",
+  "grund": "फेज़/रूटीन → चरण/दिनचर्या"
+ },
+ {
+  "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+  "alt": "चार साफ़ फेज़: पहले हफ़्ते से लेकर आपके स्थायी रूटीन तक।",
+  "neu": "चार साफ़ चरण: पहले हफ़्ते से लेकर आपकी स्थायी दिनचर्या तक।",
+  "grund": "फेज़/रूटीन → चरण/दिनचर्या"
+ },
+ {
+  "de": "Keine Kalorien tracken",
+  "alt": "कैलोरी ट्रैकिंग नहीं",
+  "neu": "कैलोरी गिनने की ज़रूरत नहीं",
+  "grund": "ट्रैकिंग → गिनना"
+ },
+ {
+  "de": "Phase 1",
+  "alt": "फेज़ 1",
+  "neu": "चरण 1",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 2",
+  "alt": "फेज़ 2",
+  "neu": "चरण 2",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 3",
+  "alt": "फेज़ 3",
+  "neu": "चरण 3",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 4",
+  "alt": "फेज़ 4",
+  "neu": "चरण 4",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 01",
+  "alt": "फेज़ 01",
+  "neu": "चरण 01",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 02",
+  "alt": "फेज़ 02",
+  "neu": "चरण 02",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 03",
+  "alt": "फेज़ 03",
+  "neu": "चरण 03",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Phase 04",
+  "alt": "फेज़ 04",
+  "neu": "चरण 04",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Stabilisieren",
+  "alt": "स्टेबिलाइज़ेशन",
+  "neu": "स्थिरता",
+  "grund": "स्टेबिलाइज़ेशन → gängiges Hindi"
+ },
+ {
+  "de": "Der neue Rhythmus wird zur Gewohnheit.",
+  "alt": "नया रिदम आदत बन जाता है।",
+  "neu": "नई लय आदत बन जाती है।",
+  "grund": "रिदम → लय"
+ },
+ {
+  "de": "Du bringst mehr Vielfalt auf den Teller und hältst die Struktur.",
+  "alt": "आप प्लेट में ज़्यादा वैरायटी लाते हैं और स्ट्रक्चर बनाए रखते हैं।",
+  "neu": "आप थाली में ज़्यादा तरह की चीज़ें शामिल करते हैं और तय रूटीन बनाए रखते हैं।",
+  "grund": "वैरायटी/स्ट्रक्चर → Hindi"
+ },
+ {
+  "de": "Weißer Tag",
+  "alt": "सफेद दिन",
+  "neu": "सफ़ेद दिन",
+  "grund": "Nukta-Schreibung einheitlich"
+ },
+ {
+  "de": "Nur Eiweiß",
+  "alt": "सिर्फ प्रोटीन",
+  "neu": "सिर्फ़ प्रोटीन",
+  "grund": "Schreibung einheitlich"
+ },
+ {
+  "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+  "alt": "सिर्फ प्रोटीन, अच्छे फैट, सुबह का प्रोबायोटिक दही और न्यूट्रिएंट कॉन्सन्ट्रेट। सब्ज़ी भी नहीं। सुनने में सख्त लगता है, लेकिन यह कोर फेज़ का हिस्सा है।",
+  "neu": "सिर्फ़ प्रोटीन, अच्छे फैट, सुबह का प्रोबायोटिक दही और पोषक तत्वों के कॉन्सन्ट्रेट। सब्ज़ी भी नहीं। सुनने में सख़्त लगता है, लेकिन यह मुख्य चरण का हिस्सा है।",
+  "grund": "न्यूट्रिएंट/कोर फेज़ → Hindi"
+ },
+ {
+  "de": "Der Normal-Tag",
+  "alt": "नॉर्मल दिन",
+  "neu": "आम दिन",
+  "grund": "नॉर्मल → आम"
+ },
+ {
+  "de": "Wie ein weißer Tag, plus Gemüse und Salat. Der Standard-Tag im Programm.",
+  "alt": "सफेद दिन जैसा, साथ में सब्ज़ियाँ और सलाद। प्रोग्राम का स्टैंडर्ड दिन।",
+  "neu": "सफ़ेद दिन जैसा, साथ में सब्ज़ियाँ और सलाद। प्रोग्राम का सामान्य दिन।",
+  "grund": "स्टैंडर्ड → सामान्य"
+ },
+ {
+  "de": "Eine Beispiel-Woche pro Phase.",
+  "alt": "हर फेज़ का एक सैंपल हफ़्ता।",
+  "neu": "हर चरण के लिए एक हफ़्ते का उदाहरण।",
+  "grund": "सैंपल/फेज़ → Hindi"
+ },
+ {
+  "de": "Wichtig: Jede Zeile zeigt nur eine Woche. Rechts siehst du wie oft sich das wiederholt.",
+  "alt": "ज़रूरी: हर लाइन सिर्फ़ एक हफ़्ता दिखाती है। दाईं तरफ़ आप देख सकते हैं कि यह कितनी बार दोहराया जाता है।",
+  "neu": "ज़रूरी: हर पंक्ति सिर्फ़ एक हफ़्ता दिखाती है। दाईं तरफ़ आप देख सकते हैं कि यह कितनी बार दोहराया जाता है।",
+  "grund": "लाइन → पंक्ति"
+ },
+ {
+  "de": "Wochen",
+  "alt": "हफ्ते",
+  "neu": "हफ़्ते",
+  "grund": "Schreibung"
+ },
+ {
+  "de": "Woche",
+  "alt": "हफ्ता",
+  "neu": "हफ़्ता",
+  "grund": "Schreibung"
+ },
+ {
+  "de": "Woche 1: nur weiße Tage",
+  "alt": "हफ्ता 1: सिर्फ सफेद दिन",
+  "neu": "हफ़्ता 1: सिर्फ़ सफ़ेद दिन",
+  "grund": "Schreibung"
+ },
+ {
+  "de": "Woche 2 bis 4",
+  "alt": "हफ्ता 2 से 4",
+  "neu": "हफ़्ता 2 से 4",
+  "grund": "Schreibung"
+ },
+ {
+  "de": "Geschützte Forschung im Nährstoff-Transport",
+  "alt": "पोषक तत्वों के ट्रांसपोर्ट पर सुरक्षित रिसर्च",
+  "neu": "पोषक तत्वों को शरीर तक पहुँचाने पर पेटेंट से संरक्षित शोध",
+  "grund": "Auftraggeber Punkt 9: „सुरक्षित रिसर्च“ = sichere Forschung, gemeint ist Patentschutz"
+ },
+ {
+  "de": "Spitzensportler",
+  "alt": "टॉप खिलाड़ी",
+  "neu": "शीर्ष खिलाड़ी",
+  "grund": "टॉप → शीर्ष"
+ },
+ {
+  "de": "Weltmeister und Olympia-Profis vertrauen darauf",
+  "alt": "विश्व चैंपियन और ओलंपिक प्रोफेशनल इस पर भरोसा करते हैं",
+  "neu": "विश्व चैंपियन और ओलंपिक खिलाड़ी इस पर भरोसा करते हैं",
+  "grund": "प्रोफेशनल → खिलाड़ी"
+ },
+ {
+  "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+  "alt": "एक्टिव रीसेट कुछ हफ़्तों का होता है। उसके बाद एक लंबा स्टेबिलाइज़ेशन फेज़ आता है और फिर लंबे समय का रोज़मर्रा का रूटीन। आप कौन-सा वेरिएंट चुनते हैं, उसके हिसाब से सटीक टाइम प्लान बदलता है।",
+  "neu": "सक्रिय रीसेट कुछ हफ़्तों का होता है। उसके बाद स्थिरता का एक लंबा चरण आता है और फिर लंबे समय की रोज़मर्रा की दिनचर्या। आप कौन-सा विकल्प चुनते हैं, उसके हिसाब से सटीक समय-सारणी अलग होती है।",
+  "grund": "एक्टिव/फेज़/वेरिएंट/टाइम प्लान → Hindi"
+ },
+ {
+  "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+  "alt": "नहीं। यह कॉन्सेप्ट कोई कैलोरी-डाइट नहीं है। आप अच्छी, नेचुरल मील्स खाते हैं, और साथ में चुने हुए पोषक तत्व लेते हैं। फ़ोकस बेहतर खान-पान पर है, चीज़ें छोड़ने पर नहीं।",
+  "neu": "नहीं। यह कॉन्सेप्ट कैलोरी गिनने वाली डाइट नहीं है। आप अच्छा, प्राकृतिक खाना खाते हैं, और साथ में चुने हुए पोषक तत्व लेते हैं। ध्यान बेहतर खान-पान पर है, चीज़ें छोड़ने पर नहीं।",
+  "grund": "„कैलोरी-डाइट“ unklar (wie sr-Punkt); मील्स/नेचुरल/फ़ोकस → Hindi"
+ },
+ {
+  "de": "Normale Mahlzeiten aus natürlichen Lebensmitteln. Frisches Gemüse, gute Eiweiße, hochwertige Fette. Je nach Phase mehr das Eine oder das Andere. Nichts Ungewöhnliches, nichts Kompliziertes.",
+  "alt": "प्राकृतिक चीजों से बनी नॉर्मल मील्स। ताजी सब्जियाँ, अच्छा प्रोटीन, अच्छी क्वालिटी की फैट्स। फेज के हिसाब से कभी एक चीज ज्यादा, कभी दूसरी। कुछ अजीब नहीं, कुछ मुश्किल नहीं।",
+  "neu": "प्राकृतिक चीज़ों से बना आम खाना। ताज़ी सब्ज़ियाँ, अच्छा प्रोटीन, अच्छी क्वालिटी के फैट। चरण के हिसाब से कभी एक चीज़ ज़्यादा, कभी दूसरी। कुछ अजीब नहीं, कुछ मुश्किल नहीं।",
+  "grund": "नॉर्मल मील्स → आम खाना; फेज़ → चरण; Schreibung"
+ },
+ {
+  "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+  "alt": "कोर फेज़ (एक्टिवेशन) में आप दूध, चीज़, क्वार्क और क्रीम जान-बूझकर छोड़ देते हैं, ताकि आपका गट फ्लोरा फिर से बन सके। <b>अपवाद:</b> सुबह पहली मील के तौर पर प्रोबायोटिक दही इस कॉन्सेप्ट का साफ़ तौर पर हिस्सा है, और ज़रूरी भी। स्टेबिलाइज़ेशन फेज़ से हार्ड चीज़, क्वार्क, मोज़रेला वगैरह फिर से शामिल हो जाते हैं: सीमित मात्रा में, प्रोटीन के स्रोत के तौर पर। कॉफ़ी में थोड़ा-सा बिना चीनी वाला बादाम या सोया मिल्क चल सकता है।",
+  "neu": "मुख्य चरण (एक्टिवेशन) में आप दूध, चीज़, क्वार्क और क्रीम जान-बूझकर छोड़ देते हैं, ताकि आपकी आंतों के अच्छे बैक्टीरिया फिर से पनप सकें। <b>अपवाद:</b> सुबह दिन के पहले खाने के तौर पर प्रोबायोटिक दही इस कॉन्सेप्ट का साफ़ तौर पर हिस्सा है, और ज़रूरी भी। स्थिरता वाले चरण से हार्ड चीज़, क्वार्क, मोज़रेला वगैरह फिर से शामिल हो जाते हैं: सीमित मात्रा में, प्रोटीन के स्रोत के तौर पर। कॉफ़ी में थोड़ा-सा बिना चीनी वाला बादाम या सोया दूध चल सकता है।",
+  "grund": "कोर फेज़/गट फ्लोरा/मील/स्टेबिलाइज़ेशन/मिल्क → Hindi"
+ },
+ {
+  "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+  "alt": "क्या शेक ले सकते हैं? क्या मील्स पीनी होती हैं?",
+  "neu": "क्या शेक ले सकते हैं? क्या खाने की जगह कुछ पीना होगा?",
+  "grund": "„मील्स पीनी“ unklar; gemeint: Mahlzeiten durch Getränke ersetzen (wie bg-Punkt)"
+ },
+ {
+  "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+  "alt": "<b>नहीं।</b> क्लासिक मील-रिप्लेसमेंट या प्रोटीन शेक कोर फेज़ में नहीं चलते और उसके बाद भी इनकी सलाह नहीं दी जाती। आप असली मील्स खाते हैं। जिन्हें बहुत लोग “शेक” समझ लेते हैं, वे हैं <b>न्यूट्रिएंट कॉन्सन्ट्रेट्स</b> (Basics इम्यून-मिक्स, Restorate मिनरल्स, अमीनो एसिड)। ये पाउडर हैं, जिन्हें आप पानी में घोलते हैं, ताकि शरीर को विटामिन और मिनरल्स मिलें। ये किसी मील की जगह नहीं लेते, बल्कि उसके साथ लिए जाते हैं। ये कॉन्सेप्ट का एक अहम हिस्सा हैं।",
+  "neu": "<b>नहीं।</b> क्लासिक मील-रिप्लेसमेंट या प्रोटीन शेक मुख्य चरण में नहीं चलते और उसके बाद भी इनकी सलाह नहीं दी जाती। आप असली खाना खाते हैं। जिन्हें बहुत लोग “शेक” समझ लेते हैं, वे हैं <b>पोषक तत्वों के कॉन्सन्ट्रेट</b> (Basics इम्यून-मिक्स, Restorate मिनरल्स, अमीनो एसिड)। ये पाउडर हैं, जिन्हें आप पानी में घोलते हैं, ताकि शरीर को विटामिन और मिनरल्स मिलें। ये खाने की जगह नहीं लेते, बल्कि उसके साथ लिए जाते हैं। ये कॉन्सेप्ट का एक अहम हिस्सा हैं।",
+  "grund": "कोर फेज़/मील्स/न्यूट्रिएंट → Hindi; „मील-रिप्लेसमेंट“ bleibt als Fachbegriff"
+ },
+ {
+  "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+  "alt": "हाँ। इस कॉन्सेप्ट को शाकाहारी या वीगन तरीके से भी किया जा सकता है। सभी पशु-आधारित सुझावों के लिए सही विकल्प मौजूद हैं।",
+  "neu": "हाँ। इस कॉन्सेप्ट को शाकाहारी या वीगन तरीके से भी अपनाया जा सकता है। सुझाए गए सभी पशु-आधारित खाद्य पदार्थों के लिए सही विकल्प मौजूद हैं।",
+  "grund": "Sinnverschiebung „पशु-आधारित सुझाव“ (= tierische Empfehlungen) → empfohlene tierische Lebensmittel (wie tr/zh-Punkt)"
+ },
+ {
+  "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+  "alt": "लंबे समय के रोज़मर्रा के रूटीन में बदलाव धीरे-धीरे होता है। आपकी नई आदतें बन चुकी होती हैं और आप अपने शरीर को बेहतर जानते हैं। जो चाहे, महीने में कुछ सोच-समझकर चुने दिनों से असर बनाए रख सकता है।",
+  "neu": "लंबे समय की रोज़मर्रा की दिनचर्या में बदलाव धीरे-धीरे होता है। आपकी नई आदतें बन चुकी होती हैं और आप अपने शरीर को बेहतर जानते हैं। जो चाहे, वह महीने में कुछ ऐसे दिन रखकर असर बनाए रख सकता है, जिनमें खान-पान पर ख़ास ध्यान दिया जाए।",
+  "grund": "„सोच-समझकर चुने दिन“ unklar; konkret Tage mit besonders bewusster Ernährung (wie it/ru/uk-Punkt)"
+ },
+ {
+  "de": "Was ist die Kölner Liste und warum ist die wichtig?",
+  "alt": "Kölner Liste क्या है और यह क्यों जरूरी है?",
+  "neu": "Kölner Liste क्या है और यह क्यों ज़रूरी है?",
+  "grund": "Schreibung"
+ },
+ {
+  "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+  "alt": "NTC का मतलब है न्यूट्रिएंट ट्रांसपोर्ट कॉन्सेप्ट। आसान शब्दों में: यह फ़ॉर्मूला पक्का करता है कि पोषक तत्व ठीक वहीं पहुँचें, जहाँ उन्हें असर करना है। आपकी कोशिकाओं में। कई दूसरे सप्लीमेंट्स में बड़ा हिस्सा बिना इस्तेमाल हुए बाहर निकल जाता है। MicroSolve Q10 ऐसी ही एक टेक्नोलॉजी का उदाहरण है: सामान्य Q10 को शरीर ठीक से नहीं सोख पाता, MicroSolve के साथ उसका इस्तेमाल कहीं बेहतर होता है। सुनने में तकनीकी लगता है, लेकिन यही वजह है कि यह चीज़ सच में काम करती है।",
+  "neu": "NTC का मतलब है Nutrient Transport Concept, यानी पोषक तत्वों को शरीर तक पहुँचाने का कॉन्सेप्ट। आसान शब्दों में: यह फ़ॉर्मूला पक्का करता है कि पोषक तत्व ठीक वहीं पहुँचें, जहाँ उन्हें असर करना है। आपकी कोशिकाओं में। कई दूसरे सप्लीमेंट्स में बड़ा हिस्सा बिना इस्तेमाल हुए बाहर निकल जाता है। MicroSolve Q10 ऐसी ही एक टेक्नोलॉजी का उदाहरण है: सामान्य Q10 को शरीर ठीक से नहीं सोख पाता, MicroSolve के साथ उसका इस्तेमाल कहीं बेहतर होता है। सुनने में तकनीकी लगता है, लेकिन यही वजह है कि यह चीज़ सच में काम करती है।",
+  "grund": "Abkürzung NTC mit Originalname erklärt, dann auf Hindi („न्यूट्रिएंट ट्रांसपोर्ट कॉन्सेप्ट“ erklärte nichts)"
+ },
+ {
+  "de": "Anfrage absenden",
+  "alt": "रिक्वेस्ट भेजें",
+  "neu": "अनुरोध भेजें",
+  "grund": "रिक्वेस्ट → अनुरोध (übliches UI-Wort)"
+ },
+ {
+  "de": "Deine Anfrage ist bei {{#unless partner_modus=duo}}mir{{/unless}}{{#if partner_modus=duo}}uns{{/if}} angekommen. {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} innerhalb von 24 Stunden persönlich bei dir.",
+  "alt": "आपकी रिक्वेस्ट {{#unless partner_modus=duo}}मेरे{{/unless}}{{#if partner_modus=duo}}हमारे{{/if}} पास पहुँच गई है। अगले 24 घंटों में {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपको व्यक्तिगत जवाब मिलेगा।",
+  "neu": "आपका अनुरोध {{#unless partner_modus=duo}}मेरे{{/unless}}{{#if partner_modus=duo}}हमारे{{/if}} पास पहुँच गया है। अगले 24 घंटों में {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपको व्यक्तिगत जवाब मिलेगा।",
+  "grund": "रिक्वेस्ट → अनुरोध (mask. Kongruenz)"
+ },
+ {
+  "de": "<b>Check dein Postfach.</b> Eine Bestätigung ist unterwegs.",
+  "alt": "<b>अपना इनबॉक्स देखिए।</b> कन्फ़र्मेशन मेल रास्ते में है।",
+  "neu": "<b>अपना इनबॉक्स देखिए।</b> पुष्टि वाला ई-मेल रास्ते में है।",
+  "grund": "कन्फ़र्मेशन मेल → Hindi"
+ },
+ {
+  "de": "<b>Persönlicher Kontakt.</b> {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} — ohne Verkaufsdruck.",
+  "alt": "<b>व्यक्तिगत संपर्क।</b> {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपसे संपर्क होगा, बिना किसी सेल्स प्रेशर के।",
+  "neu": "<b>व्यक्तिगत संपर्क।</b> {{#unless partner_modus=duo}}मेरी तरफ़ से{{/unless}}{{#if partner_modus=duo}}हमारी तरफ़ से{{/if}} आपसे संपर्क होगा, बिना कुछ बेचने के दबाव के।",
+  "grund": "सेल्स प्रेशर → Hindi"
+ },
+ {
+  "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+  "alt": "<b>उपयुक्त नहीं</b> गर्भवती और स्तनपान कराने वाली महिलाओं के लिए; जिनका डॉक्टरी इलाज चल रहा है, वे सिर्फ़ अपने डॉक्टर से बात करने के बाद।",
+  "neu": "<b>इनके लिए उपयुक्त नहीं</b> (जब तक डॉक्टर से बात न हो जाए): गर्भवती या स्तनपान कराने वाली महिलाएँ और वे लोग, जिनका डॉक्टरी इलाज चल रहा है।",
+  "grund": "Bisher unvollständiger Satz mit Semikolon; jetzt vollständig, Aussage unverändert"
+ },
+ {
+  "de": "Was passiert nach den ersten Phasen?",
+  "alt": "शुरुआती फेज़ के बाद क्या होता है?",
+  "neu": "शुरुआती चरणों के बाद क्या होता है?",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Nein. Diäten enden und du bist meistens wieder da, wo du vorher warst. Hier geht es um neue Ernährungsgewohnheiten, die auch nach den ersten Phasen bleiben.",
+  "alt": "नहीं। डाइट ख़त्म होती है और ज़्यादातर आप फिर वहीं पहुँच जाते हैं, जहाँ पहले थे। यहाँ बात खाने की नई आदतों की है, जो शुरुआती फेज़ के बाद भी बनी रहती हैं।",
+  "neu": "नहीं। डाइट ख़त्म होती है और ज़्यादातर आप फिर वहीं पहुँच जाते हैं, जहाँ पहले थे। यहाँ बात खाने की नई आदतों की है, जो शुरुआती चरणों के बाद भी बनी रहती हैं।",
+  "grund": "फेज़ → चरण"
+ },
+ {
+  "de": "Statistik-Cookies erlauben",
+  "alt": "स्टैटिस्टिक्स कुकीज़ की अनुमति दें",
+  "neu": "आँकड़ों वाली कुकीज़ की अनुमति दें",
+  "grund": "स्टैटिस्टिक्स → आँकड़े (wie im Banner)"
+ },
+ {
+  "de": "Vor- und Nachname",
+  "alt": "नाम और सरनेम",
+  "neu": "पूरा नाम",
+  "grund": "„नाम और सरनेम“ halb englisch; पूरा नाम ist das übliche Formularwort"
+ },
+ {
+  "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+  "alt": "आपकी रोज़मर्रा की ज़िंदगी के लिए एक रीसेट प्रोग्राम। चार फेज़ में फिर से ज़्यादा ऊर्जा और साफ़ दिमाग़ की ओर।",
+  "neu": "आपकी रोज़मर्रा की ज़िंदगी के लिए एक रीसेट प्रोग्राम। चार चरणों में फिर से ज़्यादा ऊर्जा और साफ़ दिमाग़ की ओर।",
+  "grund": "फेज़ → चरण"
+ }
+]

@@ -1,0 +1,140 @@
+[
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Наша концепция питательных веществ",
+    "neu": "Наш подход к восполнению питательных веществ",
+    "grund": "Auftraggeber Punkt 6: „концепция питательных веществ“ unklar"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Переход к привычной жизни происходит плавно. У тебя появляются новые привычки, и ты лучше понимаешь свой организм. При желании эффект можно поддерживать несколькими осознанными днями в месяц.",
+    "neu": "Переход к привычной жизни происходит плавно. У тебя появляются новые привычки, и ты лучше понимаешь свой организм. При желании эффект можно поддерживать несколькими днями в месяц, когда ты особенно следишь за питанием.",
+    "grund": "Auftraggeber Punkt 6: „осознанные дни“ ohne Erklärung unklar"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Качественные микронутриенты по запатентованной концепции. А не с полки супермаркета.",
+    "neu": "Качественные витамины и минералы, созданные по запатентованной технологии. А не с полки супермаркета.",
+    "grund": "„по концепции“ wörtlich/unklar; gleiche Fehlerart wie Punkt 6"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "Мы осознанно используем <strong>концепцию продуктов FitLine</strong>. Причина простая: одной хорошей еды часто недостаточно. То, что тебе нужно дополнительно, должно ещё и реально попасть в организм.",
+    "neu": "Мы сознательно выбрали <strong>систему продуктов FitLine</strong>. Причина простая: одной хорошей еды часто недостаточно. То, что тебе нужно дополнительно, должно ещё и реально попасть в организм.",
+    "grund": "„концепция продуктов“ wörtlich, „осознанно используем“ hölzern"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Да. Концепцию можно пройти и на вегетарианском, и на веганском питании. Ко всем рекомендациям с продуктами животного происхождения есть подходящие альтернативы.",
+    "neu": "Да. Программу можно проходить и на вегетарианском, и на веганском питании. Для всех рекомендованных продуктов животного происхождения есть подходящие альтернативы.",
+    "grund": "„пройти концепцию“ falsch; „tierische Empfehlungen“ als empfohlene tierische Produkte (vgl. tr/zh)"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "В основной фазе (активации) ты осознанно убираешь молоко, сыр, творог и сливки, чтобы кишечная флора могла восстановиться. <b>Исключение:</b> пробиотический йогурт утром, первый приём пищи за день. Он прямо предусмотрен концепцией и даже важен. С фазы стабилизации твёрдые сыры, творог, моцарелла и т. п. возвращаются в рацион, в умеренных количествах как источник белка. В кофе можно добавить немного несладкого миндального или соевого молока.",
+    "neu": "В основной фазе (активации) ты намеренно убираешь молоко, сыр, творог и сливки, чтобы кишечная флора могла восстановиться. <b>Исключение:</b> пробиотический йогурт утром, первый приём пищи за день. Он прямо предусмотрен программой и даже важен. С фазы стабилизации твёрдые сыры, творог, моцарелла и т. п. возвращаются в рацион, в умеренных количествах как источник белка. В кофе можно добавить немного несладкого миндального или соевого молока.",
+    "grund": "„осознанно“ hier schief, gemeint ist bewusst = absichtlich; „концепция“ → „программа“, natürlicher"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>Нет.</b> Классические шейки-заменители еды и протеиновые шейки в основной фазе не разрешены, и после неё тоже не рекомендуются. Ты ешь нормальную еду. То, что многие путают с «шейками»: <b>концентраты питательных веществ</b> (Basic-Immun-Mix, минералы Restorate, аминокислоты). Это порошки, которые ты разводишь в воде, чтобы обеспечить организм витаминами и минералами. Они не заменяют приём пищи, а дополняют его. Более того, это важная часть концепции.",
+    "neu": "<b>Нет.</b> Классические коктейли-заменители пищи и протеиновые коктейли в основной фазе не разрешены, и после неё тоже не рекомендуются. Ты ешь нормальную еду. То, что многие путают с «коктейлями»: <b>концентраты питательных веществ</b> (Basic-Immun-Mix, минералы Restorate, аминокислоты). Это порошки, которые ты разводишь в воде, чтобы обеспечить организм витаминами и минералами. Они не заменяют приём пищи, а дополняют его. Более того, это важная часть программы.",
+    "grund": "„шейки“ Anglizismus → „коктейли“ (ru üblich: протеиновый коктейль); „концепция“ → „программа“"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "Шейки можно? Еду придётся пить?",
+    "neu": "Можно ли коктейли? Придётся заменять еду напитками?",
+    "grund": "Anglizismus „шейки“; „Еду придётся пить?“ wörtlich (vgl. bg Punkt 8)"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Запусти <strong>перезагрузку обмена веществ</strong>. Никаких диет, шейков и подсчётов. Вместо этого <strong>4 приёма пищи по чёткому режиму</strong> и <strong>запатентованные добавки</strong>, чтобы в обычной жизни тебе было <strong>по-настоящему хорошо.</strong>",
+    "neu": "Запусти <strong>перезагрузку обмена веществ</strong>. Никаких диет, коктейлей и подсчёта калорий. Вместо этого <strong>4 приёма пищи по чёткому режиму</strong> и <strong>запатентованные добавки</strong>, чтобы в обычной жизни тебе было <strong>по-настоящему хорошо.</strong>",
+    "grund": "Anglizismus „шейки“; „kein Zählen“ eindeutig auf Kalorien (vgl. es Punkt 1)"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4 раза в день вкусная еда.</span> Вместо голодания или одних шейков.",
+    "neu": "<span class=\"mark\">4 раза в день вкусная еда.</span> Вместо голодания или одних коктейлей.",
+    "grund": "Anglizismus „шейки“ einheitlich → „коктейли“"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4 приёма пищи в день",
+    "neu": "4 регулярных приёма пищи в день",
+    "grund": "„feste Mahlzeiten“ = regelmäßige Mahlzeiten (vgl. es/sr Punkt 1/4)"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Общение с единомышленниками",
+    "neu": "Обмен опытом с единомышленниками",
+    "grund": "Austausch = Erfahrungsaustausch (vgl. sr/pl Punkt 4/5)"
+  },
+  {
+    "de": "Achterbahn",
+    "alt": "Американские горки",
+    "neu": "Качели",
+    "grund": "„Американские горки“ wörtliche Metapher; ru sagt „качели“ (энергетические качели)"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Без пищевых качелей",
+    "neu": "Без скачков аппетита",
+    "grund": "Metapher klarer gemacht (vgl. bg Punkt 8)"
+  },
+  {
+    "de": "Ohne Kaffee-Krücke",
+    "alt": "Без костыля в виде кофе",
+    "neu": "Без кофейной подпитки",
+    "grund": "„костыль в виде кофе“ wörtliche Übertragung"
+  },
+  {
+    "de": "02 · Fokus",
+    "alt": "02 · Фокус",
+    "neu": "02 · Концентрация",
+    "grund": "„фокус“ Anglizismus (vgl. uk Punkt 7)"
+  },
+  {
+    "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+    "alt": "Легче концентрироваться и держать фокус, когда это нужно.",
+    "neu": "Легче сосредоточиться и не отвлекаться, когда это нужно.",
+    "grund": "„держать фокус“ Anglizismus, natürlicher (vgl. uk Punkt 7)"
+  },
+  {
+    "de": "Du wünschst dir mehr Fokus im Alltag",
+    "alt": "Тебе хотелось бы больше фокуса в течение дня",
+    "neu": "Тебе хотелось бы легче сосредотачиваться в течение дня",
+    "grund": "„больше фокуса“ Anglizismus (vgl. uk Punkt 7)"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "Короткая самопроверка, и я с тобой свяжусь",
+    "neu": "Короткий тест, и я с тобой свяжусь",
+    "grund": "„самопроверка“ klingt nach Schule; einheitlich „тест“ (vgl. pl Punkt 5)"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "Короткая самопроверка, и мы с тобой свяжемся",
+    "neu": "Короткий тест, и мы с тобой свяжемся",
+    "grund": "einheitlich „тест“"
+  },
+  {
+    "de": "Kurzer <em>Selbst-Check</em>.<br><span class=\"mark\">Dann reden wir.</span>",
+    "alt": "Короткая <em>самопроверка</em>.<br><span class=\"mark\">А потом поговорим.</span>",
+    "neu": "Короткий <em>тест</em>.<br><span class=\"mark\">А потом поговорим.</span>",
+    "grund": "einheitlich „тест“"
+  },
+  {
+    "de": "Du bringst mehr Vielfalt auf den Teller und hältst die Struktur.",
+    "alt": "Ты добавляешь больше разнообразия в тарелку и сохраняешь структуру.",
+    "neu": "Ты добавляешь больше разнообразия в рацион и сохраняешь структуру.",
+    "grund": "„разнообразие в тарелку“ wörtlich"
+  },
+  {
+    "de": "Geschützte Forschung im Nährstoff-Transport",
+    "alt": "Запатентованные разработки в области транспорта питательных веществ",
+    "neu": "Запатентованные разработки в области доставки питательных веществ",
+    "grund": "„доставка“ natürlicher als „транспорт“"
+  }
+]

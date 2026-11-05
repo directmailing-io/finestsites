@@ -1,0 +1,140 @@
+[
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Без влакче на ужасите с храната",
+    "neu": "Без резки колебания в апетита",
+    "grund": "Auftraggeber Punkt 8: wörtliche Achterbahn-Metapher entfernt"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "Позволени ли са шейкове? Ще пия ли храненията си?",
+    "neu": "Позволени ли са шейкове? Ще заменям ли храната с напитки?",
+    "grund": "Auftraggeber Punkt 8: „пия храненията си“ war wörtlich und unklar"
+  },
+  {
+    "de": "Achterbahn",
+    "alt": "Влакче на ужасите",
+    "neu": "Скокове и спадове",
+    "grund": "Gleiches Muster: Diagramm-Label „Влакче на ужасите“ war dieselbe wörtliche Metapher"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Преходът към дългосрочното ежедневие е плавен. Вече имаш нови навици и познаваш тялото си по-добре. Ако искаш, поддържаш ефекта с няколко осъзнати дни в месеца.",
+    "neu": "Преходът към дългосрочното ежедневие е плавен. Вече имаш нови навици и познаваш тялото си по-добре. Ако искаш, поддържаш ефекта с няколко дни в месеца, в които особено внимаваш какво ядеш.",
+    "grund": "Unklare Kurzform „осъзнати дни“ konkret gemacht (wie ru/it/uk)"
+  },
+  {
+    "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+    "alt": "Храниш се осъзнато, а изключенията са част от живота.",
+    "neu": "Внимаваш какво ядеш, а изключенията са част от живота.",
+    "grund": "„Храниш се осъзнато“ zu abstrakt, alltagssprachlich konkret"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Започни своя <strong>рестарт на метаболизма</strong>. Без диети, без шейкове, без броене. Вместо това <strong>4 редовни хранения</strong> и <strong>патентовани добавки</strong>, за да се чувстваш <strong>наистина добре в ежедневието си.</strong>",
+    "neu": "Започни своя <strong>рестарт на метаболизма</strong>. Без диети, без шейкове, без броене на калории. Вместо това <strong>4 редовни хранения на ден</strong> и <strong>патентовани добавки</strong>, за да се чувстваш <strong>наистина добре в ежедневието си.</strong>",
+    "grund": "Kurzformen „без броене“ und „4 редовни хранения“ präzisiert (Kalorien, pro Tag; wie es)"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4× редовни хранения",
+    "neu": "4 редовни хранения на ден",
+    "grund": "„feste Mahlzeiten“ = regelmäßig, pro Tag ergänzt"
+  },
+  {
+    "de": "<span class=\"mark\">4× lecker essen.</span> Statt fasten oder nur Shakes.",
+    "alt": "<span class=\"mark\">4× вкусно хапване.</span> Вместо гладуване или само шейкове.",
+    "neu": "<span class=\"mark\">4 пъти на ден вкусна храна.</span> Вместо гладуване или само шейкове.",
+    "grund": "„хапване“ klingt nach Snacken und widerspricht dem Kein-Snacken-Prinzip"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Общност от хора на една вълна",
+    "neu": "Обмен на опит с хора със сходни цели",
+    "grund": "Sinn: Austausch (nicht Gemeinschaft), wie sr/pl-Vorgabe"
+  },
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Нашата концепция за хранителни вещества",
+    "neu": "Нашият подход към хранителните вещества",
+    "grund": "Wie ru-Vorgabe: „концепция за хранителни вещества“ wörtlich/steif"
+  },
+  {
+    "de": "Was wir geben",
+    "alt": "Какво даваме",
+    "neu": "Какво добавяме",
+    "grund": "„Какво даваме“ unklar; gemeint sind die ergänzten Nährstoffe"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Да. Концепцията може да се приложи и във вегетариански или вегански вариант. Има подходящи алтернативи на всички препоръки с животински продукти.",
+    "neu": "Да. Концепцията може да се приложи и във вегетариански или вегански вариант. Има подходящи алтернативи на всички препоръчани животински продукти.",
+    "grund": "Sinnverschiebung „tierische Empfehlungen“ korrigiert (wie tr/zh)"
+  },
+  {
+    "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+    "alt": "Енергията остава стабилна. Засищаш се за по-дълго и тялото ти използва собствените си резерви.",
+    "neu": "Енергията остава стабилна. Оставаш сит по-дълго и тялото ти използва собствените си резерви.",
+    "grund": "Natürlicher: „Засищаш се за по-дълго“ wörtlich"
+  },
+  {
+    "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+    "alt": "По-добра концентрация и повече фокус, когато ти трябват.",
+    "neu": "По-лесно се концентрираш и мислиш по-ясно, когато ти трябва.",
+    "grund": "Anglizismus „повече фокус“ vermieden (wie uk-Vorgabe)"
+  },
+  {
+    "de": "Du wünschst dir mehr Fokus im Alltag",
+    "alt": "Искаш повече фокус в ежедневието",
+    "neu": "Иска ти се да се концентрираш по-лесно в ежедневието",
+    "grund": "Anglizismus „фокус“ vermieden, natürlicher"
+  },
+  {
+    "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+    "alt": "Четири ясни фази, от първата седмица до ежедневието, което остава.",
+    "neu": "Четири ясни фази: от първата седмица до ежедневие с трайни нови навици.",
+    "grund": "„ежедневието, което остава“ unklar (wie uk-Vorgabe)"
+  },
+  {
+    "de": "Geschützte Forschung im Nährstoff-Transport",
+    "alt": "Защитени изследвания в областта на транспорта на хранителни вещества",
+    "neu": "Патентовани изследвания в транспорта на хранителни вещества",
+    "grund": "„Защитени изследвания“ unklar; gemeint ist Patentschutz (wie hi-Vorgabe)"
+  },
+  {
+    "de": "Muss ich wirklich auf Milch verzichten? Was ist mit dem Joghurt?",
+    "alt": "Наистина ли трябва да спра млякото? А киселото мляко?",
+    "neu": "Наистина ли трябва да се откажа от млякото? А киселото мляко?",
+    "grund": "„да спра млякото“ holprig"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "Кликни всичко, което се отнася за теб. После {{#unless partner_modus=duo}}ще ти покажа{{/unless}}{{#if partner_modus=duo}}ще ти покажем{{/if}} какво конкретно {{#unless partner_modus=duo}}мога{{/unless}}{{#if partner_modus=duo}}можем{{/if}} да {{#unless partner_modus=duo}}направя{{/unless}}{{#if partner_modus=duo}}направим{{/if}} за теб.",
+    "neu": "Отбележи всичко, което се отнася за теб. После {{#unless partner_modus=duo}}ще ти покажа{{/unless}}{{#if partner_modus=duo}}ще ти покажем{{/if}} какво конкретно {{#unless partner_modus=duo}}мога{{/unless}}{{#if partner_modus=duo}}можем{{/if}} да {{#unless partner_modus=duo}}направя{{/unless}}{{#if partner_modus=duo}}направим{{/if}} за теб.",
+    "grund": "„Кликни“ Anglizismus, passt auch mobil nicht; „Отбележи“ zu Checkboxen"
+  },
+  {
+    "de": "Was ist die Kölner Liste und warum ist die wichtig?",
+    "alt": "Какво е Kölner Liste и защо е важно това?",
+    "neu": "Какво е Kölner Liste и защо е важен?",
+    "grund": "Natürlicher, Bezug auf списък (mask.)"
+  },
+  {
+    "de": "Alle Produkte sind Nahrungsergänzungsmittel und keine Arzneimittel. Diese Seite dient der Information und ersetzt keine ärztliche Beratung, Diagnose oder Behandlung. Erfahrungen sind individuell und stellen keine Zusicherung eines bestimmten Ergebnisses dar. Bei Beschwerden oder Vorerkrankungen sprich bitte mit {{#unless partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/unless}}{{#if partner_modus=duo}}deiner Ärztin oder deinem Arzt{{/if}}.",
+    "alt": "Всички продукти са хранителни добавки, а не лекарства. Тази страница е само с информационна цел и не замества лекарски съвет, диагноза или лечение. Резултатите са индивидуални и не са гаранция за конкретен резултат. При оплаквания или вече съществуващи заболявания, моля, поговори с {{#unless partner_modus=duo}}лекаря си{{/unless}}{{#if partner_modus=duo}}лекаря си{{/if}}.",
+    "neu": "Всички продукти са хранителни добавки, а не лекарства. Тази страница е само с информационна цел и не замества лекарски съвет, диагноза или лечение. Опитът на всеки е индивидуален и не е гаранция за конкретен резултат. При оплаквания или вече съществуващи заболявания, моля, поговори с {{#unless partner_modus=duo}}лекаря си{{/unless}}{{#if partner_modus=duo}}лекаря си{{/if}}.",
+    "grund": "Sinn: „Erfahrungen“, nicht „Ergebnisse“ (Doppelung Resultat/Resultat)"
+  },
+  {
+    "de": "Vielfalt an Nährstoff-Formaten",
+    "alt": "Разнообразие от форми на хранителни вещества",
+    "neu": "Хранителни добавки в различни форми",
+    "grund": "Bildbeschreibung: wörtliche Konstruktion natürlich gemacht"
+  },
+  {
+    "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+    "alt": "Програма за рестарт, създадена за твоето ежедневие. В четири фази обратно към повече енергия и бистра глава.",
+    "neu": "Програма за рестарт, създадена за твоето ежедневие. Четири фази, в които си връщаш повече енергия и бистра глава.",
+    "grund": "Meta: „обратно към“ war wörtlich"
+  }
+]

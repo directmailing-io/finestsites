@@ -1,0 +1,116 @@
+[
+ {
+  "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+  "alt": "<strong>Metabolizma resetlemeye</strong> başla. Diyet yok, shake yok, hesap kitap yok. Onun yerine <strong>4 sabit öğün</strong> ve <strong>patentli takviyeler</strong>, böylece günlük hayatın <strong>gerçekten iyi hissettirir.</strong>",
+  "neu": "<strong>Metabolizma resetlemeye</strong> başla. Diyet yok, shake yok, kalori saymak yok. Onun yerine <strong>günde 4 düzenli öğün</strong> ve <strong>patentli takviyeler</strong>. Böylece günlük hayatında <strong>kendini daha iyi hissedersin.</strong>",
+  "grund": "Auftraggeber Pkt. 3: „günlük hayatın iyi hissettirir“ unnatürlich; „feste Mahlzeiten“ = regelmäßige Mahlzeiten (nicht „sabit“); „hesap kitap yok“ zu vage, gemeint ist Kalorienzählen"
+ },
+ {
+  "de": "4× feste Mahlzeiten",
+  "alt": "4 sabit öğün",
+  "neu": "Günde 4 düzenli öğün",
+  "grund": "„sabit öğün“ klingt nach festgelegten Gerichten; gemeint sind regelmäßige Mahlzeiten"
+ },
+ {
+  "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+  "alt": "Evet. Konsept vejetaryen ya da vegan şekilde de uygulanabilir. Hayvansal önerilerin hepsi için uygun alternatifler var.",
+  "neu": "Evet. Konsept vejetaryen ya da vegan şekilde de uygulanabilir. Önerilen tüm hayvansal ürünler için uygun alternatifler var.",
+  "grund": "Auftraggeber Pkt. 3: „Hayvansal önerilerin hepsi“ = „alle tierischen Empfehlungen“ (Sinnverschiebung)"
+ },
+ {
+  "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+  "alt": "Uzun vadeli günlük düzene geçiş yumuşak olur. Yeni alışkanlıkların olur ve vücudunu daha iyi tanırsın. İsteyenler, ayda birkaç bilinçli günle etkiyi korumaya devam eder.",
+  "neu": "Uzun vadeli günlük düzene geçiş yumuşak olur. Yeni alışkanlıkların olur ve vücudunu daha iyi tanırsın. İsteyen, ayda birkaç gün beslenmesine özellikle dikkat ederek etkiyi korur.",
+  "grund": "„bilinçli günler“ ohne Erklärung unklar; konkret auf Tage mit bewusster Ernährung bezogen"
+ },
+ {
+  "de": "Unser Nährstoffkonzept",
+  "alt": "Besin öğeleri konseptimiz",
+  "neu": "Besin desteği yaklaşımımız",
+  "grund": "„Besin öğeleri konseptimiz“ steif und wörtlich"
+ },
+ {
+  "de": "Austausch mit Gleichgesinnten",
+  "alt": "Aynı yoldaki insanlarla paylaşım",
+  "neu": "Benzer hedefleri olan insanlarla deneyim paylaşımı",
+  "grund": "wie sr/pl: Austausch = Erfahrungsaustausch mit Menschen mit ähnlichen Zielen"
+ },
+ {
+  "de": "Kein Ess-Rollercoaster",
+  "alt": "Yemekle ilgili gelgitler yok",
+  "neu": "İştahta ani dalgalanmalar yok",
+  "grund": "Achterbahn-Metapher natürlich aufgelöst (wie bg)"
+ },
+ {
+  "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+  "alt": "Artık seni aşağı çeken o his yok. Vücudunun sana karşı değil, seninle birlikte çalıştığını yeniden fark edersin.",
+  "neu": "O ağırlık hissi artık yok. Vücudunun sana karşı değil, seninle birlikte çalıştığını yeniden fark edersin.",
+  "grund": "„seni aşağı çeken his“ wörtlich; gemeint ist das Schweregefühl"
+ },
+ {
+  "de": "Klarer Kopf",
+  "alt": "Kafan daha net",
+  "neu": "Daha berrak bir zihin",
+  "grund": "einheitlich mit Hero („Berrak bir zihin“), „Kafan daha net“ salopp-holprig"
+ },
+ {
+  "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+  "alt": "İhtiyacın olduğunda daha iyi konsantrasyon ve daha fazla odak.",
+  "neu": "İhtiyacın olduğunda daha iyi konsantre olur, daha kolay odaklanırsın.",
+  "grund": "„daha fazla odak“ wörtlich/Anglizismus (wie uk-Hinweis)"
+ },
+ {
+  "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+  "alt": "Sabahlar farklı geçer. Daha az mahmurluk, daha çabuk kendine gelirsin.",
+  "neu": "Sabahları farklı hissedersin. Ağırlık azalır, daha çabuk kendine gelirsin.",
+  "grund": "uneinheitliche Satzstruktur geglättet, natürlicher"
+ },
+ {
+  "de": "So bleibt es dauerhaft, ohne Verzicht.",
+  "alt": "Böylece kalıcı olur, kendini mahrum bırakmadan.",
+  "neu": "Kendini mahrum bırakmadan kalıcı hâle gelir.",
+  "grund": "nachgestellter Nebensatz klang übersetzt"
+ },
+ {
+  "de": "Klingt nach dem was du suchst? <span class=\"accent\">{{#unless partner_modus=duo}}Ich erklär{{/unless}}{{#if partner_modus=duo}}Wir erklären{{/if}} dir alles.</span>",
+  "alt": "Kulağa aradığın şey gibi mi geliyor? <span class=\"accent\">{{#unless partner_modus=duo}}Sana her şeyi anlatayım{{/unless}}{{#if partner_modus=duo}}Sana her şeyi anlatalım{{/if}}.</span>",
+  "neu": "Aradığın şey bu olabilir mi? <span class=\"accent\">{{#unless partner_modus=duo}}Sana her şeyi anlatayım{{/unless}}{{#if partner_modus=duo}}Sana her şeyi anlatalım{{/if}}.</span>",
+  "grund": "„Kulağa … gibi geliyor mu“ ist ein Anglizismus-Calque"
+ },
+ {
+  "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+  "alt": "Hayır. Bu konsept bir kalori diyeti değil. İyi, doğal öğünler yersin, bunlara seçilmiş besin öğeleri eklenir. Odak noktası vazgeçmek değil, daha iyi beslenmek.",
+  "neu": "Hayır. Bu konsept, kalori saymaya dayalı bir diyet değil. İyi, doğal öğünler yersin, bunlara seçilmiş besin öğeleri eklenir. Odak noktası kendini kısıtlamak değil, daha iyi beslenmek.",
+  "grund": "„kalori diyeti“ unklar (wie sr); „vazgeçmek“ ohne Objekt holprig, Verzicht = kendini kısıtlamak"
+ },
+ {
+  "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+  "alt": "Shake içebilir miyim? Öğünleri içecek olarak mı alacağım?",
+  "neu": "Shake içebilir miyim? Öğünlerin yerine içecek mi içeceğim?",
+  "grund": "natürlicher, Sinn wie bg-Korrektur (Mahlzeiten durch Getränke ersetzen)"
+ },
+ {
+  "de": "Auch vegetarisch",
+  "alt": "Vejetaryen de olur",
+  "neu": "Vejetaryen seçenekler de var",
+  "grund": "„Vejetaryen de olur“ zu salopp/unklar als Merkmal"
+ },
+ {
+  "de": "Nach dem Essen würdest du am liebsten eine Pause machen",
+  "alt": "Yemekten sonra en çok mola vermek istiyorsun",
+  "neu": "Yemekten sonra canın hemen bir mola vermek istiyor",
+  "grund": "„en çok mola vermek istiyorsun“ wörtlich und missverständlich"
+ },
+ {
+  "de": "Vielfalt an Nährstoff-Formaten",
+  "alt": "Besin öğeleri için farklı formatlar",
+  "neu": "Farklı formlarda besin takviyeleri",
+  "grund": "Bildbeschreibung natürlicher"
+ },
+ {
+  "de": "Deine Stoffwechselkur",
+  "alt": "Metabolizma resetlemen",
+  "neu": "Metabolizma resetleme programın",
+  "grund": "„Metabolizma resetlemen“ (Seitentitel) klingt unfertig; mit „programın“ natürlich und ohne Suffix am Namen"
+ }
+]

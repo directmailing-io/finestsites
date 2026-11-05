@@ -1,0 +1,116 @@
+[
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Почни своє <strong>перезавантаження метаболізму</strong>. Це не дієта, не шейки і не підрахунки. Натомість <strong>4 прийоми їжі за розкладом</strong> та <strong>запатентовані добавки</strong>, щоб у повсякденні тобі було <strong>справді добре.</strong>",
+    "neu": "Почни своє <strong>перезавантаження метаболізму</strong>. Це не дієта, не шейки і не підрахунок калорій. Натомість <strong>4 регулярні прийоми їжі на день</strong> та <strong>запатентовані добавки</strong>, щоб у повсякденні тобі було <strong>справді добре.</strong>",
+    "grund": "Punkt 1/7-Muster: „feste Mahlzeiten“ als regelmäßige Mahlzeiten pro Tag, „kein Zählen“ konkret als Kalorienzählen"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Спілкування з однодумцями",
+    "neu": "Обмін досвідом з однодумцями",
+    "grund": "Analog Punkt 4/5: Austausch = Erfahrungsaustausch"
+  },
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Наша концепція поживних речовин",
+    "neu": "Наш підхід до поповнення поживних речовин",
+    "grund": "Analog Punkt 6: „Konzeption der Nährstoffe“ wirkte wörtlich"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Якісні нутрієнти за запатентованою концепцією. Не з полиці супермаркету.",
+    "neu": "Якісні поживні речовини за запатентованою концепцією. Не з полиці супермаркету.",
+    "grund": "„нутрієнти“ unnötiger Anglizismus, einheitlich „поживні речовини“"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4× прийоми їжі за розкладом",
+    "neu": "4 регулярні прийоми їжі на день",
+    "grund": "Wie Punkt 1/4: regelmäßige Mahlzeiten pro Tag statt „за розкладом“ (klang nach festem Speiseplan), „4× прийоми“ war grammatisch holprig"
+  },
+  {
+    "de": "Achterbahn",
+    "alt": "Американські гірки",
+    "neu": "Різкі перепади",
+    "grund": "Wörtliche Achterbahn-Metapher (vgl. Punkt 8) durch klare Beschreibung ersetzt"
+  },
+  {
+    "de": "02 · Fokus",
+    "alt": "02 · Фокус",
+    "neu": "02 · Концентрація",
+    "grund": "Einheitlich mit Punkt 7 (kein „фокус“)"
+  },
+  {
+    "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+    "alt": "Краща концентрація і більше фокусу саме тоді, коли тобі це потрібно.",
+    "neu": "Краща концентрація: тобі легше зосередитися саме тоді, коли це потрібно.",
+    "grund": "Punkt 7: „більше фокусу“ → „легше зосередитися“"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Без харчових гойдалок",
+    "neu": "Без різких стрибків апетиту",
+    "grund": "Wörtliche Rollercoaster-/Schaukel-Metapher (vgl. Punkt 8)"
+  },
+  {
+    "de": "In <span class=\"mark\">4 Phasen</span> zu deinem neuen Alltag.",
+    "alt": "За <span class=\"mark\">4 фази</span> до твого нового повсякдення.",
+    "neu": "За <span class=\"mark\">4 фази</span> до нового ритму життя.",
+    "grund": "„нове повсякдення“ wirkte wörtlich; analog Punkt 5 (neuer Tagesrhythmus)"
+  },
+  {
+    "de": "In vier klaren Phasen von Woche 1 bis in deinen dauerhaften Alltag.",
+    "alt": "Чотири чіткі фази: від першого тижня до звичного повсякдення надовго.",
+    "neu": "Чотири чіткі фази: від першого тижня до нових звичок на щодень.",
+    "grund": "Punkt 7: „звичне повсякдення надовго“ → „нові звички на щодень“"
+  },
+  {
+    "de": "Du isst wie gewohnt und fügst zusätzlich gute Nährstoffe hinzu.",
+    "alt": "Ти їси як зазвичай, а до цього додаєш якісні поживні речовини.",
+    "neu": "Ти їси як зазвичай, а до раціону додаєш якісні поживні речовини.",
+    "grund": "„до цього“ unklarer Bezug"
+  },
+  {
+    "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+    "alt": "Ти їси усвідомлено, а винятки теж частина життя.",
+    "neu": "Ти уважно обираєш, що їсти, а винятки теж допустимі.",
+    "grund": "Wie Punkt 7: „усвідомлено“ konkret aufs Essen bezogen"
+  },
+  {
+    "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+    "alt": "Активне перезавантаження триває кілька тижнів. Потім іде довша фаза стабілізації, а зрештою звичне повсякдення надовго. Точний графік залежить від обраного варіанту.",
+    "neu": "Активне перезавантаження триває кілька тижнів. Потім іде довша фаза стабілізації, а зрештою ти переходиш до нових звичок на щодень. Точний графік залежить від обраного варіанту.",
+    "grund": "Punkt 7: „звичне повсякдення надовго“ → „нові звички на щодень“"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "Ні. Ця концепція не про дієту з підрахунком калорій. Ти їси якісні натуральні страви, а до них додаються підібрані поживні речовини. Фокус на кращому харчуванні, а не на обмеженнях.",
+    "neu": "Ні. Ця концепція не про дієту з підрахунком калорій. Ти їси якісні натуральні страви, а до них додаються підібрані поживні речовини. Головне тут краще харчування, а не обмеження.",
+    "grund": "„Фокус на …“ Anglizismus-Muster, natürlicher formuliert"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "Шейки можна? Я питиму їжу?",
+    "neu": "Шейки можна? Чи доведеться пити замість їсти?",
+    "grund": "Analog Punkt 8: „Я питиму їжу?“ wörtlich („Trinke ich Mahlzeiten?“)"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Так. Концепцію можна адаптувати під вегетаріанське або веганське харчування. Для всіх рекомендацій з продуктами тваринного походження є відповідні альтернативи.",
+    "neu": "Так. Концепцію можна адаптувати під вегетаріанське або веганське харчування. Для всіх рекомендованих продуктів тваринного походження є відповідні альтернативи.",
+    "grund": "Analog Punkt 3/11: „рекомендації з продуктами“ → „рекомендовані продукти тваринного походження“"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Перехід до звичного повсякдення плавний. У тебе вже є нові звички, і ти краще знаєш своє тіло. Хто хоче, може підтримувати ефект кількома усвідомленими днями на місяць.",
+    "neu": "Перехід до нового щоденного ритму плавний. У тебе вже є нові звички, і ти краще знаєш своє тіло. Хто хоче, підтримує ефект так: кілька днів на місяць особливо уважно стежить за харчуванням.",
+    "grund": "Punkt 7: „усвідомлені дні“ konkret als Tage mit bewusster Ernährung; „звичне повсякдення“ ersetzt"
+  },
+  {
+    "de": "Du wünschst dir mehr Fokus im Alltag",
+    "alt": "Тобі хочеться більше фокусу в повсякденні",
+    "neu": "Тобі хотілося б легше зосереджуватися протягом дня",
+    "grund": "Punkt 7: „більше фокусу“ → „легше зосереджуватися“"
+  }
+]

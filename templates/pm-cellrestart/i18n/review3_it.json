@@ -1,0 +1,116 @@
+[
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Il nostro concetto nutrizionale",
+    "neu": "Il nostro approccio alla nutrizione",
+    "grund": "Auftraggeber: „concetto nutrizionale“ klingt übersetzt"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "Il passaggio alla quotidianità a lungo termine è graduale. Hai nuove abitudini e conosci meglio il tuo corpo. Chi vuole mantiene l’effetto con qualche giornata consapevole al mese.",
+    "neu": "Il passaggio alla routine di lungo periodo avviene in modo graduale. Hai nuove abitudini e conosci meglio il tuo corpo. Se vuoi, puoi mantenere l’effetto con qualche giorno al mese in cui presti particolare attenzione all’alimentazione.",
+    "grund": "Auftraggeber: „giornata consapevole“ unklar, konkret ausformuliert; Perspektive einheitlich „du“; „quotidianità a lungo termine“ geglättet"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Inizia il tuo <strong>reset del metabolismo</strong>. Niente dieta, niente shake, niente conteggi. Al loro posto <strong>4 pasti fissi</strong> e <strong>integratori brevettati</strong>, per sentirti <strong>davvero bene nella vita di tutti i giorni.</strong>",
+    "neu": "Inizia il tuo <strong>reset del metabolismo</strong>. Niente dieta, niente shake, niente conteggi. Al loro posto <strong>4 pasti al giorno a orari regolari</strong> e <strong>integratori brevettati</strong>, per sentirti <strong>davvero bene nella vita di tutti i giorni.</strong>",
+    "grund": "„4 pasti fissi“ = feste Gerichte missverständlich; gemeint: regelmäßige Mahlzeiten"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4× pasti fissi",
+    "neu": "4 pasti regolari al giorno",
+    "grund": "wie oben, „pasti fissi“ missverständlich; kurz für Kartentitel"
+  },
+  {
+    "de": "Das Konzept",
+    "alt": "Il concetto",
+    "neu": "Il metodo",
+    "grund": "„concetto“ für ein Programm ist Germanismus; Nav-Link"
+  },
+  {
+    "de": "Konzept",
+    "alt": "Concetto",
+    "neu": "Metodo",
+    "grund": "wie oben, Fußzeilen-Link"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "Sostanze nutritive di alta qualità, da un concetto brevettato. Non prese dallo scaffale del supermercato.",
+    "neu": "Sostanze nutritive di alta qualità, frutto di un sistema brevettato. Non quelle dello scaffale del supermercato.",
+    "grund": "„da un concetto brevettato“ ungelenk/Germanismus"
+  },
+  {
+    "de": "Nein. Das Konzept ist keine Kalorien-Diät. Du isst gute, natürliche Mahlzeiten, dazu kommen ausgewählte Nährstoffe. Der Fokus liegt auf besserer Ernährung, nicht auf Verzicht.",
+    "alt": "No. Il concetto non è una dieta ipocalorica. Mangi pasti buoni e naturali, in più ci sono nutrienti selezionati. L’idea è mangiare meglio, non fare rinunce.",
+    "neu": "No. Non è una dieta basata sul conteggio delle calorie. Mangi pasti buoni e naturali, in più ci sono nutrienti selezionati. L’idea è mangiare meglio, non fare rinunce.",
+    "grund": "„concetto“ → „programma“; „dieta ipocalorica“ → Kalorienzählen klarer"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "Nella fase centrale (attivazione) lasci da parte di proposito latte, formaggi, quark e panna, così la tua flora intestinale può ricostruirsi. <b>Eccezione:</b> lo yogurt probiotico al mattino, come primo pasto, fa espressamente parte del concetto ed è persino importante. Dalla fase di stabilizzazione rientrano formaggi stagionati, quark, mozzarella e simili: con moderazione, come fonte di proteine. Nel caffè è consentito un goccio di latte di mandorla o di soia non zuccherato.",
+    "neu": "Nella fase centrale (attivazione) lasci da parte di proposito latte, formaggi, quark e panna, così la tua flora intestinale può ricostruirsi. <b>Eccezione:</b> lo yogurt probiotico al mattino, come primo pasto, fa espressamente parte del programma ed è persino importante. Dalla fase di stabilizzazione rientrano formaggi stagionati, quark, mozzarella e simili: con moderazione, come fonte di proteine. Nel caffè è consentito un goccio di latte di mandorla o di soia non zuccherato.",
+    "grund": "„concetto“ → „programma“"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>No.</b> I classici shake sostitutivi del pasto o proteici non sono consentiti nella fase centrale e non sono consigliati nemmeno dopo. Mangi pasti veri. Quello che molti scambiano per «shake» sono i <b>concentrati di nutrienti</b> (Basic-Immun-Mix, minerali Restorate, aminoacidi): polveri da sciogliere in acqua per fornire al tuo corpo vitamine e minerali. Non sostituiscono un pasto, lo integrano. Anzi, sono una parte importante del concetto.",
+    "neu": "<b>No.</b> I classici shake sostitutivi del pasto o proteici non sono consentiti nella fase centrale e non sono consigliati nemmeno dopo. Mangi pasti veri. Quello che molti scambiano per «shake» sono i <b>concentrati di nutrienti</b> (Basic-Immun-Mix, minerali Restorate, aminoacidi): polveri da sciogliere in acqua per fornire al tuo corpo vitamine e minerali. Non sostituiscono un pasto, lo integrano. Anzi, sono una parte importante del programma.",
+    "grund": "„concetto“ → „programma“"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Sì. Il concetto si può seguire anche in versione vegetariana o vegana. Ci sono alternative adatte a tutte le indicazioni di origine animale.",
+    "neu": "Sì. Il programma si può seguire anche in versione vegetariana o vegana. Per tutti gli alimenti di origine animale consigliati esistono alternative adatte.",
+    "grund": "Sinnverschiebung „indicazioni di origine animale“ (= tierische Empfehlungen) behoben; „concetto“ → „programma“"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "Gli shake sono consentiti? Bevo i pasti?",
+    "neu": "Gli shake sono consentiti? Sostituisco i pasti con bevande?",
+    "grund": "„Bevo i pasti?“ wörtlich und unklar"
+  },
+  {
+    "de": "Kein Ess-Rollercoaster",
+    "alt": "Niente montagne russe con il cibo",
+    "neu": "Niente alti e bassi con la fame",
+    "grund": "wörtliche Achterbahn-Metapher ersetzt"
+  },
+  {
+    "de": "Achterbahn",
+    "alt": "Montagne russe",
+    "neu": "Alti e bassi",
+    "grund": "wörtliche Metapher im Energie-Diagramm ersetzt"
+  },
+  {
+    "de": "02 · Fokus",
+    "alt": "02 · Focus",
+    "neu": "02 · Concentrazione",
+    "grund": "unnötiger Anglizismus „Focus“"
+  },
+  {
+    "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+    "alt": "Migliore concentrazione e più focus quando ti servono.",
+    "neu": "Più concentrazione e più lucidità quando ti servono.",
+    "grund": "Anglizismus „focus“ ersetzt"
+  },
+  {
+    "de": "Geschützte Forschung im Nährstoff-Transport",
+    "alt": "Ricerca protetta sul trasporto dei nutrienti",
+    "neu": "Ricerca brevettata sul trasporto dei nutrienti",
+    "grund": "„protetta“ gemeint ist Patentschutz"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "La Kölner Liste (Cologne List) è una banca dati indipendente. Qui gli integratori alimentari vengono analizzati alla ricerca di sostanze vietate e dopanti. Se un prodotto è in lista, puoi fidarti: dentro non c’è niente di nascosto. Proprio per questo molti sportivi professionisti usano FitLine. Per te significa: sai cosa stai assumendo. Senza brutte sorprese.",
+    "neu": "La Kölner Liste (Lista di Colonia) è una banca dati indipendente. Qui gli integratori alimentari vengono analizzati alla ricerca di sostanze vietate e dopanti. Se un prodotto è in lista, puoi fidarti: dentro non c’è niente di nascosto. Proprio per questo molti sportivi professionisti usano FitLine. Per te significa: sai cosa stai assumendo. Senza brutte sorprese.",
+    "grund": "Erklärung auf Italienisch statt Englisch"
+  },
+  {
+    "de": "Wochenende, Feier, Geburtstag. An diesen Tagen darfst du essen was du willst. Aber halt nicht jeden Tag.",
+    "alt": "Weekend, festa, compleanno. In questi giorni puoi mangiare quello che vuoi. Però non tutti i giorni.",
+    "neu": "Il fine settimana, una festa, un compleanno. In questi giorni puoi mangiare quello che vuoi. Però non tutti i giorni.",
+    "grund": "„Weekend“ → italienisch, natürlicher"
+  }
+]

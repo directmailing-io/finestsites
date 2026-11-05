@@ -1,0 +1,74 @@
+[
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "Empieza tu <strong>reset metabólico</strong>. Sin dietas, sin batidos, sin contar. A cambio, <strong>4 comidas fijas</strong> y <strong>suplementos patentados</strong>, para que en tu día a día <strong>te sientas de maravilla.</strong>",
+    "neu": "Empieza tu <strong>reset metabólico</strong>. Sin dietas, sin batidos, sin contar calorías. A cambio, <strong>4 comidas al día en horarios regulares</strong> y <strong>suplementos patentados</strong>, para que en tu día a día <strong>te sientas de maravilla.</strong>",
+    "grund": "Auftraggeber: „comidas fijas“ klang nach festgelegten Gerichten; „sin contar“ ohne Objekt unklar"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "4× comidas fijas",
+    "neu": "4 comidas al día en horarios regulares",
+    "grund": "Auftraggeber: regelmäßige Mahlzeiten, keine festen Gerichte"
+  },
+  {
+    "de": "Austausch mit Gleichgesinnten",
+    "alt": "Comparte con gente como tú",
+    "neu": "Comparte experiencias con gente afín",
+    "grund": "„Austausch“ = Erfahrungsaustausch (analog sr/pl-Korrektur)"
+  },
+  {
+    "de": "Unser Nährstoffkonzept",
+    "alt": "Nuestro concepto nutricional",
+    "neu": "Nuestro enfoque en nutrientes",
+    "grund": "„concepto nutricional“ klingt nach Ernährungsplan; gemeint sind Nährstoffe (analog it/ru)"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "Apostamos a conciencia por el <strong>concepto de productos FitLine</strong>. El motivo: muchas veces, comer bien no basta. Lo que necesitas de más también tiene que llegar de verdad a tu cuerpo.",
+    "neu": "Apostamos a conciencia por el <strong>concepto de productos FitLine</strong>. El motivo: muchas veces, comer bien no basta. Lo que necesitas como aporte extra también tiene que llegar de verdad a tu cuerpo.",
+    "grund": "„de más“ = „zu viel“, Sinnverschiebung"
+  },
+  {
+    "de": "Geschützte Forschung im Nährstoff-Transport",
+    "alt": "Investigación protegida sobre el transporte de nutrientes",
+    "neu": "Investigación patentada sobre el transporte de nutrientes",
+    "grund": "„protegida“ unklar; gemeint Patentschutz (analog hi)"
+  },
+  {
+    "de": "02 · Fokus",
+    "alt": "02 · Enfoque",
+    "neu": "02 · Concentración",
+    "grund": "„Enfoque“ als Fokus-Anglizismus; natürlich „concentración“"
+  },
+  {
+    "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+    "alt": "Mejor concentración y más enfoque cuando los necesitas.",
+    "neu": "Más concentración y la cabeza centrada cuando lo necesitas.",
+    "grund": "Anglizismus „enfoque“ vermieden"
+  },
+  {
+    "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+    "alt": "Comes de forma consciente, y las excepciones también forman parte.",
+    "neu": "Comes con cabeza, y las excepciones también tienen su sitio.",
+    "grund": "„bewusst“ konkret und umgangssprachlich; „forman parte“ hing ohne Bezug"
+  },
+  {
+    "de": "Sind Shakes erlaubt? Trinke ich Mahlzeiten?",
+    "alt": "¿Se permiten batidos? ¿Las comidas son líquidas?",
+    "neu": "¿Se permiten batidos? ¿Sustituyo comidas por bebidas?",
+    "grund": "„Trinke ich Mahlzeiten“ = Mahlzeiten durch Getränke ersetzen (analog bg)"
+  },
+  {
+    "de": "Ja. Das Konzept lässt sich auch vegetarisch oder vegan umsetzen. Es gibt passende Alternativen zu allen tierischen Empfehlungen.",
+    "alt": "Sí. El concepto también se puede hacer de forma vegetariana o vegana. Hay alternativas adecuadas para todas las recomendaciones de origen animal.",
+    "neu": "Sí. El concepto también se puede hacer de forma vegetariana o vegana. Hay alternativas adecuadas para todos los alimentos de origen animal recomendados.",
+    "grund": "Sinnverschiebung „tierische Empfehlungen“ (analog tr/zh)"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "El paso al día a día a largo plazo es progresivo. Ya tienes nuevos hábitos y conoces mejor tu cuerpo. Si quieres, puedes mantener el efecto con algunos días al mes de alimentación consciente.",
+    "neu": "El paso al día a día a largo plazo es progresivo. Ya tienes nuevos hábitos y conoces mejor tu cuerpo. Si quieres, puedes mantener el efecto con algunos días al mes en los que cuidas especialmente lo que comes.",
+    "grund": "„bewusste Tage“ konkret auf Ernährung bezogen (analog it/ru/uk)"
+  }
+]
