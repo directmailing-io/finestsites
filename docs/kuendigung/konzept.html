@@ -607,7 +607,7 @@
           <li><strong>Neu zu entscheiden: Jahr → Monat zur Verlängerung.</strong> „Lieber monatlich weitermachen, jederzeit kündbar: 27 € im Monat.“ Heute ist Jahr → Monat grundsätzlich gesperrt (<code>canUpgradeTo</code>). Zur Verlängerung ist es kein Rausschleichen aus der Laufzeit, sondern ein neuer Vertrag. Empfehlung: erlauben, aber nur im Kündigungsflow und nur zum Laufzeitende, einmalig. Verliert uns 2 Monate Vorkasse pro Jahr, hält aber Kunden, die 270 € auf einmal scheuen.</li>
         </ul>
         <h4>SEPA bei 270 bis 370 €</h4>
-        <p class="note">Die Vorabankündigung 7 Tage vorher gibt es schon (nur SEPA). Wichtig, weil eine Lastschrift 8 Wochen lang ohne Angabe von Gründen zurückgeholt werden kann. Eine überraschte Abbuchung von 370 € ist der teuerste Kündigungsweg: Rücklastschrift 3,50 €, Seiten waren derweil online, Anfechtung 15 €. Für Kartenzahler gibt es keine Ankündigung, braucht es rechtlich auch nicht, und eine Kartenzahlung ist nicht so leicht rückholbar.</p>
+        <p class="note"><strong>Aktualisiert 05.11.2026:</strong> Die eigene 7-Tage-Mail gibt es nur noch bei Jahresabo oder höherem Betrag, für Karte und SEPA gleich (siehe <code>docs/billing/vorabankuendigung-konzept.html</code>); die SEPA-Pflichtankündigung je Lastschrift schickt Stripe. Ursprünglicher Text: Die Vorabankündigung 7 Tage vorher gibt es schon (nur SEPA). Wichtig, weil eine Lastschrift 8 Wochen lang ohne Angabe von Gründen zurückgeholt werden kann. Eine überraschte Abbuchung von 370 € ist der teuerste Kündigungsweg: Rücklastschrift 3,50 €, Seiten waren derweil online, Anfechtung 15 €. Für Kartenzahler gibt es keine Ankündigung, braucht es rechtlich auch nicht, und eine Kartenzahlung ist nicht so leicht rückholbar.</p>
       </div>
     </div>
     <div class="mockrow" style="margin-top:22px;">
@@ -732,7 +732,7 @@
         <tr><td><strong>Willkommen zurück, alles ist online</strong></td><td>Bei Pausenende</td><td>Seiten sind wieder online, nächste Abrechnung am [Datum].</td><td><span class="tag ok">Neu</span></td></tr>
         <tr><td><strong>Dein Treue-Rabatt ist aktiv</strong></td><td>Nach Annahme der 10 %</td><td>Neuer Preis, gilt ab der nächsten Rechnung. Kurz und freundlich.</td><td><span class="tag ok">Neu</span></td></tr>
         <tr><td><strong>Erinnerung vor der Verlängerung</strong></td><td>14 Tage vor dem Jahresende, nur Opt-in aus dem Flow</td><td>Datum, Betrag, Zahlungsmethode, Ein-Klick-Link „Zum [Datum] kündigen“. Geht nur an Jahreskunden, die sie in Variante E ausdrücklich bestellt haben.</td><td><span class="tag ok">Neu</span></td></tr>
-        <tr><td><strong>Rabattende-Erinnerung</strong></td><td>—</td><td>Gibt es <strong>nicht</strong> (deine Entscheidung). Die SEPA-Vorabankündigung bleibt, weil Pflicht; sie nennt nur den Betrag.</td><td><span class="tag grey">Bewusst nicht</span></td></tr>
+        <tr><td><strong>Rabattende-Erinnerung</strong></td><td>—</td><td>Gibt es <strong>nicht</strong> (deine Entscheidung). Die SEPA-Pflichtankündigung je Lastschrift kommt von Stripe; unsere eigene Mail nur noch bei Jahresabo oder höherem Betrag (seit 11/2026).</td><td><span class="tag grey">Bewusst nicht</span></td></tr>
         <tr><td><strong>Mail an dich</strong></td><td>—</td><td>Gibt es <strong>nicht</strong>. Kündigungen siehst du im Admin (Abschnitt 13), mit Zähler in der Navigation.</td><td><span class="tag grey">Bewusst nicht</span></td></tr>
       </tbody>
     </table>

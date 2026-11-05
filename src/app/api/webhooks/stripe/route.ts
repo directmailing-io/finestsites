@@ -27,11 +27,12 @@ import {
   paidInvoiceSettlesArrears,
   attemptFallbackPayment,
   createReplacementInvoice,
-  resolveDefaultPaymentMethodId,
   formatDateDe,
   formatEur,
 } from '@/lib/billing/payment-recovery'
 import { runRecoveryNotificationsFor } from '@/lib/billing/recovery-notifications'
+import { paymentMethodLabel } from '@/lib/billing/lifecycle-notifications'
+import { upcomingNoticeReason, CYCLE_BILLING_REASONS } from '@/lib/billing/upcoming-notice'
 import { invoiceSubscriptionId, invoiceCouponIds, resolveChargeInvoiceId } from '@/lib/affiliate/stripe-refs'
 import { planReversal, planDisputeRestore, type ReversalAction } from '@/lib/affiliate/reversal'
 import { syncConnectStatus } from '@/lib/affiliate/connect-status'
@@ -996,8 +997,10 @@ export async function POST(req: NextRequest) {
       break
     }
 
-    // ── Upcoming renewal (Stripe sends this N days before, Dashboard setting) ─
-    // SEPA customers get a heads-up so the account is covered on the day.
+    // ── Upcoming renewal (Stripe sends this 7 days before, Dashboard setting) ──
+    // Kein Monats-Reminder mehr: gleichbleibende Beträge gehen still durch (SEPA-Pflicht-
+    // ankündigung schickt Stripe selbst). Eigene Mail nur bei Jahresabo oder höherem Betrag,
+    // siehe src/lib/billing/upcoming-notice.ts.
     case 'invoice.upcoming': {
       const upcoming = event.data.object as Stripe.Invoice
       if (!upcoming.customer) break
@@ -1008,38 +1011,54 @@ export async function POST(req: NextRequest) {
 
       const user = await db.query.users.findFirst({
         where: eq(users.id, userId),
-        columns: { email: true, stripeCustomerId: true, stripeSubscriptionId: true, deactivatedAt: true },
+        columns: { email: true, stripeCustomerId: true, stripeSubscriptionId: true, deactivatedAt: true, billingInterval: true, renewalReminderOptIn: true, cancelAtPeriodEnd: true },
       })
-      if (!user?.email || !user.stripeCustomerId || user.deactivatedAt) break
+      if (!user?.email || !user.stripeCustomerId || user.deactivatedAt || user.cancelAtPeriodEnd) break
 
       const up = upcoming as any
       const upSubId: string | null = invoiceSubscriptionId(up) ?? user.stripeSubscriptionId
-      let pmType: string | null = null
-      let last4: string | null = null
-      try {
-        const pmId = await resolveDefaultPaymentMethodId(user.stripeCustomerId, upSubId)
-        if (pmId) {
-          const pm = await stripe.paymentMethods.retrieve(pmId)
-          pmType = pm.type
-          last4 = pm.sepa_debit?.last4 ?? null
+      // Laufzeit aus der kommenden Rechnung selbst (längste Zeilen-Periode), damit ein geplanter
+      // Wechsel Jahr→Monat nicht als Jahresabo gilt; DB-Wert nur als Rückfall
+      const lineDays: number[] = (up.lines?.data ?? [])
+        .map((l: any) => (l?.period?.end && l?.period?.start ? (l.period.end - l.period.start) / 86400 : 0))
+      const longest = lineDays.length ? Math.max(...lineDays) : 0
+      const interval: 'monthly' | 'yearly' = longest > 0 ? (longest > 300 ? 'yearly' : 'monthly') : (user.billingInterval === 'yearly' ? 'yearly' : 'monthly')
+
+      let lastCycleTotal: number | null = null
+      if (upSubId && interval === 'monthly') {
+        try {
+          const prev = await stripe.invoices.list({ subscription: upSubId, status: 'paid', limit: 10 })
+          const last = prev.data.find(i => CYCLE_BILLING_REASONS.has(i.billing_reason ?? ''))
+          lastCycleTotal = last ? last.total : null
+        } catch (err) {
+          console.error('[webhook] upcoming: previous invoice lookup failed:', err instanceof Error ? err.message : err)
         }
-      } catch { /* no mail without a known method */ }
-      if (pmType !== 'sepa_debit') break
+      }
+
+      const reason = upcomingNoticeReason({
+        interval,
+        upcomingTotal: upcoming.total ?? amountDue,
+        lastCycleTotal,
+        renewalReminderOptIn: user.renewalReminderOptIn,
+      })
+      if (!reason) break
 
       const debitTs: number | null = up.next_payment_attempt ?? up.period_end ?? null
       const debitDate = debitTs ? new Date(debitTs * 1000) : null
       if (!debitDate) break
+      const method = await paymentMethodLabel(user.stripeCustomerId, upSubId)
+      const isSepa = !!method?.startsWith('SEPA')
 
-      // upcoming invoices have no id — the event id + period keeps this once per renewal
+      // upcoming invoices have no id — the event id keeps this once per renewal
       const first = await logEventOnce({
         userId, eventType: 'upcoming_debit_notice', stripeEventId: event.id, stripeSubscriptionId: upSubId ?? undefined,
-        amountCents: amountDue, metadata: { debit_date: debitDate.toISOString(), last4 },
+        amountCents: amountDue, metadata: { debit_date: debitDate.toISOString(), reason, method, last_cycle_total: lastCycleTotal },
       })
       if (first) {
         sendEmail({
           to: user.email,
           subject: `Am ${formatDateDe(debitDate)} buchen wir ${formatEur(amountDue)} ab`,
-          html: upcomingDebitEmail({ amount: formatEur(amountDue), date: formatDateDe(debitDate), last4 }),
+          html: upcomingDebitEmail({ amount: formatEur(amountDue), date: formatDateDe(debitDate), method, isSepa }),
           type: 'upcoming_debit',
         }).catch(() => {})
       }

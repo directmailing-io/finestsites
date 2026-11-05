@@ -321,7 +321,7 @@
     </div>
 
     <div class="info info-gray" style="margin-top:12px;">
-      <strong>Vorbeugung:</strong> <code>invoice.upcoming</code> (Stripe schickt es N Tage vor der Verlängerung, Dashboard-Einstellung) &rarr; SEPA-Kunden bekommen "Am [Datum] buchen wir [Betrag] ab". Kartenkunden nicht.
+      <strong>Vorbeugung:</strong> <code>invoice.upcoming</code> (Stripe schickt es 7 Tage vor der Verlängerung, Dashboard-Einstellung) &rarr; "Am [Datum] buchen wir [Betrag] ab" nur noch bei Jahresabo oder höherem Betrag als bei der letzten Verlängerung, Karte und SEPA gleich (seit 11/2026, <code>src/lib/billing/upcoming-notice.ts</code>, Konzept <code>docs/billing/vorabankuendigung-konzept.html</code>). Gleichbleibende Monatsbeträge: keine eigene Mail; die SEPA-Pflichtankündigung schickt Stripe.
     </div>
 
     <div class="info info-gray" style="margin-top:12px;">
@@ -561,7 +561,7 @@
         <tr>
           <td><strong>Am [Datum] buchen wir [Betrag] ab</strong></td>
           <td><code>invoice.upcoming</code></td>
-          <td>Vor jeder Verlängerung, nur SEPA-Kunden</td>
+          <td>7 Tage vorher, nur Jahresabo oder höherer Betrag (Karte + SEPA)</td>
           <td>Stripe Webhook</td>
         </tr>
         <tr>

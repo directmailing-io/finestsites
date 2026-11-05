@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Konzept: Abbuchungs-Ankündigung FinestSites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --violet:#7C3AED; --violet-deep:#5B21B6; --violet-soft:#F5F3FF; --ink:#111827; --body:#374151; --muted:#6B7280; --line:#E5E7EB; --bg:#FFFFFF; --soft:#F8FAFC; --ok:#15803D; --ok-soft:#F0FDF4; --warn:#B45309; --warn-soft:#FFFBEB; --bad:#DC2626; --bad-soft:#FEF2F2; }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif; color:var(--body); background:var(--bg); line-height:1.6; font-size:15px; }
+  .wrap { max-width:1040px; margin:0 auto; padding:0 28px; }
+  h1,h2,h3,h4 { color:var(--ink); letter-spacing:-0.02em; line-height:1.2; margin:0; }
+  h1 { font-size:clamp(34px,5vw,52px); font-weight:800; letter-spacing:-0.03em; }
+  h2 { font-size:26px; font-weight:800; margin-bottom:6px; }
+  h3 { font-size:17px; font-weight:700; margin-bottom:6px; }
+  h4 { font-size:14px; font-weight:700; margin-bottom:4px; }
+  p { margin:0 0 12px; }
+  section { padding:56px 0; border-top:1px solid var(--line); }
+  section.hero { border-top:0; padding:72px 0 48px; }
+  .kicker { display:inline-block; font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--violet); margin-bottom:10px; }
+  .lead { font-size:17px; color:var(--muted); max-width:720px; }
+  .accent-line { height:4px; width:120px; border-radius:99px; background:linear-gradient(90deg,#C4B5FD,#FBCFE8,#BAE6FD); margin:22px 0 28px; }
+  .pills { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+  .pill { display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px; font-size:13px; font-weight:600; background:var(--soft); border:1px solid var(--line); color:var(--ink); }
+  .pill b { color:var(--violet); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:22px; }
+  .card.soft { background:var(--soft); }
+  .card.violet { background:var(--violet-soft); border-color:#DDD6FE; }
+  .card.ok { background:var(--ok-soft); border-color:#BBF7D0; }
+  .card.warn { background:var(--warn-soft); border-color:#FDE68A; }
+  .card.bad { background:var(--bad-soft); border-color:#FECACA; }
+  .num { width:30px; height:30px; border-radius:50%; background:var(--ink); color:#fff; font-weight:700; font-size:14px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .tag { display:inline-block; font-size:11.5px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .tag.ok { background:#DCFCE7; color:#166534; } .tag.warn { background:#FEF3C7; color:#92400E; } .tag.bad { background:#FEE2E2; color:#991B1B; } .tag.info { background:var(--violet-soft); color:var(--violet-deep); } .tag.grey { background:#F3F4F6; color:#374151; }
+  ul { padding-left:20px; margin:0 0 12px; } li { margin-bottom:6px; }
+  table { width:100%; border-collapse:separate; border-spacing:0; background:#fff; border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  th,td { text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; font-size:14px; }
+  th { background:var(--soft); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  tr:last-child td { border-bottom:0; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; background:#F3F4F6; padding:2px 6px; border-radius:6px; color:var(--ink); }
+  .flow { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .flow .step { background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; position:relative; }
+  .flow .step .s { font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; }
+  .flow .step strong { display:block; color:var(--ink); margin:4px 0 4px; font-size:15px; }
+  .flow .step p { font-size:13px; margin:0; color:var(--muted); }
+  .note { font-size:13px; color:var(--muted); }
+  .toc { display:grid; grid-template-columns:repeat(3,1fr); gap:6px 24px; font-size:14px; }
+  .toc a { color:var(--ink); text-decoration:none; padding:6px 0; border-bottom:1px solid var(--line); }
+  .toc a:hover { color:var(--violet); }
+  .toc a span { color:var(--muted); font-size:12px; margin-right:8px; }
+
+</style></head><body>
+<section class="hero"><div class="wrap">
+  <span class="kicker">Konzept + Umsetzung · Stand 05.11.2026 · noch nicht live</span>
+  <h1>Abbuchen wie im Fitnessstudio – nur da melden, wo es Pflicht ist</h1>
+  <div class="accent-line"></div>
+  <p class="lead">Bisher: 7 Tage vor jeder Verlängerung „Am … buchen wir … € ab“ an alle SEPA-Kunden, jeden Monat. Neu: gleichbleibende Monatsbeiträge laufen still durch – Karte und SEPA. Eine eigene Mail gibt es nur noch beim Jahresabo und wenn der Betrag steigt.</p>
+  <div class="pills"><span class="pill"><b>100 von 109</b> Monatskunden: keine Mail mehr</span><span class="pill"><b>9</b> bei der nächsten Verlängerung (Betrag steigt)</span><span class="pill"><b>57</b> Jahresabos: 1 Mail pro Jahr</span></div>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kicker">01 · Wann geht was raus?</span><h2>Die Regel</h2>
+  <table>
+    <tr><th>Fall</th><th>Von uns</th><th>Von Stripe</th><th>Grund</th></tr>
+    <tr><td>Monatsabo, Betrag gleich oder niedriger (auch Partner-Gutschrift, kleinerer Tarif)</td><td><span class="tag ok">nichts</span></td><td>SEPA: Lastschrift-Ankündigung beim Einzug (Pflicht, nicht abschaltbar). Karte: nichts.</td><td>keine Pflicht</td></tr>
+    <tr><td>Monatsabo, Betrag steigt (Einführungsrabatt endet, höherer Tarif, Preiserhöhung)</td><td><span class="tag warn">1 Mail, 7 Tage vorher</span></td><td>SEPA: Ankündigung beim Einzug</td><td>Visa-Regel (Europa) + Schutz vor Rücklastschrift</td></tr>
+    <tr><td>Jahresabo-Verlängerung (Karte + SEPA)</td><td><span class="tag warn">1 Mail, 7 Tage vorher</span> – entfällt, wenn die 14-Tage-Erinnerung bestellt ist</td><td>SEPA: Ankündigung beim Einzug</td><td>Visa (&gt; 6 Monate seit letzter Belastung) + Mastercard (≥ 180 Tage); bis 370 € auf einmal</td></tr>
+    <tr><td>Pause endet</td><td>wie bisher „Deine Pause endet“ (keine zweite Mail)</td><td>SEPA: Ankündigung</td><td>gibt es schon</td></tr>
+    <tr><td>Gekündigt zum Laufzeitende</td><td>wie bisher „endet in 3 Tagen“, keine Abbuchungs-Mail</td><td>—</td><td>es wird nichts mehr abgebucht</td></tr>
+  </table>
+  <p class="note" style="margin-top:10px">Die Mail ist nüchtern: Datum, Betrag, Zahlungsart, bei SEPA „Konto bitte gedeckt halten“, Knopf „Abo ansehen“. Kein Wort zu Rabatt oder Kündigung.</p>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kicker">02 · Konkret (Simulation mit allen 166 aktiven Abos, 05.11.2026)</span><h2>Was in den nächsten Monaten passiert</h2>
+  <table>
+    <tr><th>Zeitraum</th><th>Mails von uns</th></tr>
+    <tr><td>Nov./Dez. 2026</td><td>9 Monatskunden, deren Einführungspreis endet bzw. die hochgestuft haben (z. B. 21,60 € → 27 €; 5× Karte, 4× SEPA). Alle anderen Monatskunden: nichts.</td></tr>
+    <tr><td>Januar 2027</td><td>Wenn die ~100 Partner-Rabatte enden: je 1 Mail beim ersten höheren Betrag. Danach wieder Ruhe.</td></tr>
+    <tr><td>Juli–Nov. 2027</td><td>57 Jahresabos, davon 53 im Oktober 2027: je 1 Mail 7 Tage vor der Verlängerung.</td></tr>
+    <tr><td>Partner-Gutschriften</td><td>Senken den Betrag nur einmal (Stripe-Guthaben, heute 2 Kunden mit zusammen 3,95 €) → nie eine Mail. Verglichen wird der Betrag vor Guthaben.</td></tr>
+  </table>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kicker">03 · Recht (Team-Recherche)</span><h2>Warum das reicht</h2>
+  <div class="grid2">
+    <div class="card ok"><h3>Gesetz: keine Erinnerungspflicht</h3><p>Wir schließen nur mit Unternehmern ab (AGB § 1 Abs. 3). § 309 Nr. 9, § 312k BGB und der geplante EU „Digital Fairness Act“ betreffen Verbraucher. Für B2B gibt es keine gesetzliche Pflicht, vor einer Verlängerung zu erinnern.</p></div>
+    <div class="card ok"><h3>SEPA: Stripe erledigt die Pflicht</h3><p>Das SEPA-Regelwerk (EPC Rulebook 2025 v1.2, § 4.3.4) verlangt eine Vorabankündigung jeder Lastschrift, 14 Tage, wenn nichts anderes vereinbart ist. Mit Stripes Gläubiger-ID schickt Stripe diese Ankündigung <strong>bei jeder Lastschrift automatisch mit dem echten Betrag</strong> – darum auch bei schwankenden Beträgen sauber. Das Stripe-Mandat vereinbart 2 Kalendertage. Fitnessstudios machen es genauso (clever fit: Einzug „am Tag der Fälligkeit“, DSSV-Vorlage: „Frist … auf 1 Tag reduziert“).</p></div>
+    <div class="card warn"><h3>Karte: Regeln von Visa/Mastercard, kein Gesetz</h3><p>Visa Core Rules (Okt. 2026, ID 0029267): mind. 7 Tage vorher per E-Mail, wenn ein Einführungsangebot endet, wenn in Europa &gt; 6 Monate seit der letzten Belastung vergangen sind (= Jahresabo) oder wenn sich der Betrag ändert. Ohne Mail verlieren wir Rückbuchungen (Chargebacks), und Stripe kann Strafen der Kartennetze weitergeben. Darum genau diese zwei Fälle.</p></div>
+    <div class="card warn"><h3>AGB-Satz (Anwalt bitte gegenlesen)</h3><p>LG Düsseldorf (16.07.2025, 12 O 166/23, Verbraucherfall) hat 3 Bankarbeitstage ohne genannten Weg gekippt. Darum nennt unser Satz den Weg (E-Mail), den Fristbeginn (Versand) und Stripe als Absender. B2B ist weniger streng. Selbst wenn der Satz fiele: die Lastschrift bleibt gültig, Risiko nur Rücklastschrift-Gebühren.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kicker">04 · Umsetzung</span><h2>Was geändert ist</h2>
+  <ul>
+    <li><code>src/lib/billing/upcoming-notice.ts</code> (neu): Entscheidung Jahresabo / Betrag höher / nichts.</li>
+    <li><code>src/app/api/webhooks/stripe/route.ts</code> (<code>invoice.upcoming</code>): gilt jetzt für Karte und SEPA, vergleicht mit der letzten bezahlten Verlängerungsrechnung, keine Mail bei Kündigung zum Laufzeitende.</li>
+    <li><code>src/lib/email/templates.ts</code>: Mail neutral für Karte und SEPA, Knopf „Abo ansehen“.</li>
+    <li><code>src/app/agb/page.tsx</code> § 8 Abs. 2: Satz zur Vorabankündigung, „Stand: November 2026“.</li>
+    <li>App: nichts zu tun (nur Server und Mail; die App zeigt die AGB aus dem Web).</li>
+  </ul>
+  <p class="note">Stripe-Einstellung „E-Mails zu anstehenden Verlängerungen“: bleibt aus (geprüft von Daniel). Stripe verschickt bei uns übrigens keine Zahlungsbelege; Rechnungen gibt es im Konto unter Einstellungen.</p>
+</div></section>
+
+<section><div class="wrap">
+  <span class="kicker">05 · Bewusst nicht</span><h2>Was wir nicht machen</h2>
+  <ul>
+    <li>Keine eigene Gläubiger-ID, nur um Stripes SEPA-Ankündigung abzuschalten – dann hinge die Pflicht an uns.</li>
+    <li>Keine „Rabatt endet“-Mail. Die Mail bei höherem Betrag nennt nur den neuen Betrag.</li>
+    <li>Kein Kündigungslink in der Mail.</li>
+  </ul>
+  <p class="note">Kein Rechtsrat. Quellen: EPC SDD Core Rulebook 2025 v1.2; docs.stripe.com/payments/sepa-debit („Lastschriftankündigung per E-Mail“); Stripe SEPA-Bedingungen; Visa Core Rules 24.10.2026; LG Düsseldorf 12 O 166/23; clever fit AGB 03/2025; DSSV-Mitgliedsvertrag.</p>
+</div></section>
+</body></html>

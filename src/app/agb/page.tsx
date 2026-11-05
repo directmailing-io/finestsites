@@ -17,7 +17,7 @@ export default function AgbPage() {
         <h1 style={{ fontFamily: '"Plein", sans-serif', fontSize: 'clamp(32px, 4vw, 48px)', fontWeight: 400, color: '#111', letterSpacing: '-0.025em', marginBottom: 12 }}>
           Allgemeine Geschäftsbedingungen
         </h1>
-        <p style={{ fontSize: 14, color: '#aaa', marginBottom: 56 }}>Stand: Oktober 2026</p>
+        <p style={{ fontSize: 14, color: '#aaa', marginBottom: 56 }}>Stand: November 2026</p>
 
         <Section title="§ 1 Geltungsbereich und Vertragsparteien">
           <p>
@@ -229,7 +229,10 @@ export default function AgbPage() {
           <p style={{ marginTop: 12 }}>
             (2) Die Abrechnung erfolgt wahlweise monatlich oder jährlich im Voraus. Die Zahlung wird über
             den Zahlungsdienstleister Stripe eingezogen. Akzeptierte Zahlungsmittel sind Kreditkarte (Visa,
-            Mastercard, American Express) sowie SEPA-Lastschrift.
+            Mastercard, American Express) sowie SEPA-Lastschrift. Bei Zahlung per SEPA-Lastschrift wird
+            jede Lastschrift spätestens zwei Kalendertage vor der Belastung per E-Mail an die im Konto
+            hinterlegte Adresse angekündigt (Vorabankündigung); die Frist beginnt mit dem Versand der E-Mail.
+            Die Vorabankündigung kann auch durch den Zahlungsdienstleister Stripe erfolgen.
           </p>
           <p style={{ marginTop: 12 }}>
             (3) Das Abonnement verlängert sich automatisch um den jeweils gewählten Abrechnungszeitraum
@@ -536,7 +539,7 @@ export default function AgbPage() {
         </Section>
 
         <p style={{ fontSize: 12, color: '#bbb', marginTop: 48 }}>
-          FinestSites Daniel Kurzeja · Herrleinstr. 39 · 97437 Haßfurt · Stand: Oktober 2026
+          FinestSites Daniel Kurzeja · Herrleinstr. 39 · 97437 Haßfurt · Stand: November 2026
         </p>
       </main>
 

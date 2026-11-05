@@ -35,7 +35,7 @@ function planOf(plan: string): PlanKey {
 }
 
 /** „Visa ••4242“ / „SEPA-Lastschrift ••1234“ für Mails; null, wenn unbekannt */
-async function paymentMethodLabel(customerId: string | null, subscriptionId: string | null): Promise<string | null> {
+export async function paymentMethodLabel(customerId: string | null, subscriptionId: string | null): Promise<string | null> {
   if (!customerId) return null
   try {
     const stripe = getStripe()

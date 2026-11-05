@@ -544,19 +544,21 @@ export function paymentFallbackUsedEmail({ amount, methodLabel, pending }: { amo
 }
 
 /** 7 days before a SEPA renewal — so the account is covered on the day. */
-export function upcomingDebitEmail({ amount, date, last4 }: { amount: string; date: string; last4: string | null }): string {
+/** Nur bei Jahresabo-Verlängerung oder höherem Betrag (src/lib/billing/upcoming-notice.ts) – nüchtern, kein Rabatt-/Kündigungshinweis */
+export function upcomingDebitEmail({ amount, date, method, isSepa }: { amount: string; date: string; method: string | null; isSepa: boolean }): string {
   const settingsUrl = `${APP_URL}/settings`
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#111827;letter-spacing:-0.02em;">
       Am ${date} buchen wir ${amount} ab
     </h1>
     <p style="margin:0 0 16px;font-size:15px;color:${base.body};line-height:1.65;">
-      Kurze Erinnerung: Dein FinestSites-Abo verlängert sich am ${date}. Wir ziehen ${amount} per SEPA-Lastschrift${last4 ? ` von deinem Konto •••• ${last4}` : ''} ein.
+      Dein FinestSites-Abo verlängert sich am ${date}. Wir buchen ${amount}${method ? ` über ${method}` : ''} ab.
     </p>
-    <p style="margin:0 0 8px;font-size:15px;color:${base.body};line-height:1.65;">
-      Bitte sorg dafür, dass das Konto an dem Tag gedeckt ist. Eine geplatzte Lastschrift kostet dich bei deiner Bank Gebühren. Du musst sonst nichts tun.
-    </p>
-    ${button(settingsUrl, 'Zahlungsmethode prüfen')}
+    ${isSepa ? `<p style="margin:0 0 8px;font-size:15px;color:${base.body};line-height:1.65;">
+      Bitte sorg dafür, dass das Konto an dem Tag gedeckt ist. Eine geplatzte Lastschrift kostet dich bei deiner Bank Gebühren.
+    </p>` : ''}
+    <p style="margin:0 0 8px;font-size:15px;color:${base.body};line-height:1.65;">Du musst nichts tun.</p>
+    ${button(settingsUrl, 'Abo ansehen')}
     <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
       Fragen? <a href="mailto:info@finestsites.io" style="color:${base.muted};">info@finestsites.io</a>
     </p>
