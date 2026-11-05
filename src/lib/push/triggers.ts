@@ -26,11 +26,18 @@ async function guarded(name: string, fn: () => Promise<unknown>): Promise<void> 
   }
 }
 
-/** Mitteilung je Besucher-Chat-Nachricht (Daniel 30.10.2026: aus). */
-const CHAT_MESSAGE_PUSH = false
+/**
+ * Mitteilung je Besucher-Chat-Nachricht wie bei WhatsApp (Daniel 05.11.2026: wieder an; 30.10. kurz aus).
+ * Ausnahme: der Betreiber hat genau dieses Gespräch gerade in der App offen.
+ */
+const CHAT_MESSAGE_PUSH = true
 
-/** Gespräch gilt als „gerade offen“, wenn der Betreiber es in diesem Zeitraum abgerufen hat. */
-export const OWNER_ACTIVE_MS = 20_000
+/**
+ * Gespräch gilt als „gerade offen“, wenn der Betreiber es in diesem Zeitraum abgerufen hat
+ * (App fragt im offenen Gespräch alle 3 s ab, touchOwnerSeen). Knapp gehalten, damit nach dem
+ * Verlassen des Gesprächs die nächste Nachricht sofort wieder als Mitteilung kommt.
+ */
+export const OWNER_ACTIVE_MS = 10_000
 
 export type PaymentPushKind = 'notice' | 'reminder' | 'offline'
 
@@ -58,8 +65,6 @@ export const pushTriggers = {
    * Nie Besucherdaten oder Nachrichtentext im Sperrbildschirm.
    */
   newChatMessage(conversationId: string): Promise<void> {
-    // Aus seit 30.10.2026 (Daniel): keine Mitteilung je Chat-Nachricht, bei aktiven Chats wird das zu viel.
-    // Ungelesene Chats zeigen der Zähler am „Chats“-Tab und die Zahl am App-Symbol.
     if (!CHAT_MESSAGE_PUSH) return Promise.resolve()
     return guarded('chat', async () => {
       const [conv] = await db.select({
@@ -87,8 +92,8 @@ export const pushTriggers = {
         title: displayNameOf(conv.visitorName, conv.visitorKey),
         body: text ? (text.length > 160 ? text.slice(0, 159) + '…' : text) : 'Neue Nachricht',
         data: { url: `finestsites://chats/${conversationId}`, conversationId, subtitle: conv.siteTitle },
+        // Jede Nachricht einzeln (wie WhatsApp), keine Drossel; Flut bremst checkMessageRate beim Besucher
         collapseKey: `chat:${conversationId}`,
-        throttleSeconds: 5,
       })
     })
   },
