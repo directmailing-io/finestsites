@@ -11,11 +11,14 @@ import type { DemoSite } from './demo-sites'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
-/** Kurztexte der nicht empfohlenen Tarife (der empfohlene kommt aus der Event-Konfiguration) */
-const PLAN_COPY: Record<PlanKey, { title: string; text: string; alt: string }> = {
-  starter: { title: '1 Webseite', text: 'Zum Beispiel deine Optimalset-Seite. Mehr Seiten gehen später jederzeit dazu.', alt: 'Nur 1 Seite (Starter)' },
-  pro: { title: '3 Webseiten', text: 'Optimalset, PM-Business und cellRESET. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.', alt: 'Zurück zu Pro' },
-  unlimited: { title: 'Alle Webseiten', text: 'Optimalset, PM-Business, cellRESET, Vitalprofil und jede neue Vorlage, die dazukommt.', alt: 'Alle Vorlagen (Unlimited)' },
+/**
+ * Texte je Tarif. Wichtig: Der Preis gilt für ALLE Seiten des Tarifs zusammen, nicht pro Seite
+ * („Pro“ könnte als „pro Webseite“ gelesen werden), darum überall „für 3 Seiten“ / „deiner Wahl“.
+ */
+const PLAN_COPY: Record<PlanKey, { kicker: string; choice: string; forWhat: string; text: string; alt: string }> = {
+  starter: { kicker: '1 Webseite inklusive', choice: '1 Webseite deiner Wahl', forWhat: 'für deine Seite', text: 'Weitere Seiten kannst du später jederzeit dazubuchen.', alt: 'Nur 1 Seite (Starter)' },
+  pro: { kicker: '3 Webseiten inklusive', choice: '3 Webseiten deiner Wahl', forWhat: 'für alle 3 Seiten', text: 'Fertige Texte, fertiges Design, du trägst nur deine Daten ein.', alt: 'Zurück zu Pro' },
+  unlimited: { kicker: 'Alle Webseiten inklusive', choice: 'Alle Webseiten', forWhat: 'für alle Seiten', text: 'Jede Vorlage, auch jede neue, die dazukommt.', alt: 'Alle Vorlagen (Unlimited)' },
 }
 
 function pad(n: number): string { return n < 10 ? `0${n}` : String(n) }
@@ -80,7 +83,7 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
   }
 
   const unit = interval === 'yearly' ? 'Jahr' : 'Monat'
-  const copy = plan === event.recommendedPlan ? { title: event.planTitle, text: event.planText } : PLAN_COPY[plan]
+  const copy = PLAN_COPY[plan]
   const parts = countdown.parts
 
   return (
@@ -114,22 +117,29 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
 
       <form onSubmit={submit}>
         <div className="ev-card">
-          <p className="n">{PLANS[plan].name} · {PLAN_COPY[plan].title}</p>
+          <p className="n">{PLANS[plan].name} · {copy.kicker}</p>
           <div className="p">
             {prices.off && <span className="s">{formatEur(prices.base)} €</span>}
             <span className="b">{formatEur(prices.price)} €</span>
             <span className="u">/{unit}</span>
           </div>
           {interval === 'yearly'
-            ? <p className="per">= {formatEur(prices.perMonth)} € im Monat{prices.off ? ` statt ${formatEur(prices.monthlyList)} €` : ''}</p>
-            : <p className="per">Monatlich kündbar</p>}
+            ? <p className="per">= {formatEur(prices.perMonth)} € im Monat {copy.forWhat}</p>
+            : <p className="per">{copy.forWhat.charAt(0).toUpperCase() + copy.forWhat.slice(1)} · monatlich kündbar</p>}
           <p className="f">
             {prices.off && prices.duration && offer
               ? `${offer.percentOff ? `${offer.percentOff} %` : ''} ${event.name}-Rabatt ${prices.duration.text}, danach ${formatEur(prices.base)} €/${unit}. `
               : interval === 'yearly' ? `${formatEur(prices.base)} € pro Jahr, das sind 2 Monate geschenkt. ` : ''}
             Tarif jederzeit nach oben wechselbar.
           </p>
-          <div className="sites"><b>{copy.title}</b><span>{copy.text}</span></div>
+          <div className="sites">
+            <b>{copy.choice}</b>
+            <span>{copy.text}</span>
+            <ul className="chips" aria-label="Vorlagen zur Auswahl">
+              {event.templates.map(t => <li key={t.label} className={t.soon ? 'soon' : ''}>{t.label}{t.soon ? ' · bald' : ''}</li>)}
+              <li className="soon">weitere folgen</li>
+            </ul>
+          </div>
         </div>
 
         <label className="ev-field"><span>Dein Vorname</span>

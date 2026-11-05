@@ -50,20 +50,33 @@ export const EVENT_CSS = `
   .ev-card .sites { border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; }
   .ev-card .sites b { display: block; color: #fff; font-size: 16px; font-weight: 600; margin-bottom: 4px; }
   .ev-card .sites span { color: rgba(255,255,255,.72); font-size: 14px; line-height: 1.5; }
+  .ev-card .chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; margin: 12px 0 0; }
+  .ev-card .chips li { font-size: 13px; font-weight: 500; color: #fff; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 5px 11px; }
+  .ev-card .chips li.soon { color: rgba(255,255,255,.55); background: transparent; border-style: dashed; }
   .ev-field { display: block; margin: 0 0 12px; }
   .ev-field span { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin: 0 0 6px; }
   .ev-field input { width: 100%; border: 1.5px solid var(--line); border-radius: 14px; padding: 15px 16px; font: inherit; font-size: 18px; color: var(--ink); background: #fff; }
   .ev-field .ev-hint { display: block; font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
   .ev-field .ev-hint b { display: inline; color: var(--ink); font-weight: 600; font-size: inherit; margin: 0; }
   .ev-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .ev-field .ev-url { display: flex; align-items: center; gap: 8px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; margin: 0 0 8px; font-weight: 400; font-size: 15.5px; color: var(--muted); overflow: hidden; }
-  .ev-url svg { flex: 0 0 auto; color: var(--faint); }
-  .ev-field .ev-url .u { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: inherit; color: inherit; line-height: 1.3; }
-  .ev-field .ev-url .u b { display: inline; color: var(--ink); font-weight: 600; font-size: inherit; margin: 0; }
-  .ev-url.ok { border-color: #BBF7D0; background: #F0FDF4; }
-  .ev-url.ok svg { color: #166534; }
-  .ev-url.bad { border-color: #F3C4BB; background: #FFF4F2; }
-  .ev-url.bad .u b { color: #8A2E1F; }
+  .ev-field .ev-urlbox { display: block; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px rgba(0,0,0,.06); padding: 10px 10px 12px; margin: 0 0 10px; font-weight: 400; transition: border-color .2s, box-shadow .2s; }
+  .ev-field .ev-urlbox.ok { border-color: #BBF7D0; box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px rgba(22,101,52,.10); }
+  .ev-field .ev-urlbox.bad { border-color: #F3C4BB; }
+  .ev-field .ev-urlbar { display: flex; align-items: center; gap: 8px; background: var(--soft); border-radius: 999px; padding: 10px 12px 10px 14px; font-size: 15.5px; color: var(--muted); line-height: 1.2; }
+  .ev-field .ev-urlbar svg { flex: 0 0 auto; color: var(--faint); }
+  .ev-field .ev-urlbar .u { display: block; min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: inherit; color: inherit; font-variant-ligatures: none; }
+  .ev-field .ev-urlbar .u b { display: inline; color: var(--ink); font-weight: 600; font-size: inherit; margin: 0; }
+  .ev-field .ev-urlbar .u b:empty::before { content: "dein-name"; color: var(--faint); font-weight: 500; }
+  .ev-field .ev-urlbar .st { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; opacity: 0; transform: scale(.6); transition: opacity .2s, transform .2s; }
+  .ev-field .ev-urlbox.ok .st { background: #166534; opacity: 1; transform: none; }
+  .ev-field .ev-urlbox.bad .st { background: #B42318; opacity: 1; transform: none; }
+  .ev-field .ev-urlbox.checking .st { background: var(--faint); opacity: 1; transform: none; }
+  .ev-field .ev-urlpage { display: grid; gap: 7px; padding: 14px 10px 2px; }
+  .ev-field .ev-urlpage i { display: block; height: 8px; border-radius: 4px; background: #ECEAE7; }
+  .ev-field .ev-urlpage i:first-child { width: 48%; height: 10px; background: var(--ink); opacity: .85; }
+  .ev-field .ev-urlpage i:nth-child(2) { width: 84%; }
+  .ev-field .ev-urlpage i:nth-child(3) { width: 66%; }
+  .ev-field .ev-urlpage i:last-child { width: 32%; height: 14px; border-radius: 7px; background: var(--rainbow); opacity: .9; margin-top: 2px; }
   .ev-status.ok { color: #166534; font-weight: 600; }
   .ev-status.bad { color: #8A2E1F; font-weight: 600; }
   .ev-note { margin-top: 8px !important; }
@@ -105,10 +118,10 @@ export const EVENT_CSS = `
   .ev-pack-head .k { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,.55); margin: 0 0 8px; }
   .ev-pack-head b { display: block; font-family: 'Plein', var(--font-geist-sans), sans-serif; font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; color: #fff; }
   .ev-pack-head span { display: block; font-size: 14px; color: rgba(255,255,255,.65); margin-top: 4px; }
-  .ev-pack-sites { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0 14px; }
+  .ev-pack-sites { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 18px 0 14px; }
   .ev-pack-sites figure { margin: 0; }
   .ev-pack-sites .img { display: block; aspect-ratio: 16 / 11; border-radius: 12px; background: rgba(255,255,255,.08) center top / cover no-repeat; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
-  .ev-pack-sites figcaption { font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.85); margin-top: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-pack-sites figcaption { font-size: 11.5px; font-weight: 600; color: rgba(255,255,255,.85); margin-top: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .ev-pack-text { font-size: 14.5px; color: rgba(255,255,255,.72); line-height: 1.5; margin: 0; border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; }
   .ev-journey { list-style: none; padding: 0; margin: 22px 0 0; counter-reset: s; }
   .ev-journey li { counter-increment: s; position: relative; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; padding: 18px 12px 22px; margin: 0 -12px; }

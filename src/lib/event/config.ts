@@ -27,10 +27,9 @@ export interface EventConfig {
   recommendedPlan: PlanKey
   /** Vorgewähltes Intervall */
   defaultInterval: BillingInterval
-  /** Beschreibung des empfohlenen Tarifs in der Karte */
-  planTitle: string
-  planText: string
-  /** Veröffentlichte Beispielseiten (eigene Domain) für „So sehen fertige Seiten aus“ */
+  /** Vorlagen zur Auswahl, als Chips in der Tarif-Karte („soon“ = kommt bald, nicht wählbar) */
+  templates: { label: string; soon?: boolean }[]
+  /** Veröffentlichte Beispielseiten des Demo-Kontos (Vorlagen-Domain) für „So sehen fertige Seiten aus“ */
   demoSites: { domain: string; label: string }[]
   /** Hinweiszeile, wenn der Code abgelaufen ist */
   endedText: string
@@ -45,12 +44,18 @@ export const EVENTS: Record<string, EventConfig> = {
     subline: 'Du zahlst heute mit dem Handy und richtest deine Webseite später in Ruhe ein. Wir zeigen dir danach Schritt für Schritt, wie es weitergeht.',
     recommendedPlan: 'pro',
     defaultInterval: 'yearly',
-    planTitle: 'Optimalset, PM-Business und cellRESET',
-    planText: 'Die drei Seiten, die ein PM-Partner braucht. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.',
+    templates: [
+      { label: 'Optimalset' },
+      { label: 'PM-Business' },
+      { label: 'cellRESET' },
+      { label: 'Vitalprofil' },
+      { label: 'Beauty', soon: true },
+    ],
     demoSites: [
       { domain: 'dailyoptimal.de', label: 'Optimalset' },
       { domain: 'wellpreneur.io', label: 'PM-Business' },
       { domain: 'cellrestart.net', label: 'cellRESET' },
+      { domain: 'vitalprofil.net', label: 'Vitalprofil' },
     ],
     endedText: 'Das Powerday-Angebot ist beendet. Du kannst trotzdem starten, dann zum normalen Preis.',
   },

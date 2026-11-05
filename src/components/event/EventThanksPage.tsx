@@ -32,13 +32,13 @@ function purchaseFromSession(session: Stripe.Checkout.Session): Purchase {
 
 const eur = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-/** Welche Vorlagen das gekaufte Paket umfasst, in Laiensprache */
-function packageLine(plan: PlanKey, demoSites: DemoSite[]): string {
-  const names = demoSites.map(s => s.label)
-  const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} und ${names[names.length - 1]}` : names[0] ?? ''
-  if (plan === 'starter') return `Eine Webseite nach Wahl, zum Beispiel ${names[0] ?? 'Optimalset'}. Weitere kommen später jederzeit dazu.`
-  if (plan === 'unlimited') return `${list} und jede neue Vorlage, die dazukommt.`
-  return `${list}. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.`
+/** Welche Vorlagen das gekaufte Paket umfasst, in Laiensprache (Preis gilt für alle Seiten zusammen) */
+function packageLine(plan: PlanKey, event: EventConfig): string {
+  const soon = event.templates.filter(t => t.soon).map(t => t.label)
+  const soonText = soon.length ? ` Bald auch ${soon.join(' und ')}, weitere Vorlagen folgen.` : ' Weitere Vorlagen folgen.'
+  if (plan === 'starter') return `Du wählst eine dieser Vorlagen. Weitere Seiten kannst du später jederzeit dazubuchen.${soonText}`
+  if (plan === 'unlimited') return `Alle Vorlagen, und jede neue, die dazukommt.${soonText}`
+  return `Du wählst 3 dieser Vorlagen, alle im Preis enthalten. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.${soonText}`
 }
 
 /**
@@ -157,7 +157,7 @@ function ThanksBody({ event, state, sessionId, demoSites }: {
             ))}
           </div>
         )}
-        <p className="ev-pack-text">{packageLine(purchase.plan, demoSites)}</p>
+        <p className="ev-pack-text">{packageLine(purchase.plan, event)}</p>
       </section>
 
       <ol className="ev-journey ev-in ev-d2">

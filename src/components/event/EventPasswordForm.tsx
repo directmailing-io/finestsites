@@ -112,10 +112,14 @@ export default function EventPasswordForm({ sessionId, email, firstName: initial
       </div>
 
       <label className="ev-field"><span>Benutzername = deine Webadresse</span>
-        {/* Vorschau wie im Onboarding: Adresszeile eines Browsers */}
-        <span className={`ev-url ${previewState}`} aria-hidden>
-          <svg width="11" height="13" viewBox="0 0 9 11" fill="none"><rect x="0.5" y="4.5" width="8" height="6" rx="1.5" fill="currentColor" /><path d="M2.5 4.5V3a2 2 0 0 1 4 0v1.5" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round" /></svg>
-          <span className="u"><b>{cleanUsername || 'dein-name'}</b>.{PREVIEW_DOMAIN}</span>
+        {/* Vorschau wie im Onboarding: kleines Browserfenster mit Adresszeile, Status rechts in der Zeile */}
+        <span className={`ev-urlbox ${check.state === 'checking' ? 'checking' : previewState}`} aria-hidden>
+          <span className="ev-urlbar">
+            <svg width="11" height="13" viewBox="0 0 9 11" fill="none"><rect x="0.5" y="4.5" width="8" height="6" rx="1.5" fill="currentColor" /><path d="M2.5 4.5V3a2 2 0 0 1 4 0v1.5" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round" /></svg>
+            <span className="u"><b>{cleanUsername}</b>.{PREVIEW_DOMAIN}</span>
+            <span className="st">{check.state === 'ok' ? '✓' : check.state === 'bad' ? '✕' : '…'}</span>
+          </span>
+          <span className="ev-urlpage"><i /><i /><i /><i /></span>
         </span>
         <input type="text" autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} value={username}
           onChange={e => { setUsernameTouched(true); setUsername(e.target.value); setError('') }}
