@@ -91,6 +91,11 @@ try {
   ok('Danke-Seite unbekannte Session → Hinweis', danke.status === 200 && /nicht zuordnen/.test(await danke.text()))
   const sp = await fetch(`${BASE}/api/event/set-password`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ session_id: 'cs_test_unbekannt123', password: 'Powerday-2026!', username: 'sabine', first_name: 'Sabine' }) })
   ok('Passwort-Route unbekannte Session → 404', sp.status === 404, sp.status)
+  const chk = async (u: string) => (await (await fetch(`${BASE}/api/event/username-check?u=${encodeURIComponent(u)}`)).json()) as { available?: boolean; error?: string }
+  ok('Benutzername-Prüfung frei', (await chk('sabine-neu-xyz')).available === true)
+  ok('Benutzername-Prüfung vergeben', (await chk('sabine-test')).available === false)
+  ok('Benutzername-Prüfung reserviert', (await chk('admin')).available === false)
+  ok('Benutzername-Prüfung ungültig', (await chk('ab')).available === false)
   const bad = await fetch(`${BASE}/api/event/checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: 'powerday', first_name: '', email: 'x', plan: 'pro', interval: 'yearly' }) })
   ok('Checkout ohne Vorname → 400', bad.status === 400, bad.status)
   const dup = await fetch(`${BASE}/api/event/checkout`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: 'powerday', first_name: 'Sabine', email, plan: 'pro', interval: 'yearly' }) })

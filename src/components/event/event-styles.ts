@@ -56,6 +56,17 @@ export const EVENT_CSS = `
   .ev-field .ev-hint { display: block; font-size: 13px; font-weight: 400; color: var(--muted); line-height: 1.45; margin: 6px 0 0; }
   .ev-field .ev-hint b { display: inline; color: var(--ink); font-weight: 600; font-size: inherit; margin: 0; }
   .ev-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .ev-field .ev-url { display: flex; align-items: center; gap: 8px; background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; margin: 0 0 8px; font-weight: 400; font-size: 15.5px; color: var(--muted); overflow: hidden; }
+  .ev-url svg { flex: 0 0 auto; color: var(--faint); }
+  .ev-field .ev-url .u { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: inherit; color: inherit; line-height: 1.3; }
+  .ev-field .ev-url .u b { display: inline; color: var(--ink); font-weight: 600; font-size: inherit; margin: 0; }
+  .ev-url.ok { border-color: #BBF7D0; background: #F0FDF4; }
+  .ev-url.ok svg { color: #166534; }
+  .ev-url.bad { border-color: #F3C4BB; background: #FFF4F2; }
+  .ev-url.bad .u b { color: #8A2E1F; }
+  .ev-status.ok { color: #166534; font-weight: 600; }
+  .ev-status.bad { color: #8A2E1F; font-weight: 600; }
+  .ev-note { margin-top: 8px !important; }
   .ev-field input:focus { outline: 3px solid #B8D2F1; outline-offset: 1px; border-color: var(--ink); }
   .ev-btn { display: block; width: 100%; border: 0; background: var(--ink); color: #fff; border-radius: 999px; padding: 18px; font: inherit; font-size: 18px; font-weight: 600; cursor: pointer; margin: 6px 0 10px; }
   .ev-btn:disabled { opacity: .6; cursor: wait; }
