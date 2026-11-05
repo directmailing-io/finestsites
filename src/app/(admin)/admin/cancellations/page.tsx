@@ -6,7 +6,7 @@ import { CANCEL_REASONS, CANCEL_REASON_LABELS } from '@/lib/billing/cancellation
 import {
   OFFER_LABELS, OUTCOME_LABELS, RESULT_LABELS, loadFeedback, loadPendingStates, markSeen, mrrFor, reasonLabel,
 } from '@/lib/admin/cancellations'
-import { Section, Table, Row, Badge, Bar, num, dateDE } from '../_components/AdminTable'
+import { Section, Table, Row, Badge, num, dateDE } from '../_components/AdminTable'
 
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
@@ -103,24 +103,31 @@ export default async function CancellationsPage({ searchParams }: { searchParams
       <div className="grid md:grid-cols-2 gap-4 mb-4">
         <Section title="Gründe" hint={`${rows.length} Rückmeldungen in ${days === 365 ? '1 Jahr' : `${days} Tagen`}`}>
           {rows.length === 0 ? (
-            <p className="text-sm py-2" style={{ color: '#94A3B8' }}>Noch keine Rückmeldungen.</p>
+            <p className="text-sm px-4 py-3" style={{ color: '#94A3B8' }}>Noch keine Rückmeldungen.</p>
           ) : (
-            <div className="flex flex-col gap-2.5 py-1">
-              {reasonCounts.map(r => (
-                <div key={r.reason}>
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-gray-900">{CANCEL_REASON_LABELS[r.reason]}</span>
-                    <span style={{ color: '#64748B' }}>{r.n}</span>
+            <div className="divide-y" style={{ borderColor: '#F1F5F9' }}>
+              {reasonCounts.map(r => {
+                const pct = rows.length ? Math.round((r.n / rows.length) * 100) : 0
+                return (
+                  <div key={r.reason} className="px-4 py-2.5">
+                    <div className="flex items-baseline justify-between gap-3 text-sm">
+                      <span className="truncate" style={{ color: r.n ? '#111827' : '#94A3B8' }}>{CANCEL_REASON_LABELS[r.reason]}</span>
+                      <span className="shrink-0 text-xs tabular-nums" style={{ color: '#64748B', minWidth: 64, textAlign: 'right' }}>
+                        <span className="font-semibold" style={{ color: r.n ? '#111827' : '#94A3B8' }}>{r.n}</span> · {pct} %
+                      </span>
+                    </div>
+                    <div className="mt-1.5 h-1.5 rounded-full overflow-hidden" style={{ background: '#F1F5F9' }}>
+                      <div className="h-full rounded-full" style={{ width: `${pct}%`, background: '#7C3AED' }} />
+                    </div>
                   </div>
-                  <Bar pct={rows.length ? (r.n / rows.length) * 100 : 0} color="#7C3AED" />
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </Section>
         <Section title="Angebote" hint="gezeigt → angenommen">
           {offerCounts.length === 0 ? (
-            <p className="text-sm py-2" style={{ color: '#94A3B8' }}>Noch kein Angebot gezeigt.</p>
+            <p className="text-sm px-4 py-3" style={{ color: '#94A3B8' }}>Noch kein Angebot gezeigt.</p>
           ) : (
             <Table head={['Angebot', { label: 'Gezeigt', right: true }, { label: 'Angenommen', right: true }, { label: 'Quote', right: true }]} minWidth={360}>
               {offerCounts.map(([k, v]) => (
@@ -134,29 +141,29 @@ export default async function CancellationsPage({ searchParams }: { searchParams
       <div className="mb-4">
         <Section title="Rückmeldungen" hint="neueste zuerst · Klick auf den Namen öffnet das Konto">
           {rows.length === 0 ? (
-            <p className="text-sm py-2" style={{ color: '#94A3B8' }}>Noch keine Rückmeldungen.</p>
+            <p className="text-sm px-4 py-3" style={{ color: '#94A3B8' }}>Noch keine Rückmeldungen.</p>
           ) : (
             <div className="divide-y" style={{ borderColor: '#F1F5F9' }}>
               {rows.map(r => (
-                <div key={r.id} className="py-3 grid gap-x-4 gap-y-1 items-start" style={{ gridTemplateColumns: '72px 1fr 120px' }}>
-                  <div className="text-xs" style={{ color: '#94A3B8' }}>{dateDE(r.createdAt)}</div>
+                <div key={r.id} className="px-4 py-3 grid gap-x-4 items-start" style={{ gridTemplateColumns: '64px minmax(0, 1fr) 104px' }}>
+                  <div className="text-xs tabular-nums pt-0.5" style={{ color: '#94A3B8' }}>{dateDE(r.createdAt)}</div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Link href={`/admin/users/${r.userId}`} className="text-sm font-medium text-gray-900 hover:underline truncate">{name(r)}</Link>
-                      <span className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: '#F1F5F9', color: '#475569' }}>
+                      <span className="text-[11px] px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: '#F1F5F9', color: '#475569' }}>
                         {PLAN_LABEL[r.plan ?? ''] ?? r.plan} · {r.billingInterval === 'yearly' ? 'jährl.' : 'monatl.'}
                       </span>
-                      {r.tenureDays != null && <span className="text-[11px]" style={{ color: '#94A3B8' }}>{Math.max(1, Math.round(r.tenureDays / 30))} Mon. dabei</span>}
-                      {r.discountAtTime && <span className="text-[11px]" style={{ color: '#94A3B8' }}>Rabatt {r.discountAtTime}</span>}
+                      {r.tenureDays != null && <span className="text-[11px] whitespace-nowrap" style={{ color: '#94A3B8' }}>{Math.max(1, Math.round(r.tenureDays / 30))} Mon. dabei</span>}
+                      {r.discountAtTime && <span className="text-[11px] whitespace-nowrap" style={{ color: '#94A3B8' }}>Rabatt {r.discountAtTime}</span>}
                     </div>
-                    <div className="text-sm mt-0.5 text-gray-900">{reasonLabel(r.reason)}</div>
-                    {r.comment && <div className="text-sm mt-1 italic" style={{ color: '#475569' }}>„{r.comment}“</div>}
-                    <div className="text-xs mt-1" style={{ color: '#64748B' }}>
+                    <div className="text-sm mt-1 text-gray-900">{reasonLabel(r.reason)}</div>
+                    {r.comment && <div className="text-sm mt-1" style={{ color: '#475569' }}>„{r.comment}“</div>}
+                    <div className="text-xs mt-1.5" style={{ color: '#64748B' }}>
                       Angebot: {OFFER_LABELS[r.offerShown] ?? r.offerShown}{r.offerResult ? ` · ${RESULT_LABELS[r.offerResult] ?? r.offerResult}` : ''}
                       {r.outcome === 'canceled' && r.periodEnd ? ` · Ende ${dateDE(r.periodEnd)}` : ''}
                     </div>
                   </div>
-                  <div className="text-right"><Badge tone={outcomeTone(r.outcome)}>{OUTCOME_LABELS[r.outcome] ?? r.outcome}</Badge></div>
+                  <div className="text-right pt-0.5"><Badge tone={outcomeTone(r.outcome)}>{OUTCOME_LABELS[r.outcome] ?? r.outcome}</Badge></div>
                 </div>
               ))}
             </div>
@@ -164,12 +171,13 @@ export default async function CancellationsPage({ searchParams }: { searchParams
         </Section>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      {/* Volle Breite: in zwei Spalten wurden die Tabellen abgeschnitten (Status-Spalte, umbrechende Namen) */}
+      <div>
         <Section title="Laufende Kündigungen" hint={pending.cancelling.length ? `${pending.cancelling.length} Abos enden · ${fmtEur(mrrAtRisk)} € MRR` : 'keine'}>
           {pending.cancelling.length === 0 ? (
-            <p className="text-sm py-2" style={{ color: '#94A3B8' }}>Alle aktiven Abos laufen weiter.</p>
+            <p className="text-sm px-4 py-3" style={{ color: '#94A3B8' }}>Alle aktiven Abos laufen weiter.</p>
           ) : (
-            <Table head={['Nutzer', 'Tarif', 'Endet am', { label: 'in Tagen', right: true }]} minWidth={420}>
+            <Table head={['Nutzer', 'Tarif', 'Endet am', 'in Tagen']} minWidth={420}>
               {pending.cancelling.map(u => {
                 const d = u.currentPeriodEnd ? Math.max(0, Math.round((u.currentPeriodEnd.getTime() - now) / 86_400_000)) : null
                 return (
@@ -186,9 +194,9 @@ export default async function CancellationsPage({ searchParams }: { searchParams
         </Section>
         <Section title="Pausen" hint={pending.paused.length ? `${pending.paused.length} eingeplant oder laufend` : 'keine'}>
           {pending.paused.length === 0 ? (
-            <p className="text-sm py-2" style={{ color: '#94A3B8' }}>Niemand pausiert gerade.</p>
+            <p className="text-sm px-4 py-3" style={{ color: '#94A3B8' }}>Niemand pausiert gerade.</p>
           ) : (
-            <Table head={['Nutzer', 'Tarif', 'Von', 'Bis', 'Status']} minWidth={460}>
+            <Table head={['Nutzer', 'Tarif', 'Von', 'Bis', 'Status']} minWidth={520}>
               {pending.paused.map(u => (
                 <Row key={u.id} cells={[
                   <Link key="l" href={`/admin/users/${u.id}`} className="hover:underline">{u.username ? `@${u.username}` : u.email}</Link>,
