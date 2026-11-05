@@ -86,8 +86,33 @@ export default async function HomePage({
     console.error('[HomePage] templates fetch error:', err)
   }
 
+  // Strukturierte Daten für Google: Seitenname „FinestSites“ und Logo im Suchergebnis
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://finestsites.io/#organization',
+        name: 'FinestSites',
+        url: 'https://finestsites.io',
+        logo: { '@type': 'ImageObject', url: 'https://finestsites.io/app-icon-192.png', width: 192, height: 192 },
+        email: 'info@finestsites.io',
+        address: { '@type': 'PostalAddress', streetAddress: 'Herrleinstraße 39', postalCode: '97437', addressLocality: 'Haßfurt', addressCountry: 'DE' },
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://finestsites.io/#website',
+        url: 'https://finestsites.io',
+        name: 'FinestSites',
+        publisher: { '@id': 'https://finestsites.io/#organization' },
+        inLanguage: 'de-DE',
+      },
+    ],
+  }
+
   return (
     <div style={{ fontFamily: '"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif', background: '#fff', minHeight: '100vh' }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
 
       {/* ── Fonts ─────────────────────────────────────────────────────── */}
       <style>{`

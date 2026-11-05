@@ -25,15 +25,20 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://finestsites.io'),
   title: "FinestSites",
   description: "Deine professionelle Webseite – Online in unter 3 Minuten.",
+  // Google zeigt in der Suche nur Favicons, die ein Vielfaches von 48 px sind und per robots.txt
+  // erreichbar sind (siehe robots.ts). Darum 48/96/192 zusätzlich zu 16/32.
   icons: {
     icon: [
+      { url: '/fav/favicon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/fav/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/fav/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
       { url: '/fav/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
       { url: '/fav/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
     ],
     apple: '/fav/apple-touch-icon.png',
   },
   openGraph: {
-    title: 'FinestSites - Deine Network Marketing Webseiten',
+    title: 'FinestSites – Deine professionelle Website in Minuten',
     description: 'Professionelle Produktwebsite für Network-Marketing-Profis. In unter 3 Minuten live. Ab 17 € / Monat, jederzeit kündbar.',
     url: 'https://finestsites.io',
     siteName: 'FinestSites',
@@ -50,7 +55,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FinestSites - Deine Network Marketing Webseiten',
+    title: 'FinestSites – Deine professionelle Website in Minuten',
     description: 'Professionelle Produktwebsite für Network-Marketing-Profis. Ab 17 € / Monat.',
     images: ['/og-image.png'],
   },
