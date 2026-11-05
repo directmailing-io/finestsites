@@ -233,10 +233,11 @@ def flag(l):
        'zh':'<rect width="20" height="20" fill="#DE2910"/><path d="M6 3.4l1.2 3.4h3.6L7.9 8.9l1.1 3.4L6 10.2l-3 2.1 1.1-3.4-2.9-2.1h3.6z" fill="#FFDE00"/><circle cx="11.6" cy="3.6" r="1" fill="#FFDE00"/><circle cx="13.6" cy="6" r="1" fill="#FFDE00"/><circle cx="13.6" cy="9" r="1" fill="#FFDE00"/><circle cx="11.6" cy="11.4" r="1" fill="#FFDE00"/>',
        'ko':'<rect width="20" height="20" fill="#fff"/><path d="M5 10A5 5 0 0 1 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#CD2E3A"/><path d="M5 10A5 5 0 0 0 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#0047A0"/>'}
     return f'<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">{F[l]}</svg></span>'
+MENU_ORDER=sorted(ALL, key=lambda l: (0 if NAMES[l][0].isascii() else 1, NAMES[l].casefold()))   # Sprachmenü alphabetisch: lateinische Namen zuerst, dann Kyrillisch/Devanagari/CJK
 def menu(variant, onpick=''):
     def sub(l):  # „(Polnisch)“ in der gerade aktiven Sprache, entfällt wenn gleich
         return '<small class="lang-sub">' + ''.join(f'<span class="l-{a}">({NAMES_IN[a][l]})</span>' for a in ALL if a != l) + '</small>'
-    items=''.join(f'<button type="button" class="lang-item" data-lang="{l}" onclick="fsSetLang(\'{l}\');fsLangClose(){onpick}">{flag(l)}<span class="lang-name">{NAMES[l]}{sub(l)}</span></button>' for l in ALL)
+    items=''.join(f'<button type="button" class="lang-item" data-lang="{l}" onclick="fsSetLang(\'{l}\');fsLangClose(){onpick}">{flag(l)}<span class="lang-name">{NAMES[l]}{sub(l)}</span></button>' for l in MENU_ORDER)
     cur=''.join(f'<span class="lang-cur-flag" data-lang="{l}">{flag(l)}</span>' for l in ALL)
     return f'<div class="lang-menu lang-switch-{variant}"><button type="button" class="lang-cur" aria-haspopup="listbox" aria-label="Sprache wählen" onclick="fsLangToggle(this)">{cur}<span class="lang-cur-code"></span><svg class="lang-caret" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button><div class="lang-list" role="listbox">{items}</div></div>'
 html, n1 = re.subn(r'<div class="lang-switch lang-switch-mobile" role="group"[^>]*>.*?</div>', menu('mobile'), html, count=1, flags=re.S)
@@ -270,12 +271,14 @@ html[data-lang="ko"] body { word-break: keep-all; overflow-wrap: break-word; }
 """ + ''.join(f'html[data-lang="{l}"] .lang-cur-flag[data-lang="{l}"] {{ display: block; }}\n' for l in ALL) + """
 .lang-caret { width: 12px; height: 12px; opacity: .8; transition: transform .25s ease; }
 .lang-menu.open .lang-caret { transform: rotate(180deg); }
-.lang-list { position: absolute; right: 0; top: calc(100% + 8px); min-width: 196px; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.16); border: 1px solid rgba(0,0,0,0.06); z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: opacity .18s ease, transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s; }
+.lang-list { position: absolute; right: 0; top: calc(100% + 8px); width: min(520px, calc(100vw - 24px)); display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; padding: 6px; border-radius: 14px; background: #fff; box-shadow: 0 12px 40px rgba(0,0,0,0.16); border: 1px solid rgba(0,0,0,0.06); z-index: 1000; opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: opacity .18s ease, transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s linear .22s; }
 .lang-menu.open .lang-list { opacity: 1; visibility: visible; transform: translateY(0) scale(1); transition: opacity .18s ease, transform .22s cubic-bezier(.2,.8,.2,1), visibility 0s; }
 .lang-item { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; background: transparent; border-radius: 10px; color: #1a1a1a; font: inherit; font-size: 14px; font-weight: 500; letter-spacing: 0; cursor: pointer; text-align: left; transition: background .15s ease; }
 .lang-item:hover { background: #F3F4F6; }
-.lang-name { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
-.lang-sub { font-size: 11px; font-weight: 400; color: #9CA3AF; white-space: nowrap; }
+.lang-name { display: flex; flex-direction: column; gap: 1px; min-width: 0; line-height: 1.2; }
+.lang-sub { font-size: 11px; font-weight: 400; color: #9CA3AF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lang-item { min-width: 0; }
+@media (max-width: 640px) { .lang-list { position: fixed; left: 12px; right: 12px; width: auto; top: var(--lang-top, 72px); grid-template-columns: repeat(2, minmax(0, 1fr)); transform-origin: top center; } .lang-switch-overlay .lang-list { top: auto; bottom: var(--lang-bottom, 72px); left: 12px; right: 12px; transform: translateY(6px) scale(.98); transform-origin: bottom center; } .lang-switch-overlay.open .lang-list { transform: none; } }
 """ + ''.join(f'html[data-lang="{l}"] .lang-item[data-lang="{l}"] {{ background: #F3F4F6; font-weight: 600; }}\n' for l in ALL) + """
 .lang-switch-mobile { margin-left: auto; margin-right: 6px; }
 .lang-switch-mobile .lang-cur { height: 34px; }
@@ -287,7 +290,7 @@ html[data-lang="ko"] body { word-break: keep-all; overflow-wrap: break-word; }
 </style>"""
 html=html.replace('</head>', css+'\n</head>',1)
 js="""<script data-fs-i18n>
-function fsLangToggle(btn){ var m=btn.parentNode; var open=!m.classList.contains('open'); document.querySelectorAll('.lang-menu.open').forEach(function(x){x.classList.remove('open')}); if(open) m.classList.add('open'); }
+function fsLangToggle(btn){ var m=btn.parentNode; var r=btn.getBoundingClientRect(); m.style.setProperty('--lang-top',(r.bottom+8)+'px'); m.style.setProperty('--lang-bottom',(window.innerHeight-r.top+8)+'px'); var open=!m.classList.contains('open'); document.querySelectorAll('.lang-menu.open').forEach(function(x){x.classList.remove('open')}); if(open) m.classList.add('open'); }
 function fsLangClose(){ document.querySelectorAll('.lang-menu.open').forEach(function(x){x.classList.remove('open')}); }
 document.addEventListener('click', function(e){ if(!e.target.closest || !e.target.closest('.lang-menu')) fsLangClose(); });
 (function(){ function code(){ var l=document.documentElement.getAttribute('data-lang')||'de'; document.querySelectorAll('.lang-cur-code').forEach(function(s){ s.textContent=l.toUpperCase(); }); } code(); new MutationObserver(code).observe(document.documentElement,{attributes:true,attributeFilter:['data-lang']}); })();
