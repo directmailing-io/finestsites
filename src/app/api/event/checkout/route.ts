@@ -22,39 +22,69 @@ import { getEventConfig, eventPageUrl } from '@/lib/event/config'
  */
 const MWST_TAX_RATE = 'txr_1TtjFpGWVCygqvfcuF1utKUc' // 19 % MwSt., inclusive, DE (wie /api/billing/checkout)
 
+/**
+ * Die Event-Seite liegt auf finestsites.io, diese Route auf app.finestsites.io: Der Cloudflare-Worker
+ * vor finestsites.io reicht den Inhalt von POST-Anfragen nicht weiter, darum ruft der Browser die
+ * App-Domain direkt auf. Dafür braucht es CORS: Preflight (OPTIONS) + Allow-Origin für unsere Domains.
+ */
+const ALLOWED_ORIGINS = new Set([
+  'https://finestsites.io',
+  'https://www.finestsites.io',
+  (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, ''),
+])
+
+function corsHeaders(req: NextRequest): Record<string, string> {
+  const origin = req.headers.get('origin') ?? ''
+  if (!ALLOWED_ORIGINS.has(origin) && !(process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost'))) return {}
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '600',
+    Vary: 'Origin',
+  }
+}
+
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, { status: 204, headers: corsHeaders(req) })
+}
+
 export async function POST(req: NextRequest) {
+  const headers = corsHeaders(req)
+  const json = (data: unknown, status = 200) => NextResponse.json(data, { status, headers })
+
   const appBlocked = blockPurchaseInApp(req)
   if (appBlocked) return appBlocked
   if (!rateLimit('event-checkout', getClientIp(req), 10, 60 * 1000)) {
-    return NextResponse.json({ error: 'Zu viele Versuche. Bitte warte kurz und probiere es noch einmal.' }, { status: 429 })
+    return json({ error: 'Zu viele Versuche. Bitte warte kurz und probiere es noch einmal.' }, 429)
   }
 
   let body: { slug?: string; first_name?: string; email?: string; plan?: string; interval?: string }
-  try { body = await req.json() } catch { return NextResponse.json({ error: 'Ungültige Anfrage.' }, { status: 400 }) }
+  try { body = await req.json() } catch { return json({ error: 'Ungültige Anfrage.' }, 400) }
 
   const event = getEventConfig(String(body.slug ?? ''))
-  if (!event) return NextResponse.json({ error: 'Unbekanntes Event.' }, { status: 404 })
+  if (!event) return json({ error: 'Unbekanntes Event.' }, 404)
 
   const firstName = String(body.first_name ?? '').trim().slice(0, 60)
   const email = String(body.email ?? '').trim().toLowerCase()
   const plan = (body.plan ?? event.recommendedPlan) as PlanKey
   const interval = (body.interval ?? event.defaultInterval) as BillingInterval
-  if (!firstName) return NextResponse.json({ error: 'Bitte gib deinen Vornamen ein.' }, { status: 400 })
+  if (!firstName) return json({ error: 'Bitte gib deinen Vornamen ein.' }, 400)
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 254) {
-    return NextResponse.json({ error: 'Bitte prüfe deine E-Mail-Adresse.' }, { status: 400 })
+    return json({ error: 'Bitte prüfe deine E-Mail-Adresse.' }, 400)
   }
   if (!PLANS[plan] || (interval !== 'monthly' && interval !== 'yearly')) {
-    return NextResponse.json({ error: 'Ungültiger Tarif.' }, { status: 400 })
+    return json({ error: 'Ungültiger Tarif.' }, 400)
   }
   const priceId = getPriceIdByPlan(plan, interval)
-  if (!priceId) return NextResponse.json({ error: 'Tarif nicht verfügbar.' }, { status: 500 })
+  if (!priceId) return json({ error: 'Tarif nicht verfügbar.' }, 500)
 
   const existing = await db.query.users.findFirst({ where: eq(users.email, email), columns: { id: true } })
   if (existing) {
-    return NextResponse.json({
+    return json({
       error: 'Mit dieser E-Mail-Adresse gibt es schon ein FinestSites-Konto.',
       existing: true,
-    }, { status: 409 })
+    }, 409)
   }
 
   const stripe = getStripe()
@@ -108,9 +138,9 @@ export async function POST(req: NextRequest) {
       session = await stripe.checkout.sessions.create(withoutDiscount)
     }
     if (!session.url) throw new Error('Stripe lieferte keine Checkout-Adresse')
-    return NextResponse.json({ url: session.url })
+    return json({ url: session.url })
   } catch (err) {
     console.error('[event/checkout] error:', err instanceof Error ? err.message : err)
-    return NextResponse.json({ error: 'Die Bezahlseite konnte nicht geöffnet werden. Bitte versuche es gleich noch einmal.' }, { status: 500 })
+    return json({ error: 'Die Bezahlseite konnte nicht geöffnet werden. Bitte versuche es gleich noch einmal.' }, 500)
   }
 }

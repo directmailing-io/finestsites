@@ -2,10 +2,6 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe/client'
 import { getEventConfig } from '@/lib/event/config'
 import { ensureEventSignupUser, eventPasswordPending, isEventSignupSession, sessionEmail } from '@/lib/event/signup'
-import { getServerUser } from '@/lib/auth/server'
-import { db } from '@/lib/db'
-import { users } from '@/lib/db/schema'
-import { eq } from 'drizzle-orm'
 import { EVENT_CSS } from './event-styles'
 import EventPasswordForm from './EventPasswordForm'
 
@@ -27,8 +23,8 @@ export default async function EventThanksPage({ slug, sessionId, preview }: { sl
   if (!event) return null
 
   let state: State = { kind: 'invalid' }
-  // ?vorschau=1: nur für angemeldete Admins, zeigt die Seite mit Beispieldaten (Formular ohne Funktion)
-  const isPreview = preview && await isAdminViewer()
+  // ?vorschau=1: zeigt die Seite mit Beispieldaten (Formular ohne Funktion). Keine echten Daten, darum ohne Login.
+  const isPreview = !!preview
   if (isPreview) {
     state = { kind: 'pending', email: 'sabine@beispiel.de', firstName: 'Sabine' }
   } else if (/^cs_(live|test)_[A-Za-z0-9]+$/.test(sessionId)) {
@@ -123,13 +119,3 @@ export default async function EventThanksPage({ slug, sessionId, preview }: { sl
   )
 }
 
-async function isAdminViewer(): Promise<boolean> {
-  try {
-    const user = await getServerUser()
-    if (!user) return false
-    const row = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
-    return !!row?.isAdmin
-  } catch {
-    return false
-  }
-}

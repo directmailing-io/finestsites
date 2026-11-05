@@ -20,8 +20,10 @@ const GREETING: Record<SiteLang, { solo: (n: string) => string; duo: (n: string)
   sr: { solo: n => `Ćao, ja sam ${n}`, duo: n => `Ćao, mi smo ${n}` },
   es: { solo: n => `Hola, soy ${n}`, duo: n => `Hola, somos ${n}` },
   zh: { solo: n => `你好，我是${n}`, duo: n => `你好，我们是${n}` },
-  ko: { solo: n => `안녕하세요, ${n}예요`, duo: n => `안녕하세요, ${n}예요` },
+  ko: { solo: n => `안녕하세요, ${n}입니다.`, duo: n => `안녕하세요, ${n}입니다.` },
 }
+/** Satzende je Sprache: steht im farbigen Namens-Span; ko: Kopula „입니다.“ folgt außerhalb (funktioniert mit jedem Namen, 이에요/예요 hängt vom Auslaut ab), zh: ideografischer Punkt. */
+const PERIOD: Partial<Record<SiteLang, string>> = { ko: '', zh: '。' }
 const AND: Record<SiteLang, string> = { de: '&amp;', en: '&amp;', it: '&amp;', ru: 'и', uk: 'і', pl: 'i', bg: 'и', hi: 'और', tr: 've', sr: 'i', es: 'y', zh: '和', ko: '&amp;' }
 
 export function htmlEscape(s: string): string {
@@ -50,10 +52,11 @@ export function computeAboutIntro(data: Record<string, string>): Record<string, 
       const own = lang === 'de' ? raw : ((data[`about_intro_${lang}`] || '').trim() || raw)
       out[key] = wrapAccentMarkers(own)
     } else if (isDuo && vorname2) {
-      const nameHtml = `<span class="accent">${htmlEscape(vorname)} ${AND[lang]} ${htmlEscape(vorname2)}.</span>`
+      const dot = PERIOD[lang] ?? '.'
+      const nameHtml = `<span class="accent">${htmlEscape(vorname)} ${AND[lang]} ${htmlEscape(vorname2)}${dot}</span>`
       out[key] = GREETING[lang].duo(nameHtml)
     } else {
-      out[key] = GREETING[lang].solo(`<span class="accent">${htmlEscape(vorname)}.</span>`)
+      out[key] = GREETING[lang].solo(`<span class="accent">${htmlEscape(vorname)}${PERIOD[lang] ?? '.'}</span>`)
     }
   }
   return out

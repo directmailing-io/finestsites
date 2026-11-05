@@ -59,8 +59,10 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
     setError(null)
     setLoading(true)
     try {
-      const res = await fetch('/api/event/checkout', {
+      // Immer die App-Domain: der Worker vor finestsites.io reicht POST-Inhalte nicht weiter (CORS in der Route)
+      const res = await fetch(`${APP_URL}/api/event/checkout`, {
         method: 'POST',
+        mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ slug: event.slug, first_name: firstName, email, plan, interval }),
       })

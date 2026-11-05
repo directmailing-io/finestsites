@@ -91,7 +91,7 @@ export async function middleware(request: NextRequest) {
   // finestsites.io is marketing only.
   // Legal + marketing content stays on finestsites.io; app routes → app subdomain.
   // Event-Seiten (src/lib/event/config.ts) stehen hier mit ihrem Slug; /<slug>/danke läuft auf der App-Domain.
-  const FINESTSITES_IO_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies', '/vorlagen', '/webinar', '/changelog', '/konto-loeschen', '/app', '/sitemap.xml', '/robots.txt', '/powerday', '/api/event']
+  const FINESTSITES_IO_PATHS = ['/impressum', '/datenschutz', '/agb', '/cookies', '/vorlagen', '/webinar', '/changelog', '/konto-loeschen', '/app', '/sitemap.xml', '/robots.txt', '/powerday']
   if (
     (host === 'finestsites.io' || host === 'www.finestsites.io') &&
     pathname !== '/' &&

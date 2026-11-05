@@ -4,8 +4,8 @@
  * Große Schrift und große Bedienelemente: die Zielgruppe ist älter und technisch nicht fit.
  */
 export const EVENT_RAINBOW = 'linear-gradient(90deg, #F4B9AE 0%, #F5DBA2 35%, #CBE6CD 68%, #B8D2F1 100%)'
-/** Dieselben vier Farben, etwas kräftiger: als Textfarbe der Überschrift sonst zu blass auf Weiß */
-export const EVENT_RAINBOW_TEXT = 'linear-gradient(90deg, #E58B78 0%, #DBA94A 36%, #5FAE7C 68%, #5F93D9 100%)'
+/** Flieder-Akzent wie auf der Startseite (HeroSection accent/eyebrow) */
+export const EVENT_ACCENT = '#6B4FD8'
 /** Gespiegelte Stops, damit die Bewegung der Leiste oben nahtlos hin und her läuft */
 export const EVENT_RAINBOW_FLOW = 'linear-gradient(90deg, #F4B9AE, #F5DBA2, #CBE6CD, #B8D2F1, #CBE6CD, #F5DBA2, #F4B9AE)'
 
@@ -14,7 +14,7 @@ export const EVENT_CSS = `
   @font-face { font-family: 'Plein'; src: url('/fonts/Plein-Medium.otf') format('opentype'); font-weight: 500; font-display: swap; }
   .ev { --ink: #111111; --body: #3D3D3D; --muted: #6F6F6F; --faint: #A3A3A3; --line: #E7E5E4; --soft: #F7F6F4;
         --rainbow: ${EVENT_RAINBOW};
-        min-height: 100%; background: #fff; color: var(--body);
+        min-height: 100vh; background: #fff; color: var(--body);
         font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
   .ev * { box-sizing: border-box; }
@@ -32,7 +32,7 @@ export const EVENT_CSS = `
   .ev-cd-label { text-align: center; font-size: 14px; color: var(--muted); margin: 0 0 26px; }
   .ev-ended { background: var(--soft); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; font-size: 16px; color: var(--ink); margin: 0 0 24px; text-align: center; }
   .ev-h1 { font-family: 'Plein', var(--font-geist-sans), sans-serif; font-size: clamp(30px, 8vw, 36px); line-height: 1.12; letter-spacing: -0.02em; color: var(--ink); font-weight: 500; text-align: center; margin: 0 0 12px; text-wrap: balance; }
-  .ev-h1 .c { background: ${EVENT_RAINBOW_TEXT}; -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .ev-h1 .c { color: ${EVENT_ACCENT}; }
   .ev-sub { font-size: 17px; color: var(--body); text-align: center; margin: 0 0 24px; }
   .ev-seg { display: flex; background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 4px; margin: 0 0 16px; }
   .ev-seg button { flex: 1; border: 0; background: transparent; border-radius: 999px; padding: 12px 6px; font: inherit; font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; }
