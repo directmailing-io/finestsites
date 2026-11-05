@@ -17,6 +17,7 @@ check() { # check <erwartet> <beschreibung> <url> [muss-enthalten] [darf-nicht-e
 echo "▶ Smoke-Test"
 check 200 "App Login" "$APP/login"
 check 200 "Marketing Startseite" "https://finestsites.io/"
+check 200 "Event-Seite Powerday" "https://finestsites.io/powerday" "Angebot"
 check 200 "Vorschau lnko"        "$APP/api/templates/21c773ae-5ecd-418e-a9b9-a978a7bdbd98/public-preview" "<html"
 check 200 "Vorschau Business"    "$APP/api/templates/fbcf2022-2036-424a-93de-5878c5fa5b6d/public-preview" "<html"
 check 200 "Vorschau cellRESET"   "$APP/api/templates/b1d028a9-b4be-4d87-9178-9a92ebb2fb83/public-preview" "<html"

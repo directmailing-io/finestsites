@@ -93,6 +93,7 @@ export const EMAIL_TYPE_CATEGORY: Record<string, EmailCategory> = {
   sites_offline: 'system',
   payment_fallback: 'system',
   upcoming_debit: 'system',
+  event_link: 'system',
   domain_active: 'system',
   tracking_first_lead: 'system',
   affiliate_payout: 'system',

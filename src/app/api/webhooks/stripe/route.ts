@@ -33,6 +33,7 @@ import {
 import { runRecoveryNotificationsFor } from '@/lib/billing/recovery-notifications'
 import { paymentMethodLabel } from '@/lib/billing/lifecycle-notifications'
 import { upcomingNoticeReason, CYCLE_BILLING_REASONS } from '@/lib/billing/upcoming-notice'
+import { ensureEventSignupUser, isEventSignupSession } from '@/lib/event/signup'
 import { invoiceSubscriptionId, invoiceCouponIds, resolveChargeInvoiceId } from '@/lib/affiliate/stripe-refs'
 import { planReversal, planDisputeRestore, type ReversalAction } from '@/lib/affiliate/reversal'
 import { syncConnectStatus } from '@/lib/affiliate/connect-status'
@@ -400,7 +401,14 @@ export async function POST(req: NextRequest) {
       const priceId = subscription.items.data[0]?.price.id ?? ''
       const plan = getPlanByPriceId()[priceId] ?? 'starter'
       const interval = subscription.items.data[0]?.price.recurring?.interval === 'year' ? 'yearly' : 'monthly'
-      const userId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
+      // Event-Kauf ohne Konto (finestsites.io/<event>): Konto jetzt anlegen bzw. finden (idempotent,
+      // die Danke-Seite macht dasselbe). Danach läuft alles wie bei jedem anderen Checkout weiter.
+      let userId = session.metadata?.supabase_user_id ?? session.metadata?.user_id
+      if (!userId && isEventSignupSession(session)) {
+        const signup = await ensureEventSignupUser(session, subscription)
+        userId = signup?.userId
+        if (signup) console.info('[webhook] event signup', signup.created ? 'created' : 'existing', userId, session.metadata?.event_slug)
+      }
       if (!userId) break
 
       // Invoice ID — needed for payment method tracking and affiliate commission

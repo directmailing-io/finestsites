@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { readAppModeCookie } from '@/lib/app-mode/shared'
+import { EVENTS } from '@/lib/event/config'
 
 // ── Consent model ───────────────────────────────────────────────────────────
 interface Consent {
@@ -312,6 +313,10 @@ export default function CookieBanner() {
     // App-Modus (Cookie fs_app=1): kein Banner in der App-WebView, dort gibt es keine Analyse-Cookies
     // (ohne Zustimmung bleibt Analyse aus). Im normalen Browser unverändert.
     if (readAppModeCookie()) return false
+    // Event-Seiten (QR-Code im Saal, ältere Zielgruppe): kein Banner, dort werden keine Analyse-Cookies
+    // gesetzt (ohne Zustimmung bleibt Analyse aus) – nur technisch Nötiges.
+    const path = window.location.pathname
+    if (Object.keys(EVENTS).some(slug => path === `/${slug}` || path.startsWith(`/${slug}/`))) return false
     return !readConsent()
   })
   const [animated, setAnimated] = useState(false)

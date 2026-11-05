@@ -128,6 +128,29 @@ export function verificationEmail({ url }: { url: string }): string {
   `)
 }
 
+/**
+ * Event-Seite „Für später speichern“: EINE Mail auf Wunsch der Person mit dem Link zur Seite.
+ * Keine Erinnerungskette, keine Speicherung (src/app/api/event/send-link).
+ */
+export function eventSaveLinkEmail({ eventName, url, endsAt }: { eventName: string; url: string; endsAt: Date | null }): string {
+  const until = endsAt
+    ? `${endsAt.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit', timeZone: 'Europe/Berlin' })} um ${endsAt.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' })} Uhr`
+    : null
+  return layout(`
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">
+      Dein Link zum ${eventName}-Angebot
+    </h1>
+    <p style="margin:0 0 0;font-size:15px;color:${base.body};line-height:1.65;">
+      Du wolltest dir die Seite für später merken. Hier ist sie. Mit dem Button kommst du jederzeit wieder dorthin.
+    </p>
+    ${button(url, 'Zur Angebotsseite')}
+    <p style="margin:28px 0 0;font-size:13px;color:${base.muted};line-height:1.6;">
+      ${until ? `Das Angebot gilt bis ${until}.` : 'Das Angebot gilt nur für kurze Zeit.'} Du bekommst keine weitere Mail dazu.
+    </p>
+    ${fallbackLink(url)}
+  `)
+}
+
 export function passwordResetEmail({ url }: { url: string }): string {
   return layout(`
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:700;color:${base.heading};letter-spacing:-0.02em;">

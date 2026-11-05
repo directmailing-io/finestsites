@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     const {
       code, discountType, amount, plans, interval, duration,
-      durationMonths, maxRedemptions, startsAt, expiresAt, firstTimeOnly, name,
+      durationMonths, maxRedemptions, startsAt, expiresAt, firstTimeOnly, name, sitewide,
     } = await req.json() as {
       code: string
       discountType: 'percent' | 'fixed'
@@ -50,6 +50,8 @@ export async function POST(req: NextRequest) {
       expiresAt?: string // ISO date — expires at 23:59:59 UTC on that day
       firstTimeOnly?: boolean
       name?: string
+      /** Aktion: wird auf Startseite, Editor, Checkout und Event-Seiten automatisch angewendet (src/lib/billing/campaign.ts) */
+      sitewide?: boolean
     }
 
     if (!code?.trim() || !amount || !duration) {
@@ -110,6 +112,7 @@ export async function POST(req: NextRequest) {
       restrictions: { first_time_transaction: !!firstTimeOnly },
       metadata: {
         ...(startsAt ? { starts_at: startsAt } : {}),
+        ...(sitewide ? { sitewide: 'true' } : {}),
       },
     }
 

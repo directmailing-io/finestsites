@@ -17,6 +17,8 @@ interface CreateForm {
   startsAt: string
   expiresAt: string
   firstTimeOnly: boolean
+  /** Aktion: gilt automatisch auf Startseite, im Editor, Checkout und auf Event-Seiten */
+  sitewide: boolean
 }
 
 const PLAN_OPTIONS = [
@@ -70,6 +72,7 @@ const defaultForm: CreateForm = {
   startsAt: '',
   expiresAt: '',
   firstTimeOnly: false,
+  sitewide: false,
 }
 
 export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoCode[] }) {
@@ -171,6 +174,7 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
           startsAt: form.startsAt || undefined,
           expiresAt: form.expiresAt || undefined,
           firstTimeOnly: form.firstTimeOnly,
+          sitewide: form.sitewide,
         }),
       })
       const data = await res.json()
@@ -647,6 +651,20 @@ export function CouponsClient({ initialCodes }: { initialCodes: SerializedPromoC
                   className="w-4 h-4 rounded"
                 />
                 <span className="text-sm text-gray-700">Nur für Neukunden (kein aktives Abo)</span>
+              </label>
+
+              {/* Aktion (sitewide): automatisch auf Startseite, im Editor, Checkout und auf Event-Seiten */}
+              <label className="flex items-start gap-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={form.sitewide}
+                  onChange={e => setForm(f => ({ ...f, sitewide: e.target.checked }))}
+                  className="w-4 h-4 rounded mt-0.5"
+                />
+                <span className="text-sm text-gray-700">
+                  Aktion: automatisch anwenden (Startseite, Editor, Checkout, Event-Seite)
+                  <span className="block text-xs text-gray-400 mt-0.5">Bis zum Ablaufdatum sichtbar und eingerechnet, ohne dass jemand den Code eintippt. Für Event-Codes wie POWERDAY20.</span>
+                </span>
               </label>
 
               {createError && (
