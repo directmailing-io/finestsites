@@ -7,7 +7,7 @@ import { discountedTotal, formatEur, promoDurationInfo } from '@/lib/billing/pro
 import { useCampaignCountdown } from '@/components/billing/useCampaign'
 import type { EventConfig } from '@/lib/event/config'
 
-export interface DemoSite { domain: string; label: string; thumbUrl: string | null }
+export interface DemoSite { domain: string; label: string; url: string; thumbUrl: string | null }
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io'
 
@@ -83,8 +83,6 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
 
   return (
     <>
-      <p className="ev-kicker">{event.name}</p>
-
       {live ? (
         <>
           <div className="ev-cd" aria-live="off">
@@ -99,7 +97,8 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
         <div className="ev-ended">{event.endedText}</div>
       )}
 
-      <h1 className="ev-h1">{event.headline.split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}</h1>
+      {/* Erste Zeile der Überschrift in den Styleguide-Farben */}
+      <h1 className="ev-h1">{event.headline.split('\n').map((line, i) => <span key={i}>{i > 0 && <br />}<span className={i === 0 ? 'c' : undefined}>{line}</span></span>)}</h1>
       <p className="ev-sub">{event.subline}</p>
 
       {canceled && <div className="ev-ok">Die Bezahlung wurde abgebrochen. Nichts ist passiert, du kannst es jederzeit noch einmal versuchen.</div>}
@@ -164,9 +163,9 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
           <p className="ev-shots-h">So sehen fertige Seiten aus</p>
           <div className="ev-shots">
             {demoSites.map(s => (
-              <a key={s.domain} className="ev-shot" href={`https://${s.domain}`} target="_blank" rel="noopener noreferrer">
+              <a key={s.domain} className="ev-shot" href={s.url} target="_blank" rel="noopener noreferrer">
                 <span className="img" style={s.thumbUrl ? { backgroundImage: `url(${s.thumbUrl})` } : undefined} role="img" aria-label={`Vorschau ${s.label}`} />
-                <span className="cap">{s.label}<small>{s.domain}</small></span>
+                <span className="cap">{s.label}<small>{s.url.replace(/^https?:\/\//, '')}</small></span>
               </a>
             ))}
           </div>

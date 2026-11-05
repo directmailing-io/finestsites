@@ -4,6 +4,10 @@
  * Große Schrift und große Bedienelemente: die Zielgruppe ist älter und technisch nicht fit.
  */
 export const EVENT_RAINBOW = 'linear-gradient(90deg, #F4B9AE 0%, #F5DBA2 35%, #CBE6CD 68%, #B8D2F1 100%)'
+/** Dieselben vier Farben, etwas kräftiger: als Textfarbe der Überschrift sonst zu blass auf Weiß */
+export const EVENT_RAINBOW_TEXT = 'linear-gradient(90deg, #E58B78 0%, #DBA94A 36%, #5FAE7C 68%, #5F93D9 100%)'
+/** Gespiegelte Stops, damit die Bewegung der Leiste oben nahtlos hin und her läuft */
+export const EVENT_RAINBOW_FLOW = 'linear-gradient(90deg, #F4B9AE, #F5DBA2, #CBE6CD, #B8D2F1, #CBE6CD, #F5DBA2, #F4B9AE)'
 
 export const EVENT_CSS = `
   @font-face { font-family: 'Plein'; src: url('/fonts/Plein-Regular.otf') format('opentype'); font-weight: 400; font-display: swap; }
@@ -14,11 +18,12 @@ export const EVENT_CSS = `
         font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
   .ev * { box-sizing: border-box; }
-  .ev-head { display: flex; justify-content: center; padding: 22px 20px 18px; }
+  .ev-top { height: 4px; width: 100%; background: ${EVENT_RAINBOW_FLOW}; background-size: 300% 100%; animation: ev-flow 18s ease-in-out infinite alternate; }
+  @keyframes ev-flow { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+  @media (prefers-reduced-motion: reduce) { .ev-top { animation: none; } }
+  .ev-head { display: flex; justify-content: center; padding: 24px 20px 10px; }
   .ev-head img { height: 26px; width: auto; display: block; }
-  .ev-rule { height: 2px; background: var(--rainbow); margin: 0 auto; max-width: 480px; border-radius: 2px; }
   .ev-main { max-width: 480px; margin: 0 auto; padding: 26px 20px 60px; }
-  .ev-kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); text-align: center; margin: 0 0 12px; }
   .ev-cd { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 0 6px; }
   .ev-cd div { padding: 14px 0 12px; text-align: center; border-left: 1px solid var(--line); }
   .ev-cd div:first-child { border-left: 0; }
@@ -27,6 +32,7 @@ export const EVENT_CSS = `
   .ev-cd-label { text-align: center; font-size: 14px; color: var(--muted); margin: 0 0 26px; }
   .ev-ended { background: var(--soft); border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; font-size: 16px; color: var(--ink); margin: 0 0 24px; text-align: center; }
   .ev-h1 { font-family: 'Plein', var(--font-geist-sans), sans-serif; font-size: clamp(30px, 8vw, 36px); line-height: 1.12; letter-spacing: -0.02em; color: var(--ink); font-weight: 500; text-align: center; margin: 0 0 12px; text-wrap: balance; }
+  .ev-h1 .c { background: ${EVENT_RAINBOW_TEXT}; -webkit-background-clip: text; background-clip: text; color: transparent; }
   .ev-sub { font-size: 17px; color: var(--body); text-align: center; margin: 0 0 24px; }
   .ev-seg { display: flex; background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 4px; margin: 0 0 16px; }
   .ev-seg button { flex: 1; border: 0; background: transparent; border-radius: 999px; padding: 12px 6px; font: inherit; font-size: 15px; font-weight: 600; color: var(--muted); cursor: pointer; }
@@ -63,8 +69,8 @@ export const EVENT_CSS = `
   .ev-shots::-webkit-scrollbar { display: none; }
   .ev-shot { flex: 0 0 66%; scroll-snap-align: start; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--soft); text-decoration: none; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 10px 28px rgba(0,0,0,.06); }
   .ev-shot .img { aspect-ratio: 16 / 10; background: #EDEBE8 center top / cover no-repeat; display: block; }
-  .ev-shot .cap { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; font-size: 14px; font-weight: 600; }
-  .ev-shot .cap small { font-weight: 400; color: var(--muted); font-size: 13px; }
+  .ev-shot .cap { display: flex; flex-direction: column; gap: 1px; padding: 10px 14px; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; }
+  .ev-shot .cap small { font-weight: 400; color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; }
   .ev-shots-label { font-size: 14px; color: var(--muted); text-align: center; margin: 4px 0 28px; }
   .ev-foot { text-align: center; font-size: 13px; color: var(--faint); padding: 0 20px 40px; }
   .ev-foot a { color: var(--faint); text-decoration: underline; text-underline-offset: 3px; margin: 0 6px; }

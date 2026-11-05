@@ -30,7 +30,9 @@ export default async function EventOfferPage({ slug, canceled, preview }: { slug
 
   // Die Beispielseiten sind die veröffentlichten Seiten des Demo-Kontos je Vorlage (templates.domain,
   // z. B. dailyoptimal.de); ihre Vorschaubilder kommen aus user_sites.thumb_url.
-  let demoSites: DemoSite[] = event.demoSites.map(s => ({ ...s, thumbUrl: null }))
+  // Verlinkt wird die Seite des Demo-Kontos (demo.<vorlagen-domain>), nicht die Vorlagen-Domain selbst
+  const demoUrl = (domain: string) => `https://${DEMO_USERNAME}.${domain}`
+  let demoSites: DemoSite[] = event.demoSites.map(s => ({ ...s, url: demoUrl(s.domain), thumbUrl: null }))
   try {
     const rows = await db
       .select({ domain: templates.domain, thumbUrl: userSites.thumbUrl })
@@ -38,7 +40,7 @@ export default async function EventOfferPage({ slug, canceled, preview }: { slug
       .innerJoin(templates, eq(templates.id, userSites.templateId))
       .innerJoin(users, eq(users.id, userSites.userId))
       .where(and(eq(users.username, DEMO_USERNAME), inArray(templates.domain, event.demoSites.map(s => s.domain)), eq(userSites.status, 'published')))
-    demoSites = event.demoSites.map(s => ({ ...s, thumbUrl: rows.find(r => r.domain === s.domain)?.thumbUrl ?? null }))
+    demoSites = event.demoSites.map(s => ({ ...s, url: demoUrl(s.domain), thumbUrl: rows.find(r => r.domain === s.domain)?.thumbUrl ?? null }))
   } catch (e) {
     console.error('[event] demo thumbs:', e instanceof Error ? e.message : e)
   }
@@ -46,12 +48,12 @@ export default async function EventOfferPage({ slug, canceled, preview }: { slug
   return (
     <div className="ev">
       <style dangerouslySetInnerHTML={{ __html: EVENT_CSS }} />
+      <div className="ev-top" aria-hidden />
       <header className="ev-head">
         <a href="https://finestsites.io" aria-label="FinestSites">
           <img src="/logos/logo-black.svg" alt="FinestSites" width={160} height={26} />
         </a>
       </header>
-      <div className="ev-rule" />
       <main className="ev-main">
         <EventOfferClient event={event} campaign={campaign} demoSites={demoSites} canceled={!!canceled} />
       </main>

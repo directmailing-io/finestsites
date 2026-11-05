@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 export default async function PowerdayThanksPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams
   const sessionId = typeof params.session_id === 'string' ? params.session_id : ''
-  return <EventThanksPage slug="powerday" sessionId={sessionId} />
+  return <EventThanksPage slug="powerday" sessionId={sessionId} preview={params.vorschau === '1'} />
 }

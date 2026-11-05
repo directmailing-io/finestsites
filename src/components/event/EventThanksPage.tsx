@@ -2,6 +2,10 @@ import type Stripe from 'stripe'
 import { getStripe } from '@/lib/stripe/client'
 import { getEventConfig } from '@/lib/event/config'
 import { ensureEventSignupUser, eventPasswordPending, isEventSignupSession, sessionEmail } from '@/lib/event/signup'
+import { getServerUser } from '@/lib/auth/server'
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
 import { EVENT_CSS } from './event-styles'
 import EventPasswordForm from './EventPasswordForm'
 
@@ -18,12 +22,16 @@ type State =
  * Danke-Seite nach dem Event-Kauf: Konto sicherstellen (falls der Webhook noch nicht war), Passwort
  * festlegen, dann in drei Schritten erklären, wie es weitergeht. Keine Mail nötig.
  */
-export default async function EventThanksPage({ slug, sessionId }: { slug: string; sessionId: string }) {
+export default async function EventThanksPage({ slug, sessionId, preview }: { slug: string; sessionId: string; preview?: boolean }) {
   const event = getEventConfig(slug)
   if (!event) return null
 
   let state: State = { kind: 'invalid' }
-  if (/^cs_(live|test)_[A-Za-z0-9]+$/.test(sessionId)) {
+  // ?vorschau=1: nur für angemeldete Admins, zeigt die Seite mit Beispieldaten (Formular ohne Funktion)
+  const isPreview = preview && await isAdminViewer()
+  if (isPreview) {
+    state = { kind: 'pending', email: 'sabine@beispiel.de', firstName: 'Sabine' }
+  } else if (/^cs_(live|test)_[A-Za-z0-9]+$/.test(sessionId)) {
     try {
       const session: Stripe.Checkout.Session = await getStripe().checkout.sessions.retrieve(sessionId, { expand: ['subscription'] })
       if (isEventSignupSession(session)) {
@@ -49,11 +57,12 @@ export default async function EventThanksPage({ slug, sessionId }: { slug: strin
   return (
     <div className="ev">
       <style dangerouslySetInnerHTML={{ __html: EVENT_CSS }} />
+      <div className="ev-top" aria-hidden />
       <header className="ev-head">
         <img src="/logos/logo-black.svg" alt="FinestSites" width={160} height={26} />
       </header>
-      <div className="ev-rule" />
       <main className="ev-main">
+        {isPreview && <div className="ev-ok" style={{ textAlign: 'center' }}>Vorschau mit Beispieldaten. Das Passwort-Formular ist hier ohne Funktion.</div>}
         {state.kind === 'invalid' && (
           <>
             <h1 className="ev-h1">Diesen Link können wir nicht zuordnen.</h1>
@@ -71,8 +80,7 @@ export default async function EventThanksPage({ slug, sessionId }: { slug: strin
 
         {(state.kind === 'pending' || state.kind === 'done') && (
           <>
-            <p className="ev-kicker">{event.name} · Angebot gesichert</p>
-            <h1 className="ev-h1">{greeting(state.firstName)}<br />Dein Angebot ist gesichert.</h1>
+            <h1 className="ev-h1">{greeting(state.firstName)}<br /><span className="c">Dein Angebot ist gesichert.</span></h1>
             <p className="ev-sub">Die Bezahlung hat geklappt. Jetzt nur noch dein Passwort, dann kannst du dich jederzeit anmelden und deine Webseite in Ruhe einrichten.</p>
 
             <div className="ev-mailbox">
@@ -113,4 +121,15 @@ export default async function EventThanksPage({ slug, sessionId }: { slug: strin
       </main>
     </div>
   )
+}
+
+async function isAdminViewer(): Promise<boolean> {
+  try {
+    const user = await getServerUser()
+    if (!user) return false
+    const row = await db.query.users.findFirst({ where: eq(users.id, user.id), columns: { isAdmin: true } })
+    return !!row?.isAdmin
+  } catch {
+    return false
+  }
 }
