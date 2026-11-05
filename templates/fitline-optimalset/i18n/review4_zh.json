@@ -1,0 +1,110 @@
+[
+  {
+    "de": "Dein Nährstoff-Cocktail",
+    "alt": "你的营养鸡尾酒",
+    "neu": "你的营养饮品",
+    "grund": "Vorgabe: kein „鸡尾酒“ (alkoholisch), 营养饮品"
+  },
+  {
+    "de": "Dein tägliches Nährstoff-System.",
+    "alt": "你的每日营养系统。",
+    "neu": "你的每日营养补充方案。",
+    "grund": "Vorgabe: „系统“ technisch, 营养补充方案"
+  },
+  {
+    "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+    "alt": "早上喝PowerCocktail，晚上喝Restorate，这是基础。白天需要更多能量的话，就选Activize。{{#unless joghurt_anzeigen=nein}}如果愿意，还可以加上益生菌酸奶，给肠道多一份照顾。{{/unless}}",
+    "neu": "早上喝PowerCocktail，晚上喝Restorate，这是基础。白天需要更多能量的话，就选Activize。{{#unless joghurt_anzeigen=nein}}也可以根据需要搭配益生菌酸奶。{{/unless}}",
+    "grund": "Vorgabe Probiotik-Satz: 也可以根据需要搭配益生菌酸奶"
+  },
+  {
+    "de": "Beutel ins Glas, Wasser dazu, kurz umrühren",
+    "alt": "把小袋倒进杯子，加水，稍微搅拌一下",
+    "neu": "把一袋粉末倒入杯中，加水，稍微搅拌一下",
+    "grund": "Vorgabe: nicht den Beutel ins Glas schütten, sondern das Pulver"
+  },
+  {
+    "de": "Ein Beutel ins Glas, kaltes Wasser dazu. Kurz umrühren, fertig ist die Basis.",
+    "alt": "把一袋倒进杯子，加冷水。稍微搅一搅，基础就做好了。",
+    "neu": "把一袋粉末倒入杯中，加入冷水。稍微搅拌一下，基础饮品就调好了。",
+    "grund": "Wie Vorgabe: Pulver statt Beutel ins Glas; „基础“ allein unklar"
+  },
+  {
+    "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+    "alt": "把一份Activize也加进杯子。提神的部分也一并搞定。",
+    "neu": "再往杯中加入一份Activize。这样提神的那一份也一起有了。",
+    "grund": "Natürlicher, analog zu „倒入杯中“"
+  },
+  {
+    "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+    "alt": "最后在上面加一小口酸奶饮品。这两款产品相互搭配，在你的日常习惯中相辅相成。",
+    "neu": "再倒入少许酸奶饮品。这两款产品相互搭配，在你的日常习惯中相辅相成。",
+    "grund": "„加一小口“ wörtliches Bild (Schluck = trinken), natürlicher: 少许"
+  },
+  {
+    "de": "Beutel in die Tasche, ein Glas Wasser reicht",
+    "alt": "小袋放进包里，有一杯水就够了",
+    "neu": "随身带上一袋，有一杯水就够了",
+    "grund": "Wörtliches Bild „小袋放进包里“ natürlicher"
+  },
+  {
+    "de": "So pimpst du deinen Drink.",
+    "alt": "饮品升级小妙招。",
+    "neu": "这样调，饮品更出彩。",
+    "grund": "„升级“ technisch klingend (wie Vorgabe)"
+  },
+  {
+    "de": "Der Booster",
+    "alt": "能量助推器",
+    "neu": "活力补给",
+    "grund": "„助推器“ technisch (Raketenbild), natürlicher"
+  },
+  {
+    "de": "Der Booster",
+    "alt": "能量助推器",
+    "neu": "活力补给",
+    "grund": "„助推器“ technisch (Raketenbild), natürlicher (attrs)"
+  },
+  {
+    "de": "Probier mein liebstes Nährstoff-System.",
+    "alt": "试试我最爱的营养系统。",
+    "neu": "试试我最爱的营养补充方案。",
+    "grund": "Wie Vorgabe: 系统 → 营养补充方案"
+  },
+  {
+    "de": "Probier unser liebstes Nährstoff-System.",
+    "alt": "试试我们最爱的营养系统。",
+    "neu": "试试我们最爱的营养补充方案。",
+    "grund": "Wie Vorgabe: 系统 → 营养补充方案"
+  },
+  {
+    "de": "Probiotisch, cremig &amp; sättigend",
+    "alt": "益生菌、顺滑、又有饱腹感",
+    "neu": "含益生菌，口感顺滑，有饱腹感",
+    "grund": "Holprige Reihung natürlicher"
+  },
+  {
+    "de": "Das Mineralstoff-Pulver für deinen Abend. Mit Calcium, Magnesium, Zink und Vitamin D.",
+    "alt": "你晚上的矿物质粉。含钙、镁、锌和维生素D。",
+    "neu": "晚间专用的矿物质粉。含钙、镁、锌和维生素D。",
+    "grund": "„你晚上的矿物质粉“ wörtlich, natürlicher"
+  },
+  {
+    "de": "<strong>Eingenommen ist nicht gleich aufgenommen.</strong> Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Genau dafür hat PM-International das NTC entwickelt, ein patentiertes Konzept, das Nährstoffe dorthin bringt, wo dein Körper sie braucht.",
+    "alt": "<strong>吃进去，不等于吸收了。</strong>从摄入营养素到让身体真正利用营养素，中间还有很长一段路。正是为此，PM-International开发了NTC：一项专利概念，把营养素送到你身体需要的地方。",
+    "neu": "<strong>吃进去，不等于吸收了。</strong>从摄入营养素到让身体真正利用营养素，中间还有很长一段路。正是为此，PM-International开发了NTC：一套获得专利的理念，把营养素送到你身体需要的地方。",
+    "grund": "„专利概念“ technisch/holprig"
+  },
+  {
+    "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+    "alt": "Optimalset背后是NTC，也就是PM-International的营养素传输概念。核心想法是：摄入营养素和真正利用营养素之间，还有很长一段路。NTC的设计目标，是在合适的时间、以合适的形式，把营养素送到你身体需要它们的地方。背后有100多项专利。再加上时间安排的思路：有些产品早上用，有些白天或晚上用，因为你的身体在不同时间需要不同的营养素。这就是单一营养补充剂和一套精心设计的系统之间的区别。",
+    "neu": "Optimalset背后是NTC，也就是PM-International的营养素传输概念。核心想法是：摄入营养素和真正利用营养素之间，还有很长一段路。NTC的设计目标，是在合适的时间、以合适的形式，把营养素送到你身体需要它们的地方。背后有100多项专利。再加上时间安排的思路：有些产品早上用，有些白天或晚上用，因为你的身体在不同时间需要不同的营养素。这就是单一营养补充剂和一套经过周密考虑的整体方案之间的区别。",
+    "grund": "Wie Vorgabe: „系统“ technisch"
+  },
+  {
+    "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+    "alt": "早上、白天、晚上：{{#unless joghurt_anzeigen=nein}}四{{/unless}}{{#if joghurt_anzeigen=nein}}三{{/if}}款产品，彼此精准搭配。让你日常精力充沛、营养充足。研发厂家拥有100多项专利，并官方为40个国家的职业运动员生产。{{#unless team_modus=team}}我自己也在用{{/unless}}{{#if team_modus=team}}我们自己也在用{{/if}}，每天都用。",
+    "neu": "早上、白天、晚上：{{#unless joghurt_anzeigen=nein}}四{{/unless}}{{#if joghurt_anzeigen=nein}}三{{/if}}款产品，彼此精准搭配。让你日常精力充沛、营养充足。研发厂家拥有100多项专利，并为来自40个国家的职业运动员官方供货。{{#unless team_modus=team}}我自己也在用{{/unless}}{{#if team_modus=team}}我们自己也在用{{/if}}，每天都用。",
+    "grund": "„官方为…生产“ holprig"
+  }
+]
