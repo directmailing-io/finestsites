@@ -1613,7 +1613,7 @@ const LEGAL_I18N = LEGAL_I18N_JSON as Record<string, Record<string, string>>
 const LANG_NAMES: Record<LegalLang, string> = { de: 'Deutsch', en: 'English', it: 'Italiano', ru: 'Русский', uk: 'Українська', pl: 'Polski', bg: 'Български', hi: 'हिन्दी', tr: 'Türkçe', sr: 'Srpski', es: 'Español', zh: '中文', ko: '한국어' }
 // Welche Sprachen ein Template tatsächlich hat (Dailyoptimal bislang 8, Wellpreneur seit 11/2026 13)
 const LEGAL_LANGS_BY_DOMAIN: Record<string, readonly LegalLang[]> = {
-  'dailyoptimal.de': ['de', 'en', 'it', 'ru', 'uk', 'pl', 'bg', 'hi'],
+  'dailyoptimal.de': LEGAL_LANGS,
   'wellpreneur.io': LEGAL_LANGS,
 }
 const FLAG_PATHS: Record<LegalLang, string> = {

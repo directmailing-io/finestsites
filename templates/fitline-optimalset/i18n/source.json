@@ -2728,5 +2728,130 @@
   "id": 545,
   "de": "Sorgt für eine feine, würzige Note im Geschmack.",
   "en": "Adds a subtle, spicy note to the taste."
+ },
+ {
+  "id": 546,
+  "de": "Cranberry",
+  "en": "Cranberry"
+ },
+ {
+  "id": 547,
+  "de": "Guarana",
+  "en": "Guarana"
+ },
+ {
+  "id": 548,
+  "de": "Inulin",
+  "en": "Inulin"
+ },
+ {
+  "id": 549,
+  "de": "Vitamin B12",
+  "en": "Vitamin B12"
+ },
+ {
+  "id": 550,
+  "de": "Erfahrungen",
+  "en": "Experiences"
+ },
+ {
+  "id": 551,
+  "de": "Echte Stimmen aus {{#unless team_modus=team}}meinem{{/unless}}{{#if team_modus=team}}unserem{{/if}} Umfeld.",
+  "en": "Real voices from {{#unless team_modus=team}}my{{/unless}}{{#if team_modus=team}}our{{/if}} circle."
+ },
+ {
+  "id": 552,
+  "de": "Mama, zwei Kinder",
+  "en": "Mum of two"
+ },
+ {
+  "id": 553,
+  "de": "Hamburg, Pflegerin",
+  "en": "Hamburg, nurse"
+ },
+ {
+  "id": 554,
+  "de": "Seit drei Jahren dabei",
+  "en": "Three years in"
+ },
+ {
+  "id": 555,
+  "de": "Vertriebler, viel unterwegs",
+  "en": "Sales rep, always on the road"
+ },
+ {
+  "id": 556,
+  "de": "Niacin",
+  "en": "Niacin"
+ },
+ {
+  "id": 557,
+  "de": "Vitamin E",
+  "en": "Vitamin E"
+ },
+ {
+  "id": 558,
+  "de": "Vitamin B6",
+  "en": "Vitamin B6"
+ },
+ {
+  "id": 559,
+  "de": "Vitamin B1",
+  "en": "Vitamin B1"
+ },
+ {
+  "id": 560,
+  "de": "Vitamin B2",
+  "en": "Vitamin B2"
+ },
+ {
+  "id": 561,
+  "de": "Vitamin A",
+  "en": "Vitamin A"
+ },
+ {
+  "id": 562,
+  "de": "Biotin",
+  "en": "Biotin"
+ },
+ {
+  "id": 563,
+  "de": "Oregano",
+  "en": "Oregano"
+ },
+ {
+  "id": 564,
+  "de": "Steviolglycoside",
+  "en": "Steviol glycosides"
+ },
+ {
+  "id": 565,
+  "de": "Orange-Cassis",
+  "en": "Orange-blackcurrant"
+ },
+ {
+  "id": 566,
+  "de": "Dextrose",
+  "en": "Dextrose"
+ },
+ {
+  "id": 567,
+  "de": "Maltodextrin",
+  "en": "Maltodextrin"
+ },
+ {
+  "id": 568,
+  "de": "Vitamin",
+  "en": "Vitamin"
+ },
+ {
+  "id": 569,
+  "de": "Vitamin D3",
+  "en": "Vitamin D3"
+ },
+ {
+  "id": 570,
+  "de": "Status",
+  "en": "Status"
  }
 ]

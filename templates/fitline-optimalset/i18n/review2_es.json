@@ -1,0 +1,818 @@
+[
+  {
+    "de": "{{#unless team_modus=team}}FitLine {{#if geschlecht=weiblich}}Beraterin{{/if}}{{#if geschlecht=maennlich}}Berater{{/if}}{{/unless}}{{#if team_modus=team}}FitLine Berater/in{{/if}}",
+    "alt": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Asesora FitLine{{/if}}{{#if geschlecht=maennlich}}Asesor FitLine{{/if}}{{/unless}}{{#if team_modus=team}}Asesor/a FitLine{{/if}}",
+    "neu": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Asesora FitLine{{/if}}{{#if geschlecht=maennlich}}Asesor FitLine{{/if}}{{/unless}}{{#if team_modus=team}}Asesores FitLine{{/if}}",
+    "grund": "Team = zwei Personen, Plural statt „Asesor/a“"
+  },
+  {
+    "de": "Dein Probiotic-Joghurt",
+    "alt": "Tu yogur probiótico",
+    "neu": "Tu Probiotic-Joghurt",
+    "grund": "Produktname unverändert lassen"
+  },
+  {
+    "de": "Mit Milchsäurekulturen für den Darmaufbau. Schmeckt cremig und macht satt. Nur in ausgewählten Ländern erhältlich.",
+    "alt": "Con cultivos lácticos para la reconstrucción intestinal. Sabe cremoso y sacia. Solo disponible en países seleccionados.",
+    "neu": "Con cultivos lácticos para tu flora intestinal. Tiene un sabor cremoso y sacia. Solo disponible en algunos países.",
+    "grund": "„reconstrucción intestinal“ klingt medizinisch; natürlicher"
+  },
+  {
+    "de": "Für deinen Kick",
+    "alt": "Para tu empujón",
+    "neu": "Para tu chute de energía",
+    "grund": "idiomatisch"
+  },
+  {
+    "de": "Dein Start in den Tag. Vitamine, Mineralstoffe und alles Wichtige in einem Glas.",
+    "alt": "Tu comienzo del día. Vitaminas, minerales y todo lo importante en un vaso.",
+    "neu": "Tu forma de empezar el día. Vitaminas, minerales y todo lo importante en un vaso.",
+    "grund": "„Tu comienzo del día“ hölzern"
+  },
+  {
+    "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+    "alt": "Por la mañana, durante el día, por la noche: {{#unless joghurt_anzeigen=nein}}cuatro{{/unless}}{{#if joghurt_anzeigen=nein}}tres{{/if}} productos perfectamente coordinados entre sí. En forma y bien cuidado en el día a día, desarrollado por un fabricante con 100+ patentes, que produce oficialmente para deportistas profesionales de 40 países. {{#unless team_modus=team}}Yo lo uso{{/unless}}{{#if team_modus=team}}Nosotros lo usamos{{/if}}, cada día.",
+    "neu": "Por la mañana, durante el día, por la noche: {{#unless joghurt_anzeigen=nein}}cuatro{{/unless}}{{#if joghurt_anzeigen=nein}}tres{{/if}} productos perfectamente coordinados entre sí. En forma y con todos los nutrientes para tu día a día, desarrollado por un fabricante con más de 100 patentes que produce oficialmente para deportistas profesionales de 40 países. {{#unless team_modus=team}}Yo lo tomo{{/unless}}{{#if team_modus=team}}Nosotros lo tomamos{{/if}} cada día.",
+    "grund": "„bien cuidado“ falsch (versorgt), „100+“ ausgeschrieben, natürlicher"
+  },
+  {
+    "de": "Hand auf's Herz",
+    "alt": "Con la mano en el corazón",
+    "neu": "Seamos sinceros",
+    "grund": "„Hand aufs Herz“ als Kicker idiomatisch"
+  },
+  {
+    "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
+    "alt": "Ya has tomado suplementos.<br><em>¿Pero también lo has notado?</em>",
+    "neu": "Ya has tomado suplementos.<br><em>Pero ¿has notado la diferencia?</em>",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Besseres Bauchgefühl?",
+    "alt": "¿Mejor sensación en la barriga?",
+    "neu": "¿Sentirte mejor de la tripa?",
+    "grund": "„Bauchgefühl“ natürlich, Spanien-üblich „tripa“"
+  },
+  {
+    "de": "Leichter durch den Tag?",
+    "alt": "¿Más ligero durante el día?",
+    "neu": "¿Pasar el día con más ligereza?",
+    "grund": "geschlechtsneutral (statt „ligero“)"
+  },
+  {
+    "de": "<strong>Eingenommen ist nicht gleich aufgenommen.</strong> Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Genau dafür hat PM-International das NTC entwickelt, ein patentiertes Konzept, das Nährstoffe dorthin bringt, wo dein Körper sie braucht.",
+    "alt": "<strong>Tomarlo no es lo mismo que absorberlo.</strong> Entre absorber nutrientes y aprovecharlos hay un largo camino. Justo para eso PM-International ha desarrollado el NTC, un concepto patentado que lleva los nutrientes allí donde tu cuerpo los necesita.",
+    "neu": "<strong>Tomarlo no es lo mismo que absorberlo.</strong> Entre tomar nutrientes y aprovecharlos de verdad hay un largo camino. Precisamente para eso PM-International desarrolló el NTC, un concepto patentado que lleva los nutrientes allí donde tu cuerpo los necesita.",
+    "grund": "aufnehmen/verwerten konsistent zum Einstieg, flüssiger"
+  },
+  {
+    "de": "Dein Darm in<br>90 Sek. erklärt",
+    "alt": "Tu intestino explicado en<br>90 s",
+    "neu": "Tu intestino, explicado<br>en 90 segundos",
+    "grund": "natürlicher Umbruch, „s“ ausgeschrieben"
+  },
+  {
+    "de": "Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.",
+    "alt": "Estrés, falta de sueño, poca luz solar. El cuerpo tiene más necesidades de las que puede cubrir con una alimentación normal. El Optimalset aporta micronutrientes bioactivos como base diaria para 12 áreas.",
+    "neu": "Estrés, falta de sueño, poca luz solar. El cuerpo necesita más de lo que cubre una alimentación normal. El Optimalset aporta micronutrientes bioactivos como base diaria para 12 áreas.",
+    "grund": "knapper, näher am DE"
+  },
+  {
+    "de": "B-Vitamine und Vitamin C tragen zu einem normalen Energiestoffwechsel bei und helfen, Müdigkeit zu reduzieren.",
+    "alt": "Las vitaminas B y la vitamina C contribuyen al metabolismo energético normal y ayudan a reducir el cansancio.",
+    "neu": "Las vitaminas B y la vitamina C contribuyen al metabolismo energético normal y ayudan a disminuir el cansancio.",
+    "grund": "amtliche Formulierung „disminuir el cansancio“"
+  },
+  {
+    "de": "Calcium trägt zur normalen Funktion der Verdauungsenzyme bei. Plus Inulin als löslicher Ballaststoff.",
+    "alt": "El calcio contribuye al funcionamiento normal de las enzimas digestivas. Además, inulina como fibra soluble.",
+    "neu": "El calcio contribuye al funcionamiento normal de las enzimas digestivas. Además, con inulina como fibra soluble.",
+    "grund": "Satzbau"
+  },
+  {
+    "de": "Chrom trägt zu einem normalen Makronährstoff-Stoffwechsel bei. Vitamin B6 unterstützt den Eiweißstoffwechsel.",
+    "alt": "El cromo contribuye al metabolismo normal de los macronutrientes. La vitamina B6 contribuye al metabolismo de las proteínas.",
+    "neu": "El cromo contribuye al metabolismo normal de los macronutrientes. La vitamina B6 contribuye al metabolismo normal de las proteínas.",
+    "grund": "amtliche Formulierung („normal“)"
+  },
+  {
+    "de": "Vitamin D trägt zur Erhaltung normaler Knochen und zur normalen Muskelfunktion bei. Eisen trägt dazu bei, Müdigkeit und Erschöpfung zu verringern.",
+    "alt": "La vitamina D contribuye al mantenimiento de los huesos en condiciones normales y al funcionamiento normal de los músculos. El hierro ayuda a disminuir el cansancio y la fatiga.",
+    "neu": "La vitamina D contribuye al mantenimiento de los huesos en condiciones normales y al funcionamiento normal de los músculos. El hierro contribuye a disminuir el cansancio y la fatiga.",
+    "grund": "amtliche Formulierung „contribuye a“"
+  },
+  {
+    "de": "Der Wachmacher",
+    "alt": "El que te despierta",
+    "neu": "Tu despertador",
+    "grund": "„Der Wachmacher“ idiomatisch"
+  },
+  {
+    "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+    "alt": "Tu rutina diaria de mañana para un aporte óptimo de nutrientes: todo lo que tu cuerpo necesita para empezar el día con energía, en un solo vaso fresco.",
+    "neu": "Tu rutina de cada mañana para un aporte óptimo de nutrientes: todo lo que tu cuerpo necesita para empezar el día con energía, en un solo vaso fresco.",
+    "grund": "„rutina diaria de mañana“ doppelt/holprig"
+  },
+  {
+    "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+    "alt": "Aporta los principios activos que tu cuerpo necesita para producir energía.¹ Para días con concentración y mente despejada.² Endulzado con estevia, sin colorantes ni conservantes artificiales.",
+    "neu": "Aporta los principios activos que tu cuerpo necesita para producir energía.¹ Para días de concentración y mente despejada.² Endulzado con estevia, sin colorantes ni conservantes artificiales.",
+    "grund": "„días con concentración“ unidiomatisch"
+  },
+  {
+    "de": "Das basische Pulver für deinen Abend. Mit Magnesium, Zink, B-Vitaminen und Kräutern.",
+    "alt": "El polvo alcalino para tu noche. Con magnesio, zinc, vitaminas B y hierbas.",
+    "neu": "El polvo alcalino para tus noches. Con magnesio, zinc, vitaminas B y hierbas.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Plus Vitamin D und 13 Spurenelemente",
+    "alt": "Más vitamina D y 13 oligoelementos",
+    "neu": "Además, vitamina D y 13 oligoelementos",
+    "grund": "„Más vitamina D“ missverständlich (mehr Vitamin D)"
+  },
+  {
+    "de": "Frisch angerührt, nicht aus dem Kühlregal",
+    "alt": "Recién mezclado, no de la sección de refrigerados",
+    "neu": "Recién preparado, no del pasillo de refrigerados",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
+    "alt": "¹ La vitamina B6 contribuye al metabolismo energético normal. ² Las vitaminas B6, B12 y C contribuyen a una función psicológica normal.",
+    "neu": "¹ La vitamina B6 contribuye al metabolismo energético normal. ² Las vitaminas B6, B12 y C contribuyen a la función psicológica normal.",
+    "grund": "amtliche Formulierung"
+  },
+  {
+    "de": "So pimpst du deinen Drink.",
+    "alt": "Así le das un toque a tu bebida.",
+    "neu": "Así le das un toque especial a tu bebida.",
+    "grund": "„So pimpst du“ natürlicher"
+  },
+  {
+    "de": "Ein Beutel ins Glas, kaltes Wasser dazu. Kurz umrühren, fertig ist die Basis.",
+    "alt": "Un sobre al vaso, añade agua fría. Remueve un poco y ya tienes la base.",
+    "neu": "Un sobre en el vaso y agua fría. Remueve un poco y ya tienes la base.",
+    "grund": "„al vaso“ unidiomatisch"
+  },
+  {
+    "de": "Joghurt rundet ab",
+    "alt": "El Joghurt-Drink lo redondea",
+    "neu": "Joghurt-Drink para rematar",
+    "grund": "„lo redondea“ hölzern; kurze Überschrift"
+  },
+  {
+    "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+    "alt": "Una ración de Activize al vaso. Así tienes también a mano lo que te espabila.",
+    "neu": "Una ración de Activize al vaso. Así ya tienes tu dosis de energía incluida.",
+    "grund": "„lo que te espabila“ umständlich"
+  },
+  {
+    "de": "Schneller als dein Kaffee gebrüht ist. Und du hast deinen Drink für den Tag.",
+    "alt": "Más rápido que preparar tu café. Y ya tienes tu bebida para el día.",
+    "neu": "Tarda menos que tu café. Y ya tienes tu bebida para el día.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
+    "alt": "Un producto tiene que cumplir tres cosas, {{#unless team_modus=team}}para que yo lo recomiende{{/unless}}{{#if team_modus=team}}para que lo recomendemos{{/if}}: tiene que funcionar, estar fabricado de forma limpia y ser seguro. Aquí tienes por qué el Optimalset cumple los tres puntos.",
+    "neu": "Un producto tiene que cumplir tres cosas {{#unless team_modus=team}}para que yo lo recomiende{{/unless}}{{#if team_modus=team}}para que lo recomendemos{{/if}}: tiene que funcionar, estar bien fabricado y ser seguro. Aquí verás por qué el Optimalset cumple los tres.",
+    "grund": "falsches Komma, „de forma limpia“ hölzern"
+  },
+  {
+    "de": "Vertrauen von Profis",
+    "alt": "Confianza de profesionales",
+    "neu": "La confianza de los profesionales",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Offizieller Partner der ATP-Tour, Partner des Deutschen Skiverbands. Athleten aus über 85 Disziplinen in 40 Nationen.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Wer Ergebnisse braucht, kann sich keine Kompromisse leisten.",
+    "alt": "Partner oficial del ATP Tour, partner de la Federación Alemana de Esquí. Atletas de más de 85 disciplinas en 40 países.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Quien necesita resultados no puede permitirse concesiones.",
+    "neu": "Socio oficial del ATP Tour y de la Federación Alemana de Esquí. Atletas de más de 85 disciplinas en 40 países.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Quien necesita resultados no puede permitirse medias tintas.",
+    "grund": "„partner“ Anglizismus, Redewendung natürlich"
+  },
+  {
+    "de": "Mit jedem Kauf hilfst du automatisch mit.",
+    "alt": "Con cada compra ayudas automáticamente.",
+    "neu": "Con cada compra, ya estás ayudando.",
+    "grund": "„automáticamente“ hölzern"
+  },
+  {
+    "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+    "alt": "Si el Optimalset no te gusta, no encaja contigo o por cualquier motivo no te convence, devuelves el envase abierto y recuperas hasta el último céntimo.",
+    "neu": "Si el Optimalset no te gusta, no va contigo o por cualquier motivo no te convence, devuelves el envase empezado y recuperas hasta el último céntimo.",
+    "grund": "natürlicher („empezado“ = angefangen)"
+  },
+  {
+    "de": "Auch angefangene oder leere Verpackungen reichen aus.",
+    "alt": "También sirven los envases abiertos o vacíos.",
+    "neu": "También sirven los envases empezados o vacíos.",
+    "grund": "„angefangen“ = empezado"
+  },
+  {
+    "de": "Innerhalb weniger Tage zurück auf dem Konto.",
+    "alt": "En pocos días, de vuelta en tu cuenta.",
+    "neu": "El dinero vuelve a tu cuenta en pocos días.",
+    "grund": "natürlicher Satz"
+  },
+  {
+    "de": "Bringt natürliches Folat in den Drink. Folat trägt zur Verringerung von Müdigkeit und einer normalen Blutbildung bei.",
+    "alt": "Aporta folato natural a la bebida. El folato contribuye a reducir el cansancio y a la formación normal de la sangre.",
+    "neu": "Aporta folato natural a la bebida. El folato contribuye a disminuir el cansancio y a la formación normal de la sangre.",
+    "grund": "amtliche Formulierung"
+  },
+  {
+    "de": "Trägt zur Verringerung von Müdigkeit und einer normalen Muskelfunktion bei. Gleich in zwei Verbindungen drin, damit der Körper es gut aufnehmen kann.",
+    "alt": "Contribuye a reducir el cansancio y al funcionamiento normal de los músculos. Viene en dos compuestos, para que el cuerpo lo pueda absorber bien.",
+    "neu": "Contribuye a disminuir el cansancio y al funcionamiento normal de los músculos. Viene en dos compuestos, para que el cuerpo lo pueda absorber bien.",
+    "grund": "amtliche Formulierung"
+  },
+  {
+    "de": "Bringt Apfelfaser als Ballaststoff in den Drink. Plus die typischen Apfel-Pflanzenstoffe aus dem Trester.",
+    "alt": "Aporta fibra de manzana como fibra alimentaria a la bebida. Además, las sustancias vegetales típicas de la manzana procedentes del orujo.",
+    "neu": "Aporta fibra de manzana a la bebida. Además, las sustancias vegetales típicas de la manzana, procedentes del orujo.",
+    "grund": "„fibra … como fibra“ doppelt"
+  },
+  {
+    "de": "Spinat",
+    "alt": "Espinaca",
+    "neu": "Espinacas",
+    "grund": "landesüblich Plural, konsistent mit Bild-alt"
+  },
+  {
+    "de": "Liefert natürliches Eisen aus der Pflanze. Eisen trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei.",
+    "alt": "Aporta hierro natural de la planta. El hierro contribuye a reducir el cansancio y al transporte normal de oxígeno en el cuerpo.",
+    "neu": "Aporta hierro natural de la planta. El hierro contribuye a disminuir el cansancio y al transporte normal de oxígeno en el cuerpo.",
+    "grund": "amtliche Formulierung"
+  },
+  {
+    "de": "Liefert Lycopin, den roten Pflanzenstoff aus sommerreifen Tomaten. Plus etwas natürliches Vitamin C aus der Frucht.",
+    "alt": "Aporta licopeno, el compuesto vegetal rojo de los tomates madurados al sol de verano. Además de un poco de vitamina C natural de la fruta.",
+    "neu": "Aporta licopeno, el compuesto vegetal rojo de los tomates madurados al sol de verano. Y además, algo de vitamina C natural de la fruta.",
+    "grund": "Satzfragment"
+  },
+  {
+    "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+    "alt": "Contribuye a reducir el cansancio y al transporte normal de oxígeno en el cuerpo. Unido suavemente al citrato, fácil para el estómago.",
+    "neu": "Contribuye a disminuir el cansancio y al transporte normal de oxígeno en el cuerpo. Unido suavemente al citrato, suave con el estómago.",
+    "grund": "amtliche Formulierung, „fácil para el estómago“ unidiomatisch"
+  },
+  {
+    "de": "Bringt die feine Schärfe und die typischen Pflanzenstoffe (Gingerole) der Wurzel in den Drink. Klassisches Gewürz aus der asiatischen Tradition.",
+    "alt": "Aporta a la bebida el toque picante fino y los compuestos vegetales típicos (gingeroles) de la raíz. Una especia clásica de la tradición asiática.",
+    "neu": "Aporta a la bebida un toque ligeramente picante y los compuestos vegetales típicos (gingeroles) de la raíz. Una especia clásica de la tradición asiática.",
+    "grund": "„toque picante fino“ unidiomatisch"
+  },
+  {
+    "de": "Süße Sommerbeere mit natürlichem Vitamin C. Vitamin C trägt zur Verringerung von Müdigkeit und einem normalen Energiestoffwechsel bei.",
+    "alt": "Baya dulce de verano con vitamina C natural. La vitamina C contribuye a reducir el cansancio y al metabolismo energético normal.",
+    "neu": "Baya dulce de verano con vitamina C natural. La vitamina C contribuye a disminuir el cansancio y al metabolismo energético normal.",
+    "grund": "amtliche Formulierung"
+  },
+  {
+    "de": "Eine der natürlich vitamin-C-reichsten Beeren überhaupt. Vitamin C trägt zu einer normalen Funktion des Immunsystems und zur Verringerung von Müdigkeit bei.",
+    "alt": "Una de las bayas naturalmente más ricas en vitamina C que existen. La vitamina C contribuye al funcionamiento normal del sistema inmunitario y a reducir el cansancio.",
+    "neu": "Una de las bayas con más vitamina C natural que existen. La vitamina C contribuye al funcionamiento normal del sistema inmunitario y a disminuir el cansancio.",
+    "grund": "natürlicher, amtliche Formulierung"
+  },
+  {
+    "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+    "alt": "Aporta la cafeína natural de la bebida. De la fruta del Amazonas, en lugar de fabricada sintéticamente. Se libera más despacio que el café puro.",
+    "neu": "Aporta la cafeína natural de la bebida. Procede de un fruto del Amazonas, no de síntesis. Se libera más despacio que el café puro.",
+    "grund": "Satzfragment, natürlicher"
+  },
+  {
+    "de": "Sauerkirsche",
+    "alt": "Cereza ácida",
+    "neu": "Guinda",
+    "grund": "landesübliches Wort, konsistent mit Bild-alt"
+  },
+  {
+    "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Viele Nährstoffe hemmen sich gegenseitig in der Aufnahme. Wer das nicht weiß, dosiert falsch, ohne es zu merken. Das Optimalset nimmt dir das ab.",
+    "alt": "Quien compra vitaminas, minerales y extractos vegetales por separado, acaba gastando fácilmente más de lo pensado. Además: muchos nutrientes dificultan mutuamente su absorción. Si no lo sabes, dosificas mal sin darte cuenta. El Optimalset te quita ese trabajo.",
+    "neu": "Quien compra vitaminas, minerales y extractos vegetales por separado acaba gastando fácilmente más de lo pensado. Y además, muchos nutrientes se estorban entre sí a la hora de absorberse. Si no lo sabes, dosificas mal sin darte cuenta. El Optimalset te quita ese trabajo.",
+    "grund": "falsches Komma vor Prädikat, natürlicher"
+  },
+  {
+    "de": "Perfekt dosiert und aufeinander abgestimmt",
+    "alt": "Perfectamente dosificado y coordinado entre sí",
+    "neu": "Dosificado a la perfección y bien combinado",
+    "grund": "„coordinado entre sí“ hölzern"
+  },
+  {
+    "de": "Was bekommst du wirklich?",
+    "alt": "¿Qué recibes realmente?",
+    "neu": "¿Qué obtienes de verdad?",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
+    "alt": "Optimalset, vitaminas de droguería, smoothie fresco. Qué lleva realmente, cuánto cuesta y qué te aporta de verdad.",
+    "neu": "Optimalset, vitaminas del súper, smoothie recién hecho. Qué lleva realmente, cuánto cuesta y qué te aporta de verdad.",
+    "grund": "„droguería“ in Spanien ohne Vitaminregal; natürlicher"
+  },
+  {
+    "de": "Frischer Smoothie",
+    "alt": "Smoothie fresco",
+    "neu": "Smoothie casero",
+    "grund": "„frisch“ = selbst gemacht, natürlicher"
+  },
+  {
+    "de": "Tablette oder Kapsel schlucken",
+    "alt": "Trágate la tableta o cápsula",
+    "neu": "Tragar una pastilla o cápsula",
+    "grund": "parallel zu den Nachbarzellen, „pastilla“ landesüblich"
+  },
+  {
+    "de": "Schnell, aber mehrere Tabletten",
+    "alt": "Rápido, pero varias tabletas",
+    "neu": "Rápido, pero varias pastillas",
+    "grund": "„pastilla“ landesüblich"
+  },
+  {
+    "de": "Du arbeitest mit frischen Lebensmitteln selbst",
+    "alt": "Tú trabajas con alimentos frescos",
+    "neu": "Lo preparas tú con alimentos frescos",
+    "grund": "sinngemäß (GMP-Zeile: du stellst es selbst her)"
+  },
+  {
+    "de": "Beutel in die Tasche, ein Glas Wasser reicht",
+    "alt": "Sobre al bolso, con un vaso de agua basta",
+    "neu": "Un sobre en el bolso y basta con un vaso de agua",
+    "grund": "„al bolso“ unidiomatisch"
+  },
+  {
+    "de": "Pillen-Box mitnehmen, Tabletten dosieren",
+    "alt": "Llevar un pastillero, dosificar las tabletas",
+    "neu": "Llevar un pastillero y dosificar las pastillas",
+    "grund": "landesüblich"
+  },
+  {
+    "de": "⁴ Preis variiert je nach Bestellweg. Im Kundenabo oder als Teampartner günstiger. Konditionen in der persönlichen Beratung.",
+    "alt": "⁴ El precio varía según la forma de pedido. En la suscripción de cliente o como socio de equipo, más barato. Condiciones en el asesoramiento personal.",
+    "neu": "⁴ El precio varía según la forma de pedido. Con la suscripción de cliente o como socio de equipo sale más barato. Condiciones, en el asesoramiento personal.",
+    "grund": "Satzbau"
+  },
+  {
+    "de": "Was trifft auf dich zu?",
+    "alt": "¿Qué encaja contigo?",
+    "neu": "¿Con qué te identificas?",
+    "grund": "„¿Qué encaja contigo?“ unidiomatisch"
+  },
+  {
+    "de": "Für Beruf, Familie, Sport und alles, was dazukommt",
+    "alt": "Para el trabajo, la familia, el deporte y todo lo que se suma",
+    "neu": "Para el trabajo, la familia, el deporte y todo lo demás",
+    "grund": "„todo lo que se suma“ hölzern"
+  },
+  {
+    "de": "Mehrere Antworten möglich, {{#unless team_modus=team}}ich bereite mich{{/unless}}{{#if team_modus=team}}wir bereiten uns{{/if}} darauf vor.",
+    "alt": "Puedes elegir varias respuestas, {{#unless team_modus=team}}me preparo{{/unless}}{{#if team_modus=team}}nos preparamos{{/if}} para ello.",
+    "neu": "Puedes marcar varias respuestas y {{#unless team_modus=team}}me preparo{{/unless}}{{#if team_modus=team}}nos preparamos{{/if}} en función de ellas.",
+    "grund": "„me preparo para ello“ unklar"
+  },
+  {
+    "de": "Am liebsten per (optional)",
+    "alt": "Preferiblemente por (opcional)",
+    "neu": "Contacto preferido (opcional)",
+    "grund": "„Preferiblemente por“ als Label holprig"
+  },
+  {
+    "de": "Danke. Deine Nachricht ist bei {{#unless team_modus=team}}mir{{/unless}}{{#if team_modus=team}}uns{{/if}}.",
+    "alt": "Gracias. Tu mensaje ha llegado a {{#unless team_modus=team}}mí{{/unless}}{{#if team_modus=team}}nosotros{{/if}}.",
+    "neu": "Gracias. Tu mensaje {{#unless team_modus=team}}ya me ha llegado{{/unless}}{{#if team_modus=team}}ya nos ha llegado{{/if}}.",
+    "grund": "„ha llegado a mí“ unidiomatisch"
+  },
+  {
+    "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+    "alt": "{{#unless joghurt_anzeigen=nein}}Estos tres productos forman el Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Estos dos productos forman tu rutina diaria.{{/if}} Simplemente añádelos por separado al carrito en la tienda oficial de FitLine.",
+    "neu": "{{#unless joghurt_anzeigen=nein}}Estos tres productos forman el Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Estos dos productos forman tu rutina diaria.{{/if}} Solo tienes que añadirlos uno a uno al carrito en la tienda oficial de FitLine.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "PowerCocktail + Restorate — die tägliche Basis",
+    "alt": "PowerCocktail + Restorate — la base diaria",
+    "neu": "PowerCocktail + Restorate: la base diaria",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Noch unsicher, was du brauchst? <button onclick=\"switchKontaktTab('beratung')\">Lass dich kostenlos beraten</button> — {{#unless team_modus=team}}ich helfe{{/unless}}{{#if team_modus=team}}wir helfen{{/if}} dir persönlich.",
+    "alt": "¿Aún no tienes claro qué necesitas? <button onclick=\"switchKontaktTab('beratung')\">Déjate asesorar gratis</button> — {{#unless team_modus=team}}te ayudo{{/unless}}{{#if team_modus=team}}te ayudamos{{/if}} personalmente.",
+    "neu": "¿Aún no tienes claro qué necesitas? <button onclick=\"switchKontaktTab('beratung')\">Déjate asesorar gratis</button>. {{#unless team_modus=team}}Te ayudo{{/unless}}{{#if team_modus=team}}Te ayudamos{{/if}} personalmente.",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Eure persönlichen Berater",
+    "alt": "Vuestros asesores personales",
+    "neu": "Tus asesores personales",
+    "grund": "Besucher wird mit „tú“ angesprochen (nicht vosotros)"
+  },
+  {
+    "de": "{{#unless team_modus=team}}Ich versuche so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreib mir einfach.{{/unless}}{{#if team_modus=team}}Wir versuchen so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreibt uns einfach.{{/if}}",
+    "alt": "{{#unless team_modus=team}}Intento responder de la forma más directa y sincera posible. Si falta algo, escríbeme sin problema.{{/unless}}{{#if team_modus=team}}Intentamos responder de la forma más directa y sincera posible. Si falta algo, escribidnos sin problema.{{/if}}",
+    "neu": "{{#unless team_modus=team}}Intento responder de la forma más directa y sincera posible. Si falta algo, escríbeme sin más.{{/unless}}{{#if team_modus=team}}Intentamos responder de la forma más directa y sincera posible. Si falta algo, escríbenos sin más.{{/if}}",
+    "grund": "tú statt vosotros, natürlicher"
+  },
+  {
+    "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+    "alt": "Detrás del Optimalset está el NTC, el concepto de transporte de nutrientes de PM-International. La idea de base: entre tomar nutrientes y aprovechar nutrientes hay un largo camino. El NTC está diseñado para llevar los nutrientes en la forma adecuada, en el momento adecuado, allí donde tu cuerpo los necesita. 100+ patentes lo respaldan. A eso se suma el enfoque del timing: determinados productos por la mañana, otros durante el día o por la noche, porque tu cuerpo necesita distintos nutrientes en diferentes momentos. Esa es la diferencia entre un suplemento suelto y un sistema bien pensado.",
+    "neu": "Detrás del Optimalset está el NTC, el concepto de transporte de nutrientes de PM-International. La idea de base: entre tomar nutrientes y aprovecharlos hay un largo camino. El NTC está diseñado para llevar los nutrientes en la forma adecuada, en el momento adecuado, allí donde tu cuerpo los necesita. Más de 100 patentes lo respaldan. A eso se suma el momento de la toma: determinados productos por la mañana, otros durante el día o por la noche, porque tu cuerpo necesita distintos nutrientes en diferentes momentos. Esa es la diferencia entre un suplemento suelto y un sistema bien pensado.",
+    "grund": "Wiederholung, „100+“, Anglizismus „timing“"
+  },
+  {
+    "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+    "alt": "No, son complementos alimenticios. No sustituyen una alimentación equilibrada y no son un tratamiento médico. Si tienes preguntas concretas de salud, consúltalo primero con un médico. Lo que hace el Optimalset es abastecer mejor a tu cuerpo, no curar nada.",
+    "neu": "No, son complementos alimenticios. No sustituyen una alimentación equilibrada y no son un tratamiento médico. Si tienes preguntas concretas de salud, consúltalo primero con un médico. Lo que hace el Optimalset es ayudar a que tu cuerpo esté mejor abastecido, no curar nada.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Das ist eine Frage, die {{#unless team_modus=team}}ich oft bekomme{{/unless}}{{#if team_modus=team}}wir oft bekommen{{/if}}, und die Antwort überrascht viele. Ja, in manchen Produkten steckt eine kleine Menge Zucker, zum Beispiel Dextrose. Aber der ist nicht da, damit es süß schmeckt. Er funktioniert als Transportmittel. Vereinfacht erklärt: Dein Darm hat Kanäle, durch die Nährstoffe ins Blut wandern. Bestimmte Vitamine und Aminosäuren kommen durch diese Kanäle deutlich besser rein, wenn gleichzeitig ein kleiner Zuckeranteil dabei ist. Der Zucker öffnet quasi das Tor, und die Nährstoffe kommen mit rein. Die Menge ist so gering, dass du dir da keine Sorgen machen musst, solange du nicht den ganzen Tag davon isst.",
+    "alt": "Es una pregunta que {{#unless team_modus=team}}me hacen a menudo{{/unless}}{{#if team_modus=team}}nos hacen a menudo{{/if}}, y la respuesta sorprende a muchos. Sí, algunos productos llevan una pequeña cantidad de azúcar, por ejemplo dextrosa. Pero no está ahí para que sepa dulce. Funciona como medio de transporte. Explicado de forma sencilla: tu intestino tiene canales por los que los nutrientes pasan a la sangre. Determinadas vitaminas y aminoácidos entran mucho mejor por esos canales cuando al mismo tiempo hay una pequeña proporción de azúcar. El azúcar, por así decirlo, abre la puerta, y los nutrientes entran con él. La cantidad es tan baja que no tienes que preocuparte por eso, siempre que no estés tomando eso todo el día.",
+    "neu": "Es una pregunta que {{#unless team_modus=team}}me hacen a menudo{{/unless}}{{#if team_modus=team}}nos hacen a menudo{{/if}}, y la respuesta sorprende a muchos. Sí, algunos productos llevan una pequeña cantidad de azúcar, por ejemplo dextrosa. Pero no está ahí para que sepa dulce. Funciona como medio de transporte. Explicado de forma sencilla: tu intestino tiene canales por los que los nutrientes pasan a la sangre. Determinadas vitaminas y aminoácidos entran mucho mejor por esos canales cuando al mismo tiempo hay una pequeña proporción de azúcar. El azúcar, por así decirlo, abre la puerta, y los nutrientes entran con él. La cantidad es tan pequeña que no tienes que preocuparte, mientras no te pases el día comiéndolo.",
+    "grund": "Schluss holprig („tomando eso“)"
+  },
+  {
+    "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
+    "alt": "Muchos productos FitLine se endulzan con estevia. La estevia es un extracto vegetal natural de la planta del mismo nombre, tiene prácticamente cero calorías y no te altera el azúcar en sangre. De primeras suena a la típica tendencia saludable, pero la diferencia con edulcorantes clásicos como el aspartamo o el acesulfamo-K es realmente relevante: se fabrican de forma sintética y llevan tiempo en debate, porque se dice que en algunas personas pueden aumentar los antojos o cargar el intestino. La estevia viene de la naturaleza y, en cantidades normales, se considera segura. Así que tienes el sabor dulce sin cargar tu cuerpo con ello.",
+    "neu": "Muchos productos FitLine se endulzan con estevia. La estevia es un extracto vegetal natural de la planta del mismo nombre, tiene prácticamente cero calorías y no te altera el azúcar en sangre. De primeras suena a la típica moda saludable, pero la diferencia con edulcorantes clásicos como el aspartamo o el acesulfamo-K es realmente relevante: se fabrican de forma sintética y llevan tiempo en debate, porque se dice que en algunas personas pueden aumentar los antojos o sobrecargar el intestino. La estevia viene de la naturaleza y, en cantidades normales, se considera segura. Así que tienes el sabor dulce sin sobrecargar tu cuerpo.",
+    "grund": "„cargar“ unidiomatisch"
+  },
+  {
+    "de": "Nein. Auf Konservierungsstoffe wird bewusst verzichtet. Das funktioniert, weil die Produkte in kleinen, luftdicht versiegelten Tagespäckchen abgepackt sind. Das Pulver hat bis zum Öffnen keinen Kontakt mit Luft oder Feuchtigkeit, also braucht es schlicht keine Konservierung. Sobald du die Packung aufmachst, verwendest du alles auf einmal. Kein Anbruch, keine Oxidation, keine Konservierungsstoffe nötig.",
+    "alt": "No. Se prescinde conscientemente de los conservantes. Esto funciona porque los productos vienen en pequeños sobres diarios sellados herméticamente. El polvo no tiene contacto con el aire ni con la humedad hasta que se abre, así que simplemente no necesita conservación. En cuanto abres el sobre, lo usas todo de una vez. No queda nada abierto, no hay oxidación, no hacen falta conservantes.",
+    "neu": "No. Se prescinde de ellos a propósito. Esto funciona porque los productos vienen en pequeños sobres diarios sellados herméticamente. El polvo no tiene contacto con el aire ni con la humedad hasta que se abre, así que simplemente no necesita conservantes. En cuanto abres el sobre, lo usas todo de una vez. No queda nada abierto, no hay oxidación, no hacen falta conservantes.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
+    "alt": "Es una pregunta justa, y {{#unless team_modus=team}}entiendo{{/unless}}{{#if team_modus=team}}entendemos{{/if}} la primera idea: más envase suena a más basura. Pero fíjate un poco más. Un bote normal de suplementos contiene 30 o 60 raciones, necesita estabilizarse con desecantes y absorbedores de oxígeno, y lo abres a diario. Al hacerlo, el resto se sigue oxidando cada vez más. Los sobres diarios de aquí están sellados herméticamente, por eso no necesitan conservantes, y no se generan residuos por restos que se estropean. Además, los envases son de material reciclable. Perfecto no es, claro, pero en comparación directa es más sostenible que muchas botellas grandes de plástico que al final se tiran medio llenas.",
+    "neu": "Es una pregunta justa, y {{#unless team_modus=team}}entiendo{{/unless}}{{#if team_modus=team}}entendemos{{/if}} lo primero que se piensa: más envase suena a más basura. Pero míralo con más detalle. Un bote normal de suplementos contiene 30 o 60 raciones, necesita estabilizarse con desecantes y absorbedores de oxígeno, y lo abres a diario. Al hacerlo, el resto se sigue oxidando cada vez más. Estos sobres diarios están sellados herméticamente, por eso no necesitan conservantes, y no se generan residuos por restos que se estropean. Además, los envases son de material reciclable. Perfecto no es, claro, pero en comparación directa es más sostenible que muchas botellas grandes de plástico que al final se tiran medio llenas.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.",
+    "alt": "Los packs de inicio suelen empezar entre 50 y 100 Euro, según el set. No hay cantidad mínima de pedido ni obligación de compra. En la conversación {{#unless team_modus=team}}te enseño{{/unless}}{{#if team_modus=team}}te enseñamos{{/if}} todas las opciones y lo que tendría sentido para ti; tú decides con calma.",
+    "neu": "Los packs de inicio suelen empezar entre 50 y 100 euros, según el set. No hay cantidad mínima de pedido ni obligación de compra. En la conversación {{#unless team_modus=team}}te enseño{{/unless}}{{#if team_modus=team}}te enseñamos{{/if}} todas las opciones y lo que tendría sentido para ti; tú decides con calma.",
+    "grund": "„euros“ klein und Plural"
+  },
+  {
+    "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+    "alt": "Sí, como {{#unless team_modus=team}}{{#if geschlecht=weiblich}}distribuidora independiente{{/if}}{{#if geschlecht=maennlich}}distribuidor independiente{{/if}} recibo{{/unless}}{{#if team_modus=team}}distribuidores independientes recibimos{{/if}} una participación en las ventas cuando haces un pedido a través de {{#unless team_modus=team}}mí{{/unless}}{{#if team_modus=team}}nosotros{{/if}}. Así funciona la venta directa. {{#unless team_modus=team}}Para mí, la transparencia es importante: mi objetivo es tu satisfacción{{/unless}}{{#if team_modus=team}}Para nosotros, la transparencia es importante: nuestro objetivo es tu satisfacción{{/if}}, no cerrar una venta rápido.",
+    "neu": "Sí, como {{#unless team_modus=team}}{{#if geschlecht=weiblich}}distribuidora independiente{{/if}}{{#if geschlecht=maennlich}}distribuidor independiente{{/if}} recibo{{/unless}}{{#if team_modus=team}}distribuidores independientes recibimos{{/if}} una participación en las ventas cuando haces un pedido a través de {{#unless team_modus=team}}mí{{/unless}}{{#if team_modus=team}}nosotros{{/if}}. Así funciona la venta directa. {{#unless team_modus=team}}Para mí, la transparencia es importante: mi objetivo es tu satisfacción{{/unless}}{{#if team_modus=team}}Para nosotros, la transparencia es importante: nuestro objetivo es tu satisfacción{{/if}}, no una venta rápida.",
+    "grund": "Schluss natürlicher"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 15 g Pulver (1 Sachet), angerührt mit Wasser. Energie 190 kJ / 45 kcal.",
+    "alt": "<strong>Ración diaria:</strong> 15 g de polvo (1 sobre), mezclado con agua. Energía 190 kJ / 45 kcal.",
+    "neu": "<strong>Dosis diaria:</strong> 15 g de polvo (1 sobre), mezclado con agua. Energía 190 kJ / 45 kcal.",
+    "grund": "einheitlich „Dosis diaria“"
+  },
+  {
+    "de": "Milchsäurekulturen",
+    "alt": "Cultivos de ácido láctico",
+    "neu": "Cultivos lácticos",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "aus Stevia",
+    "alt": "de stevia",
+    "neu": "de estevia",
+    "grund": "Schreibweise einheitlich"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 3× 1 Messlöffel (1,67 g) in je 40 ml stilles Wasser. Insgesamt 30 mg Koffein pro Tag.",
+    "alt": "<strong>Ración diaria:</strong> 3× 1 cacito medidor (1,67 g) en 40 ml de agua sin gas cada uno. En total 30 mg de cafeína al día.",
+    "neu": "<strong>Dosis diaria:</strong> 3× 1 cacito medidor (1,67 g) en 40 ml de agua sin gas cada uno. En total 30 mg de cafeína al día.",
+    "grund": "einheitlich „Dosis diaria“"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g) in Wasser aufgelöst, am Abend vor dem Schlafengehen.",
+    "alt": "<strong>Ración diaria:</strong> 1 sobre (6,7 g) disuelto en agua, por la noche antes de acostarte.",
+    "neu": "<strong>Dosis diaria:</strong> 1 sobre (6,7 g) disuelto en agua, por la noche antes de acostarte.",
+    "grund": "einheitlich „Dosis diaria“"
+  },
+  {
+    "de": "Wichtige Hinweise",
+    "alt": "Indicaciones importantes",
+    "neu": "Avisos importantes",
+    "grund": "landesüblich"
+  },
+  {
+    "de": "Die Stoffe darin können sich gegenseitig in der Aufnahme hemmen. Die Mischung ist nie für dich angepasst.",
+    "alt": "Las sustancias que contiene pueden dificultar la absorción entre sí. La mezcla nunca está adaptada a ti.",
+    "neu": "Las sustancias que contiene pueden dificultar mutuamente su absorción. La mezcla nunca está adaptada a ti.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Nimm es nicht zur gleichen Zeit wie Calcium. Sonst konkurrieren beide um die Aufnahme.",
+    "alt": "No lo tomes al mismo tiempo que el calcio. Si no, ambos compiten por la absorción.",
+    "neu": "No lo tomes al mismo tiempo que el calcio. De lo contrario, ambos compiten por la absorción.",
+    "grund": "„Si no,“ holprig"
+  },
+  {
+    "de": "Nicht mit Milch oder Calcium kombinieren. Sonst landet kaum etwas im Körper.",
+    "alt": "No lo combines con leche ni calcio. Si no, apenas llega algo al cuerpo.",
+    "neu": "No lo combines con leche ni calcio. De lo contrario, apenas llega nada al cuerpo.",
+    "grund": "idiomatisch („apenas llega nada“)"
+  },
+  {
+    "de": "Blockiert deine Eisenaufnahme. Beides gleichzeitig macht wenig Sinn.",
+    "alt": "Bloquea tu absorción de hierro. Tomar ambos a la vez tiene poco sentido.",
+    "neu": "Bloquea la absorción de hierro. Tomar ambos a la vez no tiene mucho sentido.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Spät am Abend wirst du davon wach. Du musst es morgens einplanen.",
+    "alt": "A última hora de la tarde te mantendrá despierto. Tienes que planificarlo por la mañana.",
+    "neu": "Si lo tomas tarde por la noche, te quita el sueño. Tienes que reservarlo para la mañana.",
+    "grund": "„tarde“ ≠ spät abends; geschlechtsneutral"
+  },
+  {
+    "de": "Konkurriert mit Zink um die Aufnahme. Du musst beide zeitlich versetzen.",
+    "alt": "Compite con el zinc en la absorción. Tienes que separar la toma de ambos.",
+    "neu": "Compite con el zinc por la absorción. Tienes que tomarlos en momentos distintos.",
+    "grund": "Präposition, natürlicher"
+  },
+  {
+    "de": "Können die Aufnahme anderer Vitamine und Mineralien hemmen. Reihenfolge zählt.",
+    "alt": "Pueden inhibir la absorción de otras vitaminas y minerales. El orden cuenta.",
+    "neu": "Pueden inhibir la absorción de otras vitaminas y minerales. El orden importa.",
+    "grund": "idiomatisch"
+  },
+  {
+    "de": "Magensäure setzt vielen Stämmen zu. Du musst auf den richtigen Einnahme-Zeitpunkt achten.",
+    "alt": "El ácido del estómago afecta a muchas cepas. Tienes que fijarte en el momento correcto de la toma.",
+    "neu": "El ácido gástrico afecta a muchas cepas. Tienes que fijarte en el momento adecuado para tomarlo.",
+    "grund": "Fachbegriff, natürlicher"
+  },
+  {
+    "de": "Hohe Dosen verstecken einen B12-Mangel. Beides muss aufeinander abgestimmt sein.",
+    "alt": "Las dosis altas ocultan una carencia de B12. Hay que ajustar ambas cosas entre sí.",
+    "neu": "Las dosis altas enmascaran una carencia de B12. Ambas tienen que estar bien ajustadas entre sí.",
+    "grund": "präziser („enmascaran“)"
+  },
+  {
+    "de": "Gehört zu Vitamin D. Ohne D landet das Calcium nicht da wo es soll.",
+    "alt": "Va de la mano de la vitamina D. Sin D, el calcio no acaba donde debe.",
+    "neu": "Va de la mano de la vitamina D. Sin D, el calcio no llega adonde debe.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Falsche Mischverhältnisse blockieren sich gegenseitig in der Aufnahme.",
+    "alt": "Unas proporciones incorrectas hacen que se bloqueen entre sí en la absorción.",
+    "neu": "Si la proporción no es la correcta, se bloquean mutuamente en la absorción.",
+    "grund": "Satzbau"
+  },
+  {
+    "de": "Steckt voller Vitamin C. Mit anderen Vitamin-C-Quellen schnell überdosiert.",
+    "alt": "Está llena de vitamina C. Con otras fuentes de vitamina C, te pasas de dosis rápido.",
+    "neu": "Está repleta de vitamina C. Junto con otras fuentes de vitamina C, es fácil pasarse de dosis.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Kann die Aufnahme von Eisen verstärken. Bei zu viel davon entstehen Überdosierungen.",
+    "alt": "Puede aumentar la absorción de hierro. Con demasiada cantidad, se producen sobredosis.",
+    "neu": "Puede aumentar la absorción de hierro. Si se toma en exceso, se produce una sobredosificación.",
+    "grund": "„sobredosis“ klingt nach Drogen"
+  },
+  {
+    "de": "Konkurriert mit Vitamin E um die Aufnahme. Zusammen sind beide weniger effektiv.",
+    "alt": "Compite con la vitamina E en la absorción. Al tomarlos juntos, ambos son menos eficaces.",
+    "neu": "Compite con la vitamina E por la absorción. Juntos, ambos son menos eficaces.",
+    "grund": "Präposition, natürlicher"
+  },
+  {
+    "de": "München, Selbstständig",
+    "alt": "Múnich, autónoma",
+    "neu": "Múnich, autónomo",
+    "grund": "Person ist Markus (männlich)"
+  },
+  {
+    "de": "Wir nutzen das zu zweit",
+    "alt": "Lo usamos los dos",
+    "neu": "Lo tomamos los dos",
+    "grund": "„tomar“ bei Nahrungsergänzung üblich"
+  },
+  {
+    "de": "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"",
+    "alt": "«Me siento con todo cubierto, sin tener cinco botes distintos en el armario. La bebida de la mañana es mi forma fija de empezar el día».",
+    "neu": "«Siento que lo tengo todo cubierto, sin tener cinco botes distintos en el armario. La bebida de la mañana es mi ritual fijo para empezar el día».",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "„Restorate am Abend ist Teil meines Runterkommens nach der Arbeit geworden. Seit über einem Jahr dabei und mag die Routine.\"",
+    "alt": "«Restorate por la noche se ha convertido en parte de mi forma de desconectar después del trabajo. Llevo más de un año con ello y me gusta la rutina».",
+    "neu": "«Restorate por la noche se ha convertido en parte de mi forma de desconectar después del trabajo. Llevo más de un año tomándolo y me gusta la rutina».",
+    "grund": "„con ello“ hölzern"
+  },
+  {
+    "de": "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"",
+    "alt": "«Era escéptica, porque solo lo había visto en una story. Después de una conversación sincera lo probé y me parece que encaja bien».",
+    "neu": "«Era escéptica, porque solo lo había visto en una story. Después de una conversación sincera lo probé y creo que me va bien».",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Menge, Zeitpunkt und Zusammensetzung müssen zueinander passen. Wer das nicht weiß, nimmt von manchem zu viel und von anderem zu wenig, ohne es zu merken. Das Optimalset nimmt dir das ab.",
+    "alt": "Quien compra vitaminas, minerales y extractos de plantas por separado acaba gastando rápido más de lo que pensaba. Además: cantidad, momento y composición tienen que encajar entre sí. Quien no lo sabe toma demasiado de algunas cosas y demasiado poco de otras sin darse cuenta. El Optimalset te ahorra eso.",
+    "neu": "Quien compra vitaminas, minerales y extractos de plantas por separado acaba gastando rápido más de lo que pensaba. Además, la cantidad, el momento y la composición tienen que encajar entre sí. Quien no lo sabe toma demasiado de algunas cosas y demasiado poco de otras sin darse cuenta. El Optimalset te quita ese trabajo.",
+    "grund": "Satzbau, natürlicher"
+  },
+  {
+    "de": "Zu viel ist nicht harmlos, zu wenig bringt nichts. Und Kaffee oder Tee direkt dazu bremsen die Aufnahme.",
+    "alt": "Demasiado no es inocuo, demasiado poco no sirve de nada. Y tomar café o té justo con ello frena la absorción.",
+    "neu": "Demasiado no es inocuo, demasiado poco no sirve de nada. Y si lo tomas justo con café o té, se frena la absorción.",
+    "grund": "Satzbau"
+  },
+  {
+    "de": "Feste Mischung von der Stange. Die Mengen passen selten zu dir, und mit weiteren Präparaten verdoppelst du schnell einzelne Stoffe.",
+    "alt": "Mezcla fija estándar. Las cantidades rara vez encajan contigo y, con otros preparados, puedes duplicar rápido algunas sustancias.",
+    "neu": "Mezcla fija, de serie. Las cantidades rara vez se ajustan a ti y, con otros preparados, es fácil duplicar algunas sustancias.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Welche Form, welche Menge, wann? Einzeln gekauft musst du das selbst herausfinden. Zu viel auf einmal verträgt der Darm oft nicht.",
+    "alt": "¿Qué forma, qué cantidad, cuándo? Si lo compras por separado, tienes que averiguarlo tú. El intestino a menudo no tolera demasiado de golpe.",
+    "neu": "¿En qué forma, cuánto y cuándo? Si lo compras por separado, tienes que averiguarlo tú. El intestino a menudo no tolera demasiado de golpe.",
+    "grund": "idiomatisch"
+  },
+  {
+    "de": "Große Einzeldosen nimmt der Körper schlechter auf als kleinere Portionen. Und es braucht Vitamin D, das zur normalen Aufnahme beiträgt.",
+    "alt": "El cuerpo absorbe peor las grandes dosis individuales que las porciones más pequeñas. Y necesita vitamina D, que contribuye a la absorción normal.",
+    "neu": "El cuerpo absorbe peor las dosis grandes de una vez que las raciones más pequeñas. Y necesita vitamina D, que contribuye a la absorción normal.",
+    "grund": "einheitlich „ración“, natürlicher"
+  },
+  {
+    "de": "Fettlöslich: Ohne etwas Fett dazu kommt wenig an. Und es gehört mit Magnesium und Vitamin K zusammen.",
+    "alt": "Liposoluble: sin algo de grasa acompañando, llega poco. Y va junto con magnesio y vitamina K.",
+    "neu": "Liposoluble: si no lo tomas con algo de grasa, llega poco. Y va de la mano del magnesio y la vitamina K.",
+    "grund": "Satzbau"
+  },
+  {
+    "de": "Gehört zu Vitamin D und Calcium. Einzeln gekauft fehlt meist einer der Partner.",
+    "alt": "Va con la vitamina D y el calcio. Comprado por separado, suele faltar uno de los compañeros.",
+    "neu": "Va con la vitamina D y el calcio. Si lo compras por separado, suele faltar alguno de sus aliados.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Einzeln hochdosiert ist mehr nicht besser. Es gehört in natürlicher Menge in den Mix mit anderen Carotinoiden.",
+    "alt": "Por separado y en dosis altas, más no es mejor. Debe ir en una cantidad natural en la mezcla con otros carotenoides.",
+    "neu": "Por separado y en dosis altas, más no es mejor. Lo suyo es tomarlo en cantidades naturales, junto con otros carotenoides.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "11 Vitamine plus Selen in einer Portion",
+    "alt": "11 vitaminas más selenio en una porción",
+    "neu": "11 vitaminas y selenio en una ración",
+    "grund": "einheitlich „ración“, „más“ missverständlich"
+  },
+  {
+    "de": "30 mg Koffein am Tag, unter anderem aus Guarana",
+    "alt": "30 mg de cafeína al día, entre otras cosas del guaraná",
+    "neu": "30 mg de cafeína al día, en parte del guaraná",
+    "grund": "„entre otras cosas“ falsch"
+  },
+  {
+    "de": "Das Mineralstoff-Pulver für deinen Abend. Mit Calcium, Magnesium, Zink und Vitamin D.",
+    "alt": "El polvo de minerales para tu noche. Con calcio, magnesio, zinc y vitamina D.",
+    "neu": "El polvo de minerales para tus noches. Con calcio, magnesio, zinc y vitamina D.",
+    "grund": "natürlicher, konsistent"
+  },
+  {
+    "de": "Plus Vitamin D und 6 Spurenelemente",
+    "alt": "Más vitamina D y 6 oligoelementos",
+    "neu": "Además, vitamina D y 6 oligoelementos",
+    "grund": "„Más vitamina D“ missverständlich"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 1 Beutel (15 g Pulver) in 180 ml stillem Wasser. Geschmack: Orange-Cassis.",
+    "alt": "<strong>Dosis diaria:</strong> 1 sobre (15 g de polvo) en 180 ml de agua sin gas. Sabor: naranja-cassis.",
+    "neu": "<strong>Dosis diaria:</strong> 1 sobre (15 g de polvo) en 180 ml de agua sin gas. Sabor: naranja y grosella negra.",
+    "grund": "Geschmack landesüblich, einheitlich"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 3× täglich 1 gestrichener Messlöffel (1,67 g) in 40 ml stillem Wasser, zusammen 5 g Pulver. Geschmack: Cassis.",
+    "alt": "<strong>Dosis diaria:</strong> 3× al día 1 cucharada medidora rasa (1,67 g) en 40 ml de agua sin gas, en total 5 g de polvo. Sabor: cassis.",
+    "neu": "<strong>Dosis diaria:</strong> 3× al día 1 cacito medidor raso (1,67 g) en 40 ml de agua sin gas, en total 5 g de polvo. Sabor: grosella negra.",
+    "grund": "einheitlich „cacito medidor“, Geschmack landesüblich"
+  },
+  {
+    "de": "Rote-Bete-Konzentrat",
+    "alt": "Concentrado de remolacha roja",
+    "neu": "Concentrado de remolacha",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "Cassis",
+    "alt": "Cassis",
+    "neu": "Grosella negra",
+    "grund": "landesüblich, einheitlich"
+  },
+  {
+    "de": "<strong>Hinweis:</strong> Enthält Koffein (30 mg pro Tagesportion). Für Kinder und schwangere Frauen nicht empfohlen. Nicht mehr als einen Messlöffel pro Einzeldosis und drei Messlöffel am Tag. Glutenfrei, vegan.",
+    "alt": "<strong>Nota:</strong> Contiene cafeína (30 mg por dosis diaria). No recomendado para niños ni mujeres embarazadas. No tomar más de una cucharada medidora por dosis individual ni tres cucharadas medidoras al día. Sin gluten, vegano.",
+    "neu": "<strong>Nota:</strong> Contiene cafeína (30 mg por dosis diaria). No recomendado para niños ni mujeres embarazadas. No tomar más de un cacito medidor por toma ni más de tres cacitos al día. Sin gluten, vegano.",
+    "grund": "einheitlich „cacito medidor“"
+  },
+  {
+    "de": "<strong>Portion:</strong> 200 ml fertiger Drink pro Tag. Aus 1 Beutel (50,5 g) und 1 Liter Milch werden im FitLine Joghurtbereiter 5 Portionen.",
+    "alt": "<strong>Porción:</strong> 200 ml de bebida preparada al día. Con 1 sobre (50,5 g) y 1 litro de leche se preparan 5 porciones en la yogurtera FitLine.",
+    "neu": "<strong>Ración:</strong> 200 ml de bebida preparada al día. Con 1 sobre (50,5 g) y 1 litro de leche se preparan 5 raciones en la yogurtera FitLine.",
+    "grund": "einheitlich „ración“"
+  },
+  {
+    "de": "Nährwerte pro Portion (200 ml)",
+    "alt": "Valores nutricionales por porción (200 ml)",
+    "neu": "Valores nutricionales por ración (200 ml)",
+    "grund": "einheitlich „ración“"
+  },
+  {
+    "de": "Vier Milchsäurekulturen",
+    "alt": "Cuatro cultivos de ácido láctico",
+    "neu": "Cuatro cultivos lácticos",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "Milchsäurekultur",
+    "alt": "Cultivo de ácido láctico",
+    "neu": "Cultivo láctico",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "Vier Milchsäurekulturen direkt im Pulver",
+    "alt": "Cuatro cultivos de ácido láctico directamente en el polvo",
+    "neu": "Cuatro cultivos lácticos directamente en el polvo",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Sorten: Citrus (Orange-Zitrone) und Exotic (Kaktusfeige), beide mit denselben Werten.",
+    "alt": "<strong>Porción diaria:</strong> 1 sobre (6,7 g de polvo) en 250 ml de agua sin gas, idealmente por la noche. Sabores: Citrus (naranja-limón) y Exotic (higo chumbo), ambos con los mismos valores.",
+    "neu": "<strong>Dosis diaria:</strong> 1 sobre (6,7 g de polvo) en 250 ml de agua sin gas, idealmente por la noche. Sabores: Citrus (naranja-limón) y Exotic (higo chumbo), ambos con los mismos valores.",
+    "grund": "einheitlich „Dosis diaria“"
+  },
+  {
+    "de": "Vier Milchsäurekulturen direkt im Pulver, ohne Konservierungsstoffe",
+    "alt": "Cuatro cultivos de ácido láctico directamente en el polvo, sin conservantes",
+    "neu": "Cuatro cultivos lácticos directamente en el polvo, sin conservantes",
+    "grund": "einheitlich"
+  },
+  {
+    "de": "Orange-Cassis",
+    "alt": "Naranja-grosella negra",
+    "neu": "Naranja y grosella negra",
+    "grund": "einheitlich mit Portionsangabe"
+  },
+  {
+    "de": "Deine E-Mail-Adresse",
+    "alt": "Tu dirección de correo electrónico",
+    "neu": "Tu correo electrónico",
+    "grund": "Platzhalter kürzer"
+  },
+  {
+    "de": "Der Wachmacher",
+    "alt": "El que te despierta",
+    "neu": "Tu despertador",
+    "grund": "konsistent mit Überschrift"
+  },
+  {
+    "de": "Familie genießt gemeinsam ihren Morgendrink",
+    "alt": "Familia disfrutando junta de su bebida de la mañana",
+    "neu": "Familia disfrutando de su bebida de la mañana",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Frau Ende 50 lacht im Garten",
+    "alt": "Mujer de casi 60 años se ríe en el jardín",
+    "neu": "Mujer de casi 60 años riendo en el jardín",
+    "grund": "konsistent mit anderen Bildtexten"
+  },
+  {
+    "de": "Mann konzentriert am Laptop mit Activize-Drink",
+    "alt": "Hombre concentrado con el portátil y un Activize-Drink",
+    "neu": "Hombre concentrado con el portátil y una bebida Activize",
+    "grund": "„Activize-Drink“ deutsch"
+  },
+  {
+    "de": "Mehr zum Joghurt-Drink",
+    "alt": "Más sobre Joghurt-Drink",
+    "neu": "Más sobre el Joghurt-Drink",
+    "grund": "Artikel"
+  },
+  {
+    "de": "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.",
+    "alt": "{{vorname}} {{nachname}} | Tu aporte óptimo diario. Y en minutos.",
+    "neu": "{{vorname}} {{nachname}} | Todos los nutrientes cada día. En solo unos minutos.",
+    "grund": "„aporte óptimo“ hölzern; geschlechtsneutral"
+  },
+  {
+    "de": "Das ist mein Morgenritual. {{#unless joghurt_anzeigen=nein}}Vier{{/unless}}{{#if joghurt_anzeigen=nein}}Drei{{/if}} aufeinander abgestimmte Produkte, morgens, tagsüber und abends. Was drinsteckt und warum ich dabei bleibe, siehst du hier.",
+    "alt": "Este es mi ritual de mañana. {{#unless joghurt_anzeigen=nein}}Cuatro{{/unless}}{{#if joghurt_anzeigen=nein}}Tres{{/if}} productos pensados para combinar entre sí, por la mañana, durante el día y por la noche. Aquí ves qué contienen y por qué los sigo tomando.",
+    "neu": "Este es mi ritual de cada mañana. {{#unless joghurt_anzeigen=nein}}Cuatro{{/unless}}{{#if joghurt_anzeigen=nein}}Tres{{/if}} productos pensados para combinar entre sí, por la mañana, durante el día y por la noche. Aquí ves qué contienen y por qué los sigo tomando.",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "Paar genießt gemeinsam das Frühstück",
+    "alt": "Pareja disfrutando junta del desayuno",
+    "neu": "Pareja disfrutando juntos del desayuno",
+    "grund": "„junta“ grammatisch unschön"
+  }
+]

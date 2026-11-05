@@ -1,0 +1,494 @@
+[
+  {
+    "de": "Über {{vorname}}",
+    "alt": "O {{vorname}}",
+    "neu": "Ko je {{vorname}}",
+    "grund": "„O“ verlangt Lokativ, Name bliebe falsch ungebeugt; Frage hält Namen im Nominativ"
+  },
+  {
+    "de": "{{#unless team_modus=team}}FitLine {{#if geschlecht=weiblich}}Beraterin{{/if}}{{#if geschlecht=maennlich}}Berater{{/if}}{{/unless}}{{#if team_modus=team}}FitLine Berater/in{{/if}}",
+    "alt": "{{#unless team_modus=team}}FitLine {{#if geschlecht=weiblich}}savetnica{{/if}}{{#if geschlecht=maennlich}}savetnik{{/if}}{{/unless}}{{#if team_modus=team}}FitLine savetnik/ca{{/if}}",
+    "neu": "{{#unless team_modus=team}}FitLine {{#if geschlecht=weiblich}}savetnica{{/if}}{{#if geschlecht=maennlich}}savetnik{{/if}}{{/unless}}{{#if team_modus=team}}FitLine savetnici{{/if}}",
+    "grund": "Keine „/ca“-Form; Team = Plural"
+  },
+  {
+    "de": "Für deinen Kick",
+    "alt": "Za tvoj kick",
+    "neu": "Za dodatnu energiju",
+    "grund": "Anglizismus „kick“ ersetzt"
+  },
+  {
+    "de": "Dein Booster",
+    "alt": "Tvoj booster",
+    "neu": "Tvoja doza energije",
+    "grund": "Anglizismus „booster“ ersetzt"
+  },
+  {
+    "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+    "alt": "Ujutru, tokom dana, uveče: {{#unless joghurt_anzeigen=nein}}četiri{{/unless}}{{#if joghurt_anzeigen=nein}}tri{{/if}} proizvoda koja su tačno usklađena međusobno. Fit i snabdeven kroz svakodnevicu, osmislio ih je proizvođač sa 100+ patenata, koji zvanično proizvodi za profesionalne sportiste iz 40 zemalja. {{#unless team_modus=team}}Koristim ga lično{{/unless}}{{#if team_modus=team}}Koristimo ga lično{{/if}}, svaki dan.",
+    "neu": "Ujutru, tokom dana, uveče: {{#unless joghurt_anzeigen=nein}}četiri{{/unless}}{{#if joghurt_anzeigen=nein}}tri{{/if}} proizvoda koja su tačno usklađena jedan s drugim. Za energiju i dobru snabdevenost u svakodnevici, a osmislio ih je proizvođač sa 100+ patenata koji zvanično proizvodi za profesionalne sportiste iz 40 zemalja. {{#unless team_modus=team}}Lično ga koristim{{/unless}}{{#if team_modus=team}}Lično ga koristimo{{/if}}, svaki dan.",
+    "grund": "„Fit i snabdeven“ war maskulin und holprig; natürlichere Wortstellung"
+  },
+  {
+    "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
+    "alt": "Već imaš iskustva sa suplementima.<br><em>Ali je l’ se i osetilo?</em>",
+    "neu": "Suplementi ti nisu ništa novo.<br><em>Ali da li se razlika i osetila?</em>",
+    "grund": "Natürlicher, geschlechtsneutral, ohne umgangssprachliches „je l’“"
+  },
+  {
+    "de": "Mehr Wohlbefinden?",
+    "alt": "Više dobrog osećaja?",
+    "neu": "Bolji opšti osećaj?",
+    "grund": "„Više dobrog osećaja“ unidiomatisch"
+  },
+  {
+    "de": "Pantothensäure trägt zur normalen geistigen Leistung bei, Zink zur normalen kognitiven Funktion.",
+    "alt": "Pantotenska kiselina doprinosi normalnim mentalnim performansama, a cink normalnoj kognitivnoj funkciji.",
+    "neu": "Pantotenska kiselina doprinosi normalnoj mentalnoj sposobnosti, a cink normalnoj kognitivnoj funkciji.",
+    "grund": "Claim-Formulierung ohne Anglizismus „performanse“"
+  },
+  {
+    "de": "Vital älter werden",
+    "alt": "Stariti vitalno",
+    "neu": "Vitalno kroz godine",
+    "grund": "Natürlicher als „Stariti vitalno“"
+  },
+  {
+    "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+    "alt": "PowerCocktail ujutru i Restorate uveče čine osnovu. Ako ti tokom dana treba više energije, uzmi Activize.{{#unless joghurt_anzeigen=nein}} Probiotski jogurt je opciono unapređenje za creva.{{/unless}}",
+    "neu": "PowerCocktail ujutru i Restorate uveče čine osnovu. Ako ti tokom dana treba više energije, uzmi Activize.{{#unless joghurt_anzeigen=nein}} Probiotski jogurt je opciona nadogradnja za creva.{{/unless}}",
+    "grund": "„nadogradnja“ ist das übliche Wort für Upgrade"
+  },
+  {
+    "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+    "alt": "Tvoja svakodnevna jutarnja rutina za optimalno snabdevanje hranljivim materijama — sve što tvom telu treba za energičan početak dana, u jednoj svežoj čaši.",
+    "neu": "Tvoja svakodnevna jutarnja rutina za optimalno snabdevanje hranljivim materijama: sve što tvom telu treba za energičan početak dana, u jednoj svežoj čaši.",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Der Booster",
+    "alt": "Buster",
+    "neu": "Doza energije",
+    "grund": "Transkription „Buster“ ersetzt"
+  },
+  {
+    "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+    "alt": "Isporučuje aktivne sastojke koji su tvom telu potrebni za stvaranje energije.¹ Za fokusirane dane i bistru glavu.² Zaslađeno stevijom, bez veštačkih boja i konzervansa.",
+    "neu": "Obezbeđuje aktivne sastojke koji su tvom telu potrebni za stvaranje energije.¹ Za fokusirane dane i bistru glavu.² Zaslađeno stevijom, bez veštačkih boja i konzervansa.",
+    "grund": "„Isporučuje“ klingt nach Lieferung"
+  },
+  {
+    "de": "Neun Mineralstoffe in einem Glas",
+    "alt": "Devet mineralnih materija u jednoj čaši",
+    "neu": "Devet minerala u jednoj čaši",
+    "grund": "„mineralnih materija“ ungebräuchlich"
+  },
+  {
+    "de": "Optional",
+    "alt": "Opcionalno",
+    "neu": "Opciono",
+    "grund": "Einheitlich „opciono“ wie im übrigen Text"
+  },
+  {
+    "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+    "alt": "Domaći Joghurt-Drink umesto gotovog proizvoda — sveže umućen, bez konzervansa, prirodnog ukusa i sa kulturama mlečne kiseline, idealan za celu porodicu.",
+    "neu": "Domaći Joghurt-Drink umesto gotovog proizvoda: sveže pripremljen, bez konzervansa, prirodnog ukusa i sa kulturama mlečne kiseline, idealan za celu porodicu.",
+    "grund": "Gedankenstrich entfernt; „umućen“ ersetzt"
+  },
+  {
+    "de": "Frisch angerührt, nicht aus dem Kühlregal",
+    "alt": "Sveže umućen, nije iz rashladne vitrine",
+    "neu": "Sveže pripremljen, ne iz rashladne vitrine",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "¹ Vitamin B6 trägt zu einem normalen Energiestoffwechsel bei. ² Vitamin B6, B12 und C tragen zu einer normalen psychologischen Funktion bei.",
+    "alt": "¹ Vitamin B6 doprinosi normalnom metabolizmu energije. ² Vitamini B6, B12 i C doprinose normalnoj psihološkoj funkciji.",
+    "neu": "¹ Vitamin B6 doprinosi normalnom energetskom metabolizmu. ² Vitamini B6, B12 i C doprinose normalnoj psihološkoj funkciji.",
+    "grund": "Einheitliche Claim-Formulierung"
+  },
+  {
+    "de": "So pimpst du deinen Drink.",
+    "alt": "Ovako doteruješ svoj napitak.",
+    "neu": "Ovako svoj napitak činiš još boljim.",
+    "grund": "„pimpen“ natürlich übertragen"
+  },
+  {
+    "de": "Start mit PowerCocktail",
+    "alt": "Počni sa PowerCocktail",
+    "neu": "Prvo PowerCocktail",
+    "grund": "„Počni sa PowerCocktail“ grammatisch unvollständig"
+  },
+  {
+    "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+    "alt": "Još gutljaj Joghurt-Drink-a odozgo. Ova dva proizvoda su međusobno usklađena i dopunjuju se u tvojoj svakodnevnoj rutini.",
+    "neu": "Odozgo dodaj gutljaj Joghurt-Drink-a. Ova dva proizvoda su međusobno usklađena i dopunjuju se u tvojoj svakodnevnoj rutini.",
+    "grund": "Natürlichere Satzstellung"
+  },
+  {
+    "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+    "alt": "Jedna porcija Activize-a u čašu. Tako odmah imaš i razbuđivač uz sebe.",
+    "neu": "Dodaj i porciju Activize-a u čašu. Tako odmah imaš i ono što te razbudi.",
+    "grund": "Satz ohne Verb ergänzt, „razbuđivač“ unidiomatisch"
+  },
+  {
+    "de": "Ergebnisse, Qualität, Sicherheit.",
+    "alt": "Rezultati, kvalitet, sigurnost.",
+    "neu": "Rezultati, kvalitet, bezbednost.",
+    "grund": "Safety = „bezbednost“"
+  },
+  {
+    "de": "Drei Dinge muss ein Produkt erfüllen, {{#unless team_modus=team}}damit ich es empfehle{{/unless}}{{#if team_modus=team}}damit wir es empfehlen{{/if}}: Es muss wirken, sauber hergestellt sein und sicher sein. Hier ist, warum das Optimalset alle drei Punkte erfüllt.",
+    "alt": "Tri stvari proizvod mora da ispuni, {{#unless team_modus=team}}da bih ga preporučio{{/unless}}{{#if team_modus=team}}da bismo ga preporučili{{/if}}: mora da deluje, da bude čisto proizveden i siguran. Evo zašto Optimalset ispunjava sve tri stavke.",
+    "neu": "Proizvod mora da ispuni tri stvari {{#unless team_modus=team}}pre nego što ga preporučim{{/unless}}{{#if team_modus=team}}pre nego što ga preporučimo{{/if}}: mora da deluje, da bude čisto proizveden i da bude bezbedan. Evo zašto Optimalset ispunjava sve tri.",
+    "grund": "„preporučio“ war maskulin; neutral umformuliert"
+  },
+  {
+    "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
+    "alt": "Od istraživanja do punjenja, sve se dešava u Speyeru. Bez outsourcinga, bez dugih lanaca isporuke. Tačno znaš odakle dolazi tvoj Optimalset.",
+    "neu": "Od istraživanja do punjenja, sve se dešava u Speyeru. Bez spoljnih izvođača, bez dugih lanaca isporuke. Tačno znaš odakle dolazi tvoj Optimalset.",
+    "grund": "Anglizismus „outsourcing“ ersetzt"
+  },
+  {
+    "de": "Alles aus einer Hand",
+    "alt": "Sve iz jedne ruke",
+    "neu": "Sve na jednom mestu",
+    "grund": "Deutsche Redewendung natürlich übertragen"
+  },
+  {
+    "de": "Offizieller Partner der ATP-Tour, Partner des Deutschen Skiverbands. Athleten aus über 85 Disziplinen in 40 Nationen.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Wer Ergebnisse braucht, kann sich keine Kompromisse leisten.",
+    "alt": "Zvanični partner ATP Toura, partner Nemačkog skijaškog saveza. Sportisti iz preko 85 disciplina u 40 zemalja.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Ko mora da ima rezultate, ne može sebi da priušti kompromise.",
+    "neu": "Zvanični partner ATP Toura, partner Nemačkog skijaškog saveza. Sportisti iz preko 85 disciplina u 40 zemalja.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Kome su rezultati neophodni, taj ne može sebi da dozvoli kompromise.",
+    "grund": "Schlusssatz grammatisch und natürlicher"
+  },
+  {
+    "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+    "alt": "Ako ti se Optimalset ne sviđa po ukusu, ne odgovara ti ili te iz bilo kog razloga ne ubedi, pošalješ nazad započeto pakovanje i dobiješ sve nazad do poslednjeg centa.",
+    "neu": "Ako ti Optimalset nije ukusan, ne odgovara ti ili te iz bilo kog razloga ne ubedi, pošalješ nazad započeto pakovanje i dobiješ ceo iznos nazad, do poslednjeg centa.",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Ehrliche Frage: Wo gibt es das heute noch? Geht nur, weil die Qualität wirklich überzeugt.",
+    "alt": "Iskreno pitanje: gde toga danas još ima? Moguće je samo zato što kvalitet zaista uverava.",
+    "neu": "Iskreno pitanje: gde toga danas još ima? Moguće je samo zato što je kvalitet zaista uverljiv.",
+    "grund": "„kvalitet uverava“ unidiomatisch"
+  },
+  {
+    "de": "Liefert Lycopin, den roten Pflanzenstoff aus sommerreifen Tomaten. Plus etwas natürliches Vitamin C aus der Frucht.",
+    "alt": "Obezbeđuje likopen, crveni biljni pigment iz letnjih zrelih paradajza. Plus malo prirodnog vitamina C iz ploda.",
+    "neu": "Obezbeđuje likopen, crveni biljni pigment iz paradajza sazrelog na letnjem suncu. Plus malo prirodnog vitamina C iz ploda.",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Trägt zur Verringerung von Müdigkeit und einem normalen Sauerstofftransport im Körper bei. Sanft an Citrat gebunden, magenfreundlich.",
+    "alt": "Doprinosi smanjenju umora i normalnom transportu kiseonika u telu. Blago vezan za citrat, prijatno za stomak.",
+    "neu": "Doprinosi smanjenju umora i normalnom transportu kiseonika u telu. Blago vezano za citrat, nežno prema želucu.",
+    "grund": "Genus (gvožđe ist neutrum), natürlicher"
+  },
+  {
+    "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+    "alt": "Obezbeđuje prirodni kofein u napitku. Iz amazonskog voća, umesto sintetički proizveden. Oslobađa se sporije nego čista kafa.",
+    "neu": "Obezbeđuje prirodni kofein u napitku. Potiče iz ploda sa Amazona, a ne iz sinteze. Oslobađa se sporije nego čista kafa.",
+    "grund": "Grammatisch falscher Satz korrigiert"
+  },
+  {
+    "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Viele Nährstoffe hemmen sich gegenseitig in der Aufnahme. Wer das nicht weiß, dosiert falsch, ohne es zu merken. Das Optimalset nimmt dir das ab.",
+    "alt": "Ako vitamine, minerale i biljne ekstrakte kupuješ pojedinačno, brzo potrošiš više nego što si mislio. A uz to: mnogi nutrijenti međusobno ometaju apsorpciju. Ako to ne znaš, pogrešno doziraš, a da i ne primetiš. Optimalset ti skida tu brigu s vrata.",
+    "neu": "Ako vitamine, minerale i biljne ekstrakte kupuješ pojedinačno, brzo potrošiš više nego što očekuješ. A uz to: mnogi nutrijenti međusobno ometaju apsorpciju. Ako to ne znaš, pogrešno doziraš, a da i ne primetiš. Optimalset to rešava umesto tebe.",
+    "grund": "„mislio“ maskulin; einheitlich mit Parallelsatz"
+  },
+  {
+    "de": "Du musst Abstand zu Milch und Calcium halten.",
+    "alt": "Moraš da praviš razmak od mleka i kalcijuma.",
+    "neu": "Moraš da ga uzimaš odvojeno od mleka i kalcijuma.",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Du arbeitest mit frischen Lebensmitteln selbst",
+    "alt": "Sam radiš sa svežim namirnicama",
+    "neu": "Sve pripremaš od svežih namirnica",
+    "grund": "„Sam“ maskulin"
+  },
+  {
+    "de": "⁴ Preis variiert je nach Bestellweg. Im Kundenabo oder als Teampartner günstiger. Konditionen in der persönlichen Beratung.",
+    "alt": "⁴ Cena varira u zavisnosti od načina poručivanja. U pretplati za kupce ili kao timski partner povoljnije. Uslovi na ličnom savetovanju.",
+    "neu": "⁴ Cena varira u zavisnosti od načina poručivanja. Povoljnije je uz pretplatu za kupce ili kao timski partner. Uslove saznaješ na ličnom savetovanju.",
+    "grund": "Unvollständige Sätze ergänzt"
+  },
+  {
+    "de": "Ich möchte meinen Alltag gut versorgen",
+    "alt": "Želim da dobro pokrijem svoje potrebe u svakodnevici",
+    "neu": "Želim da svakodnevno dobro snabdem organizam",
+    "grund": "Natürlicher, „pokrijem potrebe“ holprig"
+  },
+  {
+    "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+    "alt": "{{#unless joghurt_anzeigen=nein}}Ova tri proizvoda čine Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Ova dva proizvoda čine tvoju dnevnu rutinu.{{/if}} Samo ih pojedinačno ubaci u korpu u zvaničnom FitLine shopu.",
+    "neu": "{{#unless joghurt_anzeigen=nein}}Ova tri proizvoda čine Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Ova dva proizvoda čine tvoju dnevnu rutinu.{{/if}} Samo ih pojedinačno ubaci u korpu u zvaničnoj FitLine prodavnici.",
+    "grund": "„shop“ vereinheitlicht zu „prodavnica“"
+  },
+  {
+    "de": "PowerCocktail + Restorate — die tägliche Basis",
+    "alt": "PowerCocktail + Restorate — dnevna osnova",
+    "neu": "PowerCocktail + Restorate: dnevna osnova",
+    "grund": "Gedankenstrich entfernt"
+  },
+  {
+    "de": "Zum Shop",
+    "alt": "U shop",
+    "neu": "U prodavnicu",
+    "grund": "Anglizismus „shop“"
+  },
+  {
+    "de": "Noch unsicher, was du brauchst? <button onclick=\"switchKontaktTab('beratung')\">Lass dich kostenlos beraten</button> — {{#unless team_modus=team}}ich helfe{{/unless}}{{#if team_modus=team}}wir helfen{{/if}} dir persönlich.",
+    "alt": "Još nisi siguran šta ti treba? <button onclick=\"switchKontaktTab('beratung')\">Zatraži besplatno savetovanje</button> — {{#unless team_modus=team}}pomoći ću{{/unless}}{{#if team_modus=team}}pomoći ćemo{{/if}} ti lično.",
+    "neu": "Još ne znaš tačno šta ti treba? <button onclick=\"switchKontaktTab('beratung')\">Zatraži besplatno savetovanje</button>. {{#unless team_modus=team}}Pomoći ću{{/unless}}{{#if team_modus=team}}Pomoći ćemo{{/if}} ti lično.",
+    "grund": "„siguran“ maskulin; Gedankenstrich entfernt"
+  },
+  {
+    "de": "Eure persönlichen Berater",
+    "alt": "Vaši lični savetnici",
+    "neu": "Tvoji lični savetnici",
+    "grund": "Einheitliche ti-Ansprache"
+  },
+  {
+    "de": "{{#unless team_modus=team}}Ich versuche so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreib mir einfach.{{/unless}}{{#if team_modus=team}}Wir versuchen so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreibt uns einfach.{{/if}}",
+    "alt": "{{#unless team_modus=team}}Trudim se da odgovorim što direktnije i iskrenije. Ako još nešto fali, samo mi piši.{{/unless}}{{#if team_modus=team}}Trudimo se da odgovorimo što direktnije i iskrenije. Ako još nešto fali, samo nam pišite.{{/if}}",
+    "neu": "{{#unless team_modus=team}}Trudim se da odgovorim što direktnije i iskrenije. Ako još nešto fali, samo mi piši.{{/unless}}{{#if team_modus=team}}Trudimo se da odgovorimo što direktnije i iskrenije. Ako još nešto fali, samo nam piši.{{/if}}",
+    "grund": "Einheitliche ti-Ansprache"
+  },
+  {
+    "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+    "alt": "Iza Optimalseta stoji NTC, koncept transporta hranljivih materija kompanije PM-International. Osnovna ideja: između unošenja hranljivih materija i toga da ih telo iskoristi postoji dug put. NTC je osmišljen tako da hranljive materije u pravom obliku, u pravo vreme, stignu tamo gde su tvom telu potrebne. Iza toga stoji 100+ patenata. Tu je i pristup tajminga: određeni proizvodi ujutru, drugi tokom dana ili uveče, jer tvom telu u različito vreme trebaju različite hranljive materije. To je razlika između pojedinačnog suplementa i promišljenog sistema.",
+    "neu": "Iza Optimalseta stoji NTC, koncept transporta hranljivih materija kompanije PM-International. Osnovna ideja: između unošenja hranljivih materija i toga da ih telo iskoristi postoji dug put. NTC je osmišljen tako da hranljive materije u pravom obliku, u pravo vreme, stignu tamo gde su tvom telu potrebne. Iza toga stoji 100+ patenata. Tu je i princip pravog trenutka: određeni proizvodi ujutru, drugi tokom dana ili uveče, jer tvom telu u različito vreme trebaju različite hranljive materije. To je razlika između pojedinačnog suplementa i promišljenog sistema.",
+    "grund": "„pristup tajminga“ Anglizismus"
+  },
+  {
+    "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
+    "alt": "To je skroz fer pitanje, i {{#unless team_modus=team}}razumem{{/unless}}{{#if team_modus=team}}razumemo{{/if}} prvu pomisao: više pakovanja zvuči kao više smeća. Ali pogledaj malo pažljivije. Obična tegla suplementa sadrži 30 ili 60 porcija, mora da se stabilizuje sredstvima za sušenje i apsorberima kiseonika, i otvaraš je svaki dan. Pri tome ostatak sve više oksidira. Dnevne kesice ovde su hermetički zatvorene, zato im nisu potrebni konzervansi, i ne nastaje otpad od ostataka koji se pokvare. Osim toga, pakovanja su od materijala koji se može reciklirati. Naravno da nije savršeno, ali u direktnom poređenju je održivije od mnogih velikih plastičnih flaša koje se na kraju bace polupune.",
+    "neu": "To je sasvim opravdano pitanje, i {{#unless team_modus=team}}razumem{{/unless}}{{#if team_modus=team}}razumemo{{/if}} prvu pomisao: više pakovanja zvuči kao više smeća. Ali pogledaj malo pažljivije. Obična tegla suplementa sadrži 30 ili 60 porcija, mora da se stabilizuje sredstvima za sušenje i apsorberima kiseonika, i otvaraš je svaki dan. Pri tome ostatak sve više oksidira. Dnevne kesice ovde su hermetički zatvorene, zato im nisu potrebni konzervansi, i ne nastaje otpad od ostataka koji se pokvare. Osim toga, pakovanja su od materijala koji se može reciklirati. Naravno da nije savršeno, ali u direktnom poređenju je održivije od mnogih velikih plastičnih flaša koje se na kraju bace polupune.",
+    "grund": "„skroz fer“ Anglizismus/Slang"
+  },
+  {
+    "de": "Nein. PM-International ist eine seit 1993 bestehende Aktiengesellschaft mit Sitz in Speyer und arbeitet im legalen Direktvertrieb. Du kannst ganz normal als Kunde bestellen, ohne selbst etwas zu verkaufen oder weiterzuempfehlen.",
+    "alt": "Ne. PM-International je akcionarsko društvo koje postoji od 1993. godine, sa sedištem u Speyeru, i radi u legalnoj direktnoj prodaji. Možeš sasvim normalno da naručiš kao kupac, bez toga da sam/sama nešto prodaješ ili preporučuješ dalje.",
+    "neu": "Ne. PM-International je akcionarsko društvo koje postoji od 1993. godine, sa sedištem u Speyeru, i radi u legalnoj direktnoj prodaji. Možeš sasvim normalno da naručiš kao kupac, a da ništa ne prodaješ niti preporučuješ dalje.",
+    "grund": "„sam/sama“ verboten, neutral umformuliert"
+  },
+  {
+    "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+    "alt": "Da, kao {{#unless team_modus=team}}{{#if geschlecht=weiblich}}nezavisna prodajna partnerka{{/if}}{{#if geschlecht=maennlich}}nezavisni prodajni partner{{/if}} dobijam{{/unless}}{{#if team_modus=team}}nezavisni prodajni partneri dobijamo{{/if}} deo od prometa ako naručiš preko {{#unless team_modus=team}}mene{{/unless}}{{#if team_modus=team}}nas{{/if}}. Tako funkcioniše direktna prodaja. {{#unless team_modus=team}}Važna mi je transparentnost: moj cilj je tvoje zadovoljstvo{{/unless}}{{#if team_modus=team}}Važna nam je transparentnost: naš cilj je tvoje zadovoljstvo{{/if}}, a ne brza prodaja.",
+    "neu": "Da, kao {{#unless team_modus=team}}{{#if geschlecht=weiblich}}nezavisna prodajna partnerka{{/if}}{{#if geschlecht=maennlich}}nezavisni prodajni partner{{/if}} dobijam{{/unless}}{{#if team_modus=team}}nezavisni prodajni partneri dobijamo{{/if}} udeo u prometu ako naručiš preko {{#unless team_modus=team}}mene{{/unless}}{{#if team_modus=team}}nas{{/if}}. Tako funkcioniše direktna prodaja. {{#unless team_modus=team}}Važna mi je transparentnost: moj cilj je tvoje zadovoljstvo{{/unless}}{{#if team_modus=team}}Važna nam je transparentnost: naš cilj je tvoje zadovoljstvo{{/if}}, a ne brza prodaja.",
+    "grund": "„deo od prometa“ → üblich „udeo u prometu“"
+  },
+  {
+    "de": "Kann ich auch direkt online bestellen?",
+    "alt": "Mogu li da naručim i direktno online?",
+    "neu": "Mogu li da naručim i direktno preko interneta?",
+    "grund": "Unnötiger Anglizismus"
+  },
+  {
+    "de": "Selen (aus Selenhefe)",
+    "alt": "Selen (iz selenovog kvasca)",
+    "neu": "Selen (iz selenskog kvasca)",
+    "grund": "Einheitlich mit „selenski kvasac“"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 3× 1 Messlöffel (1,67 g) in je 40 ml stilles Wasser. Insgesamt 30 mg Koffein pro Tag.",
+    "alt": "<strong>Dnevna porcija:</strong> 3× 1 merica (1,67 g) u po 40 ml negazirane vode. Ukupno 30 mg kofeina dnevno.",
+    "neu": "<strong>Dnevna porcija:</strong> 3× 1 merna kašičica (1,67 g) u po 40 ml negazirane vode. Ukupno 30 mg kofeina dnevno.",
+    "grund": "Einheitlich „merna kašičica“"
+  },
+  {
+    "de": "Rote-Bete-Pulver",
+    "alt": "prah cvekle",
+    "neu": "Prah od cvekle",
+    "grund": "Zutatenname groß, natürlicher"
+  },
+  {
+    "de": "Algenpulver",
+    "alt": "prah algi",
+    "neu": "Prah algi",
+    "grund": "Zutatenname groß"
+  },
+  {
+    "de": "Citronensäure",
+    "alt": "limunska kiselina",
+    "neu": "Limunska kiselina",
+    "grund": "Zutatenname groß"
+  },
+  {
+    "de": "Säuerungsmittel",
+    "alt": "sredstvo za regulisanje kiselosti",
+    "neu": "regulator kiselosti",
+    "grund": "Übliche Etikettenbezeichnung"
+  },
+  {
+    "de": "Milchsäurebakterium",
+    "alt": "bakterija mlečne kiseline",
+    "neu": "mlečnokiselinska bakterija",
+    "grund": "Fachlich üblich"
+  },
+  {
+    "de": "Joghurtkultur",
+    "alt": "jogurt kultura",
+    "neu": "jogurtna kultura",
+    "grund": "Grammatisch korrekt"
+  },
+  {
+    "de": "Protein-angereichertes Molkepulver",
+    "alt": "prah surutke obogaćen proteinima",
+    "neu": "Prah surutke obogaćen proteinima",
+    "grund": "Zutatenname groß"
+  },
+  {
+    "de": "enthalten",
+    "alt": "sadrži",
+    "neu": "sadržano",
+    "grund": "„enthalten“ = sadržano, nicht „sadrži“"
+  },
+  {
+    "de": "Natürliches Aroma",
+    "alt": "prirodna aroma",
+    "neu": "Prirodna aroma",
+    "grund": "Zutatenname groß"
+  },
+  {
+    "de": "{{#unless team_modus=team}}Über {{vorname}}{{/unless}}{{#if team_modus=team}}Über uns{{/if}}",
+    "alt": "{{#unless team_modus=team}}O {{vorname}}{{/unless}}{{#if team_modus=team}}O nama{{/if}}",
+    "neu": "{{#unless team_modus=team}}Ko je {{vorname}}{{/unless}}{{#if team_modus=team}}O nama{{/if}}",
+    "grund": "Name sonst ungebeugt nach „O“"
+  },
+  {
+    "de": "' + rest + ' weitere Produkte anzeigen",
+    "alt": "' + rest + ' prikaži još proizvoda",
+    "neu": "Prikaži još ' + rest + ' proizvoda",
+    "grund": "Wortstellung, Zahl vor Substantiv im Genitiv"
+  },
+  {
+    "de": "Fit älter werden",
+    "alt": "Budi fit i u zrelijim godinama",
+    "neu": "Fit kroz godine",
+    "grund": "Kurz als Option, natürlicher"
+  },
+  {
+    "de": "Wird ohne Vitamin C kaum richtig aufgebaut. Du musst beides kombinieren.",
+    "alt": "Bez vitamina C se skoro uopšte ne gradi kako treba. Moraš da kombinuješ oba.",
+    "neu": "Bez vitamina C se teško pravilno stvara. Moraš da kombinuješ oba.",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Drei kurze Videos, drei Sprachnachrichten, drei Momente und drei geschriebene Eindrücke. Tipp auf eine Karte und schau rein.",
+    "alt": "Tri kratka videa, tri glasovne poruke, tri trenutka i tri napisana utiska. Tapni na karticu i pogledaj.",
+    "neu": "Tri kratka videa, tri glasovne poruke, tri trenutka i tri napisana utiska. Dodirni karticu i pogledaj.",
+    "grund": "Anglizismus „tapni“"
+  },
+  {
+    "de": "München, Selbstständig",
+    "alt": "Minhen, samostalna",
+    "neu": "Minhen, preduzetnica",
+    "grund": "„samostalna“ ohne Beruf missverständlich"
+  },
+  {
+    "de": "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"",
+    "alt": "„Osećam da sam potpuno zbrinuta, bez pet različitih kutija u ormariću. Jutarnji napitak je moj stalan početak dana.“",
+    "neu": "„Osećam da mi telo dobija sve što treba, a da u ormariću nemam pet različitih kutija. Jutarnji napitak je moj stalni početak dana.“",
+    "grund": "„zbrinuta“ klingt nach Fürsorge"
+  },
+  {
+    "de": "Wer Vitamine, Mineralien und Pflanzenextrakte einzeln kauft, gibt schnell mehr aus als gedacht. Dazu kommt: Menge, Zeitpunkt und Zusammensetzung müssen zueinander passen. Wer das nicht weiß, nimmt von manchem zu viel und von anderem zu wenig, ohne es zu merken. Das Optimalset nimmt dir das ab.",
+    "alt": "Ko vitamine, minerale i biljne ekstrakte kupuje pojedinačno, brzo potroši više nego što je mislio. Uz to: količina, vreme uzimanja i sastav moraju da se uklapaju. Ko to ne zna, uzima od nečega previše, a od nečega premalo, a da to i ne primeti. Optimalset to rešava umesto tebe.",
+    "neu": "Ko vitamine, minerale i biljne ekstrakte kupuje pojedinačno, brzo potroši više nego što je planirao. Uz to: količina, vreme uzimanja i sastav moraju da se uklapaju. Ko to ne zna, uzima od nečega previše, a od nečega premalo, a da to i ne primeti. Optimalset to rešava umesto tebe.",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Welche Form, welche Menge, wann? Einzeln gekauft musst du das selbst herausfinden. Zu viel auf einmal verträgt der Darm oft nicht.",
+    "alt": "Koji oblik, koja količina, kada? Kad kupuješ pojedinačno, moraš sam to da otkriješ. Crevima često ne prija previše odjednom.",
+    "neu": "Koji oblik, koja količina, kada? Kad kupuješ pojedinačno, moraš to da otkriješ na svoju ruku. Crevima često ne prija previše odjednom.",
+    "grund": "„sam“ maskulin"
+  },
+  {
+    "de": "Die Spanne zwischen sinnvoll und zu viel ist klein. Einzeln kaufst du dir schnell ein Zuviel ein.",
+    "alt": "Raspon između smislenog i previše je mali. Kad kupuješ pojedinačno, lako završiš sa previše.",
+    "neu": "Granica između korisne količine i previše je tanka. Kad kupuješ pojedinačno, lako završiš sa previše.",
+    "grund": "Natürlicher"
+  },
+  {
+    "de": "Einzeln hochdosiert ist mehr nicht besser. Es gehört in natürlicher Menge in den Mix mit anderen Carotinoiden.",
+    "alt": "Kada je pojedinačno visoko doziran, više nije bolje. Treba da bude u prirodnoj količini u miksu sa drugim karotenoidima.",
+    "neu": "Kada je pojedinačno visoko doziran, više nije bolje. Treba da bude u prirodnoj količini, u kombinaciji sa drugim karotenoidima.",
+    "grund": "„miks“ Anglizismus"
+  },
+  {
+    "de": "Schreibt uns direkt",
+    "alt": "Pišite nam direktno",
+    "neu": "Piši nam direktno",
+    "grund": "Einheitliche ti-Ansprache"
+  },
+  {
+    "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Quelle: offizielles Datenblatt PM-International AG (LMIV).",
+    "alt": "NRV = procentualna vrednost referentne količine za dnevni unos (odrasli). Izvor: zvanični list sa podacima PM-International AG (LMIV).",
+    "neu": "NRV = procentualna vrednost referentne količine za dnevni unos (odrasli). Izvor: zvanični tehnički list PM-International AG (LMIV).",
+    "grund": "Einheitlich „tehnički list“"
+  },
+  {
+    "de": "Orange-Zitrone",
+    "alt": "Pomorandža-limun",
+    "neu": "Narandža-limun",
+    "grund": "Einheitlich „narandža“"
+  },
+  {
+    "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Quelle: offizielles Datenblatt PM-International AG (LMIV), Sorte Citrus.",
+    "alt": "NRV = procenat referentne vrednosti za dnevni unos (odrasli). Izvor: zvanični list sa podacima PM-International AG (LMIV), ukus Citrus.",
+    "neu": "NRV = procenat referentne vrednosti za dnevni unos (odrasli). Izvor: zvanični tehnički list PM-International AG (LMIV), ukus Citrus.",
+    "grund": "Einheitlich „tehnički list“"
+  },
+  {
+    "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.",
+    "alt": "NRV = procenat referentne vrednosti za dnevni unos (odrasli). Nutritivne vrednosti za 200 ml, pripremljeno sa obranim mlekom (0,3 % masti). Sadrži mleko i laktozu. Izvor: zvanični list sa podacima PM-International AG.",
+    "neu": "NRV = procenat referentne vrednosti za dnevni unos (odrasli). Nutritivne vrednosti za 200 ml, pripremljeno sa obranim mlekom (0,3 % masti). Sadrži mleko i laktozu. Izvor: zvanični tehnički list PM-International AG.",
+    "grund": "Einheitlich „tehnički list“"
+  },
+  {
+    "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Sorten: Citrus (Orange-Zitrone) und Exotic (Kaktusfeige), beide mit denselben Werten.",
+    "alt": "<strong>Dnevna porcija:</strong> 1 kesica (6,7 g praha) u 250 ml negazirane vode, idealno uveče. Ukusi: Citrus (pomorandža-limun) i Exotic (kaktusova smokva), oba sa istim vrednostima.",
+    "neu": "<strong>Dnevna porcija:</strong> 1 kesica (6,7 g praha) u 250 ml negazirane vode, idealno uveče. Ukusi: Citrus (narandža-limun) i Exotic (kaktusova smokva), oba sa istim vrednostima.",
+    "grund": "Einheitlich „narandža“"
+  },
+  {
+    "de": "Seit drei Jahren dabei",
+    "alt": "Već tri godine sa FitLine",
+    "neu": "Koristi FitLine već tri godine",
+    "grund": "Ungebeugter Markenname im Satz holprig"
+  },
+  {
+    "de": "Steviolglycoside",
+    "alt": "Steviol glikozidi",
+    "neu": "Steviol-glikozidi",
+    "grund": "Schreibweise"
+  },
+  {
+    "de": "Orange-Cassis",
+    "alt": "Pomorandža-crna ribizla",
+    "neu": "Narandža-crna ribizla",
+    "grund": "Einheitlich „narandža“"
+  },
+  {
+    "de": "Der Booster",
+    "alt": "Buster",
+    "neu": "Doza energije",
+    "grund": "Transkription „Buster“ ersetzt"
+  },
+  {
+    "de": "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.",
+    "alt": "{{vorname}} {{nachname}} | Optimalna podrška svakog dana. I to za par minuta.",
+    "neu": "{{vorname}} {{nachname}} | Optimalna snabdevenost svakog dana. I to za nekoliko minuta.",
+    "grund": "„podrška“ trifft „versorgt“ nicht"
+  },
+  {
+    "de": "Das FitLine Optimalset von {{vorname}} {{nachname}}",
+    "alt": "FitLine Optimalset od {{vorname}} {{nachname}}",
+    "neu": "FitLine Optimalset, preporučuje {{vorname}} {{nachname}}",
+    "grund": "„od“ + Name verlangt Genitiv; Name jetzt im Nominativ"
+  }
+]

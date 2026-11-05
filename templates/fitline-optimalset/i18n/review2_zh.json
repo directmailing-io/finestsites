@@ -1,0 +1,524 @@
+[
+ {
+  "de": "Für die Verdauung",
+  "alt": "为了消化",
+  "neu": "关注消化",
+  "grund": "„为了消化“ klingt hölzern; natürliche Kartenzeile"
+ },
+ {
+  "de": "Mit Milchsäurekulturen für den Darmaufbau. Schmeckt cremig und macht satt. Nur in ausgewählten Ländern erhältlich.",
+  "alt": "含乳酸菌培养物，用于肠道调理。口感绵密，也有饱腹感。仅在部分国家有售。",
+  "neu": "含乳酸菌，帮助调理肠道。口感绵密，也有饱腹感。仅在部分国家有售。",
+  "grund": "Einheitlich „乳酸菌“ statt „乳酸菌培养物“ im Fließtext"
+ },
+ {
+  "de": "Für die Nacht",
+  "alt": "为夜晚准备",
+  "neu": "夜间饮用",
+  "grund": "„为夜晚准备“ unnatürlich"
+ },
+ {
+  "de": "Kurz vor dem Schlafen für eine bessere Regeneration. Mit Magnesium, Kalzium und neun Vitaminen für die Nacht.",
+  "alt": "睡前不久喝，帮助更好恢复。含镁、钙和九种适合夜间的维生素。",
+  "neu": "睡前饮用，帮助身体更好地恢复。含镁、钙，以及九种夜间所需的维生素。",
+  "grund": "„睡前不久喝“ holprig"
+ },
+ {
+  "de": "Wenn der Akku leer ist. Mit Guarana und B-Vitaminen, ganz ohne Zucker.",
+  "alt": "电量耗尽的时候。含瓜拉纳和B族维生素，完全不含糖。",
+  "neu": "感觉没电的时候。含瓜拉纳和B族维生素，完全不含糖。",
+  "grund": "Bild „Akku leer“ natürlicher"
+ },
+ {
+  "de": "Für jeden Tag",
+  "alt": "每天都适合",
+  "neu": "每日饮用",
+  "grund": "„每天都适合“ als Kartenzeile natürlicher, parallel zu 夜间饮用"
+ },
+ {
+  "de": "Morgens, tagsüber, abends: {{#unless joghurt_anzeigen=nein}}vier{{/unless}}{{#if joghurt_anzeigen=nein}}drei{{/if}} Produkte, die genau aufeinander abgestimmt sind. Fit und versorgt durch den Alltag, entwickelt von einem Hersteller mit 100+ Patenten, der offiziell für Profisportler aus 40 Ländern produziert. {{#unless team_modus=team}}Ich nutze es selbst{{/unless}}{{#if team_modus=team}}Wir nutzen es selbst{{/if}}, jeden Tag.",
+  "alt": "早上、白天、晚上：{{#unless joghurt_anzeigen=nein}}四{{/unless}}{{#if joghurt_anzeigen=nein}}三{{/if}}款产品，彼此精准搭配。让你日常保持状态、补充所需，由一家拥有100+项专利，并官方为来自40个国家的职业运动员生产产品的厂家研发。{{#unless team_modus=team}}我自己也在用{{/unless}}{{#if team_modus=team}}我们自己也在用{{/if}}，每天都用。",
+  "neu": "早上、白天、晚上：{{#unless joghurt_anzeigen=nein}}四{{/unless}}{{#if joghurt_anzeigen=nein}}三{{/if}}款产品，彼此精准搭配。让你日常精力充沛、营养充足。研发厂家拥有100多项专利，并官方为40个国家的职业运动员生产。{{#unless team_modus=team}}我自己也在用{{/unless}}{{#if team_modus=team}}我们自己也在用{{/if}}，每天都用。",
+  "grund": "Überlanger Bandwurmsatz aufgeteilt; „100+“ → „100多项“ einheitlich"
+ },
+ {
+  "de": "Diese Seite wird betrieben von <strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong>",
+  "alt": "本页面由<strong>{{#unless team_modus=team}}{{vorname}}{{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}}{{nachname}}&amp;{{partner_vorname}}{{partner_nachname}}{{/if}}</strong>运营",
+  "neu": "本页面由<strong>{{#unless team_modus=team}}{{vorname}} {{nachname}}{{/unless}}{{#if team_modus=team}}{{vorname}} {{nachname}} &amp; {{partner_vorname}} {{partner_nachname}}{{/if}}</strong>运营",
+  "grund": "Leerzeichen zwischen Vor- und Nachname (lateinische Namen liefen zusammen)"
+ },
+ {
+  "de": "{{#unless team_modus=team}}{{#if geschlecht=weiblich}}Unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}Unabhängiger Vertriebspartner{{/if}}{{/unless}}{{#if team_modus=team}}Unabhängige Vertriebspartner{{/if}} der PM-International (FitLine®). Diese Seite ist keine offizielle Website der PM-International AG.",
+  "alt": "PM-International（FitLine®）的{{#unless team_modus=team}}{{#if geschlecht=weiblich}}独立销售伙伴{{/if}}{{#if geschlecht=maennlich}}独立销售伙伴{{/if}}{{/unless}}{{#if team_modus=team}}独立销售伙伴{{/if}}。本页面不是PM-International AG的官方网站。",
+  "neu": "PM-International（FitLine®）的{{#unless team_modus=team}}{{#if geschlecht=weiblich}}独立经销商{{/if}}{{#if geschlecht=maennlich}}独立经销商{{/if}}{{/unless}}{{#if team_modus=team}}独立经销商{{/if}}。本页面不是PM-International AG的官方网站。",
+  "grund": "Einheitlich „独立经销商“ wie in den FAQ"
+ },
+ {
+  "de": "Du hast schon Supplements genommen.<br><em>Aber hast du es auch gemerkt?</em>",
+  "alt": "你肯定也吃过营养补充品。<br><em>但你真的感觉到了吗？</em>",
+  "neu": "你也吃过营养补充剂吧。<br><em>但你真的感觉到效果了吗？</em>",
+  "grund": "Einheitlich „营养补充剂“; „肯定“ übertreibt"
+ },
+ {
+  "de": "Mehr Wohlbefinden?",
+  "alt": "感觉更舒服？",
+  "neu": "整体状态更好？",
+  "grund": "Doppelung mit „肚子感觉更舒服“ vermieden"
+ },
+ {
+  "de": "<strong>Eingenommen ist nicht gleich aufgenommen.</strong> Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Genau dafür hat PM-International das NTC entwickelt, ein patentiertes Konzept, das Nährstoffe dorthin bringt, wo dein Körper sie braucht.",
+  "alt": "<strong>吃进去，不等于吸收了。</strong>从摄入营养到让身体真正利用营养，中间还有很长一段路。正是为此，PM-International开发了NTC，这是一个获得专利的概念，可以把营养送到你身体需要的地方。",
+  "neu": "<strong>吃进去，不等于吸收了。</strong>从摄入营养素到让身体真正利用营养素，中间还有很长一段路。正是为此，PM-International开发了NTC：一项专利概念，把营养素送到你身体需要的地方。",
+  "grund": "Einheitlich „营养素“; flüssiger"
+ },
+ {
+  "de": "Video lädt nicht.",
+  "alt": "视频加载不了。",
+  "neu": "视频无法加载。",
+  "grund": "Standardformulierung für Fehlermeldung"
+ },
+ {
+  "de": "Warum immer mehr Menschen gezielt ergänzen",
+  "alt": "为什么越来越多人会有针对性地补充",
+  "neu": "为什么越来越多的人选择有针对性地补充营养",
+  "grund": "Satz war unvollständig („补充“ ohne Objekt)"
+ },
+ {
+  "de": "Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.",
+  "alt": "压力、睡眠不足、阳光少。身体的需求比普通饮食能提供的更多。Optimalset提供生物活性微量营养素，作为每天的基础支持，覆盖12个方面。",
+  "neu": "压力、睡眠不足、日照太少。身体的需求，比日常饮食能满足的更多。Optimalset提供生物活性微量营养素，作为每日基础，覆盖12个方面。",
+  "grund": "Natürlichere Formulierung"
+ },
+ {
+  "de": "B-Vitamine und Vitamin C tragen zu einem normalen Energiestoffwechsel bei und helfen, Müdigkeit zu reduzieren.",
+  "alt": "B族维生素和维生素C有助于正常能量代谢，并帮助减少疲劳感。",
+  "neu": "B族维生素和维生素C有助于正常能量代谢，并有助于减轻疲劳。",
+  "grund": "Health-Claim einheitlich „有助于减轻疲劳“"
+ },
+ {
+  "de": "Vital älter werden",
+  "alt": "有活力地变老",
+  "neu": "年岁渐长，活力依旧",
+  "grund": "„有活力地变老“ wörtlich und unschön"
+ },
+ {
+  "de": "Vitamin D trägt zur Erhaltung normaler Knochen und zur normalen Muskelfunktion bei. Eisen trägt dazu bei, Müdigkeit und Erschöpfung zu verringern.",
+  "alt": "维生素D有助于维持正常骨骼和正常肌肉功能。铁有助于减少疲劳和疲惫感。",
+  "neu": "维生素D有助于维持正常骨骼和正常肌肉功能。铁有助于减轻疲劳和倦怠。",
+  "grund": "Health-Claim einheitlich „减轻疲劳“"
+ },
+ {
+  "de": "So funktioniert das Optimalset",
+  "alt": "Optimalset就是这样发挥作用的",
+  "neu": "Optimalset的使用方法",
+  "grund": "Natürliche Überschrift statt Wortlaut"
+ },
+ {
+  "de": "Deine tägliche Morgenroutine für die optimale Nährstoffversorgung — alles, was dein Körper für einen energiereichen Start in den Tag braucht, in einem einzigen frischen Glas.",
+  "alt": "你的每日晨间习惯，帮你获得理想的营养供给——身体开启活力一天所需要的一切，都在这一杯新鲜饮品里。",
+  "neu": "你的每日晨间习惯，带来理想的营养供给：开启活力一天所需的一切，都在这一杯新鲜饮品里。",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "12 Vitamine + Spurenelemente in einer Portion",
+  "alt": "一份含12种维生素+微量元素",
+  "neu": "一份含12种维生素和微量元素",
+  "grund": "„+“ im Fließtext unschön"
+ },
+ {
+  "de": "20+ Pflanzenextrakte inkl. Kurkuma &amp; Guarana",
+  "alt": "20+植物提取物，包括姜黄&amp;瓜拉纳",
+  "neu": "20多种植物提取物，含姜黄&amp;瓜拉纳",
+  "grund": "„20+“ → „20多种“ (Zählwort fehlte)"
+ },
+ {
+  "de": "Lebende Milchsäurekulturen direkt im Pulver",
+  "alt": "活性乳酸菌培养物，直接在粉末里",
+  "neu": "粉末中直接含有活性乳酸菌",
+  "grund": "Wortstellung natürlich, einheitlich „乳酸菌“"
+ },
+ {
+  "de": "Liefert die Wirkstoffe, die dein Körper braucht, um Energie zu erzeugen.¹ Für fokussierte Tage und klare Köpfe.² Mit Stevia gesüßt, ohne künstliche Farbstoffe und Konservierungsmittel.",
+  "alt": "提供你的身体产生能量所需要的有效成分。¹让白天更专注，头脑更清晰。²用甜菊糖调甜，不含人工色素和防腐剂。",
+  "neu": "为身体提供产生能量所需的有效成分。¹让你白天更专注、头脑更清晰。²以甜菊增甜，不含人工色素和防腐剂。",
+  "grund": "Flüssiger; Stevia einheitlich „甜菊“"
+ },
+ {
+  "de": "Das basische Pulver für deinen Abend. Mit Magnesium, Zink, B-Vitaminen und Kräutern.",
+  "alt": "适合你晚上的碱性粉末。含镁、锌、B族维生素和草本成分。",
+  "neu": "专为夜晚准备的碱性粉末。含镁、锌、B族维生素和草本成分。",
+  "grund": "„适合你晚上的“ holprig"
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "自制Joghurt-Drink，不用买现成品——新鲜现调，不含防腐剂，天然口味，含乳酸菌培养物，很适合全家一起喝。",
+  "neu": "自制Joghurt-Drink，替代现成品：新鲜现调，不含防腐剂，口味天然，含乳酸菌，全家都适合。",
+  "grund": "Gedankenstrich entfernt; einheitlich „乳酸菌“"
+ },
+ {
+  "de": "Mehr Bakterienkulturen als im Supermarkt-Joghurt",
+  "alt": "比超市酸奶含更多菌种培养物",
+  "neu": "比超市酸奶含有更多菌种",
+  "grund": "„菌种培养物“ Laborsprache"
+ },
+ {
+  "de": "So pimpst du deinen Drink.",
+  "alt": "这样给你的饮品升级。",
+  "neu": "饮品升级小妙招。",
+  "grund": "„So pimpst du deinen Drink“ natürlich"
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "再倒上一口Joghurt-Drink。这两个产品是搭配好的，能在你的日常习惯中互相补充。",
+  "neu": "再加一小口Joghurt-Drink。这两款产品相互搭配，在你的日常习惯中相辅相成。",
+  "grund": "„倒上一口“ unidiomatisch; Zählwort 款"
+ },
+ {
+  "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+  "alt": "把一份Activize也加进杯子。这样提神的那部分也一起有了。",
+  "neu": "把一份Activize也加进杯子。提神的部分也一并搞定。",
+  "grund": "Holprigen Nachsatz geglättet"
+ },
+ {
+  "de": "Schneller als dein Kaffee gebrüht ist. Und du hast deinen Drink für den Tag.",
+  "alt": "比你的咖啡冲好还快。而且你一天的饮品就有了。",
+  "neu": "比冲一杯咖啡还快。一天的饮品就准备好了。",
+  "grund": "Natürlicher"
+ },
+ {
+  "de": "Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC, das Nährstoff-Transport-Konzept von PM-International, ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ nationale und internationale Patente stehen hinter diesem Ansatz.",
+  "alt": "吸收营养素和真正利用营养素之间，其实还有很长一段路。PM-International的NTC营养素传输概念，旨在把营养素以合适的形式、在合适的时间送到你身体需要它们的地方。这个理念背后有100+项国内和国际专利。",
+  "neu": "吸收营养素和真正利用营养素之间，其实还有很长一段路。PM-International的NTC营养素传输概念，旨在把营养素以合适的形式、在合适的时间送到你身体需要它们的地方。这个理念背后有100多项国内和国际专利。",
+  "grund": "„100+“ → „100多项“ einheitlich"
+ },
+ {
+  "de": "Für Sportler geprüft",
+  "alt": "为运动人士检测过",
+  "neu": "按运动员标准检测",
+  "grund": "„为运动人士检测过“ unidiomatisch"
+ },
+ {
+  "de": "Kölner Liste®. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte.{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte.{{/if}} Ohne Beanstandung.",
+  "alt": "科隆名单®。{{#unless joghurt_anzeigen=nein}}全部四款产品。{{/unless}}{{#if joghurt_anzeigen=nein}}全部三款产品。{{/if}}无异议通过。",
+  "neu": "科隆名单®。{{#unless joghurt_anzeigen=nein}}全部四款产品。{{/unless}}{{#if joghurt_anzeigen=nein}}全部三款产品。{{/if}}检测未发现问题。",
+  "grund": "„无异议通过“ ungenau für „ohne Beanstandung“"
+ },
+ {
+  "de": "Die Kölner Liste® prüft Nahrungsergänzungsmittel unabhängig auf unerlaubte Substanzen. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte{{/if}} des Optimalsets sind gelistet und wurden ohne Beanstandung analysiert. Für Profis Pflicht, für alle anderen eine starke Garantie.",
+  "alt": "科隆名单®会独立检测膳食补充剂中是否含有违禁物质。{{#unless joghurt_anzeigen=nein}}Optimalset的全部四款产品{{/unless}}{{#if joghurt_anzeigen=nein}}Optimalset的全部三款产品{{/if}}都已列入名单，并且检测结果无异议。对专业人士来说是必备，对其他人来说也是一份很强的保障。",
+  "neu": "科隆名单®（Kölner Liste®）会独立检测膳食补充剂中是否含有违禁物质。{{#unless joghurt_anzeigen=nein}}Optimalset的全部四款产品{{/unless}}{{#if joghurt_anzeigen=nein}}Optimalset的全部三款产品{{/if}}都已列入名单，检测未发现任何问题。对职业运动员来说是必备条件，对其他人也是一份可靠的保障。",
+  "grund": "Eigenname einmal mit Original erklärt; „ohne Beanstandung“ präzise"
+ },
+ {
+  "de": "Offizieller Partner der ATP-Tour, Partner des Deutschen Skiverbands. Athleten aus über 85 Disziplinen in 40 Nationen.<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup> Wer Ergebnisse braucht, kann sich keine Kompromisse leisten.",
+  "alt": "ATP巡回赛官方合作伙伴，德国滑雪协会合作伙伴。来自40个国家、超过85个项目的运动员。<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup>需要成绩的人，不能有任何妥协。",
+  "neu": "ATP巡回赛官方合作伙伴，德国滑雪协会合作伙伴。来自40个国家、超过85个项目的运动员。<sup style=\"font-size:0.7em;vertical-align:super;opacity:0.55\">³</sup>追求成绩的人，容不得半点妥协。",
+  "grund": "Natürlichere Schlusszeile"
+ },
+ {
+  "de": "³ Angaben gemäß PM-International AG",
+  "alt": "³信息根据PM-International AG提供",
+  "neu": "³数据来源：PM-International AG",
+  "grund": "Übliche Quellenangabe"
+ },
+ {
+  "de": "Ein Teil jedes Verkaufs geht an die PM We Care-Stiftung. Seit über 20 Jahren Partnerschaft mit World Vision. 8.500 Patenkinder und 40 Projekte weltweit.",
+  "alt": "每一笔销售的一部分都会捐给PM We Care基金会。与World Vision携手合作已超过20年。全球有8.500名助养儿童和40个项目。",
+  "neu": "每一笔销售的一部分都会捐给PM We Care基金会。与World Vision携手合作已超过20年。全球有8500名助养儿童和40个项目。",
+  "grund": "Deutscher Tausenderpunkt „8.500“ ist im Chinesischen falsch"
+ },
+ {
+  "de": "Du hast eine 30-tägige Zufriedenheitsgarantie.",
+  "alt": "你有30天满意保证。",
+  "neu": "你享有30天满意保证。",
+  "grund": "Natürlicher"
+ },
+ {
+  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+  "alt": "如果你觉得Optimalset不好喝、不适合你，或者因为任何原因没能说服你，把已开封的包装寄回来，就能一分不少地拿回全部款项。",
+  "neu": "如果你觉得Optimalset不好喝、不适合你，或者因为任何原因没能打动你，把已开封的包装寄回来，就能一分不少地拿回全部款项。",
+  "grund": "„说服你“ hölzern"
+ },
+ {
+  "de": "Innerhalb weniger Tage zurück auf dem Konto.",
+  "alt": "几天内退回到你的账户。",
+  "neu": "款项几天内就会退回你的账户。",
+  "grund": "Subjekt fehlte"
+ },
+ {
+  "de": "Garantiegeber: PM-International AG, Hauptstrasse 5, 67547 Worms. Bedingungen gemäß PM-Rückgaberichtlinien. Gilt für Erstkäufe über den offiziellen FitLine-Shop.",
+  "alt": "保证提供方：PM-International AG，Hauptstrasse 5，67547 Worms。条件遵循PM退货指南。适用于通过官方FitLine商店首次购买。",
+  "neu": "保证提供方：PM-International AG，Hauptstrasse 5，67547 Worms。条件以PM退货政策为准。适用于通过FitLine官方商店的首次购买。",
+  "grund": "Natürlicher; einheitlich „FitLine官方商店“"
+ },
+ {
+  "de": "Aus echten Lebensmitteln.",
+  "alt": "来自真正的食物。",
+  "neu": "源自真正的食材。",
+  "grund": "Natürlicher"
+ },
+ {
+  "de": "Trägt zur Verringerung von Müdigkeit und einer normalen Muskelfunktion bei. Gleich in zwei Verbindungen drin, damit der Körper es gut aufnehmen kann.",
+  "alt": "有助于减轻疲劳，并有助于正常肌肉功能。这里直接用了两种化合形态，让身体更好吸收。",
+  "neu": "有助于减轻疲劳，并有助于正常肌肉功能。同时采用两种化合形态，便于身体吸收。",
+  "grund": "„这里直接用了“ umgangssprachlich holprig"
+ },
+ {
+  "de": "Bringt Apfelfaser als Ballaststoff in den Drink. Plus die typischen Apfel-Pflanzenstoffe aus dem Trester.",
+  "alt": "把作为膳食纤维的苹果纤维带进饮品里。还有来自果渣的典型苹果植物成分。",
+  "neu": "以苹果纤维的形式为饮品带来膳食纤维，另含来自苹果渣的典型植物成分。",
+  "grund": "Holprige Satzstellung"
+ },
+ {
+  "de": "Bringt Wärme und feines Aroma in den Drink. Echter Ceylon-Zimt aus Sri Lanka, höher geschätzt als gewöhnlicher Cassia-Zimt.",
+  "alt": "为饮品带来温暖感和细腻香气。来自斯里兰卡的真正锡兰肉桂，比普通卡西亚肉桂更受推崇。",
+  "neu": "为饮品带来温暖感和细腻香气。来自斯里兰卡的真正锡兰肉桂，比常见的桂皮更受推崇。",
+  "grund": "„卡西亚肉桂“ unüblich; Cassia heißt 桂皮"
+ },
+ {
+  "de": "Süße Sommerbeere mit natürlichem Vitamin C. Vitamin C trägt zur Verringerung von Müdigkeit und einem normalen Energiestoffwechsel bei.",
+  "alt": "甜甜的夏日浆果，含天然维生素C。维生素C有助于减轻疲劳，并维持正常能量代谢。",
+  "neu": "甜甜的夏日浆果，含天然维生素C。维生素C有助于减轻疲劳，并有助于正常能量代谢。",
+  "grund": "Health-Claim einheitlich „有助于“"
+ },
+ {
+  "de": "Eine der natürlich vitamin-C-reichsten Beeren überhaupt. Vitamin C trägt zu einer normalen Funktion des Immunsystems und zur Verringerung von Müdigkeit bei.",
+  "alt": "可以说是天然维生素C含量最高的浆果之一。维生素C有助于维持免疫系统的正常功能，并减轻疲劳。",
+  "neu": "可以说是天然维生素C含量最高的浆果之一。维生素C有助于免疫系统的正常功能，并有助于减轻疲劳。",
+  "grund": "Health-Claim einheitlich"
+ },
+ {
+  "de": "als Selenhefe",
+  "alt": "以硒酵母形式",
+  "neu": "以富硒酵母形式",
+  "grund": "Einheitlich „富硒酵母“ wie in der Inhaltsstoffliste"
+ },
+ {
+  "de": "Trägt zum Schutz der Zellen vor oxidativem Stress und einer normalen Schilddrüsenfunktion bei. Gewonnen aus angereicherter Hefe.",
+  "alt": "有助于保护细胞免受氧化应激，并维持正常甲状腺功能。来自强化酵母。",
+  "neu": "有助于保护细胞免受氧化应激，并有助于正常甲状腺功能。提取自富硒酵母。",
+  "grund": "Health-Claim einheitlich; Begriff einheitlich"
+ },
+ {
+  "de": "Bringt typische Cranberry-Pflanzenstoffe und natürliches Vitamin C mit. Vitamin C trägt zur normalen Funktion des Immunsystems bei.",
+  "alt": "带来蔓越莓典型的植物成分和天然维生素C。维生素C有助于维持免疫系统的正常功能。",
+  "neu": "带来蔓越莓典型的植物成分和天然维生素C。维生素C有助于免疫系统的正常功能。",
+  "grund": "Health-Claim einheitlich"
+ },
+ {
+  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+  "alt": "提供饮品中的天然咖啡因。来自亚马逊水果，而不是人工合成。释放速度比纯咖啡更慢。",
+  "neu": "提供饮品中的天然咖啡因。来自亚马逊地区的果实，而非人工合成。释放速度比纯咖啡更慢。",
+  "grund": "Natürlicher"
+ },
+ {
+  "de": "Bringt eine säuerlich-fruchtige Note und natürliche rote Pflanzenfarbstoffe in den Drink.",
+  "alt": "给饮品带来酸甜果香和天然红色植物色素。",
+  "neu": "给饮品带来微酸的果香和天然红色植物色素。",
+  "grund": "„säuerlich“ ist nicht „酸甜“"
+ },
+ {
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "alt": "来自菊苣根的可溶性膳食纤维。{{#unless joghurt_anzeigen=nein}}在Probiotic-Joghurt-Drink里，是其中乳酸菌菌种的天然营养基础。{{/unless}}{{#if joghurt_anzeigen=nein}}在PowerCocktail里，是其中乳酸菌菌种的天然营养基础。{{/if}}",
+  "neu": "来自菊苣根的可溶性膳食纤维。{{#unless joghurt_anzeigen=nein}}在Probiotic-Joghurt-Drink里，是其中乳酸菌的天然营养基础。{{/unless}}{{#if joghurt_anzeigen=nein}}在PowerCocktail里，是其中乳酸菌的天然营养基础。{{/if}}",
+  "grund": "Einheitlich „乳酸菌“"
+ },
+ {
+  "de": "Du musst Abstand zu Milch und Calcium halten.",
+  "alt": "你得和牛奶、钙隔开。",
+  "neu": "需要和牛奶、钙错开时间服用。",
+  "grund": "Sachlich präziser („隔开“ unklar)"
+ },
+ {
+  "de": "Folat",
+  "alt": "活性叶酸",
+  "neu": "天然叶酸",
+  "grund": "„活性叶酸“ bezeichnet Methylfolat, nicht Folat"
+ },
+ {
+  "de": "Optimalset, Drogerie-Vitamine, frischer Smoothie. Was steckt wirklich drin, was kostet es, was bringt es dir tatsächlich.",
+  "alt": "Optimalset、药妆店维生素、新鲜Smoothie。里面到底有什么、要花多少钱、对你实际有什么用。",
+  "neu": "Optimalset、药妆店维生素、新鲜果蔬昔。里面到底有什么、要花多少钱、对你实际有什么用。",
+  "grund": "„Smoothie“ landesüblich „果蔬昔“"
+ },
+ {
+  "de": "Einzelne Supplements",
+  "alt": "单独的补充剂",
+  "neu": "单一补充剂",
+  "grund": "Natürlicher Spaltenkopf"
+ },
+ {
+  "de": "Frischer Smoothie",
+  "alt": "新鲜Smoothie",
+  "neu": "新鲜果蔬昔",
+  "grund": "„Smoothie“ landesüblich"
+ },
+ {
+  "de": "20+ Vitamine & Mineralien plus 25 Pflanzen, alles in einem Glas",
+  "alt": "20+种维生素和矿物质，加上25种植物，都在一杯里",
+  "neu": "20多种维生素和矿物质，加上25种植物，都在一杯里",
+  "grund": "„20+种“ → „20多种“"
+ },
+ {
+  "de": "Pharma-Standard (GMP)",
+  "alt": "制药标准（GMP）",
+  "neu": "药品级标准（GMP）",
+  "grund": "Einheitlich mit „药品级标准“"
+ },
+ {
+  "de": "Wenn du unterwegs bist",
+  "alt": "如果你在外面",
+  "neu": "外出时",
+  "grund": "Natürlicher Zeilenkopf"
+ },
+ {
+  "de": "ab 2,50 &euro;",
+  "alt": "2,50 &euro;起",
+  "neu": "2.50 &euro;起",
+  "grund": "Dezimalpunkt statt Komma"
+ },
+ {
+  "de": "Du sparst Geld",
+  "alt": "你省钱",
+  "neu": "帮你省钱",
+  "grund": "„你省钱“ unvollständig"
+ },
+ {
+  "de": "Damit {{#unless team_modus=team}}ich dich besser vorbereitet beraten kann{{/unless}}{{#if team_modus=team}}wir dich besser vorbereitet beraten können{{/if}}.",
+  "alt": "这样{{#unless team_modus=team}}我就能准备得更好，再给你咨询{{/unless}}{{#if team_modus=team}}我们就能准备得更好，再给你咨询{{/if}}。",
+  "neu": "这样{{#unless team_modus=team}}我能提前做好准备，更好地为你提供咨询{{/unless}}{{#if team_modus=team}}我们能提前做好准备，更好地为你提供咨询{{/if}}。",
+  "grund": "Holprige Reihenfolge"
+ },
+ {
+  "de": "Mehrere Antworten möglich, {{#unless team_modus=team}}ich bereite mich{{/unless}}{{#if team_modus=team}}wir bereiten uns{{/if}} darauf vor.",
+  "alt": "可以选多个，{{#unless team_modus=team}}我会提前准备{{/unless}}{{#if team_modus=team}}我们会提前准备{{/if}}。",
+  "neu": "可多选，{{#unless team_modus=team}}我会据此提前准备{{/unless}}{{#if team_modus=team}}我们会据此提前准备{{/if}}。",
+  "grund": "Knapper, natürlicher"
+ },
+ {
+  "de": "Name und E-Mail reichen, der Rest ist optional.",
+  "alt": "姓名和邮箱就够了，其他都可以不填",
+  "neu": "只需填写姓名和邮箱，其余为选填。",
+  "grund": "Satzzeichen fehlte; einheitlich „选填“"
+ },
+ {
+  "de": "Am liebsten per (optional)",
+  "alt": "最方便的联系方式（可选）",
+  "neu": "首选联系方式（选填）",
+  "grund": "Natürlicher; einheitlich „选填“"
+ },
+ {
+  "de": "{{#unless joghurt_anzeigen=nein}}Diese drei Produkte bilden das Optimalset.{{/unless}}{{#if joghurt_anzeigen=nein}}Diese beiden Produkte bilden deine tägliche Routine.{{/if}} Einfach einzeln in den Warenkorb legen im offiziellen FitLine-Shop.",
+  "alt": "{{#unless joghurt_anzeigen=nein}}这三款产品组成Optimalset。{{/unless}}{{#if joghurt_anzeigen=nein}}这两款产品组成你的每日 routine。{{/if}}在FitLine官方商店里一件件加入购物车就可以。",
+  "neu": "{{#unless joghurt_anzeigen=nein}}这三款产品组成Optimalset。{{/unless}}{{#if joghurt_anzeigen=nein}}这两款产品组成你的每日习惯。{{/if}}在FitLine官方商店里逐一加入购物车即可。",
+  "grund": "Englisches „routine“ im Text; natürlicher"
+ },
+ {
+  "de": "PowerCocktail + Restorate — die tägliche Basis",
+  "alt": "PowerCocktail+Restorate——每日基础搭配",
+  "neu": "PowerCocktail+Restorate：每日基础搭配",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Noch unsicher, was du brauchst? <button onclick=\"switchKontaktTab('beratung')\">Lass dich kostenlos beraten</button> — {{#unless team_modus=team}}ich helfe{{/unless}}{{#if team_modus=team}}wir helfen{{/if}} dir persönlich.",
+  "alt": "还不确定自己需要什么？<button onclick=\"switchKontaktTab('beratung')\">来免费咨询一下</button>——{{#unless team_modus=team}}我会{{/unless}}{{#if team_modus=team}}我们会{{/if}}亲自帮你。",
+  "neu": "还不确定自己需要什么？<button onclick=\"switchKontaktTab('beratung')\">来免费咨询一下</button>，{{#unless team_modus=team}}我会{{/unless}}{{#if team_modus=team}}我们会{{/if}}亲自帮你。",
+  "grund": "Gedankenstrich entfernt"
+ },
+ {
+  "de": "Eure persönlichen Berater",
+  "alt": "你们的专属顾问",
+  "neu": "你的专属顾问",
+  "grund": "Besucher wird durchgängig mit „你“ angesprochen"
+ },
+ {
+  "de": "{{#unless team_modus=team}}Ich versuche so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreib mir einfach.{{/unless}}{{#if team_modus=team}}Wir versuchen so direkt und ehrlich wie möglich zu antworten. Wenn noch etwas fehlt, schreibt uns einfach.{{/if}}",
+  "alt": "{{#unless team_modus=team}}我会尽量直接、诚实地回答。如果还有没说到的，直接写给我就好。{{/unless}}{{#if team_modus=team}}我们会尽量直接、诚实地回答。如果还有没说到的，直接写给我们就好。{{/if}}",
+  "neu": "{{#unless team_modus=team}}我会尽量直接、诚实地回答。如果还有没说到的，直接给我发消息就好。{{/unless}}{{#if team_modus=team}}我们会尽量直接、诚实地回答。如果还有没说到的，直接给我们发消息就好。{{/if}}",
+  "grund": "„写给我“ unidiomatisch"
+ },
+ {
+  "de": "Hinter dem Optimalset steckt das NTC, das Nährstoff-Transport-Konzept von PM-International. Der Grundgedanke: Zwischen Nährstoffe aufnehmen und Nährstoffe verwerten liegt ein langer Weg. Das NTC ist darauf ausgelegt, Nährstoffe in der richtigen Form zur richtigen Zeit dorthin zu bringen, wo dein Körper sie braucht. 100+ Patente stehen dahinter. Dazu kommt der Timing-Ansatz: bestimmte Produkte morgens, andere tagsüber oder abends, weil dein Körper zu verschiedenen Zeiten unterschiedliche Nährstoffe braucht. Das ist der Unterschied zwischen einem einzelnen Supplement und einem durchdachten System.",
+  "alt": "Optimalset背后是NTC，也就是PM-International的营养素传输概念。核心想法是：摄入营养素和真正利用营养素之间，还有很长一段路。NTC的设计目标，是在合适的时间、以合适的形式，把营养素送到你身体需要它们的地方。背后有100+项专利。再加上时间安排的思路：有些产品早上用，有些白天或晚上用，因为你的身体在不同时间需要不同的营养素。这就是单一营养补充剂和一个经过认真设计的系统之间的区别。",
+  "neu": "Optimalset背后是NTC，也就是PM-International的营养素传输概念。核心想法是：摄入营养素和真正利用营养素之间，还有很长一段路。NTC的设计目标，是在合适的时间、以合适的形式，把营养素送到你身体需要它们的地方。背后有100多项专利。再加上时间安排的思路：有些产品早上用，有些白天或晚上用，因为你的身体在不同时间需要不同的营养素。这就是单一营养补充剂和一套精心设计的系统之间的区别。",
+  "grund": "„100+“ einheitlich; natürlicher Schluss"
+ },
+ {
+  "de": "Nein, das sind Nahrungsergänzungsmittel. Sie ersetzen keine ausgewogene Ernährung und sind keine ärztliche Behandlung. Bei konkreten gesundheitlichen Fragen schau bitte zuerst mit einem Arzt. Was das Optimalset tut, ist deinen Körper besser versorgen, nicht etwas kurieren.",
+  "alt": "不是，这些是膳食补充剂。它们不能替代均衡饮食，也不是医疗治疗。如果你有具体的健康问题，请先咨询医生。Optimalset做的是更好地供给你的身体，而不是治疗什么。",
+  "neu": "不是，这些是膳食补充剂。它们不能替代均衡饮食，也不能代替医疗。如果你有具体的健康问题，请先咨询医生。Optimalset的作用是为你的身体提供更好的营养供给，而不是治疗什么。",
+  "grund": "„医疗治疗“ doppelt gemoppelt"
+ },
+ {
+  "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
+  "alt": "很多FitLine产品是用甜叶菊来增甜的。甜叶菊是来自同名植物的天然植物提取物，几乎零卡路里，也不会打乱你的血糖。听起来可能像常见的健康潮流，但它和阿斯巴甜或安赛蜜-K这类传统甜味剂的区别确实很重要：后者是合成制造的，而且已经被讨论很久，因为据说它们可能会让一些人更容易暴食，或给肠道带来负担。甜叶菊来自自然，正常用量下被认为是安全的。所以你能得到甜味，同时又不会因此给身体增加负担。",
+  "neu": "很多FitLine产品是用甜菊来增甜的。甜菊是来自同名植物的天然植物提取物，几乎零卡路里，也不会打乱你的血糖。听起来可能像常见的健康潮流，但它和阿斯巴甜或安赛蜜这类传统甜味剂的区别确实很重要：后者是合成制造的，而且已经被讨论很久，因为据说它们可能会让一些人食欲更旺，或给肠道带来负担。甜菊来自自然，正常用量下被认为是安全的。所以你能得到甜味，同时又不会因此给身体增加负担。",
+  "grund": "Stevia einheitlich „甜菊“; „安赛蜜-K“ unüblich; „暴食“ zu stark für „Heißhunger“"
+ },
+ {
+  "de": "Einstiegspakete starten typischerweise bei 50 bis 100 Euro, je nach Set. Es gibt keine Mindestbestellmenge und keinen Kaufzwang. Im Gespräch {{#unless team_modus=team}}zeige ich{{/unless}}{{#if team_modus=team}}zeigen wir{{/if}} dir alle Möglichkeiten und was für dich sinnvoll wäre, du entscheidest in Ruhe.",
+  "alt": "入门套装通常从50到100欧元起，具体取决于套装。没有最低订购量，也没有强制购买。沟通时{{#unless team_modus=team}}我会{{/unless}}{{#if team_modus=team}}我们会{{/if}}把所有选择以及对你来说比较合适的方案都展示给你，你可以慢慢决定。",
+  "neu": "入门套装通常50到100欧元起，具体取决于套装。没有最低订购量，也没有强制购买。沟通时{{#unless team_modus=team}}我会{{/unless}}{{#if team_modus=team}}我们会{{/if}}把所有选择以及对你来说比较合适的方案都展示给你，你可以慢慢决定。",
+  "grund": "„从…起“ doppelt"
+ },
+ {
+  "de": "Nein. Du kannst einmalig bestellen, regelmäßig bestellen oder optional Treuepunkte nutzen, kein Abo, keine Mindestlaufzeit. Du entscheidest bei jeder Bestellung neu, was du möchtest.",
+  "alt": "不是。你可以单次订购、定期订购，也可以选择使用积分，不是订阅，也没有最低期限。每次下单都由你重新决定想要什么。",
+  "neu": "不用。你可以单次订购、定期订购，也可以选择使用积分；没有订阅，也没有最低期限。每次下单都由你重新决定想要什么。",
+  "grund": "„不是“ passt nicht zur Frage „必须…吗“"
+ },
+ {
+  "de": "Süßung aus Stevia",
+  "alt": "甜菊来源的甜味",
+  "neu": "甜菊增甜",
+  "grund": "Natürlicher Etikettbegriff"
+ },
+ {
+  "de": "Vier lebende Bakterienkulturen",
+  "alt": "四种活菌培养物",
+  "neu": "四种活性菌种",
+  "grund": "„活菌培养物“ Laborsprache"
+ },
+ {
+  "de": "Kurz vor dem Schlafen für eine bessere Regeneration. Mit Calcium, Magnesium, Zink, weiteren Spurenelementen und Vitamin D.",
+  "alt": "睡前不久喝，帮助更好恢复。含钙、镁、锌、其他微量元素和维生素D。",
+  "neu": "睡前饮用，帮助身体更好地恢复。含钙、镁、锌、其他微量元素和维生素D。",
+  "grund": "„睡前不久喝“ holprig"
+ },
+ {
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Quelle: offizielles Datenblatt PM-International AG (LMIV).",
+  "alt": "NRV：占成人每日参考摄入量的百分比。来源：PM-International AG官方数据表（LMIV）。",
+  "neu": "NRV：占成人每日营养素参考值的百分比。来源：PM-International AG官方数据表（LMIV）。",
+  "grund": "NRV-Begriff einheitlich „营养素参考值“"
+ },
+ {
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Quelle: offizielles Datenblatt PM-International AG (LMIV), Sorte Citrus.",
+  "alt": "NRV：占成人每日参考摄入量的百分比。来源：PM-International AG官方数据表（LMIV），Citrus口味。",
+  "neu": "NRV：占成人每日营养素参考值的百分比。来源：PM-International AG官方数据表（LMIV），Citrus口味。",
+  "grund": "NRV-Begriff einheitlich"
+ },
+ {
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.",
+  "alt": "NRV：占成人每日参考摄入量的百分比。营养数据按200 ml计算，使用脱脂牛奶（0.3%脂肪）制作。含牛奶和乳糖。来源：PM-International AG官方数据表。",
+  "neu": "NRV：占成人每日营养素参考值的百分比。营养数据按200 ml计算，使用脱脂牛奶（0.3%脂肪）制作。含牛奶和乳糖。来源：PM-International AG官方数据表。",
+  "grund": "NRV-Begriff einheitlich"
+ },
+ {
+  "de": "Vier Milchsäurekulturen direkt im Pulver",
+  "alt": "粉末中直接含有四种乳酸菌培养物",
+  "neu": "粉末中直接含有四种乳酸菌",
+  "grund": "Einheitlich „乳酸菌“"
+ },
+ {
+  "de": "Vier Milchsäurekulturen direkt im Pulver, ohne Konservierungsstoffe",
+  "alt": "粉末中直接含有四种乳酸菌培养物，不含防腐剂",
+  "neu": "粉末中直接含有四种乳酸菌，不含防腐剂",
+  "grund": "Einheitlich „乳酸菌“"
+ },
+ {
+  "de": "Kölner Liste Logo",
+  "alt": "Kölner Liste标志",
+  "neu": "科隆名单标志",
+  "grund": "Einheitlich „科隆名单“ wie im Text"
+ }
+]

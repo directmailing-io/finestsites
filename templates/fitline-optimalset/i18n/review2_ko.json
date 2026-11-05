@@ -1,0 +1,446 @@
+[
+ {
+  "de": "Wofür?",
+  "alt": "어디에 좋을까요?",
+  "neu": "필요한 이유",
+  "grund": "Nav-Link kürzer und natürlicher als Frage"
+ },
+ {
+  "de": "Wenn der Akku leer ist. Mit Guarana und B-Vitaminen, ganz ohne Zucker.",
+  "alt": "배터리가 방전된 것 같을 때. 과라나와 비타민 B군, 설탕은 전혀 없어요.",
+  "neu": "방전된 것 같은 날에. 과라나와 비타민 B군을 담았고, 설탕은 전혀 없어요.",
+  "grund": "Satzbruch geglättet, natürliches Bild für ‚Akku leer‘"
+ },
+ {
+  "de": "Dein Start in den Tag. Vitamine, Mineralstoffe und alles Wichtige in einem Glas.",
+  "alt": "하루의 시작. 비타민, 미네랄 그리고 꼭 필요한 모든 것을 한 잔에 담았어요.",
+  "neu": "하루를 여는 첫 잔. 비타민과 미네랄 등 꼭 필요한 모든 것을 한 잔에 담았어요.",
+  "grund": "griffiger Einstieg, kein ‚, 그리고‘-Übersetzungsstil"
+ },
+ {
+  "de": "{{#unless team_modus=team}}Meine{{/unless}}{{#if team_modus=team}}Unsere{{/if}} persönliche Empfehlung",
+  "alt": "{{#unless team_modus=team}}저의{{/unless}}{{#if team_modus=team}}저희의{{/if}} 개인적인 추천",
+  "neu": "{{#unless team_modus=team}}제가{{/unless}}{{#if team_modus=team}}저희가{{/if}} 직접 추천해요",
+  "grund": "‚저의 개인적인 추천‘ wirkt übersetzt"
+ },
+ {
+  "de": "Dein tägliches Nährstoff-System.",
+  "alt": "매일을 위한 영양 시스템.",
+  "neu": "매일 챙기는 나만의 영양 시스템.",
+  "grund": "natürlichere Headline"
+ },
+ {
+  "de": "Hand auf's Herz",
+  "alt": "솔직히 말해 볼까요",
+  "neu": "솔직하게 물어볼게요",
+  "grund": "griffiger, leitet die folgende Frage ein"
+ },
+ {
+  "de": "Mehr Energie im Alltag?",
+  "alt": "일상에 더 많은 에너지?",
+  "neu": "더 넘치는 활력?",
+  "grund": "Übersetzungsstil; Reihe einheitlich ‚더 …?‘"
+ },
+ {
+  "de": "Ruhiger schlafen?",
+  "alt": "더 편안한 잠?",
+  "neu": "더 푹 자는 밤?",
+  "grund": "vermeidet doppeltes ‚편안한‘ (s. Bauchgefühl), natürlich"
+ },
+ {
+  "de": "Dein Darm in<br>90 Sek. erklärt",
+  "alt": "90초로 알아보는<br>나의 장",
+  "neu": "90초 만에 알아보는<br>내 장 이야기",
+  "grund": "natürlicher Videotitel"
+ },
+ {
+  "de": "Warum immer mehr Menschen gezielt ergänzen",
+  "alt": "왜 점점 더 많은 사람들이 똑똑하게 보충할까요",
+  "neu": "점점 더 많은 사람이 영양을 골라 챙기는 이유",
+  "grund": "‚똑똑하게 보충할까요‘ unidiomatisch"
+ },
+ {
+  "de": "Stress, Schlafmangel, wenig Sonnenlicht. Der Körper hat mehr Bedarf, als er durch normale Ernährung deckt. Das Optimalset liefert bioaktive Mikronährstoffe als tägliche Basis für 12 Bereiche.",
+  "alt": "스트레스, 수면 부족, 부족한 햇빛. 몸이 필요로 하는 양은 평소 식사로 채울 수 있는 것보다 많아요. Optimalset은 12가지 영역을 위한 매일의 기본으로 생체 활성 미량영양소를 제공해요.",
+  "neu": "스트레스, 수면 부족, 부족한 햇빛. 몸이 필요로 하는 양은 평소 식사로 채울 수 있는 것보다 많아요. Optimalset은 12가지 영역을 위한 생체 활성 미량영양소로 매일의 기본을 채워 줘요.",
+  "grund": "Satzbau natürlicher"
+ },
+ {
+  "de": "B-Vitamine und Vitamin C tragen zu einem normalen Energiestoffwechsel bei und helfen, Müdigkeit zu reduzieren.",
+  "alt": "비타민 B군과 비타민 C는 정상적인 에너지 대사에 기여하고 피로 감소에 도움을 줘요.",
+  "neu": "비타민 B군과 비타민 C는 정상적인 에너지 대사와 피로 감소에 기여해요.",
+  "grund": "Health-Claim einheitlich ‚기여해요‘ (nicht verstärken)"
+ },
+ {
+  "de": "So funktioniert das Optimalset",
+  "alt": "Optimalset은 이렇게 작동해요",
+  "neu": "Optimalset, 이렇게 먹어요",
+  "grund": "‚작동해요‘ unpassend für Lebensmittel"
+ },
+ {
+  "de": "Deine tägliche Routine. Einfacher als gedacht.",
+  "alt": "매일의 루틴. 생각보다 간단해요.",
+  "neu": "매일 하는 루틴, 생각보다 간단해요.",
+  "grund": "flüssiger"
+ },
+ {
+  "de": "PowerCocktail morgens und Restorate abends bilden die Basis. Wer tagsüber mehr Energie braucht, greift zum Activize.{{#unless joghurt_anzeigen=nein}} Der probiotische Joghurt ist das optionale Darm-Upgrade.{{/unless}}",
+  "alt": "아침의 PowerCocktail과 저녁의 Restorate가 기본이에요. 낮에 에너지가 더 필요하다면 Activize를 선택하세요.{{#unless joghurt_anzeigen=nein}} 프로바이오틱 요거트는 장을 위한 선택형 업그레이드예요.{{/unless}}",
+  "neu": "아침의 PowerCocktail과 저녁의 Restorate가 기본이에요. 낮에 에너지가 더 필요하다면 Activize를 더하면 돼요.{{#unless joghurt_anzeigen=nein}} 프로바이오틱 요거트는 장을 위한 선택 업그레이드예요.{{/unless}}",
+  "grund": "kein Befehlston (‚선택하세요‘), natürlicher"
+ },
+ {
+  "de": "Der Wachmacher",
+  "alt": "잠을 깨워 주는 한 잔",
+  "neu": "아침을 깨우는 한 잔",
+  "grund": "griffiger Slogan für den Morgen-Drink"
+ },
+ {
+  "de": "Selbstgemachter Joghurt-Drink statt Fertigprodukt — frisch angerührt, frei von Konservierungsstoffen, mit natürlichem Geschmack und Milchsäurekulturen, ideal für die ganze Familie.",
+  "alt": "완제품 대신 직접 만드는 Joghurt-Drink. 바로 섞어 신선하고, 보존료가 없으며, 자연스러운 맛과 유산균이 들어 있어 온 가족에게 딱이에요.",
+  "neu": "완제품 대신 직접 만드는 Joghurt-Drink예요. 바로 만들어 신선하고, 보존료 없이 자연스러운 맛과 유산균을 담아 온 가족에게 딱이에요.",
+  "grund": "Satzfluss, ‚바로 섞어 신선하고‘ holprig"
+ },
+ {
+  "de": "Frisch angerührt, nicht aus dem Kühlregal",
+  "alt": "냉장 코너가 아니라 바로 만들어서 신선하게",
+  "neu": "마트 냉장 코너 대신, 바로 만들어 신선하게",
+  "grund": "natürlichere Gegenüberstellung"
+ },
+ {
+  "de": "{{#unless team_modus=team}}Mein{{/unless}}{{#if team_modus=team}}Unser{{/if}} Lieblings-Trick",
+  "alt": "{{#unless team_modus=team}}저의{{/unless}}{{#if team_modus=team}}저희의{{/if}} 꿀팁",
+  "neu": "{{#unless team_modus=team}}제{{/unless}}{{#if team_modus=team}}저희{{/if}} 최애 꿀팁",
+  "grund": "‚저의 꿀팁‘ steif; ‚Lieblings‘ fehlte"
+ },
+ {
+  "de": "So pimpst du deinen Drink.",
+  "alt": "드링크를 더 맛있게 업그레이드하는 법.",
+  "neu": "드링크, 이렇게 업그레이드해 보세요.",
+  "grund": "griffiger Slogan, ‚더 맛있게‘ war hinzugefügt"
+ },
+ {
+  "de": "Ein Schluck Joghurt-Drink obendrauf. Die beiden Produkte sind aufeinander abgestimmt und ergänzen sich in deiner täglichen Routine.",
+  "alt": "위에 Joghurt-Drink를 조금 더해요. 두 제품은 서로 잘 맞게 만들어져 매일의 루틴을 보완해 줘요.",
+  "neu": "위에 Joghurt-Drink를 조금 더해요. 두 제품은 서로 잘 맞게 만들어져 매일의 루틴 속에서 서로를 보완해요.",
+  "grund": "‚ergänzen sich‘ = gegenseitig"
+ },
+ {
+  "de": "Eine Portion Activize mit ins Glas. So hast du den Wachmacher gleich dabei.",
+  "alt": "Activize 1회분을 같은 컵에 넣어요. 그러면 잠을 깨워 주는 한 잔까지 한 번에 해결돼요.",
+  "neu": "Activize 1회분을 같은 컵에 넣어요. 이렇게 하면 활력 한 잔까지 한 번에 챙길 수 있어요.",
+  "grund": "Wachmacher hier = Activize, natürlicher"
+ },
+ {
+  "de": "Schneller als dein Kaffee gebrüht ist. Und du hast deinen Drink für den Tag.",
+  "alt": "커피 내리는 것보다 빨라요. 그리고 하루를 위한 드링크가 준비돼요.",
+  "neu": "커피 내리는 것보다 빨라요. 이렇게 오늘의 드링크가 완성돼요.",
+  "grund": "natürlicher Abschluss"
+ },
+ {
+  "de": "Das NTC. Damit Nährstoffe ankommen, wo sie gebraucht werden.",
+  "alt": "NTC. 영양소가 필요한 곳에 도착하도록.",
+  "neu": "NTC. 영양소가 필요한 곳까지 닿도록.",
+  "grund": "‚도착하도록‘ wörtlich"
+ },
+ {
+  "de": "Für Sportler geprüft",
+  "alt": "운동선수를 위해 검증",
+  "neu": "운동선수 기준으로 검증",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Kölner Liste®. {{#unless joghurt_anzeigen=nein}}Alle vier Produkte.{{/unless}}{{#if joghurt_anzeigen=nein}}Alle drei Produkte.{{/if}} Ohne Beanstandung.",
+  "alt": "Kölner Liste®. {{#unless joghurt_anzeigen=nein}}네 가지 제품 모두.{{/unless}}{{#if joghurt_anzeigen=nein}}세 가지 제품 모두.{{/if}} 문제없음.",
+  "neu": "Kölner Liste®. {{#unless joghurt_anzeigen=nein}}네 가지 제품 모두.{{/unless}}{{#if joghurt_anzeigen=nein}}세 가지 제품 모두.{{/if}} 이상 없음.",
+  "grund": "‚이상 없음‘ ist der übliche Prüfvermerk"
+ },
+ {
+  "de": "Pharma-Standard, freiwillig",
+  "alt": "자발적인 제약 기준",
+  "neu": "자발적으로 지키는 제약 기준",
+  "grund": "natürliche Wortstellung"
+ },
+ {
+  "de": "Made in Germany. Vom Labor bis zur Abfüllung.",
+  "alt": "Made in Germany. 연구실부터 충전까지.",
+  "neu": "Made in Germany. 연구실에서 포장까지.",
+  "grund": "‚충전‘ missverständlich (= Aufladen)"
+ },
+ {
+  "de": "Von der Forschung bis zur Abfüllung passiert alles in Speyer. Kein Outsourcing, keine langen Lieferketten. Du weißt genau, wo dein Optimalset herkommt.",
+  "alt": "연구부터 충전까지 모든 과정이 독일 슈파이어(Speyer)에서 이루어져요. 외주도, 긴 공급망도 없어요. 내 Optimalset이 어디서 오는지 정확히 알 수 있어요.",
+  "neu": "연구부터 포장까지 모든 과정이 독일 슈파이어(Speyer)에서 이루어져요. 외주도, 긴 공급망도 없어요. 내 Optimalset이 어디서 왔는지 정확히 알 수 있어요.",
+  "grund": "‚충전‘ missverständlich"
+ },
+ {
+  "de": "Kaufen und Gutes tun",
+  "alt": "구매하면서 좋은 일도",
+  "neu": "구매하면서 나눔까지",
+  "grund": "griffiger"
+ },
+ {
+  "de": "Volle Zufriedenheit oder Geld zurück",
+  "alt": "완전히 만족하지 않으면 환불",
+  "neu": "만족하지 않으면 전액 환불",
+  "grund": "übliche Garantieformel"
+ },
+ {
+  "de": "Du hast eine 30-tägige Zufriedenheitsgarantie.",
+  "alt": "30일 만족 보장이 있어요.",
+  "neu": "30일 동안 만족을 보장해요.",
+  "grund": "natürlicher"
+ },
+ {
+  "de": "Wenn dir das Optimalset nicht schmeckt, nicht zu dir passt oder es dich aus irgendeinem Grund nicht überzeugt, schickst du die angefangene Verpackung zurück und bekommst auf den Cent alles wieder.",
+  "alt": "Optimalset이 입맛에 맞지 않거나, 나와 맞지 않거나, 어떤 이유로든 마음에 들지 않으면 개봉한 포장을 돌려보내고 한 푼도 빠짐없이 돌려받을 수 있어요.",
+  "neu": "Optimalset이 입맛에 맞지 않거나, 나와 맞지 않거나, 어떤 이유로든 마음에 들지 않으면 개봉한 제품을 그대로 돌려보내면 돼요. 한 푼도 빠짐없이 돌려받아요.",
+  "grund": "flüssiger, ‚포장‘ → Produkt"
+ },
+ {
+  "de": "Innerhalb weniger Tage zurück auf dem Konto.",
+  "alt": "며칠 안에 계좌로 돌아와요.",
+  "neu": "며칠 안에 계좌로 환불돼요.",
+  "grund": "Subjekt fehlte"
+ },
+ {
+  "de": "Liefert das natürliche Koffein im Drink. Aus der Amazonas-Frucht statt synthetisch hergestellt. Wird langsamer freigesetzt als reiner Kaffee.",
+  "alt": "드링크 속 천연 카페인을 공급해요. 합성 대신 아마존 열매에서 얻었어요. 일반 커피보다 천천히 방출돼요.",
+  "neu": "드링크 속 천연 카페인을 공급해요. 합성하지 않고 아마존 열매에서 얻었어요. 일반 커피보다 천천히 방출돼요.",
+  "grund": "‚합성 대신‘ unidiomatisch"
+ },
+ {
+  "de": "Löslicher Ballaststoff aus der Chicoree-Wurzel. {{#unless joghurt_anzeigen=nein}}Im Probiotic-Joghurt-Drink die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/unless}}{{#if joghurt_anzeigen=nein}}Im PowerCocktail die natürliche Nährgrundlage für die enthaltenen Milchsäurekulturen.{{/if}}",
+  "alt": "치커리 뿌리에서 얻은 수용성 식이섬유예요. {{#unless joghurt_anzeigen=nein}}Probiotic Joghurt-Drink 속에서 들어 있는 유산균의 천연 먹이가 돼요.{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail 속에서 들어 있는 유산균의 천연 먹이가 돼요.{{/if}}",
+  "neu": "치커리 뿌리에서 얻은 수용성 식이섬유예요. {{#unless joghurt_anzeigen=nein}}Probiotic Joghurt-Drink에서는 함께 들어 있는 유산균의 천연 먹이가 돼요.{{/unless}}{{#if joghurt_anzeigen=nein}}PowerCocktail에서는 함께 들어 있는 유산균의 천연 먹이가 돼요.{{/if}}",
+  "grund": "Grammatikfehler ‚속에서 들어 있는‘"
+ },
+ {
+  "de": "Bisher",
+  "alt": "지금까지",
+  "neu": "기존 방식",
+  "grund": "Spaltenlabel im Vergleich, ‚지금까지‘ missverständlich"
+ },
+ {
+  "de": "B-Komplex",
+  "alt": "비타민 B 복합체",
+  "neu": "비타민 B 컴플렉스",
+  "grund": "in Korea übliche Produktbezeichnung"
+ },
+ {
+  "de": "Du musst Abstand zu Milch und Calcium halten.",
+  "alt": "우유와 칼슘과는 간격을 두고 먹어야 해요.",
+  "neu": "우유, 칼슘과는 간격을 두고 먹어야 해요.",
+  "grund": "doppeltes ‚과‘ vermieden"
+ },
+ {
+  "de": "Noch unsicher, was du brauchst? <button onclick=\"switchKontaktTab('beratung')\">Lass dich kostenlos beraten</button> — {{#unless team_modus=team}}ich helfe{{/unless}}{{#if team_modus=team}}wir helfen{{/if}} dir persönlich.",
+  "alt": "아직 무엇이 필요한지 잘 모르겠나요? <button onclick=\"switchKontaktTab('beratung')\">무료로 상담받기</button>, {{#unless team_modus=team}}제가{{/unless}}{{#if team_modus=team}}저희가{{/if}} 직접 도와드릴게요.",
+  "neu": "아직 무엇이 필요한지 잘 모르겠나요? <button onclick=\"switchKontaktTab('beratung')\">무료 상담받기</button>. {{#unless team_modus=team}}제가{{/unless}}{{#if team_modus=team}}저희가{{/if}} 직접 도와드릴게요.",
+  "grund": "Komma nach Button unnatürlich, Knopftext wie S30"
+ },
+ {
+  "de": "Viele FitLine-Produkte werden mit Stevia gesüßt. Stevia ist ein natürlicher Pflanzenextrakt aus der gleichnamigen Pflanze, hat praktisch null Kalorien und bringt deinen Blutzucker nicht durcheinander. Das klingt erstmal nach dem typischen Gesundheitstrend, aber der Unterschied zu klassischen Süßungsmitteln wie Aspartam oder Acesulfam-K ist wirklich relevant: Die sind synthetisch hergestellt und stehen schon länger in der Diskussion, weil sie bei manchen Menschen Heißhunger verstärken oder den Darm belasten sollen. Stevia kommt aus der Natur und gilt bei normaler Menge als unbedenklich. Du bekommst also den süßen Geschmack, ohne deinen Körper damit zu belasten.",
+  "alt": "많은 FitLine 제품은 스테비아로 단맛을 내요. 스테비아는 같은 이름의 식물에서 얻은 천연 식물 추출물로, 칼로리가 사실상 0이고 혈당을 흔들지 않아요. 흔한 건강 트렌드처럼 들릴 수 있지만, 아스파탐이나 아세설팜칼륨 같은 기존 감미료와의 차이는 정말 중요해요: 이들은 합성으로 만들어지고, 일부 사람에게 식욕을 자극하거나 장에 부담을 준다는 이유로 오래전부터 논란이 있어 왔어요. 스테비아는 자연에서 왔고, 일반적인 양에서는 안전하다고 여겨져요. 그래서 몸에 부담 없이 단맛을 즐길 수 있어요.",
+  "neu": "많은 FitLine 제품은 스테비아로 단맛을 내요. 스테비아는 같은 이름의 식물에서 얻은 천연 식물 추출물로, 칼로리가 사실상 0이고 혈당을 들쑥날쑥하게 만들지 않아요. 흔한 건강 트렌드처럼 들릴 수 있지만, 아스파탐이나 아세설팜칼륨 같은 기존 감미료와의 차이는 정말 중요해요: 이들은 합성으로 만들어지고, 일부 사람에게 식욕을 자극하거나 장에 부담을 준다는 이유로 오래전부터 논란이 있어 왔어요. 스테비아는 자연에서 왔고, 일반적인 양에서는 안전하다고 여겨져요. 그래서 몸에 부담 없이 단맛을 즐길 수 있어요.",
+  "grund": "‚혈당을 흔들지 않아요‘ unidiomatisch"
+ },
+ {
+  "de": "Nein. Auf Konservierungsstoffe wird bewusst verzichtet. Das funktioniert, weil die Produkte in kleinen, luftdicht versiegelten Tagespäckchen abgepackt sind. Das Pulver hat bis zum Öffnen keinen Kontakt mit Luft oder Feuchtigkeit, also braucht es schlicht keine Konservierung. Sobald du die Packung aufmachst, verwendest du alles auf einmal. Kein Anbruch, keine Oxidation, keine Konservierungsstoffe nötig.",
+  "alt": "아니요. 보존료는 일부러 넣지 않았어요. 제품이 작고 밀봉된 1일분 파우치에 담겨 있어서 가능한 일이에요. 파우더는 개봉 전까지 공기나 습기에 닿지 않으니, 보존할 필요가 아예 없어요. 파우치를 열면 한 번에 다 사용해요. 반쯤 남는 것도, 산화도 없고, 보존료도 필요 없어요.",
+  "neu": "아니요. 보존료는 일부러 넣지 않았어요. 제품이 작고 밀봉된 1일분 파우치에 담겨 있어서 가능한 일이에요. 파우더는 개봉 전까지 공기나 습기에 닿지 않으니, 따로 보존 처리를 할 필요가 없어요. 파우치를 열면 한 번에 다 사용해요. 반쯤 남는 것도, 산화도 없고, 보존료도 필요 없어요.",
+  "grund": "‚보존할 필요가 없어요‘ sinnverschoben"
+ },
+ {
+  "de": "Das ist eine faire Frage, und {{#unless team_modus=team}}ich verstehe{{/unless}}{{#if team_modus=team}}wir verstehen{{/if}} den ersten Gedanken: mehr Verpackung klingt nach mehr Müll. Aber schau mal genauer hin. Ein normales Supplement-Glas enthält 30 oder 60 Portionen, muss mit Trockenmittel und Sauerstoffabsorbern stabilisiert werden, und du öffnest es täglich. Dabei oxidiert der Rest immer weiter. Die Tagespäckchen hier sind luftdicht versiegelt, brauchen deshalb keine Konservierungsstoffe, und es entsteht kein Abfall durch Reste, die schlecht werden. Außerdem sind die Verpackungen aus recycelbarem Material. Perfekt ist das natürlich nicht, aber im direkten Vergleich nachhaltiger als viele große Plastikflaschen, die am Ende halb voll weggeworfen werden.",
+  "alt": "좋은 질문이에요. {{#unless team_modus=team}}저도{{/unless}}{{#if team_modus=team}}저희도{{/if}} 처음 드는 생각은 이해해요: 포장이 많으면 쓰레기도 많아 보이죠. 하지만 조금 더 자세히 볼까요. 일반 영양제 통에는 30회분이나 60회분이 들어 있고, 건조제와 산소 흡수제로 안정성을 유지해야 하며, 매일 열게 돼요. 그동안 남은 내용물은 계속 산화돼요. 여기의 1일분 파우치는 밀봉되어 있어 보존료가 필요 없고, 상해서 버리는 내용물도 생기지 않아요. 게다가 포장재는 재활용 가능한 소재예요. 물론 완벽하진 않지만, 결국 반쯤 남은 채 버려지는 큰 플라스틱 통들과 비교하면 더 지속 가능해요.",
+  "neu": "충분히 나올 수 있는 질문이에요. 처음에 드는 생각, {{#unless team_modus=team}}저도{{/unless}}{{#if team_modus=team}}저희도{{/if}} 이해해요. 포장이 많으면 쓰레기도 많아 보이죠. 하지만 조금 더 자세히 볼까요. 일반 영양제 통에는 30회분이나 60회분이 들어 있고, 건조제와 산소 흡수제로 안정성을 유지해야 하며, 매일 열게 돼요. 그동안 남은 내용물은 계속 산화돼요. 여기의 1일분 파우치는 밀봉되어 있어 보존료가 필요 없고, 상해서 버리는 내용물도 생기지 않아요. 게다가 포장재는 재활용 가능한 소재예요. 물론 완벽하진 않지만, 결국 반쯤 남은 채 버려지는 큰 플라스틱 통들과 비교하면 더 지속 가능해요.",
+  "grund": "‚처음 드는 생각은 이해해요‘ holprig"
+ },
+ {
+  "de": "Ist das ein Schneeballsystem?",
+  "alt": "이거 다단계 사기 아닌가요?",
+  "neu": "이거 불법 다단계 아닌가요?",
+  "grund": "in Korea übliche Formulierung; ‚다단계‘ allein ist legal"
+ },
+ {
+  "de": "Verdienst du Geld, wenn ich bestelle?",
+  "alt": "제가 주문하면 돈을 버나요?",
+  "neu": "제가 주문하면 수익이 생기나요?",
+  "grund": "höflicher, natürlicher"
+ },
+ {
+  "de": "Ja, als {{#unless team_modus=team}}{{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} werde ich{{/unless}}{{#if team_modus=team}}unabhängige Vertriebspartner werden wir{{/if}} am Umsatz beteiligt, wenn du über {{#unless team_modus=team}}mich{{/unless}}{{#if team_modus=team}}uns{{/if}} bestellst. So funktioniert Direktvertrieb. {{#unless team_modus=team}}Mir ist Transparenz dabei wichtig: Mein Ziel ist deine Zufriedenheit{{/unless}}{{#if team_modus=team}}Uns ist Transparenz dabei wichtig: Unser Ziel ist deine Zufriedenheit{{/if}}, nicht der schnelle Abschluss.",
+  "alt": "네, {{#unless team_modus=team}}{{#if geschlecht=weiblich}}독립 판매 파트너인 저는{{/if}}{{#if geschlecht=maennlich}}독립 판매 파트너인 저는{{/if}}{{/unless}}{{#if team_modus=team}}독립 판매 파트너인 저희는{{/if}} {{#unless team_modus=team}}저를{{/unless}}{{#if team_modus=team}}저희를{{/if}} 통해 주문하면 매출의 일부를 받아요. 직접판매는 이렇게 운영돼요. {{#unless team_modus=team}}저에게는 투명성이 중요해요: 제 목표는 만족이에요{{/unless}}{{#if team_modus=team}}저희에게는 투명성이 중요해요: 저희 목표는 만족이에요{{/if}}, 빠른 판매가 아니라요.",
+  "neu": "네, {{#unless team_modus=team}}{{#if geschlecht=weiblich}}독립 판매 파트너로서{{/if}}{{#if geschlecht=maennlich}}독립 판매 파트너로서{{/if}}{{/unless}}{{#if team_modus=team}}독립 판매 파트너로서{{/if}} {{#unless team_modus=team}}저를{{/unless}}{{#if team_modus=team}}저희를{{/if}} 통해 주문이 들어오면 매출의 일부를 받아요. 직접판매는 이렇게 운영돼요. {{#unless team_modus=team}}저에게는 투명성이 중요해요. 제 목표는 빠른 판매가 아니라 주문하는 분의 만족이에요{{/unless}}{{#if team_modus=team}}저희에게는 투명성이 중요해요. 저희 목표는 빠른 판매가 아니라 주문하는 분의 만족이에요{{/if}}.",
+  "grund": "‚저는 저를 통해‘ doppeltes Subjekt; ‚deine Zufriedenheit‘ fehlte, Nachsatz ‚아니라요‘ holprig"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 15 g Pulver (1 Sachet), angerührt mit Wasser. Energie 190 kJ / 45 kcal.",
+  "alt": "<strong>1일 섭취량:</strong> 파우더 15 g(1포)을 물에 타서. 에너지 190 kJ / 45 kcal.",
+  "neu": "<strong>1일 섭취량:</strong> 1포(파우더 15g)를 물에 타서. 에너지 190kJ / 45kcal.",
+  "grund": "Partikel nach Klammer eindeutig, wie übrige Portionsangaben; Einheiten ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 3× 1 Messlöffel (1,67 g) in je 40 ml stilles Wasser. Insgesamt 30 mg Koffein pro Tag.",
+  "alt": "<strong>1일 섭취량:</strong> 계량스푼 1개(1.67 g)를 생수 40 ml에 타서 하루 3회. 하루 카페인 총 30 mg.",
+  "neu": "<strong>1일 섭취량:</strong> 계량스푼 1개(1.67g)를 생수 40ml에 타서 하루 3회. 하루 카페인 총 30mg.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "30 mg Koffein",
+  "alt": "카페인 30 mg",
+  "neu": "카페인 30mg",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g) in Wasser aufgelöst, am Abend vor dem Schlafengehen.",
+  "alt": "<strong>1일 섭취량:</strong> 1포(6.7 g)를 물에 녹여 저녁 잠자리에 들기 전에.",
+  "neu": "<strong>1일 섭취량:</strong> 1포(6.7g)를 물에 녹여 저녁 잠자리에 들기 전에.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Portion:</strong> 100 ml angerührter Drink enthält ca. <strong>100 Milliarden lebende Bakterien</strong>.",
+  "alt": "<strong>1회분:</strong> 만든 드링크 100 ml에 약 <strong>1,000억 마리의 살아 있는 유산균</strong>이 들어 있어요.",
+  "neu": "<strong>1회분:</strong> 만든 드링크 100ml에 약 <strong>1,000억 마리의 살아 있는 유산균</strong>이 들어 있어요.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "Für jeden Tag, an dem du dir selbst etwas Gutes tust. Finde heraus, ob das Optimalset zu dir passt.",
+  "alt": "나를 위해 좋은 일을 하는 매일을 위해. Optimalset이 나에게 맞는지 알아보세요.",
+  "neu": "나를 아끼는 모든 하루를 위해. Optimalset이 나에게 맞는지 알아보세요.",
+  "grund": "‚좋은 일을 하는 매일을 위해‘ holprig"
+ },
+ {
+  "de": "Mehr Energie im Alltag",
+  "alt": "일상에 더 많은 에너지",
+  "neu": "더 활기찬 일상",
+  "grund": "Formularoption natürlicher"
+ },
+ {
+  "de": "Nicht mit Milch oder Calcium kombinieren. Sonst landet kaum etwas im Körper.",
+  "alt": "우유나 칼슘과 함께 먹지 마세요. 그러면 몸에 거의 흡수되지 않아요.",
+  "neu": "우유나 칼슘과 함께 먹지 마세요. 함께 먹으면 몸에 거의 흡수되지 않아요.",
+  "grund": "‚그러면‘ nach Verbot missverständlich"
+ },
+ {
+  "de": "Spät am Abend wirst du davon wach. Du musst es morgens einplanen.",
+  "alt": "저녁 늦게 먹으면 잠이 깨요. 아침에 먹도록 계획해야 해요.",
+  "neu": "저녁 늦게 먹으면 잠이 달아나요. 아침에 먹도록 계획해야 해요.",
+  "grund": "‚잠이 깨요‘ = aufwachen, gemeint: wach halten"
+ },
+ {
+  "de": "Hohe Dosen verstecken einen B12-Mangel. Beides muss aufeinander abgestimmt sein.",
+  "alt": "고용량은 비타민 B12 결핍을 가릴 수 있어요. 두 가지가 서로 맞춰져 있어야 해요.",
+  "neu": "고용량은 비타민 B12 결핍을 가려요. 두 가지가 서로 맞춰져 있어야 해요.",
+  "grund": "exakt wie DE (keine Abschwächung)"
+ },
+ {
+  "de": "Drei kurze Videos, drei Sprachnachrichten, drei Momente und drei geschriebene Eindrücke. Tipp auf eine Karte und schau rein.",
+  "alt": "짧은 영상 세 개, 음성 메시지 세 개, 세 개의 순간 그리고 글로 남긴 세 가지 이야기. 카드를 눌러 확인해 보세요.",
+  "neu": "짧은 영상 세 편, 음성 메시지 세 개, 사진으로 남긴 순간 세 장, 글로 남긴 후기 세 개. 카드를 눌러 확인해 보세요.",
+  "grund": "‚세 개의 순간‘ unidiomatisch, Zählwörter"
+ },
+ {
+  "de": "„Ich fühle mich rundum versorgt, ohne fünf verschiedene Dosen im Schrank stehen zu haben. Der Morgendrink ist mein fester Start in den Tag.\"",
+  "alt": "“다섯 가지 통을 찬장에 두지 않아도 골고루 잘 챙기고 있다는 느낌이에요. 아침 드링크는 제 하루의 고정 시작이에요.”",
+  "neu": "“찬장에 영양제 통을 다섯 개씩 두지 않아도 골고루 잘 챙기고 있다는 느낌이에요. 아침 드링크로 하루를 시작하는 게 제 루틴이 됐어요.”",
+  "grund": "‚고정 시작‘ wörtlich"
+ },
+ {
+  "de": "„War skeptisch, weil ich davon nur in einer Story gesehen hatte. Nach einem ehrlichen Gespräch habe ich es ausprobiert und finde es passt gut.\"",
+  "alt": "“스토리에서만 봐서 처음엔 의심했어요. 솔직한 대화를 나눈 뒤 먹어 봤는데, 저와 잘 맞는 것 같아요.”",
+  "neu": "“스토리에서만 봐서 처음엔 반신반의했어요. 솔직한 대화를 나눈 뒤 먹어 봤는데, 저와 잘 맞는 것 같아요.”",
+  "grund": "‚반신반의‘ natürlicher als ‚의심‘"
+ },
+ {
+  "de": "30 mg Koffein am Tag, unter anderem aus Guarana",
+  "alt": "하루 카페인 30 mg, 그중 일부는 과라나 유래",
+  "neu": "하루 카페인 30mg, 그중 일부는 과라나 유래",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (15 g Pulver) in 180 ml stillem Wasser. Geschmack: Orange-Cassis.",
+  "alt": "<strong>1일 섭취량:</strong> 1포(파우더 15 g)를 생수 180 ml에. 맛: 오렌지 블랙커런트.",
+  "neu": "<strong>1일 섭취량:</strong> 1포(파우더 15g)를 생수 180ml에. 맛: 오렌지 블랙커런트.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Hinweis:</strong> Enthält Koffein (30 mg pro Tagesportion). Für Kinder und schwangere Frauen nicht empfohlen. Glutenfrei, laktosefrei, vegan.",
+  "alt": "<strong>참고:</strong> 카페인 함유(1일 섭취량당 30 mg). 어린이와 임신부에게는 권장하지 않아요. 글루텐 프리, 락토스 프리, 비건.",
+  "neu": "<strong>참고:</strong> 카페인 함유(1일 섭취량당 30mg). 어린이와 임신부에게는 권장하지 않아요. 글루텐 프리, 락토스 프리, 비건.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 3× täglich 1 gestrichener Messlöffel (1,67 g) in 40 ml stillem Wasser, zusammen 5 g Pulver. Geschmack: Cassis.",
+  "alt": "<strong>1일 섭취량:</strong> 평평하게 깎은 계량스푼 1개(1.67 g)를 생수 40 ml에 타서 하루 3회, 파우더 총 5 g. 맛: 블랙커런트.",
+  "neu": "<strong>1일 섭취량:</strong> 평평하게 깎은 계량스푼 1개(1.67g)를 생수 40ml에 타서 하루 3회, 파우더 총 5g. 맛: 블랙커런트.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Hinweis:</strong> Enthält Koffein (30 mg pro Tagesportion). Für Kinder und schwangere Frauen nicht empfohlen. Nicht mehr als einen Messlöffel pro Einzeldosis und drei Messlöffel am Tag. Glutenfrei, vegan.",
+  "alt": "<strong>참고:</strong> 카페인 함유(1일 섭취량당 30 mg). 어린이와 임신부에게는 권장하지 않아요. 1회에 계량스푼 1개, 하루 3개를 넘기지 마세요. 글루텐 프리, 비건.",
+  "neu": "<strong>참고:</strong> 카페인 함유(1일 섭취량당 30mg). 어린이와 임신부에게는 권장하지 않아요. 1회에 계량스푼 1개, 하루 3개를 넘기지 마세요. 글루텐 프리, 비건.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Geschmack der Sorte Citrus: Orange-Zitrone.",
+  "alt": "<strong>1일 섭취량:</strong> 1포(파우더 6.7 g)를 생수 250 ml에, 가능하면 저녁에. Citrus 맛: 오렌지 레몬.",
+  "neu": "<strong>1일 섭취량:</strong> 1포(파우더 6.7g)를 생수 250ml에, 가능하면 저녁에. Citrus 맛: 오렌지 레몬.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Portion:</strong> 200 ml fertiger Drink pro Tag. Aus 1 Beutel (50,5 g) und 1 Liter Milch werden im FitLine Joghurtbereiter 5 Portionen.",
+  "alt": "<strong>1회분:</strong> 완성된 드링크 하루 200 ml. 1포(50.5 g)와 우유 1리터로 FitLine 요거트 메이커에서 5회분이 만들어져요.",
+  "neu": "<strong>1회분:</strong> 완성된 드링크 하루 200ml. 1포(50.5g)와 우유 1리터로 FitLine 요거트 메이커에서 5회분이 만들어져요.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "Nährwerte pro Portion (200 ml)",
+  "alt": "1회분(200 ml)당 영양 성분",
+  "neu": "1회분(200ml)당 영양 성분",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "11 g, davon Zucker 11 g",
+  "alt": "11 g, 그중 당류 11 g",
+  "neu": "11g, 그중 당류 11g",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "0,75 g, davon gesättigt 0,47 g",
+  "alt": "0.75 g, 그중 포화지방 0.47 g",
+  "neu": "0.75g, 그중 포화지방 0.47g",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "Salz",
+  "alt": "나트륨(소금)",
+  "neu": "소금",
+  "grund": "EU-Angabe ‚Salz‘ in g, nicht Natrium"
+ },
+ {
+  "de": "19,8 % im Pulver, Ballaststoff",
+  "alt": "파우더의 19.8 %, 식이섬유",
+  "neu": "파우더의 19.8%, 식이섬유",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "NRV = Prozentwert der Referenzmenge für die tägliche Zufuhr (Erwachsene). Nährwerte für 200 ml, zubereitet mit entrahmter Milch (0,3 % Fett). Enthält Milch und Laktose. Quelle: offizielles Datenblatt PM-International AG.",
+  "alt": "NRV = 1일 섭취 기준량 대비 비율(성인). 탈지유(지방 0.3 %)로 만든 200 ml 기준 영양 성분. 우유와 유당이 들어 있어요. 출처: PM-International AG 공식 데이터 시트.",
+  "neu": "NRV = 1일 섭취 기준량 대비 비율(성인). 탈지유(지방 0.3%)로 만든 200ml 기준 영양 성분. 우유와 유당이 들어 있어요. 출처: PM-International AG 공식 데이터 시트.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "<strong>Tagesportion:</strong> 1 Beutel (6,7 g Pulver) in 250 ml stillem Wasser, idealerweise am Abend. Sorten: Citrus (Orange-Zitrone) und Exotic (Kaktusfeige), beide mit denselben Werten.",
+  "alt": "<strong>1일 섭취량:</strong> 1포(파우더 6.7 g)를 생수 250 ml에, 가능하면 저녁에. 맛: Citrus(오렌지 레몬)와 Exotic(백년초), 둘 다 성분 함량은 같아요.",
+  "neu": "<strong>1일 섭취량:</strong> 1포(파우더 6.7g)를 생수 250ml에, 가능하면 저녁에. 맛: Citrus(오렌지 레몬)와 Exotic(백년초), 둘 다 성분 함량은 같아요.",
+  "grund": "Typografie: Einheit/Prozent ohne Leerzeichen"
+ },
+ {
+  "de": "{{vorname}} {{nachname}} | Täglich optimal versorgt. Und das in Minuten.",
+  "alt": "{{vorname}} {{nachname}} | 매일 최적의 영양을. 단 몇 분 만에.",
+  "neu": "{{vorname}} {{nachname}} | 매일 든든하게 채우는 영양, 단 몇 분이면 돼요.",
+  "grund": "griffiger Slogan statt Wortliste"
+ }
+]

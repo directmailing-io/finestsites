@@ -32,7 +32,7 @@ def call(lang, items, kind):
     msgs=[{"role":"system","content":SYSTEM.replace('{lang}',LANGS[lang])},
           {"role":"user","content":f"Target language: {LANGS[lang]} ({lang}). {NOTES.get(lang,'')} Context: {kind}. Translate these German strings. Input JSON (id → German):\n"+json.dumps(items,ensure_ascii=False)}]
     body={"model":MODEL,"messages":msgs,"response_format":{"type":"json_object"}}
-    for attempt in range(4):
+    for attempt in range(8):   # 429: länger warten
         try:
             req=urllib.request.Request('https://api.openai.com/v1/chat/completions',data=json.dumps(body).encode(),headers={'Authorization':'Bearer '+KEY,'Content-Type':'application/json'})
             d=json.load(urllib.request.urlopen(req,timeout=600))
@@ -40,7 +40,7 @@ def call(lang, items, kind):
             if all(str(k) in out for k in items): return {str(k):out[str(k)] for k in items}
             print('  fehlende ids, retry', file=sys.stderr)
         except Exception as e:
-            print('  fehler', e, file=sys.stderr); time.sleep(5*(attempt+1))
+            print('  fehler', e, file=sys.stderr); time.sleep(30*(attempt+1))
     raise SystemExit('Übersetzung fehlgeschlagen: '+lang)
 def ok(de, xx):
     ph=lambda t: sorted(re.findall(r'\{\{[^}]*\}\}', t)); tg=lambda t: sorted(re.findall(r'<[a-zA-Z/][^>]*>', t))

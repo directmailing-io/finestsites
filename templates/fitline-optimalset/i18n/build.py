@@ -11,24 +11,36 @@ import json, os, re, sys
 HERE=os.path.dirname(os.path.abspath(__file__)); ROOT=os.path.dirname(HERE)
 SRC=os.path.join(ROOT,'index.de-en.html'); OUT=os.path.join(ROOT,'index.html')
 if not os.path.exists(SRC): raise SystemExit('index.de-en.html fehlt (DE/EN-Quelle)')
-LANGS=['it','ru','uk','pl','bg','hi']           # neue Sprachen (de/en sind im Template)
+LANGS=['it','ru','uk','pl','bg','hi','tr','sr','es','zh','ko']   # neue Sprachen (de/en sind im Template); tr/sr/es/zh/ko seit 05.11.2026
 ALL=['de','en']+LANGS
-NAMES={'de':'Deutsch','en':'English','it':'Italiano','ru':'Русский','uk':'Українська','pl':'Polski','bg':'Български','hi':'हिन्दी'}
+NAMES={'de':'Deutsch','en':'English','it':'Italiano','ru':'Русский','uk':'Українська','pl':'Polski','bg':'Български','hi':'हिन्दी','tr':'Türkçe','sr':'Srpski','es':'Español','zh':'中文','ko':'한국어'}
+HTML_LANG={'zh':'zh-Hans','sr':'sr-Latn'}        # lang-Attribut (Glyphenwahl Han/Latin)
 # Sprachname je Sprache: NAMES_IN[aktiv][sprache]
-NAMES_IN={
- 'de':{'de':'Deutsch','en':'Englisch','it':'Italienisch','ru':'Russisch','uk':'Ukrainisch','pl':'Polnisch','bg':'Bulgarisch','hi':'Hindi'},
- 'en':{'de':'German','en':'English','it':'Italian','ru':'Russian','uk':'Ukrainian','pl':'Polish','bg':'Bulgarian','hi':'Hindi'},
- 'it':{'de':'Tedesco','en':'Inglese','it':'Italiano','ru':'Russo','uk':'Ucraino','pl':'Polacco','bg':'Bulgaro','hi':'Hindi'},
- 'ru':{'de':'Немецкий','en':'Английский','it':'Итальянский','ru':'Русский','uk':'Украинский','pl':'Польский','bg':'Болгарский','hi':'Хинди'},
- 'uk':{'de':'Німецька','en':'Англійська','it':'Італійська','ru':'Російська','uk':'Українська','pl':'Польська','bg':'Болгарська','hi':'Гінді'},
- 'pl':{'de':'Niemiecki','en':'Angielski','it':'Włoski','ru':'Rosyjski','uk':'Ukraiński','pl':'Polski','bg':'Bułgarski','hi':'Hindi'},
- 'bg':{'de':'Немски','en':'Английски','it':'Италиански','ru':'Руски','uk':'Украински','pl':'Полски','bg':'Български','hi':'Хинди'},
- 'hi':{'de':'जर्मन','en':'अंग्रेज़ी','it':'इतालवी','ru':'रूसी','uk':'यूक्रेनी','pl':'पोलिश','bg':'बल्गेरियाई','hi':'हिन्दी'},
-}
-SHOP={'en':'en-us','it':'it-it','ru':'ru-ru','uk':'uk-ua','pl':'pl-pl','bg':'bg-bg','hi':'hi-in'}
+NAMES_IN={}
+_ORDER=['de','en','it','ru','uk','pl','bg','hi','tr','sr','es','zh','ko']
+for _a,_row in {
+ 'de':'Deutsch|Englisch|Italienisch|Russisch|Ukrainisch|Polnisch|Bulgarisch|Hindi|Türkisch|Serbisch|Spanisch|Chinesisch|Koreanisch',
+ 'en':'German|English|Italian|Russian|Ukrainian|Polish|Bulgarian|Hindi|Turkish|Serbian|Spanish|Chinese|Korean',
+ 'it':'Tedesco|Inglese|Italiano|Russo|Ucraino|Polacco|Bulgaro|Hindi|Turco|Serbo|Spagnolo|Cinese|Coreano',
+ 'ru':'Немецкий|Английский|Итальянский|Русский|Украинский|Польский|Болгарский|Хинди|Турецкий|Сербский|Испанский|Китайский|Корейский',
+ 'uk':'Німецька|Англійська|Італійська|Російська|Українська|Польська|Болгарська|Гінді|Турецька|Сербська|Іспанська|Китайська|Корейська',
+ 'pl':'Niemiecki|Angielski|Włoski|Rosyjski|Ukraiński|Polski|Bułgarski|Hindi|Turecki|Serbski|Hiszpański|Chiński|Koreański',
+ 'bg':'Немски|Английски|Италиански|Руски|Украински|Полски|Български|Хинди|Турски|Сръбски|Испански|Китайски|Корейски',
+ 'hi':'जर्मन|अंग्रेज़ी|इतालवी|रूसी|यूक्रेनी|पोलिश|बल्गेरियाई|हिन्दी|तुर्की|सर्बियाई|स्पेनिश|चीनी|कोरियाई',
+ 'tr':'Almanca|İngilizce|İtalyanca|Rusça|Ukraynaca|Lehçe|Bulgarca|Hintçe|Türkçe|Sırpça|İspanyolca|Çince|Korece',
+ 'sr':'Nemački|Engleski|Italijanski|Ruski|Ukrajinski|Poljski|Bugarski|Hindi|Turski|Srpski|Španski|Kineski|Korejski',
+ 'es':'Alemán|Inglés|Italiano|Ruso|Ucraniano|Polaco|Búlgaro|Hindi|Turco|Serbio|Español|Chino|Coreano',
+ 'zh':'德语|英语|意大利语|俄语|乌克兰语|波兰语|保加利亚语|印地语|土耳其语|塞尔维亚语|西班牙语|中文|韩语',
+ 'ko':'독일어|영어|이탈리아어|러시아어|우크라이나어|폴란드어|불가리아어|힌디어|터키어|세르비아어|스페인어|중국어|한국어',
+}.items():
+    NAMES_IN[_a]=dict(zip(_ORDER,_row.split('|'))); assert len(NAMES_IN[_a])==13
+VIDEO_LANGS=['en','it','ru','uk','pl','bg','hi']   # videos/darm_{lang}.mp4 in R2; Sprachen ohne eigene Tonspur bekommen die englische
+SHOP={'en':'en-us','it':'it-it','ru':'ru-ru','uk':'uk-ua','pl':'pl-pl','bg':'bg-bg','hi':'hi-in','tr':'tr-tr','sr':'sr-rs','es':'es-es','zh':'zh-cn','ko':'ko-kr'}
 USER_FIELDS=['about_me_html']                   # Nutzertexte mit Sprachvarianten {key}_{lang}
 
 html=open(SRC,encoding='utf-8').read()
+n_lang=html.count("document.documentElement.setAttribute('lang', l);"); assert n_lang==2, n_lang
+html=html.replace("document.documentElement.setAttribute('lang', l);", "document.documentElement.setAttribute('lang', (%s)[l] || l);" % json.dumps(HTML_LANG))
 
 # 0a) „Über mich“ an zwei Positionen (Editor-Feld about_position: oben | leer/unten; „mitte“ am 27.10.2026 auf Daniels Wunsch gestrichen).
 #     Die Quelle enthält die Sektion genau EINMAL (zwischen @@about:start/@@about:end) plus den Slot-Marker für oben;
@@ -120,7 +132,19 @@ html=html.replace(old_detect.group(0), """var SUP = %s;
 # 4) fsApplyLang: Attribute, Shop-Links, Video, Titel
 js=json.load(open(os.path.join(HERE,'js-strings.json')))
 js_keys=list(js)+[k for k in JS_EXTRA if k not in js]
-i18n={'attrs':{l:tr[l]['attrs'] for l in tr}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js_keys} for l in tr}, 'shop':SHOP, 'names':NAMES, 'langs':ALL}
+src_en={x['de']:x['en'] for x in json.load(open(os.path.join(HERE,'source.json')))}
+attrs_de=json.load(open(os.path.join(HERE,'attrs.json')))
+rows_en=dict(re.findall(r"\['[^']+', '(?:placeholder|aria-label|title|alt)', '((?:[^'\\]|\\.)*)', '((?:[^'\\]|\\.)*)'\]", html))   # fsLangAttrs: DE → EN
+mt=re.search(r"var fsMetaTitle = \['([^']*)', '([^']*)'\]", html); md=re.search(r"var fsMetaDesc = \[\s*'([^']*)',\s*'([^']*)'", html)
+for mm in (mt,md):
+    if mm: rows_en[mm.group(1)]=mm.group(2)
+attrs_en={a:(rows_en.get(a) or re.sub(r'<[^>]+>','',src_en.get(a,a))) for a in attrs_de}
+# Attribute: zusätzlich alle kurzen sichtbaren Strings (ohne Tags/Platzhalter) als Wörterbuch, damit alt/title mit gleichem DE-Text (z. B. „Calcium“) mitübersetzt werden
+def attr_dict(l):
+    base={k:re.sub(r'<[^>]+>','',v) for k,v in tr[l]['strings'].items() if len(k)<=60 and '<' not in k and '{{' not in k}
+    base.update(tr[l]['attrs']); return base
+attrs_en_all={k:re.sub(r'<[^>]+>','',v) for k,v in src_en.items() if len(k)<=60 and '<' not in k and '{{' not in k}; attrs_en_all.update(attrs_en)
+i18n={'attrs':{**{l:attr_dict(l) for l in tr}, 'en':attrs_en_all}, 'js':{l:{de:tr[l]['strings'].get(de,de) for de in js_keys} for l in tr}, 'shop':SHOP, 'names':NAMES, 'langs':ALL}
 html=html.replace("  function fsApplyLang(l) {\n    var en = l === 'en';",
 """  var FS_I18N = %s;
   function fsT(l, de) { var d = FS_I18N.attrs[l]; return (d && d[de]) ? d[de] : de; }
@@ -132,9 +156,39 @@ html=html.replace("  function fsApplyLang(l) {\n    var en = l === 'en';",
     return h;
   }
   window.fsJsSpans = fsJsSpans; window.fsJ = fsJ; window.fsT = fsT;
+  function fsCjkFonts(l) {
+    var id = 'fs-cjk-' + l; if (document.getElementById(id)) return;
+    var fam = l === 'zh' ? 'Noto+Sans+SC:wght@400;500;600;700' : 'Noto+Sans+KR:wght@400;500;600;700';
+    var lk = document.createElement('link'); lk.id = id; lk.rel = 'stylesheet'; lk.href = 'https://fonts.googleapis.com/css2?family=' + fam + '&display=swap';
+    document.head.appendChild(lk);
+  }
+  var FS_ATTR_NAMES = ['alt', 'aria-label', 'placeholder', 'title'];
+  /* Alle Attribute mit Text in die Sprache l; Original (DE) wird beim ersten Lauf in data-fs-de-* gemerkt; auch spaeter eingefuegte Elemente (Observer) */
+  function fsAttrAll(l) {
+    var dict = l === 'de' ? null : (FS_I18N.attrs[l] || null);
+    if (l !== 'de' && !dict) return;
+    document.querySelectorAll('[alt],[aria-label],[placeholder],[title]').forEach(function(el) {
+      FS_ATTR_NAMES.forEach(function(a) {
+        if (!el.hasAttribute(a)) return;
+        var k = 'data-fs-de-' + a, de = el.getAttribute(k);
+        if (de === null) { de = el.getAttribute(a); el.setAttribute(k, de); }
+        var v = dict ? (dict[de] || de) : de;
+        if (el.getAttribute(a) !== v) el.setAttribute(a, v);
+      });
+    });
+  }
+  (function() {
+    var pending = false;
+    function run() { pending = false; var l = document.documentElement.getAttribute('data-lang') || 'de'; if (l !== 'de') fsAttrAll(l); }
+    function arm() { if (!pending) { pending = true; requestAnimationFrame(run); } }
+    function start() { new MutationObserver(arm).observe(document.body, { childList: true, subtree: true }); run(); }
+    if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+  })();
   function fsApplyLang(l) {
     var en = l === 'en';
-    var other = FS_I18N.langs.indexOf(l) > 1;""" % json.dumps(i18n, ensure_ascii=False).replace('</', '<\\/'))
+    var other = FS_I18N.langs.indexOf(l) > 1;
+    fsAttrAll(l);
+    if (l === 'zh' || l === 'ko') fsCjkFonts(l);""" % json.dumps(i18n, ensure_ascii=False).replace('</', '<\\/'))
 # Attribute: en → Spalte 3, andere → Wörterbuch, de → Spalte 2
 html=html.replace("document.querySelectorAll(row[0]).forEach(function(el) { el.setAttribute(row[1], en ? row[3] : row[2]); });",
                   "document.querySelectorAll(row[0]).forEach(function(el) { el.setAttribute(row[1], en ? row[3] : other ? fsT(l, row[2]) : row[2]); });")
@@ -149,7 +203,7 @@ html=html.replace(old_shop,"a.setAttribute('href', FS_I18N.shop[l] ? de.replace(
 # Video
 old_vid="var want = en ? 'videos/darm_en.mp4' : 'videos/darm.mp4';"
 assert old_vid in html
-html=html.replace(old_vid,"var want = l === 'de' ? 'videos/darm.mp4' : 'videos/darm_' + l + '.mp4';")
+html=html.replace(old_vid,"var want = l === 'de' ? 'videos/darm.mp4' : 'videos/darm_' + (%s.indexOf(l) >= 0 ? l : 'en') + '.mp4';" % json.dumps(VIDEO_LANGS))
 # Initial anwenden (nicht nur bei en)
 html=html.replace("if (document.documentElement.getAttribute('data-lang') === 'en') fsApplyLang('en');",
                   "(function(){ var cur = document.documentElement.getAttribute('data-lang'); if (cur && cur !== 'de') fsApplyLang(cur); })();")
@@ -164,6 +218,11 @@ def flag(l):
        'uk':'<rect width="20" height="10" fill="#0057B7"/><rect y="10" width="20" height="10" fill="#FFD700"/>',
        'pl':'<rect width="20" height="10" fill="#fff"/><rect y="10" width="20" height="10" fill="#DC143C"/>',
        'bg':'<rect width="20" height="7" fill="#fff"/><rect y="7" width="20" height="6" fill="#00966E"/><rect y="13" width="20" height="7" fill="#D62612"/>',
+       'tr':'<rect width="20" height="20" fill="#E30A17"/><circle cx="8" cy="10" r="5" fill="#fff"/><circle cx="9.2" cy="10" r="4" fill="#E30A17"/><path d="M13.9 7.9l.7 1.8 1.9.1-1.5 1.2.5 1.9-1.6-1.1-1.6 1.1.5-1.9-1.5-1.2 1.9-.1z" fill="#fff"/>',
+       'sr':'<rect width="20" height="7" fill="#C6363C"/><rect y="7" width="20" height="6" fill="#0C4076"/><rect y="13" width="20" height="7" fill="#fff"/>',
+       'es':'<rect width="20" height="20" fill="#AA151B"/><rect y="5" width="20" height="10" fill="#F1BF00"/>',
+       'zh':'<rect width="20" height="20" fill="#DE2910"/><path d="M6 3.4l1.2 3.4h3.6L7.9 8.9l1.1 3.4L6 10.2l-3 2.1 1.1-3.4-2.9-2.1h3.6z" fill="#FFDE00"/><circle cx="11.6" cy="3.6" r="1" fill="#FFDE00"/><circle cx="13.6" cy="6" r="1" fill="#FFDE00"/><circle cx="13.6" cy="9" r="1" fill="#FFDE00"/><circle cx="11.6" cy="11.4" r="1" fill="#FFDE00"/>',
+       'ko':'<rect width="20" height="20" fill="#fff"/><path d="M5 10A5 5 0 0 1 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#CD2E3A"/><path d="M5 10A5 5 0 0 0 15 10A2.5 2.5 0 0 1 10 10A2.5 2.5 0 0 0 5 10Z" fill="#0047A0"/>',
        'hi':'<rect width="20" height="7" fill="#FF9933"/><rect y="7" width="20" height="6" fill="#fff"/><rect y="13" width="20" height="7" fill="#138808"/><circle cx="10" cy="10" r="2.2" fill="none" stroke="#000080" stroke-width="0.8"/>'}
     return f'<span class="lang-flag"><svg viewBox="0 0 20 20" aria-hidden="true">{F[l]}</svg></span>'
 def menu(variant):
@@ -195,6 +254,17 @@ css="""<style data-fs-i18n>
 .lang-sub { font-size: 11px; font-weight: 400; color: #9CA3AF; white-space: nowrap; }
 """ + ''.join(f'html[data-lang="{l}"] .lang-item[data-lang="{l}"] {{ background: #F3F4F6; font-weight: 600; }}\n' for l in ALL) + """
 .lang-switch-mobile { margin-left: auto; margin-right: 10px; }
+/* CJK/Hindi: keine Sperrung, kein Kursiv, serifenlose Systemschrift (Noto Sans SC/KR wird nur bei aktiver Sprache nachgeladen), ruhigere Titelgroessen */
+html[data-lang="hi"] body, html[data-lang="hi"] body *, html[data-lang="zh"] body, html[data-lang="zh"] body *, html[data-lang="ko"] body, html[data-lang="ko"] body * { letter-spacing: normal !important; }
+html[data-lang="zh"] { --font-heading: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', sans-serif; --font-body: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Source Han Sans SC', sans-serif; }
+html[data-lang="ko"] { --font-heading: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Source Han Sans KR', sans-serif; --font-body: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Source Han Sans KR', sans-serif; }
+html[data-lang="zh"] body *, html[data-lang="ko"] body * { font-style: normal !important; }
+html[data-lang="zh"] h1, html[data-lang="ko"] h1, html[data-lang="zh"] h2, html[data-lang="ko"] h2, html[data-lang="zh"] h3, html[data-lang="ko"] h3 { font-weight: 600; }
+html[data-lang="zh"] h1, html[data-lang="ko"] h1 { line-height: 1.25; }
+html[data-lang="zh"] h2, html[data-lang="ko"] h2 { line-height: 1.3; }
+html[data-lang="zh"] p, html[data-lang="zh"] li { line-height: 1.75; }
+html[data-lang="ko"] p, html[data-lang="ko"] li { line-height: 1.7; }
+html[data-lang="ko"] body { word-break: keep-all; overflow-wrap: break-word; }
 @media (prefers-reduced-motion: reduce) { .lang-list, .lang-caret, .lang-cur, .lang-item { transition: none; } }
 </style>"""
 html=html.replace('</head>', css+'\n</head>',1)
