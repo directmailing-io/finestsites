@@ -1,0 +1,446 @@
+[
+  {
+    "de": "Wofür?",
+    "alt": "무엇을 위해서요?",
+    "neu": "장점",
+    "grund": "Nav-Link: Frage wirkt sperrig, kurzes Stichwort"
+  },
+  {
+    "de": "Schreib mir auf WhatsApp",
+    "alt": "WhatsApp으로 메시지 보내기",
+    "neu": "WhatsApp으로 메시지 주세요",
+    "grund": "„Schreib mir“ als Bitte statt Funktionsbeschriftung"
+  },
+  {
+    "de": "Mit vorbereiteter Nachricht, direkt im Chat",
+    "alt": "준비된 메시지로 바로 채팅해요",
+    "neu": "메시지가 미리 작성돼 있어 바로 채팅할 수 있어요",
+    "grund": "„준비된 메시지로“ wörtlich"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melde ich mich",
+    "alt": "짧은 셀프 체크 후 제가 연락드릴게요",
+    "neu": "간단한 셀프 체크 후 제가 연락드릴게요",
+    "grund": "einheitlich „간단한 셀프 체크“"
+  },
+  {
+    "de": "Kurzer Selbst-Check, dann melden wir uns",
+    "alt": "짧은 셀프 체크 후 저희가 연락드릴게요",
+    "neu": "간단한 셀프 체크 후 저희가 연락드릴게요",
+    "grund": "einheitlich „간단한 셀프 체크“"
+  },
+  {
+    "de": "Folge mir auf",
+    "alt": "팔로우하기",
+    "neu": "팔로우해 주세요",
+    "grund": "Überschrift über Social-Pills, natürlicher"
+  },
+  {
+    "de": "Folgt uns auf",
+    "alt": "저희 팔로우하기",
+    "neu": "저희를 팔로우해 주세요",
+    "grund": "wie oben, Duo"
+  },
+  {
+    "de": "Mehr Energie. Klarer Kopf. <span class=\"mark\">Mit mehr Leichtigkeit.</span>",
+    "alt": "에너지는 더 채우고. 머리는 더 맑게. <span class=\"mark\">더 가볍게.</span>",
+    "neu": "더 많은 에너지. 더 맑은 머리. <span class=\"mark\">한결 가볍게.</span>",
+    "grund": "Satzfragmente mit „채우고.“ holprig"
+  },
+  {
+    "de": "Starte deinen <strong>Stoffwechsel-Reset</strong>. Keine Diät, keine Shakes, kein Zählen. Dafür <strong>4 feste Mahlzeiten</strong> und <strong>patentierte Supplemente</strong>, damit sich dein Alltag <strong>richtig gut anfühlt.</strong>",
+    "alt": "당신의 <strong>대사 리셋</strong>을 시작해요. 다이어트도, 쉐이크도, 계산도 아니에요. 대신 <strong>하루 4번 정해진 식사</strong>와 <strong>특허받은 서플리먼트</strong>로, 일상이 <strong>훨씬 기분 좋게 느껴지도록요.</strong>",
+    "neu": "<strong>대사 리셋</strong>을 시작해 보세요. 다이어트도, 셰이크도, 칼로리 계산도 없어요. 대신 <strong>하루 4번 정해진 식사</strong>와 <strong>특허받은 서플리먼트</strong>로 일상이 <strong>확실히 좋아지는 걸 느낄 수 있게요.</strong>",
+    "grund": "당신 entfernt; Schreibweise 셰이크; „계산도 아니에요“ unnatürlich"
+  },
+  {
+    "de": "{{#unless partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}}</b>, {{#if geschlecht=weiblich}}unabhängige Vertriebspartnerin{{/if}}{{#if geschlecht=maennlich}}unabhängiger Vertriebspartner{{/if}} der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/unless}}{{#if partner_modus=duo}}Diese Seite wird betrieben von <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>, unabhängige Vertriebspartner der PM-International (FitLine®). Keine offizielle Website der PM-International AG.{{/if}}",
+    "alt": "{{#unless partner_modus=duo}}이 페이지는 PM-International (FitLine®)의 {{#if geschlecht=weiblich}}독립 판매 파트너{{/if}}{{#if geschlecht=maennlich}}독립 판매 파트너{{/if}}인 <b>{{vorname}} {{nachname}}</b>가 운영해요. PM-International AG의 공식 웹사이트가 아니에요.{{/unless}}{{#if partner_modus=duo}}이 페이지는 PM-International (FitLine®)의 독립 판매 파트너인 <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b>가 운영해요. PM-International AG의 공식 웹사이트가 아니에요.{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}이 페이지는 PM-International (FitLine®)의 {{#if geschlecht=weiblich}}독립 판매 파트너{{/if}}{{#if geschlecht=maennlich}}독립 판매 파트너{{/if}}인 <b>{{vorname}} {{nachname}}</b> 님이 운영해요. PM-International AG의 공식 웹사이트가 아니에요.{{/unless}}{{#if partner_modus=duo}}이 페이지는 PM-International (FitLine®)의 독립 판매 파트너인 <b>{{vorname}} {{nachname}} &amp; {{vorname2}} {{nachname2}}</b> 님이 운영해요. PM-International AG의 공식 웹사이트가 아니에요.{{/if}}",
+    "grund": "Partikel 가 direkt am Namen (Batchim-abhängig) durch „님이“ ersetzt; beide geschlecht-Blöcke erhalten"
+  },
+  {
+    "de": "So einfach ist <span class=\"mark\">das Ganze.</span>",
+    "alt": "전체 과정은 <span class=\"mark\">이렇게 간단해요.</span>",
+    "neu": "알고 보면 <span class=\"mark\">정말 간단해요.</span>",
+    "grund": "„전체 과정은“ wörtlich"
+  },
+  {
+    "de": "Was wir geben",
+    "alt": "무엇을 챙기나요?",
+    "neu": "무엇을 더하나요?",
+    "grund": "parallel zu „어떻게 먹나요? / 무엇을 빼나요?“"
+  },
+  {
+    "de": "Hochwertige Vitalstoffe aus einem patentierten Konzept. Nicht aus dem Supermarktregal.",
+    "alt": "특허받은 콘셉트로 만든 고품질 바이탈 영양소예요. 마트 진열대에서 고르는 제품이 아니에요.",
+    "neu": "특허받은 콘셉트로 만든 고품질 영양소예요. 마트 진열대에서 아무거나 집어 드는 제품이 아니에요.",
+    "grund": "„바이탈 영양소“ ungebräuchlich"
+  },
+  {
+    "de": "4× feste Mahlzeiten",
+    "alt": "정해진 식사 4번",
+    "neu": "정해진 식사, 하루 4번",
+    "grund": "natürlichere Reihenfolge"
+  },
+  {
+    "de": "<b>Diese drei Bausteine wirken zusammen.</b> Nur wenn du alle drei kombinierst, entfaltet sich der Reset-Effekt.",
+    "alt": "<b>이 세 가지 요소가 함께 작용해요.</b> 세 가지를 모두 결합할 때 리셋 효과가 나타나요.",
+    "neu": "<b>이 세 가지 요소가 함께 작용해요.</b> 세 가지를 모두 함께 지킬 때 비로소 리셋 효과가 나타나요.",
+    "grund": "„결합할 때“ technisch"
+  },
+  {
+    "de": "In der Aktivierungsphase orientierst du dich am Prinzip der <b>ketogenen Ernährung</b>. Klingt kompliziert, ist es aber nicht: ähnliches Prinzip wie <b>klassisches Keto</b>, nur <b>ohne extreme Fett-Löffel</b> und <b>ohne ständigen Verzicht</b>.",
+    "alt": "활성화 단계에서는 <b>케토제닉 식단</b> 원리를 기준으로 먹어요. 복잡하게 들리지만 그렇지 않아요. <b>클래식 케토</b>와 비슷한 원리예요. 다만 <b>지나치게 지방을 퍼먹는 방식은 아니고</b>, <b>계속 참기만 하는 방식도 아니에요</b>.",
+    "neu": "활성화 단계에서는 <b>케토제닉 식단</b>의 원리를 따라요. 복잡하게 들리지만 사실 그렇지 않아요. <b>클래식 케토</b>와 원리는 비슷하지만, <b>지방을 극단적으로 챙겨 먹지 않아도 되고</b> <b>계속 참기만 할 필요도 없어요</b>.",
+    "grund": "„지방을 퍼먹는“ salopp/schief; flüssiger"
+  },
+  {
+    "de": "Vorher",
+    "alt": "이전",
+    "neu": "변화 전",
+    "grund": "„이전“ als Diagramm-Label unklar"
+  },
+  {
+    "de": "Energie bleibt stabil. Du bist länger satt und dein Körper nutzt die eigenen Reserven.",
+    "alt": "에너지가 안정적으로 유지돼요. 더 오래 포만감이 가고, 몸은 자기 안의 저장분을 사용해요.",
+    "neu": "에너지가 안정적으로 유지돼요. 포만감이 더 오래가고, 몸은 스스로 저장해 둔 에너지를 써요.",
+    "grund": "„자기 안의 저장분“ wörtlich"
+  },
+  {
+    "de": "Das sind die Rückmeldungen, die immer wieder kommen. Klar, jeder Körper reagiert anders.",
+    "alt": "반복해서 자주 들리는 피드백들이에요. 물론 몸은 사람마다 다르게 반응해요.",
+    "neu": "자주 듣는 이야기들이에요. 물론 몸은 사람마다 다르게 반응해요.",
+    "grund": "„반복해서 자주 들리는 피드백들“ doppelt/holprig"
+  },
+  {
+    "de": "Bessere Konzentration und mehr Fokus, wenn du sie brauchst.",
+    "alt": "필요할 때 더 잘 집중하고, 초점을 맞추기 쉬워져요.",
+    "neu": "필요할 때 더 잘 집중할 수 있어요.",
+    "grund": "„초점을 맞추기“ doppelt und wörtlich"
+  },
+  {
+    "de": "Kein Ziehen nach unten mehr. Du merkst wieder, dass dein Körper mit dir arbeitet, nicht gegen dich.",
+    "alt": "몸이 아래로 끌려 내려가는 느낌이 줄어요. 몸이 나를 거스르는 게 아니라, 나와 함께 움직인다는 걸 다시 느껴요.",
+    "neu": "몸이 축 처지는 느낌이 없어요. 몸이 나를 거스르는 게 아니라, 나와 함께 움직인다는 걸 다시 느껴요.",
+    "grund": "„아래로 끌려 내려가는“ wörtlich"
+  },
+  {
+    "de": "Der Morgen fühlt sich anders an. Weniger schwerfällig, mehr sofort da.",
+    "alt": "아침 느낌이 달라져요. 덜 무겁고, 더 빨리 깨어 있는 느낌이에요.",
+    "neu": "아침 느낌이 달라져요. 덜 무겁고, 일어나자마자 정신이 들어요.",
+    "grund": "„mehr sofort da“ natürlich"
+  },
+  {
+    "de": "05 · Kontrolle",
+    "alt": "05 · 컨트롤",
+    "neu": "05 · 조절",
+    "grund": "Anglizismus 컨트롤 vermeiden"
+  },
+  {
+    "de": "Kein ständiges Denken ans nächste Essen. Kein Nasch-Zwang um drei. Wird einfach leiser.",
+    "alt": "다음에 뭘 먹을지 계속 생각하지 않아요. 오후 3시에 단 게 당기는 강박도 줄어들어요. 그냥 점점 조용해져요.",
+    "neu": "다음 끼니 생각이 계속 맴돌지 않아요. 오후 3시만 되면 군것질 생각나던 것도 없어요. 그냥 자연스럽게 잠잠해져요.",
+    "grund": "„강박도 줄어들어요“ schwächer als DE und steif; „wird leiser“ natürlich"
+  },
+  {
+    "de": "Klingt nach dem was du suchst? <span class=\"accent\">{{#unless partner_modus=duo}}Ich erklär{{/unless}}{{#if partner_modus=duo}}Wir erklären{{/if}} dir alles.</span>",
+    "alt": "찾던 게 이런 느낌인가요? <span class=\"accent\">{{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 다 설명해드릴게요.</span>",
+    "neu": "찾고 있던 게 바로 이건가요? <span class=\"accent\">{{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 다 설명해 드릴게요.</span>",
+    "grund": "natürlichere Frage"
+  },
+  {
+    "de": "Kurz mit {{#unless partner_modus=duo}}{{vorname}}{{/unless}}{{#if partner_modus=duo}}uns{{/if}} schreiben",
+    "alt": "{{#unless partner_modus=duo}}{{vorname}}: 잠깐 메시지하기{{/unless}}{{#if partner_modus=duo}}저희에게 잠깐 메시지하기{{/if}}",
+    "neu": "{{#unless partner_modus=duo}}{{vorname}} 님에게 메시지 보내기{{/unless}}{{#if partner_modus=duo}}저희에게 메시지 보내기{{/if}}",
+    "grund": "Name mit 님 statt Doppelpunkt; „잠깐 메시지하기“ ungelenk"
+  },
+  {
+    "de": "Und wie kommst du dahin?",
+    "alt": "그럼 어떻게 거기까지 갈까요?",
+    "neu": "그럼 어떻게 하면 될까요?",
+    "grund": "„거기까지 갈까요“ wörtlich"
+  },
+  {
+    "de": "Kein Sport nötig",
+    "alt": "운동은 필수 아니에요",
+    "neu": "운동 안 해도 돼요",
+    "grund": "parallel zu „칼로리 계산 안 해도 돼요“"
+  },
+  {
+    "de": "Vorbereiten",
+    "alt": "준비하기",
+    "neu": "준비",
+    "grund": "Phasenname als Nomen, kürzer"
+  },
+  {
+    "de": "Aktivieren",
+    "alt": "활성화하기",
+    "neu": "활성화",
+    "grund": "Phasenname als Nomen, kürzer"
+  },
+  {
+    "de": "Stabilisieren",
+    "alt": "안정시키기",
+    "neu": "안정화",
+    "grund": "Phasenname als Nomen, kürzer"
+  },
+  {
+    "de": "Du bringst mehr Vielfalt auf den Teller und hältst die Struktur.",
+    "alt": "식단에 더 다양한 음식을 더하면서 구조는 그대로 지켜요.",
+    "neu": "식단에 더 다양한 음식을 더하면서 식사 리듬은 그대로 지켜요.",
+    "grund": "„구조“ wörtlich"
+  },
+  {
+    "de": "Du isst bewusst, Ausnahmen gehören dazu.",
+    "alt": "의식해서 먹고, 예외도 자연스럽게 받아들여요.",
+    "neu": "신경 써서 먹되, 가끔의 예외도 괜찮아요.",
+    "grund": "„의식해서 먹고“ steif"
+  },
+  {
+    "de": "Jeder Tag hat <span class=\"mark\">eine Farbe.</span>",
+    "alt": "매일은 <span class=\"mark\">하나의 색으로 나뉘어요.</span>",
+    "neu": "매일 <span class=\"mark\">색깔이 정해져 있어요.</span>",
+    "grund": "„하나의 색으로 나뉘어요“ schief"
+  },
+  {
+    "de": "Nur Eiweiß, gute Fette, der probiotische Joghurt am Morgen und die Nährstoff-Konzentrate. Auch kein Gemüse. Klingt strikt, gehört aber zur Kernphase dazu.",
+    "alt": "단백질, 좋은 지방, 아침의 프로바이오틱 요거트, 영양소 농축 제품만 먹어요. 채소도 없어요. 엄격하게 들리지만, 핵심 단계에 포함되는 부분이에요.",
+    "neu": "단백질, 좋은 지방, 아침의 프로바이오틱 요거트, 영양소 농축 제품만 먹어요. 채소도 안 먹어요. 엄격하게 들리지만, 핵심 단계에 포함되는 부분이에요.",
+    "grund": "„채소도 없어요“ natürlicher"
+  },
+  {
+    "de": "Milch",
+    "alt": "우유",
+    "neu": "유제품",
+    "grund": "Chart meint Milchprodukte (Kernphase ohne Milchprodukte)"
+  },
+  {
+    "de": "Grüner Tag",
+    "alt": "그린 데이",
+    "neu": "초록색 날",
+    "grund": "einheitlich mit 흰색 날 (vorher „그린 데이“)"
+  },
+  {
+    "de": "Der Normal-Tag",
+    "alt": "보통 날",
+    "neu": "평범한 날",
+    "grund": "„보통 날“ klingt wie Wertung"
+  },
+  {
+    "de": "Roter Tag",
+    "alt": "레드 데이",
+    "neu": "빨간색 날",
+    "grund": "einheitlich mit 흰색 날 (vorher „레드 데이“)"
+  },
+  {
+    "de": "Alles erlaubt",
+    "alt": "뭐든지 가능",
+    "neu": "뭐든 괜찮아요",
+    "grund": "natürlicher"
+  },
+  {
+    "de": "dauerhaft",
+    "alt": "지속적으로",
+    "neu": "계속",
+    "grund": "kurzes Label in der Wiederholungs-Spalte"
+  },
+  {
+    "de": "Wir nutzen bewusst das <strong>FitLine-Produktkonzept</strong>. Grund: gutes Essen allein reicht oft nicht. Was du zusätzlich brauchst, muss auch wirklich im Körper ankommen.",
+    "alt": "저희는 <strong>FitLine-제품 콘셉트</strong>를 의식적으로 선택해요. 이유는 간단해요: 좋은 음식을 먹는 것만으로는 부족할 때가 많거든요. 추가로 필요한 것도 몸에 제대로 도달해야 해요.",
+    "neu": "저희는 <strong>FitLine 제품 콘셉트</strong>를 신중하게 골라서 써요. 이유는 간단해요. 좋은 음식만으로는 부족할 때가 많거든요. 추가로 챙기는 것도 몸에 제대로 도달해야 해요.",
+    "grund": "Bindestrich „FitLine-제품“ unkoreanisch; „의식적으로 선택“ wörtlich"
+  },
+  {
+    "de": "Geschützte Forschung im Nährstoff-Transport",
+    "alt": "영양소 전달 분야의 보호된 연구",
+    "neu": "특허로 보호받는 영양소 전달 연구",
+    "grund": "„보호된 연구“ wörtlich"
+  },
+  {
+    "de": "Made in Germany",
+    "alt": "독일 제조",
+    "neu": "독일산",
+    "grund": "natürliche Herkunftsangabe"
+  },
+  {
+    "de": "Nach strengsten deutschen Standards produziert",
+    "alt": "엄격한 독일 기준에 맞춰 생산돼요",
+    "neu": "가장 엄격한 독일 기준으로 생산돼요",
+    "grund": "„strengsten“ (Superlativ) fehlte"
+  },
+  {
+    "de": "Spitzensportler",
+    "alt": "엘리트 선수",
+    "neu": "정상급 선수",
+    "grund": "„엘리트 선수“ klingt nach Schulsport-Kategorie"
+  },
+  {
+    "de": "Über mich",
+    "alt": "제 이야기",
+    "neu": "제 소개",
+    "grund": "einheitlich mit Nav „제 소개“"
+  },
+  {
+    "de": "Über uns",
+    "alt": "저희 이야기",
+    "neu": "저희 소개",
+    "grund": "einheitlich mit Nav „저희 소개“"
+  },
+  {
+    "de": "Wie lange dauert der Reset?",
+    "alt": "Reset은 얼마나 걸리나요?",
+    "neu": "리셋은 얼마나 걸리나요?",
+    "grund": "lateinisches „Reset“ vereinheitlicht (대사 리셋/리셋)"
+  },
+  {
+    "de": "Der aktive Reset dauert einige Wochen. Danach folgt eine längere Stabilisierungsphase und schließlich der langfristige Alltag. Je nach gewählter Variante variiert der genaue Zeitplan.",
+    "alt": "활성 Reset은 몇 주 정도 진행돼요. 그다음에는 더 긴 안정화 단계가 이어지고, 마지막에는 장기적인 일상 단계로 넘어가요. 선택한 방식에 따라 정확한 일정은 달라질 수 있어요.",
+    "neu": "본격적인 리셋 기간은 몇 주 정도예요. 그다음에는 더 긴 안정화 단계가 이어지고, 마지막에는 장기적인 일상 단계로 넘어가요. 선택한 방식에 따라 정확한 일정은 달라질 수 있어요.",
+    "grund": "„활성 Reset“ lateinisch und wörtlich"
+  },
+  {
+    "de": "Muss ich hungern?",
+    "alt": "배고프게 참아야 하나요?",
+    "neu": "굶어야 하나요?",
+    "grund": "„배고프게 참아야“ holprig"
+  },
+  {
+    "de": "Ist das eine Diät?",
+    "alt": "이것도 다이어트인가요?",
+    "neu": "이거 다이어트인가요?",
+    "grund": "„이것도“ verschiebt Sinn"
+  },
+  {
+    "de": "Nein. Diäten enden und du bist meistens wieder da, wo du vorher warst. Hier geht es um neue Ernährungsgewohnheiten, die auch nach den ersten Phasen bleiben.",
+    "alt": "아니요. 다이어트는 끝나고 나면 대부분 다시 원래 자리로 돌아가요. 여기서는 첫 단계들이 끝난 뒤에도 이어갈 수 있는 새로운 식습관을 만드는 것이 중요해요.",
+    "neu": "아니요. 다이어트는 끝나고 나면 대부분 원래대로 돌아가요. 여기서는 첫 단계들이 끝난 뒤에도 이어갈 수 있는 새로운 식습관을 만드는 것이 중요해요.",
+    "grund": "„원래 자리로“ wörtlich"
+  },
+  {
+    "de": "Muss ich wirklich auf Milch verzichten? Was ist mit dem Joghurt?",
+    "alt": "정말 우유를 끊어야 하나요? 요거트는요?",
+    "neu": "정말 유제품을 끊어야 하나요? 요거트는요?",
+    "grund": "Milch = Milchprodukte (Käse, Quark, Sahne)"
+  },
+  {
+    "de": "In der Kernphase (Aktivierung) lässt du Milch, Käse, Quark und Sahne bewusst weg &mdash; damit deine Darmflora sich neu aufbauen kann. <b>Ausnahme:</b> der probiotische Joghurt am Morgen als erste Mahlzeit ist ausdrücklich Teil des Konzepts und sogar wichtig. Ab der Stabilisierungsphase kommen Hartkäse, Quark, Mozzarella und Co. wieder rein &mdash; in Maßen als Eiweißquelle. Im Kaffee ist ein Schuss ungesüßte Mandel- oder Sojamilch erlaubt.",
+    "alt": "핵심 단계인 활성화 단계에서는 우유, 치즈, 쿼크, 생크림을 의식적으로 빼요 &mdash; 장내 환경이 새롭게 자리 잡을 수 있도록요. <b>예외:</b> 아침 첫 끼로 먹는 프로바이오틱 요거트는 이 콘셉트에 분명히 포함되어 있고, 오히려 중요한 부분이에요. 안정화 단계부터는 하드 치즈, 쿼크, 모차렐라 같은 것들이 다시 들어와요 &mdash; 단백질원으로 적당히요. 커피에는 무가당 아몬드 밀크나 두유를 조금 넣어도 괜찮아요.",
+    "neu": "핵심 단계인 활성화 단계에서는 우유, 치즈, 쿼크, 생크림을 일부러 빼요. 장내 환경이 새롭게 자리 잡을 수 있도록요. <b>예외:</b> 아침 첫 끼로 먹는 프로바이오틱 요거트는 이 콘셉트에 분명히 포함되어 있고, 오히려 중요한 부분이에요. 안정화 단계부터는 하드 치즈, 쿼크, 모차렐라 같은 것들을 다시 먹어요. 단백질원으로 적당히요. 커피에는 무가당 아몬드 밀크나 두유를 조금 넣어도 괜찮아요.",
+    "grund": "ENTITY: zwei &mdash; durch Punkt ersetzt; „의식적으로“ steif"
+  },
+  {
+    "de": "<b>Nein.</b> Klassische Meal-Replacement- oder Protein-Shakes sind in der Kernphase nicht erlaubt und auch danach nicht empfohlen. Du isst richtige Mahlzeiten. Was viele mit „Shakes\" verwechseln: die <b>Nährstoff-Konzentrate</b> (Basic-Immun-Mix, Restorate-Mineralien, Aminosäuren) &mdash; das sind Pulver, die du in Wasser anrührst, um deinen Körper mit Vitaminen und Mineralstoffen zu versorgen. Sie ersetzen keine Mahlzeit, sondern ergänzen sie. Sie sind sogar ein wichtiger Teil des Konzepts.",
+    "alt": "<b>아니요.</b> 일반적인 식사 대용 셰이크나 단백질 셰이크는 핵심 단계에서 허용되지 않고, 그 이후에도 권장하지 않아요. 제대로 된 식사를 해요. 많은 분들이 ‘셰이크’로 오해하는 것은 <b>영양소 농축 제품</b>이에요. Basic-Immun-Mix, Restorate-Mineralien, 아미노산처럼요 &mdash; 물에 타서 마시는 분말이고, 몸에 비타민과 미네랄을 공급하기 위한 거예요. 식사를 대신하는 것이 아니라 보완해요. 오히려 이 콘셉트에서 중요한 부분이에요.",
+    "neu": "<b>아니요.</b> 일반적인 식사 대용 셰이크나 단백질 셰이크는 핵심 단계에서 허용되지 않고, 그 이후에도 권장하지 않아요. 제대로 된 식사를 해요. 많은 분들이 ‘셰이크’로 헷갈리는 건 <b>영양소 농축 제품</b>(Basic-Immun-Mix, Restorate 미네랄, 아미노산)이에요. 물에 타서 마시는 분말로, 몸에 비타민과 미네랄을 공급해 줘요. 식사를 대신하는 게 아니라 보완해요. 오히려 이 콘셉트에서 중요한 부분이에요.",
+    "grund": "ENTITY: &mdash; entfernt, Aufzählung in Klammern; „Restorate-Mineralien“ deutsch"
+  },
+  {
+    "de": "Der Übergang zum langfristigen Alltag ist fließend. Du hast neue Gewohnheiten und kennst deinen Körper besser. Wer möchte, hält den Effekt mit einzelnen bewussten Tagen im Monat aufrecht.",
+    "alt": "장기적인 일상으로 넘어가는 과정은 자연스럽게 이어져요. 새로운 습관이 생기고, 자기 몸도 더 잘 알게 되죠. 원한다면 한 달에 며칠 정도 의식적으로 관리하는 날을 두면서 그 흐름을 유지할 수 있어요.",
+    "neu": "장기적인 일상으로 넘어가는 과정은 자연스럽게 이어져요. 새로운 습관이 생기고, 내 몸도 더 잘 알게 되죠. 원한다면 한 달에 며칠 정도 의식적으로 관리하는 날을 두면서 그 효과를 유지할 수 있어요.",
+    "grund": "„den Effekt“ = 효과; „자기 몸“ → „내 몸“"
+  },
+  {
+    "de": "Die Kölner Liste ist eine unabhängige Datenbank. Da werden Nahrungsergänzungsmittel auf verbotene Substanzen und Dopingstoffe getestet. Wenn ein Produkt drauf steht, kannst du dir sicher sein: da ist nichts Verstecktes drin. Genau deshalb nutzen viele Profisportler FitLine. Für dich heißt das: du weißt, was du reinbekommst. Ohne böse Überraschungen.",
+    "alt": "Kölner Liste는 독립 데이터베이스예요. 여기서는 건강기능식품과 영양 보충제를 금지 성분과 도핑 성분에 대해 검사해요. 어떤 제품이 여기에 올라와 있다면, 숨겨진 성분이 없다는 점을 확인할 수 있어요. 그래서 많은 프로 선수들이 FitLine을 사용하는 거예요. 당신에게는 이런 의미예요. 내가 몸에 넣는 것이 무엇인지 알 수 있다는 것. 찝찝한 surprises 없이요.",
+    "neu": "Kölner Liste(쾰른 리스트)는 독립적인 데이터베이스예요. 여기서는 영양 보충제에 금지 성분이나 도핑 물질이 들어 있는지 검사해요. 제품이 이 리스트에 올라 있다면 확신해도 돼요. 숨겨진 성분이 없다는 뜻이니까요. 그래서 많은 프로 선수들이 FitLine을 쓰는 거예요. 결국 내 몸에 무엇이 들어가는지 정확히 알 수 있다는 뜻이에요. 찜찜한 일 없이요.",
+    "grund": "englisches „surprises“ im Text; 당신 entfernt; Kölner Liste einmal erklärt; Doppelung 건강기능식품/영양 보충제"
+  },
+  {
+    "de": "ELAB ist ein unabhängiges Labor. Die prüfen laufend, ob die FitLine-Produkte wirklich das enthalten, was drauf steht, und dass nichts drin ist, was da nicht rein soll. Klingt selbstverständlich, ist es aber leider nicht bei allen Nahrungsergänzungsmitteln. Bei FitLine wird das dauerhaft kontrolliert. Für dich: du kannst dich drauf verlassen.",
+    "alt": "ELAB은 독립 연구소예요. FitLine 제품에 표시된 성분이 실제로 들어 있는지, 들어가면 안 되는 것이 들어 있지는 않은지 계속 검사해요. 당연하게 들리지만, 안타깝게도 모든 영양 보충제가 그런 건 아니에요. FitLine은 이 부분을 지속적으로 관리해요. 당신에게는, 믿고 선택할 수 있다는 뜻이에요.",
+    "neu": "ELAB은 독립적인 검사 기관이에요. FitLine 제품에 표시된 성분이 실제로 들어 있는지, 들어가면 안 되는 것이 들어 있지는 않은지 계속 검사해요. 당연하게 들리지만, 안타깝게도 모든 영양 보충제가 그런 건 아니에요. FitLine은 이 부분을 꾸준히 검사받아요. 그러니 믿고 먹어도 돼요.",
+    "grund": "당신 entfernt; „관리해요“ ungenau"
+  },
+  {
+    "de": "NTC steht für Nährstoff-Transport-Konzept. Einfach gesagt: die Formel sorgt dafür, dass die Nährstoffe genau da ankommen, wo sie wirken. In deinen Zellen. Bei vielen anderen Präparaten landet ein großer Teil ungenutzt wieder draußen. MicroSolve Q10 ist ein Beispiel für so eine Technologie: normales Q10 nimmt der Körper schlecht auf, mit MicroSolve wird es viel besser verwertet. Klingt technisch, ist aber der Grund, warum das Zeug wirklich was bringt.",
+    "alt": "NTC는 영양소 전달 콘셉트, 즉 Nährstoff-Transport-Konzept를 뜻해요. 쉽게 말하면 영양소가 작용해야 할 곳까지 정확히 도달하도록 설계한 포뮬러예요. 바로 세포까지요. 다른 많은 제품은 큰 비중이 제대로 쓰이지 못한 채 다시 밖으로 나가요. MicroSolve Q10은 이런 기술의 한 예예요. 일반 Q10은 몸이 잘 흡수하지 못하는데, MicroSolve를 적용하면 훨씬 더 잘 활용돼요. 기술적인 이야기처럼 들리지만, 바로 이 점이 제대로 도움이 되는 이유예요.",
+    "neu": "NTC는 Nährstoff-Transport-Konzept, 즉 영양소 전달 콘셉트의 약자예요. 쉽게 말하면 영양소가 작용해야 할 곳까지 정확히 도달하도록 설계한 포뮬러예요. 바로 세포까지요. 다른 많은 제품은 상당 부분이 쓰이지 못하고 그대로 배출돼요. MicroSolve Q10은 이런 기술의 한 예예요. 일반 Q10은 몸이 잘 흡수하지 못하는데, MicroSolve를 적용하면 훨씬 더 잘 활용돼요. 기술적인 이야기처럼 들리지만, 바로 이 점이 제대로 도움이 되는 이유예요.",
+    "grund": "„큰 비중이 … 밖으로 나가요“ wörtlich; Abkürzungserklärung natürlicher"
+  },
+  {
+    "de": "Ja, und zwar viele. Über 500 Weltmeister und Olympia-Teilnehmer haben mit FitLine schon gearbeitet, unter anderem der Deutsche Skiverband und der Deutsche Eishockey-Bund. Warum? Profisportler sind extrem vorsichtig, was in ihren Körper reinkommt, weil sie sich zu 100 Prozent auf die Reinheit verlassen müssen. Das ist ein ziemlich guter Qualitäts-Indikator, auch wenn du selbst gar nicht Leistungssport machst.",
+    "alt": "네, 그것도 많아요. 500명 이상의 세계 챔피언과 올림픽 참가 선수들이 이미 FitLine과 함께했어요. 독일 스키 협회와 독일 아이스하키 연맹도 포함돼요. 이유요? 프로 선수들은 몸에 무엇이 들어가는지에 정말 신중해요. 순도를 100% 믿을 수 있어야 하니까요. 당신이 전문 운동선수가 아니더라도, 꽤 좋은 품질 지표가 되는 이유예요.",
+    "neu": "네, 그것도 많아요. 500명 이상의 세계 챔피언과 올림픽 참가 선수들이 이미 FitLine과 함께했어요. 독일 스키 협회와 독일 아이스하키 연맹도 포함돼요. 이유요? 프로 선수들은 몸에 무엇이 들어가는지에 정말 신중해요. 순도를 100% 믿을 수 있어야 하니까요. 직접 운동선수로 뛰지 않더라도 꽤 믿을 만한 품질 지표예요.",
+    "grund": "당신 entfernt"
+  },
+  {
+    "de": "Klick alles an was auf dich zutrifft. {{#unless partner_modus=duo}}Ich zeig{{/unless}}{{#if partner_modus=duo}}Wir zeigen{{/if}} dir dann, was {{#unless partner_modus=duo}}ich{{/unless}}{{#if partner_modus=duo}}wir{{/if}} dir konkret zeigen {{#unless partner_modus=duo}}kann{{/unless}}{{#if partner_modus=duo}}können{{/if}}.",
+    "alt": "나에게 해당되는 걸 모두 눌러 주세요. 그러면 {{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 구체적으로 어떤 걸 보여드릴 {{#unless partner_modus=duo}}수 있는지{{/unless}}{{#if partner_modus=duo}}수 있는지{{/if}} 알려드릴게요.",
+    "neu": "해당되는 항목을 모두 눌러 주세요. 그러면 {{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 구체적으로 무엇을 보여 {{#unless partner_modus=duo}}드릴 수 있는지{{/unless}}{{#if partner_modus=duo}}드릴 수 있는지{{/if}} {{#unless partner_modus=duo}}알려 드릴게요{{/unless}}{{#if partner_modus=duo}}알려 드릴게요{{/if}}.",
+    "grund": "Bedingungsblöcke 3+3 wie im Deutschen (vorher 2+2); natürlicher"
+  },
+  {
+    "de": "<b>Persönlicher Kontakt.</b> {{#unless partner_modus=duo}}Ich melde mich{{/unless}}{{#if partner_modus=duo}}Wir melden uns{{/if}} — ohne Verkaufsdruck.",
+    "alt": "<b>개인적으로 연락드려요.</b> {{#unless partner_modus=duo}}제가 연락드릴게요{{/unless}}{{#if partner_modus=duo}}저희가 연락드릴게요{{/if}}. 판매 압박은 없어요.",
+    "neu": "<b>1:1로 연락드려요.</b> {{#unless partner_modus=duo}}제가{{/unless}}{{#if partner_modus=duo}}저희가{{/if}} 판매 압박 없이 연락드릴게요.",
+    "grund": "Doppelung „연락드려요 … 연락드릴게요“ aufgelöst"
+  },
+  {
+    "de": "Kein Abo-Zwang",
+    "alt": "정기구독 강요 없음",
+    "neu": "정기구독 의무 없음",
+    "grund": "„강요“ zu hart"
+  },
+  {
+    "de": "<b>Nicht geeignet für</b> Schwangere, Stillende und Menschen in ärztlicher Behandlung nur nach Rücksprache mit der behandelnden Praxis.",
+    "alt": "<b>적합하지 않은 경우</b> 임신 중이거나 수유 중인 분, 진료를 받고 있는 분은 담당 의료기관과 상담한 뒤에만 진행해 주세요.",
+    "neu": "<b>이런 분은 주의하세요.</b> 임신 중이거나 수유 중인 분, 진료를 받고 있는 분은 담당 의료기관과 상담한 뒤에만 진행해 주세요.",
+    "grund": "„적합하지 않은 경우“ ohne Satzanschluss"
+  },
+  {
+    "de": "Impressum",
+    "alt": "사이트 정보",
+    "neu": "법적 고지",
+    "grund": "Impressum = 법적 고지, nicht „사이트 정보“"
+  },
+  {
+    "de": "Datenschutz",
+    "alt": "개인정보 보호",
+    "neu": "개인정보처리방침",
+    "grund": "übliche Footer-Bezeichnung"
+  },
+  {
+    "de": "Made with",
+    "alt": "정성을 담아 제작",
+    "neu": "Made with",
+    "grund": "mit „♥ by FinestSites“ ergab „정성을 담아 제작 ♥ 제작“; wie auf koreanischen Seiten englisch belassen"
+  },
+  {
+    "de": "von",
+    "alt": "제작",
+    "neu": "by",
+    "grund": "wie oben"
+  },
+  {
+    "de": "Einstellungen anpassen ›",
+    "alt": "설정 조정 ›",
+    "neu": "설정 변경 ›",
+    "grund": "„조정“ steif"
+  },
+  {
+    "de": "Dieses Bild wurde mit KI erstellt (EU Kennzeichnung)",
+    "alt": "이 이미지는 AI로 제작되었습니다(EU 표시)",
+    "neu": "이 이미지는 AI로 만들었어요 (EU 표시 의무)",
+    "grund": "해요체 statt 합니다체"
+  },
+  {
+    "de": "Technisch notwendig (immer aktiv)",
+    "alt": "기술적으로 필요한 쿠키(항상 활성화)",
+    "neu": "필수 쿠키(항상 활성화)",
+    "grund": "einheitlich mit „필수 쿠키“"
+  },
+  {
+    "de": "Vor- und Nachname",
+    "alt": "이름과 성",
+    "neu": "성과 이름",
+    "grund": "koreanische Reihenfolge"
+  },
+  {
+    "de": "Ein Reset-Programm für deinen Alltag. In vier Phasen zurück zu mehr Energie und einem klaren Kopf.",
+    "alt": "일상 속 리셋 프로그램. 4단계로 더 많은 에너지와 맑은 머리를 되찾아 가요.",
+    "neu": "일상을 위한 리셋 프로그램. 4단계로 더 많은 에너지와 맑은 머리를 되찾아요.",
+    "grund": "„일상 속“ schief; flüssiger"
+  }
+]

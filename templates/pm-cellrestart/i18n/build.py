@@ -140,9 +140,7 @@ html, n1 = re.subn(r'<div class="lang-switch" role="group" aria-label="Sprache /
 assert n1==1, 'Desktop-Schalter nicht gefunden'
 n2=html.count('class="lang-switch lang-switch-mobile"')
 html=re.sub(r'<div class="lang-switch lang-switch-mobile"[^>]*>.*?</div>\s*</div>', lambda m: menu('mobile'), html, count=1, flags=re.S) if n2 else html
-if not n2:   # kein mobiler Schalter in der Quelle: Menü vor dem Burger (CSS zeigt .lang-switch-mobile nur ≤960 px)
-    burger='<button type="button" class="nav-burger" id="navBurger"'; assert html.count(burger)==1
-    html=html.replace(burger, menu('mobile')+'\n    '+burger); n2=1
+# Der eine Schalter steht außerhalb von .nav-links und ist auch mobil sichtbar (wie der alte DE/EN-Schalter); kein zweites Menü nötig
 print('Sprachmenüs:', 1+n2)
 css="""<style data-fs-i18n>
 .lang-menu { position: relative; }
