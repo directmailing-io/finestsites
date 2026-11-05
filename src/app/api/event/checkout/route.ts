@@ -5,7 +5,7 @@ import { db } from '@/lib/db'
 import { users } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 import { getStripe, getPriceIdByPlan, PLANS, type PlanKey, type BillingInterval } from '@/lib/stripe/client'
-import { getActiveCampaign } from '@/lib/billing/campaign'
+import { getCampaignByCode } from '@/lib/billing/campaign'
 import { campaignDiscount } from '@/lib/billing/campaign-shared'
 import { getClientIp, rateLimit } from '@/lib/security/request'
 import { getEventConfig, eventPageUrl } from '@/lib/event/config'
@@ -14,10 +14,10 @@ import { getEventConfig, eventPageUrl } from '@/lib/event/config'
  * Checkout ohne Konto für Event-Seiten (finestsites.io/<event>): Vorname + E-Mail → Stripe.
  * Das Konto entsteht nach der Zahlung (Webhook bzw. Danke-Seite, src/lib/event/signup.ts).
  *
- * - Bekannte E-Mail → 409 „Du hast schon ein Konto“: anmelden, der Aktionscode gilt im normalen
- *   Checkout automatisch (sitewide). So entstehen keine Doppelkonten.
- * - Aktionscode aus Stripe (sitewide, Code aus der Event-Konfiguration). Abgelaufen → normaler Preis,
- *   kein Gutscheinfeld bei Stripe (die Seite sagt vorher, dass das Angebot beendet ist).
+ * - Bekannte E-Mail → 409 „Du hast schon ein Konto“: anmelden und den Code im normalen Checkout
+ *   eintippen (Gutscheinfeld bei Stripe). So entstehen keine Doppelkonten.
+ * - Event-Code aus Stripe (Code aus der Event-Konfiguration, bewusst NICHT sitewide: Startseite,
+ *   Editor und normaler Checkout zeigen keinen Rabatt). Abgelaufen → normaler Preis, kein Gutscheinfeld.
  * - Keine Partnerlinks auf der Event-Seite (Konzept: Partner werben über ihre normalen Links).
  */
 const MWST_TAX_RATE = 'txr_1TtjFpGWVCygqvfcuF1utKUc' // 19 % MwSt., inclusive, DE (wie /api/billing/checkout)
@@ -90,9 +90,9 @@ export async function POST(req: NextRequest) {
   const stripe = getStripe()
   const appUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://app.finestsites.io').replace(/\/$/, '')
 
-  // Aktionscode: nur der aus der Event-Konfiguration, und nur solange Stripe ihn als aktiv führt
-  const campaign = await getActiveCampaign()
-  const promo = campaign && campaign.code === event.code && campaignDiscount(campaign, interval) ? campaign : null
+  // Event-Code: nur der aus der Event-Konfiguration, und nur solange Stripe ihn als aktiv führt
+  const campaign = await getCampaignByCode(event.code)
+  const promo = campaign && campaignDiscount(campaign, interval) ? campaign : null
 
   try {
     const customer = await stripe.customers.create({

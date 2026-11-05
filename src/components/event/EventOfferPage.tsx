@@ -1,7 +1,7 @@
 import { inArray, and, eq } from 'drizzle-orm'
 import { db } from '@/lib/db'
 import { templates, users, userSites } from '@/lib/db/schema'
-import { getActiveCampaign, toPublicCampaign } from '@/lib/billing/campaign'
+import { getCampaignByCode, toPublicCampaign } from '@/lib/billing/campaign'
 import type { PublicCampaign } from '@/lib/billing/campaign-shared'
 import { getEventConfig } from '@/lib/event/config'
 import { EVENT_CSS } from './event-styles'
@@ -16,15 +16,15 @@ function previewCampaign(code: string): PublicCampaign {
 }
 
 /**
- * Event-Seite „Angebot sichern“ (Server): lädt den laufenden Aktionscode aus Stripe (nur der aus
- * der Event-Konfiguration zählt) und die Vorschaubilder der Beispielseiten. Alles Weitere im Client.
+ * Event-Seite „Angebot sichern“ (Server): lädt den Event-Code aus Stripe (nur der aus der
+ * Event-Konfiguration, unabhängig von „sitewide“) und die Vorschaubilder der Beispielseiten.
  */
 export default async function EventOfferPage({ slug, canceled, preview }: { slug: string; canceled?: boolean; preview?: boolean }) {
   const event = getEventConfig(slug)
   if (!event) return null
 
-  const active = await getActiveCampaign()
-  let campaign = active && active.code === event.code ? toPublicCampaign(active) : null
+  // Nur der Event-Code zählt, und nur hier (nicht sitewide: die Startseite bleibt ohne Rabatt)
+  let campaign = toPublicCampaign(await getCampaignByCode(event.code))
   // Nur lokal (nie in Produktion): ?vorschau=1 zeigt den laufenden Countdown ohne Stripe-Code
   if (!campaign && preview && process.env.NODE_ENV !== 'production') campaign = previewCampaign(event.code)
 

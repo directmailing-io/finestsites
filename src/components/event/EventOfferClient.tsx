@@ -142,7 +142,7 @@ export default function EventOfferClient({ event, campaign, demoSites, canceled 
         {error && (
           <div className="ev-err" role="alert">
             {error.text}{' '}
-            {error.existing && <>Bitte <a href={`${APP_URL}/login`}>melde dich hier an</a>, dann gilt der {event.name}-Preis dort automatisch.</>}
+            {error.existing && <>Bitte <a href={`${APP_URL}/login`}>melde dich hier an</a> und gib beim Bezahlen den Code <b>{event.code}</b> ein.</>}
           </div>
         )}
 

@@ -16,19 +16,20 @@ export interface Campaign extends PublicCampaign {
 }
 
 const CACHE_MS = 60_000
-let cache: { at: number; campaigns: Campaign[] } | null = null
+/** Alle aktiven Codes mit Rabatt (sitewide oder nicht); gefiltert wird je Aufrufer */
+let cache: { at: number; campaigns: (Campaign & { sitewide: boolean })[] } | null = null
 
-async function loadCampaigns(): Promise<Campaign[]> {
+async function loadCampaigns(): Promise<(Campaign & { sitewide: boolean })[]> {
   const stripe = getStripe()
   const codes = await stripe.promotionCodes.list({ active: true, limit: 100, expand: ['data.promotion.coupon'] })
-  const campaigns: Campaign[] = []
+  const campaigns: (Campaign & { sitewide: boolean })[] = []
   for (const pc of codes.data) {
-    if (pc.metadata?.sitewide !== 'true') continue
     const coupon = pc.promotion?.coupon as Stripe.Coupon | string | null | undefined
     if (!coupon || typeof coupon === 'string' || !coupon.valid) continue
     if (!coupon.percent_off && !coupon.amount_off) continue
     const interval = coupon.metadata?.interval
     campaigns.push({
+      sitewide: pc.metadata?.sitewide === 'true',
       promoCodeId: pc.id,
       code: pc.code,
       percentOff: coupon.percent_off ?? null,
@@ -42,20 +43,41 @@ async function loadCampaigns(): Promise<Campaign[]> {
   return campaigns
 }
 
-/** The currently running site-wide campaign, or null. Never throws. */
-export async function getActiveCampaign(): Promise<Campaign | null> {
+async function loadCached(): Promise<(Campaign & { sitewide: boolean })[]> {
   if (!cache || Date.now() - cache.at > CACHE_MS) {
     try {
       cache = { at: Date.now(), campaigns: await loadCampaigns() }
     } catch (e) {
       console.error('[billing/campaign] failed to load campaigns:', e instanceof Error ? e.message : e)
-      // Keep serving the last known list (expiry is still enforced below); retry on next call
-      if (!cache) return null
+      // Keep serving the last known list (expiry is still enforced by the callers); retry on next call
+      if (!cache) return []
     }
   }
-  // Expiry is checked on every call, so the campaign ends on the second — independent of the cache
+  // Expiry is checked on every call, so a campaign ends on the second — independent of the cache
   const now = Date.now()
-  return cache.campaigns.find(c => !c.endsAt || new Date(c.endsAt).getTime() > now) ?? null
+  return cache.campaigns.filter(c => !c.endsAt || new Date(c.endsAt).getTime() > now)
+}
+
+function strip(c: Campaign & { sitewide: boolean }): Campaign {
+  const { sitewide: _sitewide, ...rest } = c
+  return rest
+}
+
+/** The currently running site-wide campaign, or null. Never throws. */
+export async function getActiveCampaign(): Promise<Campaign | null> {
+  const c = (await loadCached()).find(c => c.sitewide)
+  return c ? strip(c) : null
+}
+
+/**
+ * Aktionscode für eine Event-Seite (src/lib/event/config.ts): wird nur dort gezeigt und angewendet,
+ * NICHT auf Startseite, Editor oder normalem Checkout (dafür wäre `sitewide=true` nötig, was Daniel
+ * für Event-Codes ausdrücklich nicht will). Aktiv + nicht abgelaufen, sonst null. Never throws.
+ */
+export async function getCampaignByCode(code: string): Promise<Campaign | null> {
+  const wanted = code.trim().toUpperCase()
+  const c = (await loadCached()).find(c => c.code.toUpperCase() === wanted)
+  return c ? strip(c) : null
 }
 
 /**

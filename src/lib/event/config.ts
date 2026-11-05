@@ -5,8 +5,9 @@ import type { BillingInterval, PlanKey } from '@/lib/plans'
  *
  * Für ein neues Event: einen Eintrag hier ergänzen, eine Route `src/app/<slug>/page.tsx` (3 Zeilen,
  * siehe src/app/powerday/page.tsx) und `/<slug>` in FINESTSITES_IO_PATHS (src/middleware.ts) eintragen.
- * Dazu in Stripe einen Aktionscode mit Metadatum `sitewide=true` (Admin → Gutscheine → „Aktion“),
- * dessen Code hier unter `code` steht. Ablauf des Codes = Ende des Angebots = Countdown auf der Seite.
+ * Dazu in Stripe einen aktiven Gutscheincode (Admin → Gutscheine, OHNE „Aktion“/sitewide: der Rabatt
+ * soll nur auf der Event-Seite erscheinen, nie auf der Startseite), dessen Code hier unter `code`
+ * steht. Ablauf des Codes = Ende des Angebots = Countdown auf der Seite.
  * Ist der Code abgelaufen oder inaktiv, zeigt die Seite die normalen Preise und eine Hinweiszeile.
  *
  * Diese Datei ist auch für Client-Komponenten sicher (keine Server-Importe).
@@ -16,7 +17,7 @@ export interface EventConfig {
   slug: string
   /** Name des Events, erscheint als Zeile über dem Countdown und in Texten */
   name: string
-  /** Stripe-Aktionscode (sitewide), dessen Ablauf das Angebot beendet */
+  /** Stripe-Gutscheincode (nicht sitewide), dessen Ablauf das Angebot beendet */
   code: string
   /** Überschrift der Seite (zwei Sätze, Zeilenumbruch mit \n) */
   headline: string
