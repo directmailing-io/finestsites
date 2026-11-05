@@ -1,0 +1,280 @@
+<title>Powerday Angebot sichern</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: eine ruhige Lesespalte (720px), das Handy-Mockup der Event-Seite steht daneben bzw. darunter. */
+  :root {
+    --bg: #FFFFFF; --panel: #FAFAF9; --ink: #111111; --body: #3D3D3D; --muted: #737373; --faint: #A3A3A3;
+    --line: #E7E5E4; --line-soft: #F2F1F0; --accent: #7A5AF8; --accent-soft: #F3F0FF; --accent-line: #DDD6FE;
+    --ok: #15803D; --ok-soft: #F0FDF4; --ok-line: #BBF7D0; --warn: #9A3412; --warn-soft: #FFF7ED; --warn-line: #FED7AA;
+    --mock-bg: #FFFFFF; --mock-ink: #111111; --mock-body: #444444; --mock-muted: #7A7A7A; --mock-line: #ECEAE8; --mock-dark: #1A2530; --mock-lilac: #D4C5E2; --mock-lilac-ink: #3A2060;
+    --font: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #141414; --panel: #1C1C1B; --ink: #F5F5F4; --body: #D6D3D1; --muted: #A8A29E; --faint: #78716C;
+    --line: #2E2D2B; --line-soft: #232221; --accent: #A78BFA; --accent-soft: #241F3A; --accent-line: #3B3260;
+    --ok: #86EFAC; --ok-soft: #122618; --ok-line: #1F4D2C; --warn: #FDBA74; --warn-soft: #2B1A0E; --warn-line: #5A3A1C; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #141414; --panel: #1C1C1B; --ink: #F5F5F4; --body: #D6D3D1; --muted: #A8A29E; --faint: #78716C;
+    --line: #2E2D2B; --line-soft: #232221; --accent: #A78BFA; --accent-soft: #241F3A; --accent-line: #3B3260;
+    --ok: #86EFAC; --ok-soft: #122618; --ok-line: #1F4D2C; --warn: #FDBA74; --warn-soft: #2B1A0E; --warn-line: #5A3A1C; color-scheme: dark }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--body); font-family: var(--font); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  main { max-width: 760px; margin: 0 auto; padding-block: 48px 96px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  h1 { font-size: clamp(28px, 5vw, 36px); line-height: 1.12; letter-spacing: -0.8px; color: var(--ink); margin: 0 0 10px; font-weight: 700; text-wrap: balance; }
+  h2 { font-size: 22px; line-height: 1.25; letter-spacing: -0.4px; color: var(--ink); margin: 56px 0 12px; font-weight: 700; padding-top: 22px; border-top: 1px solid var(--line); text-wrap: balance; }
+  h2 small { display: block; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint); font-weight: 600; margin-bottom: 8px; }
+  h3 { font-size: 16px; color: var(--ink); margin: 26px 0 8px; font-weight: 600; }
+  p { margin: 0 0 14px; max-width: 68ch; }
+  .lead { font-size: 18px; line-height: 1.5; color: var(--ink); }
+  .meta { font-size: 13px; color: var(--faint); margin-bottom: 32px; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; max-width: 68ch; }
+  li { margin: 5px 0; }
+  li::marker { color: var(--faint); }
+  b { color: var(--ink); font-weight: 600; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; background: var(--line-soft); padding: 2px 6px; border-radius: 6px; color: var(--ink); }
+  .tbl { overflow-x: auto; margin: 12px 0 20px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+  th { text-align: left; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); font-weight: 600; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  td:first-child { color: var(--ink); font-weight: 500; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  .note { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; font-size: 15px; margin: 18px 0; max-width: none; }
+  .note p { max-width: none; }
+  .note.accent { background: var(--accent-soft); border-color: var(--accent-line); }
+  .note.warn { background: var(--warn-soft); border-color: var(--warn-line); color: var(--warn); }
+  .note.warn b { color: inherit; }
+  .note.ok { background: var(--ok-soft); border-color: var(--ok-line); }
+  .pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--line-soft); color: var(--muted); vertical-align: middle; margin-left: 6px; }
+  .pill.new { background: var(--accent-soft); color: var(--accent); }
+  .pill.cut { background: var(--warn-soft); color: var(--warn); }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 18px 0 8px; }
+  .kpi { border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+  .kpi b { display: block; font-size: 26px; letter-spacing: -0.6px; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi span { font-size: 13px; color: var(--muted); display: block; margin-top: 4px; line-height: 1.4; }
+  .levers { list-style: none; padding: 0; margin: 18px 0 0; max-width: none; counter-reset: l; }
+  .levers li { counter-increment: l; display: grid; grid-template-columns: 34px 1fr; column-gap: 14px; padding: 14px 0; border-top: 1px solid var(--line-soft); margin: 0; }
+  .levers li:first-child { border-top: 0; }
+  .levers li > b, .levers li > span { grid-column: 2; }
+  .levers li::before { grid-row: 1 / span 2; content: counter(l); width: 28px; height: 28px; border-radius: 999px; background: var(--ink); color: var(--bg); font-weight: 600; font-size: 13px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .levers b { display: block; margin-bottom: 2px; }
+  .levers span { font-size: 15px; display: block; max-width: 62ch; }
+  .q { list-style: none; padding: 0; margin: 14px 0; max-width: none; }
+  .q li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line-soft); margin: 0; }
+  .q li:first-child { border-top: 0; }
+  .q li > span { color: var(--accent); font-weight: 700; }
+  .q li em { display: block; font-style: normal; font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .timeline { list-style: none; padding: 0; margin: 14px 0; max-width: none; }
+  .timeline li { display: grid; grid-template-columns: 130px 1fr; gap: 14px; padding: 10px 0; border-top: 1px solid var(--line-soft); font-size: 15px; margin: 0; }
+  .timeline li:first-child { border-top: 0; }
+  .timeline b { white-space: nowrap; }
+  @media (max-width: 560px) { .timeline li { grid-template-columns: 1fr; gap: 2px; } }
+
+  /* ---------- Mockup der Event-Seite (Produkt-UI, bleibt hell wie das Produkt) ---------- */
+  .mock-wrap { margin: 24px 0 8px; display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .mock-wrap figcaption { font-size: 13px; color: var(--muted); margin-top: 10px; max-width: 320px; line-height: 1.45; }
+  .phone { width: 100%; max-width: 390px; border: 1px solid var(--line); border-radius: 34px; background: var(--mock-bg); color: var(--mock-body); overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 16px 40px rgba(0,0,0,.08); font-family: var(--font); }
+  .phone .bar { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 13px; font-weight: 600; color: var(--mock-ink); }
+  .phone .bar i { display: block; width: 92px; height: 26px; background: #111; border-radius: 999px; }
+  .screen { padding: 6px 20px 26px; }
+  .logo { display: flex; justify-content: center; margin: 8px 0 18px; color: var(--mock-ink); }
+  .logo svg { height: 22px; width: auto; }
+  .logo svg path, .logo svg rect, .logo svg polygon { fill: currentColor; }
+  .m-kicker { font-size: 11.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mock-muted); text-align: center; }
+  .cd { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0 4px; }
+  .cd div { background: var(--mock-dark); color: #fff; border-radius: 14px; padding: 10px 0 8px; text-align: center; }
+  .cd b { display: block; font-size: 30px; font-weight: 700; letter-spacing: -1px; line-height: 1; font-variant-numeric: tabular-nums; color: #fff; }
+  .cd span { display: block; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 5px; }
+  .cd-label { text-align: center; font-size: 12.5px; color: var(--mock-muted); margin: 0 0 16px; }
+  .m-h { font-size: 26px; line-height: 1.12; letter-spacing: -0.7px; color: var(--mock-ink); font-weight: 700; margin: 0 0 8px; text-align: center; text-wrap: balance; }
+  .m-p { font-size: 14.5px; line-height: 1.5; color: var(--mock-body); margin: 0 0 14px; text-align: center; max-width: none; }
+  .m-seg { display: flex; background: #F5F3F0; border-radius: 999px; padding: 3px; margin: 10px 0 12px; font-size: 13px; font-weight: 600; }
+  .m-seg span { flex: 1; text-align: center; padding: 8px 0; border-radius: 999px; color: var(--mock-muted); }
+  .m-seg span.on { background: #fff; color: var(--mock-ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .m-seg span.on em { font-style: normal; color: #2D5A1B; background: #C8D8B8; font-size: 10px; padding: 2px 7px; border-radius: 999px; margin-left: 6px; font-weight: 700; }
+  .m-card { background: var(--mock-dark); color: #fff; border-radius: 22px; padding: 20px 18px 18px; margin: 0 0 12px; position: relative; }
+  .m-card .badge { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--mock-lilac); color: var(--mock-lilac-ink); font-size: 10.5px; font-weight: 700; padding: 4px 12px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.04em; }
+  .m-card .name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,.55); margin: 4px 0 8px; }
+  .m-card .price { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .m-card .strike { font-size: 18px; color: rgba(255,255,255,.35); text-decoration: line-through; }
+  .m-card .big { font-size: 44px; font-weight: 700; letter-spacing: -1.6px; line-height: 1; color: #fff; }
+  .m-card .unit { font-size: 13px; color: rgba(255,255,255,.45); }
+  .m-card .per { font-size: 13.5px; color: #C8D8B8; font-weight: 600; margin: 6px 0 2px; }
+  .m-card .fine { font-size: 12px; color: rgba(255,255,255,.55); line-height: 1.5; margin: 0 0 12px; }
+  .m-card .sites { background: rgba(255,255,255,.07); border-radius: 14px; padding: 12px 14px; }
+  .m-card .sites b { color: #fff; font-size: 15px; display: block; }
+  .m-card .sites span { color: rgba(255,255,255,.65); font-size: 12.5px; line-height: 1.5; }
+  .m-input { border: 1px solid var(--mock-line); border-radius: 12px; padding: 12px 14px; font-size: 14.5px; color: var(--mock-muted); background: #fff; margin: 8px 0; }
+  .m-input.filled { color: var(--mock-ink); }
+  .m-btn { display: block; text-align: center; background: var(--mock-lilac); color: var(--mock-lilac-ink); border-radius: 999px; padding: 15px; font-weight: 700; font-size: 15.5px; margin: 12px 0 8px; }
+  .m-fine { font-size: 11.5px; color: var(--mock-muted); text-align: center; line-height: 1.5; margin: 0 0 14px; }
+  .m-alt { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--mock-muted); margin: 0 0 18px; }
+  .m-alt span { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--mock-line); }
+  .m-shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 8px; }
+  .m-shots div { aspect-ratio: 3 / 4; border-radius: 10px; border: 1px solid var(--mock-line); background: linear-gradient(160deg, #F7F3FF, #FFF4EC 55%, #EAF5EE); position: relative; overflow: hidden; }
+  .m-shots div::before { content: ""; position: absolute; left: 12%; right: 12%; top: 14%; height: 7px; border-radius: 4px; background: rgba(17,17,17,.14); }
+  .m-shots div::after { content: ""; position: absolute; left: 12%; right: 30%; top: 30%; height: 4px; border-radius: 4px; background: rgba(17,17,17,.1); box-shadow: 0 10px 0 rgba(17,17,17,.08), 0 20px 0 rgba(17,17,17,.06); }
+  .m-shots span { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; font-size: 10.5px; font-weight: 600; color: var(--mock-ink); }
+  .m-shots-label { font-size: 12.5px; color: var(--mock-muted); text-align: center; margin: 0 0 14px; }
+  .m-ghost { text-align: center; font-size: 13.5px; color: var(--mock-muted); font-weight: 500; }
+  .m-ghost small { display: block; font-size: 11.5px; color: var(--mock-muted); font-weight: 400; margin-top: 2px; }
+  .side { flex: 1 1 260px; min-width: 0; }
+  .side h3 { margin-top: 0; }
+  .side ul { font-size: 14.5px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<main>
+  <p class="meta">Konzept v2 · Stand 05.11.2026 · für Daniel · ersetzt die Fassung vom 26.10. · nicht veröffentlicht, nichts davon gebaut</p>
+  <h1>Powerday am 08.11.: Pro fürs ganze Jahr, in zwei Minuten gesichert</h1>
+  <p class="lead">Wer im Saal sitzt, soll mit dem Handy Pro für ein Jahr sichern und die Webseite zu Hause in Ruhe einrichten. Die Seite zeigt ein einziges Angebot, rechnet den Jahresvorteil vor und nimmt mit einer Geld-zurück-Zusage die Angst vor der Festlegung. Rabattcode POWERDAY20: 20 % auf die ersten drei Monate, beim Jahresabo 20 % auf das erste Jahr.</p>
+
+  <h2><small>Ausgangslage</small>Was die Zahlen vom 04.10. (INNERVISIONDAY) sagen</h2>
+  <div class="kpis">
+    <div class="kpi"><b>108</b><span>Käufe aus 137 Registrierungen vom 03. bis 06.10.</span></div>
+    <div class="kpi"><b>81 %</b><span>haben noch am Tag der Registrierung bezahlt</span></div>
+    <div class="kpi"><b>19 %</b><span>nahmen Starter (21), Pro 63 % (68), Unlimited 17 % (18)</span></div>
+    <div class="kpi"><b>39 %</b><span>wählten das Jahresabo (42 von 107)</span></div>
+  </div>
+  <p>Der Weg selbst funktioniert also, die Leute buchen. Die zwei Hebel liegen in der Auswahl: jeder Fünfte nimmt den kleinsten Tarif, und sechs von zehn zahlen monatlich. Ziel für den Powerday: Starter unter 10 %, Jahresabo über 60 %. Bei 100 Käufen wären das grob 20 Pro-Jahresabos mehr, also etwa 4.300 € Umsatz am Event-Tag statt verteilt über das Jahr, und 20 Konten weniger, die sich monatlich an eine Kündigung erinnern.</p>
+
+  <h2><small>Das Angebot</small>POWERDAY20 in Zahlen</h2>
+  <p>Ein Stripe-Gutschein reicht für beides: 20 %, Dauer „3 Monate“. Stripe zieht ihn von jeder Rechnung ab, die in diesen drei Monaten entsteht. Beim Monatsabo sind das drei Rechnungen, beim Jahresabo genau die erste Jahresrechnung. Das ist dieselbe Technik wie bei ANNETT15 und INNERVISIONDAY, die Seite zeigt dafür schon heute „im ersten Jahr“ bzw. „in den ersten 3 Monaten“.</p>
+  <div class="tbl"><table>
+    <tr><th>Tarif</th><th class="num">Monatlich</th><th class="num">3 Monate mit Code</th><th class="num">Jährlich</th><th class="num">1. Jahr mit Code</th><th class="num">= pro Monat</th></tr>
+    <tr><td>Starter</td><td class="num">17 €</td><td class="num">13,60 €</td><td class="num">170 €</td><td class="num">136 €</td><td class="num">11,33 €</td></tr>
+    <tr><td>Pro <span class="pill new">Empfehlung</span></td><td class="num">27 €</td><td class="num">21,60 €</td><td class="num">270 €</td><td class="num"><b>216 €</b></td><td class="num"><b>18 €</b></td></tr>
+    <tr><td>Unlimited</td><td class="num">37 €</td><td class="num">29,60 €</td><td class="num">370 €</td><td class="num">296 €</td><td class="num">24,67 €</td></tr>
+  </table></div>
+  <p><b>Die Rechnung, die auf der Seite steht:</b> Pro monatlich kostet im ersten Jahr 307,80 € (3 × 21,60 € + 9 × 27 €). Pro jährlich kostet 216 €. Wer das Jahr nimmt, spart <b>91,80 €</b> und zahlt rechnerisch 18 € im Monat statt 27 €. Ab dem zweiten Jahr 270 € pro Jahr, also der normale Jahrespreis mit zwei Gratismonaten.</p>
+  <div class="note">
+    <b>Einstellungen des Codes:</b> 20 % · wiederkehrend 3 Monate · alle Tarife, beide Intervalle · nur Erstkäufer (wie INNERVISIONDAY) · Metadatum <code>sitewide=true</code>, damit Startseite, Editor und Checkout ihn automatisch anwenden · Ablauf Montag 09.11., 23:59 Uhr (Vorschlag). Das Admin-Werkzeug kann das Metadatum nicht setzen, das mache ich direkt in Stripe, aber erst nach deinem Ja. Ohne Metadatum wäre es ein gewöhnlicher Code zum Eintippen.
+  </div>
+
+  <h2><small>Optimierung</small>Sechs Hebel, damit Pro und Jahr gewählt werden</h2>
+  <ol class="levers">
+    <li><b>Ein Angebot statt drei Karten.</b><span>Die Event-Seite zeigt nur Pro, groß, mit „Jährlich“ vorgewählt. Starter und Unlimited stehen als je eine Textzeile darunter („Nur eine Seite? Starter 136 €/Jahr“). Wer wirklich nur eine Seite will, findet es; niemand nimmt Starter, weil er die erste Karte links ist. Auf der Startseite steht Starter heute links, Pro in der Mitte.</span></li>
+    <li><b>Den Jahresvorteil vorrechnen, nicht behaupten.</b><span>Im Umschalter steht „Jährlich · spart 91,80 €“, in der Karte „18 € im Monat statt 27 €“. Die Zahl ist ehrlich (Monatsabo mit Code übers erste Jahr gegen Jahresabo mit Code) und größer als die üblichen „2 Monate gratis“.</span></li>
+    <li><b>Die Angst vor dem Jahr nehmen: 14 Tage Geld zurück.</b><span>„Passt es nicht, schreib uns eine Mail, du bekommst alles zurück.“ Das ist der Satz, der aus „ich nehme erstmal das Kleinste“ ein „dann nehme ich gleich das Richtige“ macht. Für Unternehmer gibt es kein gesetzliches Widerrufsrecht, die Zusage ist freiwillig und kostet im Zweifel 216 € je Rückgabe. Dazu: „Tarif jederzeit nach oben wechseln“ (geht heute schon sofort). Ein Wechsel vom Jahres- ins Monatsabo ist in unserem Billing nicht vorgesehen, deshalb braucht das Jahresabo diesen Ausweg.</span></li>
+    <li><b>Zeigen, wie es aussieht.</b><span>Die Unsicherheit „keine Ahnung, wie das dann aussieht“ beantwortet die Seite mit drei echten Seitenvorschauen (Optimalset, PM-Business, cellRESET) direkt unter dem Knopf, antippbar zur Live-Vorschau unter finestsites.io/vorlagen. Genau diese drei Seiten sind das Pro-Argument: „die drei Seiten, die ein PM-Partner braucht“.</span></li>
+    <li><b>Großer Countdown, der die Wahrheit sagt.</b><span>Vier Kacheln Tage · Std · Min · Sek, direkt unter dem Logo, gezählt bis zum Ablauf des Stripe-Codes. Läuft der Code ab, zeigt die Seite automatisch die normalen Preise (gleiche Technik wie heute auf der Startseite). Kein künstlicher Zähler, keine „nur noch 3 Plätze“.</span></li>
+    <li><b>Kein Umweg zur Kasse.</b><span>Vorname, E-Mail, „Pro sichern“, Stripe mit Apple Pay. Das Konto entsteht nach der Zahlung, die Mail bringt den Link zum Passwort. Keine E-Mail-Bestätigung, kein Benutzername, keine Vorlage vor der Zahlung. Das ist der Kern aus dem Konzept vom 26.10. und bleibt.</span></li>
+  </ol>
+
+  <h2><small>Die Seite</small>finestsites.io/powerday auf dem Handy</h2>
+  <div class="mock-wrap">
+    <figure style="margin:0; flex: 0 1 390px; min-width: 0;">
+      <div class="phone">
+        <div class="bar"><span>9:41</span><i></i><span>●●●</span></div>
+        <div class="screen">
+          <div class="logo"><svg role="img" aria-label="FinestSites" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620.04 126"><defs><style>.cls-1{fill:#1a1a1a;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M82.71,34.42A9.75,9.75,0,0,1,73,24.7a9.5,9.5,0,0,1,2.85-6.91,9.56,9.56,0,0,1,11.77-1.54,10.79,10.79,0,0,1,3.63,3.54A9.13,9.13,0,0,1,92.6,24.7a9.29,9.29,0,0,1-2.9,6.86A9.57,9.57,0,0,1,82.71,34.42Z"/><rect class="cls-1" x="75.12" y="45.18" width="14.84" height="70.01"/><path class="cls-1" d="M137.84,43.13A32.81,32.81,0,0,1,151.27,46,25.08,25.08,0,0,1,162,55.2q4.22,6.25,4.22,16.33v43.66h-15V74.43q0-10.41-4.86-15.14a17.19,17.19,0,0,0-12.53-4.73,18.25,18.25,0,0,0-9.68,2.85,22.7,22.7,0,0,0-7.63,7.85,21.56,21.56,0,0,0-3,11.3v38.63H98.7v-70h14.83V57.63c.51-1.94,1.91-4,4.18-6.31a28.8,28.8,0,0,1,8.7-5.8A27.44,27.44,0,0,1,137.84,43.13Z"/><path class="cls-1" d="M238.89,59.59A29.91,29.91,0,0,0,227,47.44a35.87,35.87,0,0,0-17.94-4.31q-11.26,0-19.23,4.78a31.45,31.45,0,0,0-12.15,13,40.18,40.18,0,0,0-4.18,18.46A42,42,0,0,0,178,99a32.52,32.52,0,0,0,12.66,13.4q8.22,4.8,19.48,4.81a51.58,51.58,0,0,0,14.16-1.67,29.31,29.31,0,0,0,9.85-4.73,31.05,31.05,0,0,0,6.86-7.16l-7.25-9a23.13,23.13,0,0,1-4.18,4.81,25.1,25.1,0,0,1-7.46,4.61A28.43,28.43,0,0,1,211,106.06,25.23,25.23,0,0,1,198.13,103a20.07,20.07,0,0,1-7.89-8.28,25.9,25.9,0,0,1-2.73-11.52h55.34c.06-.45.11-1.25.18-2.42s.08-2,.08-2.43Q243.11,67.44,238.89,59.59ZM188,72a21.81,21.81,0,0,1,2.47-7.89,18.34,18.34,0,0,1,6.71-7c3-1.93,7.06-2.91,12.05-2.91,4.84,0,8.68,1,11.52,3A17.79,17.79,0,0,1,227,64.36,20,20,0,0,1,229,72Z"/><path class="cls-1" d="M276.91,43.13a44.51,44.51,0,0,1,10.19,1.11,46.45,46.45,0,0,1,8.19,2.64,23.35,23.35,0,0,1,4.9,2.73L294.31,59a24.36,24.36,0,0,0-6.14-3.45,24.68,24.68,0,0,0-9.89-1.92A20.48,20.48,0,0,0,268.13,56,7.4,7.4,0,0,0,264,62.74c0,3,1.44,5.3,4.31,7a40.47,40.47,0,0,0,11.55,4.3,59.08,59.08,0,0,1,10.87,3.67,21.42,21.42,0,0,1,8.23,6.35q3.15,4.05,3.16,10.79a20.09,20.09,0,0,1-2.56,10.45,19.6,19.6,0,0,1-6.91,6.9,32.52,32.52,0,0,1-9.72,3.8A50.51,50.51,0,0,1,272,117.23a47.64,47.64,0,0,1-11.69-1.32,41.43,41.43,0,0,1-8.74-3.15,29.86,29.86,0,0,1-5.16-3.2L252.27,99a28.16,28.16,0,0,0,7.29,4.52,26.68,26.68,0,0,0,11.55,2.39q7.17,0,11.6-3A9.15,9.15,0,0,0,287.14,95,8.15,8.15,0,0,0,285,89.09a15.43,15.43,0,0,0-5.71-3.58,65.15,65.15,0,0,0-7.85-2.39,55.26,55.26,0,0,1-8-2.47,29.65,29.65,0,0,1-7.08-4,18.1,18.1,0,0,1-5.07-6,17.52,17.52,0,0,1-1.88-8.32A15,15,0,0,1,253.29,52a24.68,24.68,0,0,1,10.06-6.61A38.91,38.91,0,0,1,276.91,43.13Z"/><path class="cls-1" d="M305.46,45.18h13.73V15.06H334V45.18h18v12.7H334V92.5q0,6.15,2.17,9a6.94,6.94,0,0,0,5.84,2.9,9.06,9.06,0,0,0,5-1.19c1.2-.8,3.64-2.31,3.87-2.6l5.52,11c-.34.28-2.62,1.68-4.1,2.47a26.45,26.45,0,0,1-5.71,2.13,31.64,31.64,0,0,1-8.19.94,19.6,19.6,0,0,1-13.69-5q-5.49-5-5.5-15.81V57.88H305.46Z"/><path class="cls-1" d="M391.62,43.13a44.58,44.58,0,0,1,10.19,1.11A46.6,46.6,0,0,1,410,46.88a23.22,23.22,0,0,1,4.91,2.73L409,59a24,24,0,0,0-6.14-3.45A24.61,24.61,0,0,0,393,53.62,20.44,20.44,0,0,0,382.84,56a7.4,7.4,0,0,0-4.18,6.78c0,3,1.43,5.3,4.3,7a40.55,40.55,0,0,0,11.56,4.3,59.34,59.34,0,0,1,10.87,3.67,21.49,21.49,0,0,1,8.23,6.35q3.15,4.05,3.15,10.79a20.18,20.18,0,0,1-2.55,10.45,19.6,19.6,0,0,1-6.91,6.9,32.52,32.52,0,0,1-9.72,3.8,50.53,50.53,0,0,1-10.92,1.19A47.56,47.56,0,0,1,375,115.91a41.22,41.22,0,0,1-8.74-3.15,29.86,29.86,0,0,1-5.16-3.2L367,99a27.81,27.81,0,0,0,7.29,4.52,26.68,26.68,0,0,0,11.55,2.39q7.17,0,11.6-3A9.17,9.17,0,0,0,401.85,95a8.15,8.15,0,0,0-2.13-5.89A15.52,15.52,0,0,0,394,85.51a65.71,65.71,0,0,0-7.85-2.39,54.5,54.5,0,0,1-8-2.47,29.46,29.46,0,0,1-7.08-4,18.1,18.1,0,0,1-5.07-6,17.52,17.52,0,0,1-1.88-8.32A15,15,0,0,1,368,52a24.68,24.68,0,0,1,10.06-6.61A38.91,38.91,0,0,1,391.62,43.13Z"/><path class="cls-1" d="M430.83,34.42a9.75,9.75,0,0,1-9.72-9.72A9.5,9.5,0,0,1,424,17.79a9.56,9.56,0,0,1,11.77-1.54,10.79,10.79,0,0,1,3.63,3.54,9.13,9.13,0,0,1,1.36,4.91,9.29,9.29,0,0,1-2.9,6.86A9.57,9.57,0,0,1,430.83,34.42Z"/><rect class="cls-1" x="423.24" y="45.18" width="14.84" height="70.01"/><path class="cls-1" d="M444.58,45.18h13.73V15.06h14.75V45.18h18v12.7h-18V92.5q0,6.15,2.17,9a6.94,6.94,0,0,0,5.84,2.9,9.06,9.06,0,0,0,5-1.19,12.8,12.8,0,0,0,2.14-1.62l5.88,10.91a20.28,20.28,0,0,1-2.73,1.62,26.45,26.45,0,0,1-5.71,2.13,31.59,31.59,0,0,1-8.19.94,19.56,19.56,0,0,1-13.68-5q-5.51-5-5.5-15.81V57.88H444.58Z"/><path class="cls-1" d="M557.46,59.59A29.91,29.91,0,0,0,545.6,47.44a35.89,35.89,0,0,0-18-4.31q-11.25,0-19.23,4.78a31.52,31.52,0,0,0-12.15,13,40.3,40.3,0,0,0-4.18,18.46A42.09,42.09,0,0,0,496.53,99a32.61,32.61,0,0,0,12.67,13.4q8.2,4.8,19.47,4.81a51.4,51.4,0,0,0,14.15-1.67,29,29,0,0,0,9.85-4.73,30.48,30.48,0,0,0,6.87-7.16l-7.24-9a23.44,23.44,0,0,1-4.18,4.81,25.23,25.23,0,0,1-7.46,4.61,28.5,28.5,0,0,1-11,1.92A25.2,25.2,0,0,1,516.7,103a20.07,20.07,0,0,1-7.89-8.28,25.64,25.64,0,0,1-2.73-11.52h55.34c.05-.45.11-1.25.18-2.42s.08-2,.08-2.43Q561.68,67.44,557.46,59.59ZM506.59,72a21.42,21.42,0,0,1,2.47-7.89,18.31,18.31,0,0,1,6.7-7c3-1.93,7.06-2.91,12.06-2.91,4.84,0,8.67,1,11.52,3a17.84,17.84,0,0,1,6.17,7.16,19.88,19.88,0,0,1,2,7.68Z"/><path class="cls-1" d="M594.89,43.13a44.64,44.64,0,0,1,10.19,1.11,46.6,46.6,0,0,1,8.18,2.64,23.09,23.09,0,0,1,4.9,2.73L612.28,59a24.17,24.17,0,0,0-6.14-3.45,24.64,24.64,0,0,0-9.89-1.92A20.5,20.5,0,0,0,586.1,56a7.42,7.42,0,0,0-4.18,6.78c0,3,1.44,5.3,4.31,7a40.47,40.47,0,0,0,11.55,4.3,59.44,59.44,0,0,1,10.88,3.67,21.57,21.57,0,0,1,8.23,6.35Q620,88.15,620,94.89a20.09,20.09,0,0,1-2.56,10.45,19.57,19.57,0,0,1-6.9,6.9,32.48,32.48,0,0,1-9.73,3.8,50.51,50.51,0,0,1-10.91,1.19,47.5,47.5,0,0,1-11.68-1.32,41.22,41.22,0,0,1-8.74-3.15,29.86,29.86,0,0,1-5.16-3.2L570.24,99a28.16,28.16,0,0,0,7.29,4.52,26.73,26.73,0,0,0,11.56,2.39q7.15,0,11.59-3A9.16,9.16,0,0,0,605.12,95,8.15,8.15,0,0,0,603,89.09a15.48,15.48,0,0,0-5.72-3.58,65,65,0,0,0-7.84-2.39,55,55,0,0,1-8-2.47,29.58,29.58,0,0,1-7.07-4,18.13,18.13,0,0,1-5.08-6,17.52,17.52,0,0,1-1.87-8.32A15.08,15.08,0,0,1,571.26,52a24.71,24.71,0,0,1,10.07-6.61A38.91,38.91,0,0,1,594.89,43.13Z"/><path class="cls-1" d="M18.33,126a18.31,18.31,0,0,1-9.26-2.58c-6.17-3.73-9.36-10.86-9-17.94C.87,85.92,14.13,77.23,28.63,71.84c-.06-2.72-.13-5.61-.21-8.9A59.28,59.28,0,0,1,1,64.07L3.75,50.56a46.28,46.28,0,0,0,24.32-2c-.07-3.32-.14-6.67-.19-10,0-1.3-.07-2.62-.12-4-.23-6.6-.49-14.08,2-21.06C32.77,5,40.25-.32,48.8,0S64.16,6.18,66.48,14.88c2.45,9.17-1,17.83-4.32,23.48a52.69,52.69,0,0,1-20.09,19c.09,3.38.17,6.76.26,10.14a88,88,0,0,0,14.31-5.26q2.56-1.24,5-2.69,2.59,4.47,5.21,8.9l1.76,3a84.83,84.83,0,0,1-21.4,9c-1.57.45-3.09.89-4.56,1.33.09,3.45.19,7.11.32,11.45.31,10.12-2.9,22.3-11.48,28.5A22.28,22.28,0,0,1,18.33,126ZM29,86.59c-9.35,4.18-14.77,9.59-15.2,19.49-.1,2.34.65,4.53,1.88,5.42a4.81,4.81,0,0,0,3.19.72c8.6-.72,10.52-12.46,10.33-18.56C29.13,91.1,29.06,88.78,29,86.59Zm19.08-72.8c-1.87,0-4.2,1.14-5.34,4.37-1.6,4.51-1.39,10.33-1.19,16,.05,1.43.1,2.84.12,4.22,0,.91,0,1.83,0,2.74a36.14,36.14,0,0,0,8.55-9.72c1.63-2.77,4.17-8.12,2.89-12.91-.77-2.86-2.55-4.56-4.9-4.65Z"/></g></g></svg></div>
+          <p class="m-kicker">Powerday · Sonntag, 08.11.2026</p>
+          <div class="cd" id="cd"><div><b>4</b><span>Tage</span></div><div><b>13</b><span>Std</span></div><div><b>26</b><span>Min</span></div><div><b>08</b><span>Sek</span></div></div>
+          <p class="cd-label">So lange gilt dein Powerday-Preis</p>
+          <h3 class="m-h">Deine Webseite. Heute gesichert.</h3>
+          <p class="m-p">Jetzt sichern, zu Hause in Ruhe einrichten. Du bekommst sofort eine Mail mit deinem Zugang.</p>
+          <div class="m-seg"><span class="on">Jährlich <em>spart 91,80 €</em></span><span>Monatlich</span></div>
+          <div class="m-card">
+            <div class="badge">EMPFEHLUNG FÜR PM-PARTNER</div>
+            <div class="name">Pro · 3 Webseiten</div>
+            <div class="price"><span class="strike">270 €</span><span class="big">216 €</span><span class="unit">/Jahr</span></div>
+            <div class="per">= 18 € im Monat statt 27 €</div>
+            <p class="fine">20 % Powerday-Rabatt im ersten Jahr, danach 270 €/Jahr. Jährlich kündbar.</p>
+            <div class="sites"><b>Optimalset, PM-Business und cellRESET</b><span>Die drei Seiten, die ein PM-Partner braucht. Fertige Texte, fertiges Design, du trägst nur deine Daten ein.</span></div>
+          </div>
+          <div class="m-input filled">Sabine</div>
+          <div class="m-input">deine@e-mail.de</div>
+          <div class="m-btn">Pro sichern · 216 €</div>
+          <p class="m-fine">Apple Pay, Karte oder SEPA · 14 Tage Geld-zurück · Für Unternehmer, Preise inkl. MwSt.</p>
+          <div class="m-alt"><span>Nur eine Seite? Starter 136 €/Jahr</span><span>Alle Vorlagen? Unlimited 296 €/Jahr</span></div>
+          <div class="m-shots"><div><span>Optimalset</span></div><div><span>PM-Business</span></div><div><span>cellRESET</span></div></div>
+          <p class="m-shots-label">So sehen fertige Seiten aus · antippen für die Live-Vorschau</p>
+          <p class="m-ghost">Erst ansehen, später entscheiden ›<small>Der Powerday-Preis gilt auch bei der normalen Registrierung, solange der Countdown läuft.</small></p>
+        </div>
+      </div>
+      <figcaption>Mockup mit laufendem Countdown bis Mo. 09.11., 23:59 Uhr. Logo, Countdown, ein Angebot, zwei Felder, ein Knopf. Alles andere steht darunter.</figcaption>
+    </figure>
+    <div class="side">
+      <h3>Bei „Monatlich“</h3>
+      <ul>
+        <li>Karte zeigt <b>21,60 €</b> /Monat, durchgestrichen 27 €, „in den ersten 3 Monaten, danach 27 €/Monat. Monatlich kündbar.“</li>
+        <li>Unter dem Knopf eine Zeile: „Mit dem Jahr sparst du 91,80 €“ als Link zurück auf „Jährlich“.</li>
+      </ul>
+      <h3>Am Rechner</h3>
+      <ul>
+        <li>Gleiche Seite, mittig, 480 px breit. Keine zweite Fassung.</li>
+        <li>Rechts daneben die drei Vorschauen größer.</li>
+      </ul>
+      <h3>Nach Ablauf</h3>
+      <ul>
+        <li>Countdown weg, Karte zeigt 270 €/Jahr, Hinweis „Das Powerday-Angebot ist beendet“. Der Kauf bleibt möglich.</li>
+      </ul>
+      <h3>Nach dem Kauf</h3>
+      <ul>
+        <li>Seite „Gesichert.“ mit der E-Mail-Adresse groß, Knopf „Passwort festlegen“, Hinweis auf die Mail und die 14 Tage.</li>
+        <li>Willkommens-Mail im normalen Layout: ein Knopf „Passwort festlegen und loslegen“, Link 7 Tage gültig.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2><small>Vereinfacht</small>Was gegenüber dem 26.10. wegfällt</h2>
+  <div class="tbl"><table>
+    <tr><th>Teil</th><th>Vorher</th><th>Jetzt</th></tr>
+    <tr><td>Angebotsfenster</td><td>Cookie <code>fs_event_offer</code> + zwei neue Spalten + Prüfung im Checkout</td><td>Entfällt. Der Ablauf des Stripe-Codes ist das Fenster. Wer über „Erst ansehen“ geht, sieht den Code auf Startseite und im Editor, solange er läuft. <span class="pill cut">−0,5 Tage</span></td></tr>
+    <tr><td>Erinnerungsmails</td><td>Tabelle, Einwilligung, Cron, drei Texte</td><td>Entfällt. Kein Massenversand, keine Einwilligungs-Technik. Der Countdown und die Bühne erinnern. <span class="pill cut">−1 Tag</span></td></tr>
+    <tr><td>Live-Zähler</td><td>optional, halber Tag</td><td>Entfällt. <span class="pill cut">−0,5 Tage</span></td></tr>
+    <tr><td>Admin „Event-Buchungen“</td><td>eigene Seite mit Export</td><td>Entfällt. Du siehst Käufe live im Stripe-Dashboard (Filter auf den Code), ich ziehe dir Montag die Auswertung aus der Datenbank. <span class="pill cut">−0,5 Tage</span></td></tr>
+    <tr><td>Inhalte</td><td>aus <code>app_settings</code> pflegbar</td><td>Fest im Code (Name, Datum, Code). Für das nächste Event ändere ich drei Zeilen. <span class="pill cut">−0,5 Tage</span></td></tr>
+    <tr><td>Partner-QR mit <code>?ref=</code></td><td>offene Entscheidung</td><td>Die Event-Seite ignoriert Partnerlinks. Partner werben weiter über ihre normalen Links, dort gilt wie heute der Empfehlungsrabatt statt der Aktion.</td></tr>
+    <tr><td>Dashboard-Banner</td><td>Web + App, eigener Zustand</td><td>Eine Zeile auf der Webseiten-Übersicht, solange noch keine Seite veröffentlicht ist. App bekommt nichts Neues (dort gibt es keinen Tarifkauf).</td></tr>
+  </table></div>
+  <p>Bleibt: Event-Seite, Checkout ohne Konto, Konto aus dem Webhook, „Gesichert“-Seite, Willkommens-Mail, Tests. Rund <b>2,5 Arbeitstage</b> statt 7,5.</p>
+
+  <h2><small>Technik</small>Was gebaut wird</h2>
+  <div class="tbl"><table>
+    <tr><th>Teil</th><th>Beschreibung</th><th class="num">Aufwand</th></tr>
+    <tr><td>Event-Seite</td><td><code>finestsites.io/powerday</code> auf der Marketing-Domain, ohne Konto erreichbar. Countdown und Preise aus dem laufenden Stripe-Code (bestehende Campaign-Technik), Umschalter Jahr/Monat, Vorname + E-Mail, Vorschauen aus den Vorlagen.</td><td class="num">0,5 Tag</td></tr>
+    <tr><td>Checkout ohne Konto</td><td><code>POST /api/billing/event-checkout</code>: prüft die E-Mail. Bekannte Adresse → „Du hast schon ein Konto“, Login, danach der normale Checkout (Code gilt dort automatisch). Neue Adresse → Stripe-Session mit Kunde, Code, Tarif, Intervall, Vorname in den Metadaten. Rate-Limit wie bei der Code-Prüfung.</td><td class="num">0,5 Tag</td></tr>
+    <tr><td>Konto aus dem Webhook</td><td><code>checkout.session.completed</code> mit <code>event_signup</code>: Nutzer anlegen (E-Mail gilt als bestätigt, Stripe hat sie geprüft), Stripe-Kunde, Abo, Tarif, Intervall, Status setzen, <code>subscription_events</code> loggen, Willkommens-Mail mit Passwort-Link (7 Tage). Idempotent über die Stripe-Event-ID. Die „Gesichert“-Seite legt das Konto notfalls selbst an, falls der Webhook hängt.</td><td class="num">1 Tag</td></tr>
+    <tr><td>„Gesichert“-Seite + Mail</td><td><code>/powerday/gesichert?session_id=…</code>, E-Mail-Adresse groß mit „Falsche Adresse? Hier korrigieren“ (solange kein Passwort gesetzt ist), Knopf „Passwort festlegen“. Mail im bestehenden Layout.</td><td class="num">0,25 Tag</td></tr>
+    <tr><td>Tests + Smoke</td><td>Lokal mit Stripe-Testmodus: neuer Kauf monatlich/jährlich, bekannte E-Mail, Webhook doppelt, abgelaufener Code, Mail-Link abgelaufen. Smoke-Test-Eintrag für <code>/powerday</code>. Keine Mail an echte Nutzer, Testmails nur an info@daniel-kurzeja.de.</td><td class="num">0,25 Tag</td></tr>
+  </table></div>
+  <div class="note ok"><b>Risiken bleiben wie im ersten Konzept abgefangen:</b> keine Doppelkonten (E-Mail-Prüfung vor Stripe), Webhook idempotent, Tippfehler in der Adresse korrigierbar, Code läuft nicht mitten im Checkout ab (die Session trägt den Rabatt fest). Alles läuft im Browser auf finestsites.io, nichts in der App.</div>
+
+  <h2><small>Zeitplan</small>Bis Sonntag, ohne Reserve</h2>
+  <ul class="timeline">
+    <li><b>Do 05.11. (heute)</b><span>Dein Ja zu den fünf Punkten unten. Danach lege ich POWERDAY20 in Stripe an (inaktiv) und fange mit der Seite an.</span></li>
+    <li><b>Fr 06.11.</b><span>Checkout, Webhook, „Gesichert“-Seite, Mail, Tests im Stripe-Testmodus. Deploy im 23:00-Fenster: Seite erreichbar, aber nirgends verlinkt, Code noch inaktiv.</span></li>
+    <li><b>Sa 07.11.</b><span>Du testest mit einem 100 %-Code: Kauf über die Seite, Mail, Passwort, Seite veröffentlichen, Rückerstattung durchspielen. Korrekturen, wenn nötig Deploy 23:00. Danach POWERDAY20 aktiv schalten.</span></li>
+    <li><b>So 08.11.</b><span>Powerday. QR-Code und Kurzlink auf der Bühne. Kein Deploy an diesem Tag, ich bin erreichbar.</span></li>
+    <li><b>Mo 09.11., 23:59</b><span>Code läuft ab, Seite zeigt normale Preise. Dienstag Auswertung: Käufe, Tarife, Jahr/Monat, Passwort gesetzt, Seite online.</span></li>
+  </ul>
+  <div class="note warn"><b>Plan B, falls Samstag 12:00 nicht alles grün ist:</b> Der Knopf „Pro sichern“ führt dann in die normale Registrierung mit vorgewähltem Pro-Jahresabo. Der Powerday-Preis gilt dort automatisch, nur der Weg ist länger (E-Mail bestätigen, Vorlage, Veröffentlichen). Die Event-Seite mit Countdown und Vorrechnung bleibt in beiden Fällen gleich.</div>
+
+  <h2><small>Entscheidungen</small>Fünf Punkte, dann geht es los</h2>
+  <ul class="q">
+    <li><span>1</span><div><b>So bauen (Checkout ohne Konto, schlanke Fassung)?</b><em>Alternativ nur die Event-Seite mit Weiterleitung in die normale Registrierung: ein halber Tag, aber wieder der lange Weg.</em></div></li>
+    <li><span>2</span><div><b>POWERDAY20 anlegen: Ablauf Montag 09.11., 23:59 Uhr, nur Erstkäufer, alle Tarife?</b><em>Das ist ein Schreibzugriff in Stripe, den mache ich nur mit deinem Ja. Alternativ Dienstag 10.11., 23:59.</em></div></li>
+    <li><span>3</span><div><b>Starter und Unlimited nur als Textzeile unter der Pro-Karte?</b><em>Empfehlung ja. Wer Starter sucht, findet ihn mit einem Tipp, aber er steht nicht mehr neben Pro.</em></div></li>
+    <li><span>4</span><div><b>14 Tage Geld-zurück auf der Seite zusagen?</b><em>Empfehlung ja, das ist der Hebel fürs Jahresabo. Kostet im Zweifel 216 € je Rückgabe, Erstattung über Stripe, Abo beenden. Beim letzten Event gab es 0 Rückforderungen.</em></div></li>
+    <li><span>5</span><div><b>Adresse finestsites.io/powerday?</b><em>Kurz, auf der Bühne lesbar, passt zum Code. Alternativ /event als Dauer-Adresse.</em></div></li>
+  </ul>
+  <p>Noch nichts davon ist gebaut oder deployt. Diese Seite liegt als <code>docs/event/powerday-konzept.html</code> im Repo.</p>
+</main>
+
+<script>
+(function () {
+  var end = new Date('2026-11-09T23:59:59+01:00').getTime();
+  var cells = document.querySelectorAll('#cd b');
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+  function tick() {
+    var ms = Math.max(0, end - Date.now());
+    var s = Math.floor(ms / 1000);
+    var d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+    cells[0].textContent = String(d); cells[1].textContent = pad(h); cells[2].textContent = pad(m); cells[3].textContent = pad(sec);
+  }
+  tick();
+  if (!window.matchMedia || !window.matchMedia('(prefers-reduced-motion: reduce)').matches) setInterval(tick, 1000);
+})();
+</script>
