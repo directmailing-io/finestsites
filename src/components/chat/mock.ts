@@ -53,6 +53,8 @@ function toAdminReport(r: AdminReportRow): AdminChatReport {
   }
 }
 
+export type AdminReportAction = 'unblock' | 'block' | 'dismiss'
+
 export class ChatApiError extends Error {
   status: number
   code: string
@@ -81,6 +83,7 @@ export interface ChatApi {
   adminGetSettings(): Promise<AdminChatSettings>
   adminSaveSettings(s: AdminChatSettings): Promise<AdminChatSettings>
   adminGetReports(): Promise<AdminChatReport[]>
+  adminReportAction(conversationId: string, action: AdminReportAction): Promise<{ status: string }>
 }
 
 export const CHAT_MOCK = process.env.NEXT_PUBLIC_CHAT_MOCK === '1'
@@ -177,6 +180,13 @@ const realApi: ChatApi = {
     // hier in die flache Form der Admin-Seite übersetzen (vorher 1:1 durchgereicht → Absturz bei der ersten Meldung).
     const r = await call<{ reports?: AdminReportRow[] }>('/api/admin/chat/reports')
     return (r.reports ?? []).map(toAdminReport)
+  },
+  async adminReportAction(conversationId: string, action: AdminReportAction) {
+    const r = await call<{ status: string }>(`/api/admin/chat/reports/${encodeURIComponent(conversationId)}`, {
+      method: 'POST',
+      body: JSON.stringify({ action }),
+    })
+    return { status: r.status }
   },
 }
 
@@ -440,6 +450,10 @@ const mockApi: ChatApi = {
         ],
       },
     ]
+  },
+  async adminReportAction(_conversationId: string, action: AdminReportAction) {
+    await delay()
+    return { status: action === 'unblock' ? 'open' : action === 'block' ? 'blocked' : 'open' }
   },
 }
 

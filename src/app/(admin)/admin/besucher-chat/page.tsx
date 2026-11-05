@@ -6,7 +6,7 @@
  */
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { chatApi, type AdminChatReport } from '@/components/chat/mock'
+import { chatApi, type AdminChatReport, type AdminReportAction } from '@/components/chat/mock'
 import { Switch } from '@/components/chat/Dialogs'
 import { reportReasonLabel } from '@/components/chat/utils'
 
@@ -29,6 +29,25 @@ export default function AdminVisitorChatPage() {
   const [reports, setReports] = useState<AdminChatReport[]>([])
   const [reportsError, setReportsError] = useState<string | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [busy, setBusy] = useState<string | null>(null)
+  const [actionError, setActionError] = useState<{ id: string; text: string } | null>(null)
+
+  async function act(r: AdminChatReport, action: AdminReportAction) {
+    if (action === 'block' && !window.confirm('Besucher sperren? Er kann dann auf keiner Seite dieses Kontos mehr schreiben.')) return
+    if (action === 'dismiss' && !window.confirm('Meldung als erledigt markieren? Sie verschwindet aus dieser Liste, das Gespräch bleibt beim Betreiber.')) return
+    setBusy(r.conversationId)
+    setActionError(null)
+    try {
+      const res = await chatApi.adminReportAction(r.conversationId, action)
+      setReports(list => action === 'dismiss'
+        ? list.filter(x => x.conversationId !== r.conversationId)
+        : list.map(x => x.conversationId === r.conversationId ? { ...x, status: res.status } : x))
+    } catch {
+      setActionError({ id: r.conversationId, text: 'Hat nicht geklappt. Bitte noch einmal versuchen.' })
+    } finally {
+      setBusy(null)
+    }
+  }
 
   useEffect(() => {
     let alive = true
@@ -215,6 +234,21 @@ export default function AdminVisitorChatPage() {
                         {open ? 'Weniger anzeigen' : `Alle ${msgs.length} Nachrichten anzeigen`}
                       </button>
                     )}
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 mt-4 pt-3" style={{ borderTop: '1px solid #F1F5F9' }}>
+                    {r.status === 'blocked' ? (
+                      <button onClick={() => act(r, 'unblock')} disabled={busy === r.conversationId} className="text-sm font-semibold px-3.5 py-2 rounded-xl disabled:opacity-50" style={{ background: '#1a1a1a', color: '#fff' }}>
+                        Besucher entsperren
+                      </button>
+                    ) : (
+                      <button onClick={() => act(r, 'block')} disabled={busy === r.conversationId} className="text-sm font-semibold px-3.5 py-2 rounded-xl disabled:opacity-50" style={{ border: '1px solid #FECACA', color: '#991B1B', background: '#fff' }}>
+                        Besucher sperren
+                      </button>
+                    )}
+                    <button onClick={() => act(r, 'dismiss')} disabled={busy === r.conversationId} className="text-sm font-semibold px-3.5 py-2 rounded-xl disabled:opacity-50" style={{ border: '1px solid #E5E7EB', color: '#374151', background: '#fff' }}>
+                      Meldung erledigt
+                    </button>
+                    {actionError?.id === r.conversationId && <span className="text-xs" style={{ color: '#B91C1C' }}>{actionError.text}</span>}
                   </div>
                 </li>
               )
