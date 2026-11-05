@@ -4,7 +4,7 @@
   "start": 0.0,
   "end": 7.44,
   "de": "Du hast bestimmt schon mal ein gutes Restaurant, eine spannende Serie oder ein Produkt empfohlen, von dem du selbst begeistert warst.",
-  "text": "좋은 식당이나 재밌는 시리즈, 아니면 직접 써 보고 정말 마음에 들었던 제품을 한 번쯤은 추천해 본 적 있을 거예요."
+  "text": "좋은 식당이나 재밌는 시리즈, 아니면 직접 써 보고 반했던 제품을 한 번쯤은 추천해 본 적 있을 거예요."
  },
  {
   "id": 1,
@@ -18,7 +18,7 @@
   "start": 11.56,
   "end": 14.0,
   "de": "Normalerweise bekommst du dafür nichts.",
-  "text": "보통은 그렇다고 뭘 받지는 않잖아요."
+  "text": "보통은 그렇다고 받는 건 없죠."
  },
  {
   "id": 3,
@@ -32,7 +32,7 @@
   "start": 20.6,
   "end": 22.4,
   "de": "Eigentlich fair, oder?",
-  "text": "따지고 보면 공평하죠?"
+  "text": "사실 공평하죠?"
  },
  {
   "id": 5,
@@ -46,7 +46,7 @@
   "start": 25.36,
   "end": 28.48,
   "de": "Es geht darum, Lebensqualität weiterzugeben.",
-  "text": "삶의 질을 나누는 거예요."
+  "text": "더 나은 일상을 다른 사람과 나누는 거예요."
  },
  {
   "id": 7,
@@ -60,28 +60,28 @@
   "start": 33.28,
   "end": 41.08,
   "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
-  "text": "오후만 되면 에너지가 거의 없거나, 일과 가족, 자기 자신까지 다 챙기려 애쓰는 사람을 알고 있을지도 몰라요."
+  "text": "오후엔 기운이 거의 없거나, 일과 가족, 자기 자신까지 챙기려 애쓰는 사람을 알지도 몰라요."
  },
  {
   "id": 9,
   "start": 41.08,
   "end": 46.56,
   "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
-  "text": "어쩌면 그런 사람들에게 다른 길도 있다는 걸 보여 줄 사람이 바로 여러분일 수도 있어요."
+  "text": "어쩌면 그 사람에게 다른 길도 있다는 걸 보여 줄 수 있어요."
  },
  {
   "id": 10,
   "start": 46.56,
   "end": 48.88,
   "de": "Genau das ist dein Job.",
-  "text": "그게 바로 여러분이 할 일이에요."
+  "text": "그게 할 일이에요."
  },
  {
   "id": 11,
   "start": 48.88,
   "end": 57.92,
   "de": "Nicht verkaufen, nicht überreden, sondern einfach ehrlich von deinen Erfahrungen erzählen und zeigen, was auch für andere möglich sein kann.",
-  "text": "판매하는 것도, 설득하는 것도 아니에요. 그냥 써 본 경험을 솔직하게 얘기하고, 다른 사람에게도 어떤 가능성이 있는지 보여 주는 거죠."
+  "text": "파는 것도, 설득하는 것도 아니에요. 써 본 경험을 솔직하게 말하고, 다른 사람에게도 가능하다는 걸 보여 주는 거죠."
  },
  {
   "id": 12,
@@ -109,7 +109,7 @@
   "start": 74.52,
   "end": 78.0,
   "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
-  "text": "안 맞으면 그냥 환불받으면 돼요."
+  "text": "안 맞으면 그냥 환불돼요."
  },
  {
   "id": 16,
@@ -123,7 +123,7 @@
   "start": 82.2,
   "end": 87.0,
   "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
-  "text": "상대방도 위험 부담 없이 자기에게 맞는지 확인해 볼 수 있어요."
+  "text": "상대방도 위험 없이 자기에게 맞는지 확인할 수 있어요."
  },
  {
   "id": 18,
@@ -144,14 +144,14 @@
   "start": 99.2,
   "end": 105.2,
   "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
-  "text": "여러 중간 유통업체나 비싼 광고에 돈을 들이는 대신, 그 돈이 바로 제품에 들어가요."
+  "text": "중간 유통업체나 비싼 광고에 돈을 쓰는 대신, 그 돈이 바로 제품에 들어가요."
  },
  {
   "id": 21,
   "start": 105.2,
   "end": 109.28,
   "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
-  "text": "그래서 일상에서 실제로 느낄 수 있는 품질이 만들어지는 거죠."
+  "text": "그래서 일상에서 정말 느껴지는 품질이 나와요."
  },
  {
   "id": 22,
@@ -165,13 +165,13 @@
   "start": 116.4,
   "end": 119.4,
   "de": "Wie das genau funktioniert, zeige ich dir.",
-  "text": "구체적으로 어떻게 되는지, 제가 보여 드릴게요."
+  "text": "어떻게 하는지, 제가 보여 드릴게요."
  },
  {
   "id": 24,
   "start": 119.4,
   "end": 122.4,
   "de": "Ich nehme dich gerne an die Hand.",
-  "text": "제가 옆에서 차근차근 안내해 드릴게요."
+  "text": "차근차근 도와드릴게요."
  }
 ]

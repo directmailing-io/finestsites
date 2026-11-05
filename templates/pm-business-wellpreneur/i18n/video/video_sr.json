@@ -11,7 +11,7 @@
   "start": 7.44,
   "end": 11.56,
   "de": "Einfach, weil du dir dachtest, das könnte auch anderen gefallen.",
-  "text": "Prosto jer ti je palo na pamet: ovo bi se možda svidelo i drugima."
+  "text": "Prosto jer misliš da bi se i drugima svidelo."
  },
  {
   "id": 2,
@@ -46,7 +46,7 @@
   "start": 25.36,
   "end": 28.48,
   "de": "Es geht darum, Lebensqualität weiterzugeben.",
-  "text": "Radi se o tome da kvalitet života preneseš dalje."
+  "text": "Cilj je da drugima pomogneš da žive bolje."
  },
  {
   "id": 7,
@@ -60,14 +60,14 @@
   "start": 33.28,
   "end": 41.08,
   "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
-  "text": "ko popodne jedva ima energije ili pokušava da bude tu i za posao, i za porodicu, i za sebe."
+  "text": "ko popodne jedva ima snage ili pokušava da bude tu za posao, porodicu i sebe."
  },
  {
   "id": 9,
   "start": 41.08,
   "end": 46.56,
   "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
-  "text": "I možda si baš ti osoba koja im pokaže da može i drugačije."
+  "text": "I možda si baš ti osoba koja mu pokaže da može i drugačije."
  },
  {
   "id": 10,
@@ -95,7 +95,7 @@
   "start": 63.0,
   "end": 68.6,
   "de": "probierst sie selbst aus und teilst deine Erfahrungen, wenn du wirklich dahinter stehst.",
-  "text": "isprobaš ih sam i podeliš svoje iskustvo, kad stvarno stojiš iza njih."
+  "text": "isprobaš ih lično i podeliš svoje iskustvo, kad stvarno stojiš iza njih."
  },
  {
   "id": 14,
@@ -109,7 +109,7 @@
   "start": 74.52,
   "end": 78.0,
   "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
-  "text": "Ako ne odgovara, pare se prosto vrate."
+  "text": "Ne odgovara? Pare se prosto vrate."
  },
  {
   "id": 16,
@@ -123,7 +123,7 @@
   "start": 82.2,
   "end": 87.0,
   "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
-  "text": "a druga osoba može skroz bez rizika da vidi da li joj odgovaraju."
+  "text": "a druga osoba bez rizika vidi da li joj odgovaraju."
  },
  {
   "id": 18,
@@ -137,35 +137,35 @@
   "start": 92.88,
   "end": 99.2,
   "de": "Hinter dem Ganzen steckt ein deutsches Familienunternehmen, gegründet im Jahr 1993.",
-  "text": "Iza svega stoji nemačka porodična firma, osnovana hiljadu devetsto devedeset treće godine."
+  "text": "Iza svega stoji nemačka porodična firma, osnovana hiljadu devetsto devedeset treće."
  },
  {
   "id": 20,
   "start": 99.2,
   "end": 105.2,
   "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
-  "text": "Umesto da se plaća gomila posrednika i skupa reklama, novac ide direktno u proizvode."
+  "text": "Umesto na gomilu posrednika i skupe reklame, novac ide pravo u proizvode."
  },
  {
   "id": 21,
   "start": 105.2,
   "end": 109.28,
   "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
-  "text": "Tako nastaje kvalitet koji stvarno osetiš iz dana u dan."
+  "text": "Tako nastaje kvalitet koji stvarno osetiš svaki dan."
  },
  {
   "id": 22,
   "start": 109.28,
   "end": 116.4,
   "de": "Und ein Teil geht an die Menschen, die die Produkte selbst nutzen, weiterempfehlen und andere dabei unterstützen.",
-  "text": "A jedan deo ide ljudima koji proizvode sami koriste, preporučuju dalje i pritom podržavaju druge."
+  "text": "A deo ide ljudima koji proizvode sami koriste, preporučuju i podržavaju druge."
  },
  {
   "id": 23,
   "start": 116.4,
   "end": 119.4,
   "de": "Wie das genau funktioniert, zeige ich dir.",
-  "text": "Kako to tačno funkcioniše, pokazaću ti."
+  "text": "Kako to tačno ide, pokazaću ti."
  },
  {
   "id": 24,

@@ -32,7 +32,7 @@
   "start": 20.6,
   "end": 22.4,
   "de": "Eigentlich fair, oder?",
-  "text": "这其实挺公平的，对吧？"
+  "text": "挺公平的，对吧？"
  },
  {
   "id": 5,
@@ -46,7 +46,7 @@
   "start": 25.36,
   "end": 28.48,
   "de": "Es geht darum, Lebensqualität weiterzugeben.",
-  "text": "就是把生活品质分享出去。"
+  "text": "就是把更好的生活分享给别人。"
  },
  {
   "id": 7,
@@ -67,14 +67,14 @@
   "start": 41.08,
   "end": 46.56,
   "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
-  "text": "也许你刚好能让他们看到，其实还可以有另一种方式。"
+  "text": "也许你刚好就是那个人，让他看到其实也可以不一样。"
  },
  {
   "id": 10,
   "start": 46.56,
   "end": 48.88,
   "de": "Genau das ist dein Job.",
-  "text": "这就是你要做的事。"
+  "text": "这就是你的工作。"
  },
  {
   "id": 11,
@@ -88,7 +88,7 @@
   "start": 57.92,
   "end": 63.0,
   "de": "Du lernst hochwertige Produkte aus den Bereichen Wellness, Fitness und Schönheit kennen,",
-  "text": "你会认识健康生活、健身和美容方面的高品质产品，"
+  "text": "你会接触到健康生活、健身和美容方面的高品质产品，"
  },
  {
   "id": 13,
@@ -172,6 +172,6 @@
   "start": 119.4,
   "end": 122.4,
   "de": "Ich nehme dich gerne an die Hand.",
-  "text": "我很乐意一步一步带着你。"
+  "text": "我很乐意带你上手。"
  }
 ]

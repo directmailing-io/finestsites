@@ -4,14 +4,14 @@
   "start": 0.0,
   "end": 7.44,
   "de": "Du hast bestimmt schon mal ein gutes Restaurant, eine spannende Serie oder ein Produkt empfohlen, von dem du selbst begeistert warst.",
-  "text": "Sen de mutlaka iyi bir restoranı, sürükleyici bir diziyi ya da kendi bayıldığın bir ürünü önermişsindir."
+  "text": "Sen de mutlaka iyi bir restoranı, sürükleyici bir diziyi ya da kendin çok beğendiğin bir ürünü önermişsindir."
  },
  {
   "id": 1,
   "start": 7.44,
   "end": 11.56,
   "de": "Einfach, weil du dir dachtest, das könnte auch anderen gefallen.",
-  "text": "Sırf başkalarının da hoşuna gidebilir diye düşündüğün için."
+  "text": "Sırf başkalarının da hoşuna gider diye."
  },
  {
   "id": 2,
@@ -39,49 +39,49 @@
   "start": 22.4,
   "end": 25.36,
   "de": "Genau darum geht's bei unserem Geschäftsmodell.",
-  "text": "Bizim iş modelimizin olayı da tam bu."
+  "text": "İş modelimiz tam olarak buna dayanıyor."
  },
  {
   "id": 6,
   "start": 25.36,
   "end": 28.48,
   "de": "Es geht darum, Lebensqualität weiterzugeben.",
-  "text": "Mesele, yaşam kalitesini paylaşmak."
+  "text": "Amaç, insanların hayatına kalite katmak."
  },
  {
   "id": 7,
   "start": 28.56,
   "end": 33.28,
   "de": "Vielleicht kennst du jemanden, der sich jeden Morgen mühsam aus dem Bett quält,",
-  "text": "Belki her sabah yataktan zar zor kalkan birini tanıyorsun,"
+  "text": "Belki tanıdığın biri her sabah yataktan zar zor kalkıyor,"
  },
  {
   "id": 8,
   "start": 33.28,
   "end": 41.08,
   "de": "der nachmittags kaum noch Energie hat oder versucht, gleichzeitig für den Job, die Familie und sich selbst da zu sein.",
-  "text": "öğleden sonra enerjisi neredeyse kalmayan ya da aynı anda işe, ailesine ve kendine yetişmeye çalışan birini."
+  "text": "öğleden sonra enerjisi bitiyor ya da aynı anda işe, aileye ve kendine yetişmeye çalışıyor."
  },
  {
   "id": 9,
   "start": 41.08,
   "end": 46.56,
   "de": "Und vielleicht bist du genau der Mensch, der ihnen zeigt, es kann auch anders gehen.",
-  "text": "Ve belki de onlara başka türlü de olabileceğini gösteren kişi tam sensin."
+  "text": "Ve belki de ona başka bir yol olduğunu gösteren kişi tam sensin."
  },
  {
   "id": 10,
   "start": 46.56,
   "end": 48.88,
   "de": "Genau das ist dein Job.",
-  "text": "İşte senin işin tam da bu."
+  "text": "İşte senin işin bu."
  },
  {
   "id": 11,
   "start": 48.88,
   "end": 57.92,
   "de": "Nicht verkaufen, nicht überreden, sondern einfach ehrlich von deinen Erfahrungen erzählen und zeigen, was auch für andere möglich sein kann.",
-  "text": "Satmak değil, ikna etmeye çalışmak değil; sadece deneyimlerini dürüstçe anlatmak ve başkaları için nelerin mümkün olabileceğini göstermek."
+  "text": "Satmak değil, ikna etmek değil; sadece deneyimini dürüstçe anlatmak ve başkaları için neyin mümkün olabileceğini göstermek."
  },
  {
   "id": 12,
@@ -95,7 +95,7 @@
   "start": 63.0,
   "end": 68.6,
   "de": "probierst sie selbst aus und teilst deine Erfahrungen, wenn du wirklich dahinter stehst.",
-  "text": "kendin denersin ve gerçekten arkasında duruyorsan deneyimlerini paylaşırsın."
+  "text": "kendin denersin ve gerçekten inanıyorsan deneyimini paylaşırsın."
  },
  {
   "id": 14,
@@ -109,7 +109,7 @@
   "start": 74.52,
   "end": 78.0,
   "de": "Wenn's nicht passt, gibt's das Geld einfach zurück.",
-  "text": "Uymazsa, paranı kolayca geri alırsın."
+  "text": "Uymazsa paranı geri alırsın."
  },
  {
   "id": 16,
@@ -123,7 +123,7 @@
   "start": 82.2,
   "end": 87.0,
   "de": "und die andere Person kann ganz ohne Risiko schauen, ob's für sie passt.",
-  "text": "ve karşındaki kişi de hiç risk almadan kendisine uyup uymadığına bakabilir."
+  "text": "ve karşındaki de hiç risk almadan uyup uymadığını görebilir."
  },
  {
   "id": 18,
@@ -144,34 +144,34 @@
   "start": 99.2,
   "end": 105.2,
   "de": "Statt viele Zwischenhändler und teure Werbung zu bezahlen, fließt das Geld direkt in die Produkte.",
-  "text": "Çok sayıda aracıya ve pahalı reklamlara para ödemek yerine, para doğrudan ürünlere gidiyor."
+  "text": "Aracılara ve pahalı reklamlara ödemek yerine, para doğrudan ürünlere gidiyor."
  },
  {
   "id": 21,
   "start": 105.2,
   "end": 109.28,
   "de": "So entsteht eine Qualität, die man im Alltag wirklich merkt.",
-  "text": "Böylece günlük hayatta gerçekten hissedilen bir kalite ortaya çıkıyor."
+  "text": "Sonuç: günlük hayatta gerçekten hissedilen bir kalite."
  },
  {
   "id": 22,
   "start": 109.28,
   "end": 116.4,
   "de": "Und ein Teil geht an die Menschen, die die Produkte selbst nutzen, weiterempfehlen und andere dabei unterstützen.",
-  "text": "Bir kısmı da ürünleri kendisi kullanan, tavsiye eden ve bu süreçte başkalarına destek olan insanlara gidiyor."
+  "text": "Bir kısmı da ürünleri kendi kullanan, tavsiye eden ve başkalarına destek olan insanlara gidiyor."
  },
  {
   "id": 23,
   "start": 116.4,
   "end": 119.4,
   "de": "Wie das genau funktioniert, zeige ich dir.",
-  "text": "Tam olarak nasıl işlediğini sana göstereceğim."
+  "text": "Nasıl işlediğini sana anlatayım."
  },
  {
   "id": 24,
   "start": 119.4,
   "end": 122.4,
   "de": "Ich nehme dich gerne an die Hand.",
-  "text": "Sana memnuniyetle yol gösteririm."
+  "text": "Seve seve yol gösteririm."
  }
 ]
