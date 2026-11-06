@@ -1584,6 +1584,119 @@ export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firs
   ].join('\n')
 }
 
+// ─── Update November 2026: 13 Sprachen + Weiterempfehlen + P.S. Android ──────
+// Kategorie "updates", Versand nur über scripts/send-update-2026-11.ts (Test an Daniel, Rest nur mit Freigabe).
+// Bewusst ohne große Bilder (Spam-Filter mögen ein ausgewogenes Text-Bild-Verhältnis), Textfassung für multipart.
+
+export const UPDATE_2026_11_SUBJECT = '13 Sprachen für deine Seite und dein Empfehlungsbonus'
+export const UPDATE_2026_11_PREHEADER = 'Fünf neue Sprachen, ganz automatisch. Und so sparst du dir dein Abo, wenn du FinestSites weiterempfiehlst.'
+
+const U11 = {
+  violet: '#6B4FD8', violetSoft: '#F1EDFD', ink: '#111111', body: '#3D3D3D', muted: '#6F6F6F', line: '#ECEAE7', soft: '#F7F6F4',
+  rainbow: ['#F4B9AE', '#F5DBA2', '#CBE6CD', '#B8D2F1'],
+}
+const U11_NEW_LANGS = ['Türkisch', 'Serbisch', 'Spanisch', 'Chinesisch', 'Koreanisch']
+const U11_OLD_LANGS = ['Deutsch', 'Englisch', 'Italienisch', 'Russisch', 'Ukrainisch', 'Polnisch', 'Bulgarisch', 'Hindi']
+
+/** Partner-Rechenbeispiel: Pro im Monatsabo, 10 % vom Nettobetrag (19 % MwSt. herausgerechnet) */
+function u11Commission(count: number): string {
+  const perCustomer = (27 / 1.19) * 0.1
+  return (Math.round(perCustomer * count * 100) / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+export function update202611Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
+  const name = launchFirstName(firstName)
+  const rainbow = `<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin:0 0 26px;"><tr>${U11.rainbow.map(c => `<td height="4" bgcolor="${c}" style="height:4px;font-size:0;line-height:0;background:${c};">&nbsp;</td>`).join('')}</tr></table>`
+  const kicker = (t: string) => `<p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${U11.violet};">${t}</p>`
+  const h1 = (t: string) => `<h1 style="margin:0 0 12px;font-size:25px;font-weight:700;color:${U11.ink};letter-spacing:-0.02em;line-height:1.22;">${t}</h1>`
+  const p = (t: string, extra = '') => `<p style="margin:0;font-size:15.5px;color:${U11.body};line-height:1.65;${extra}">${t}</p>`
+  const pill = (t: string, isNew: boolean) => `<span style="display:inline-block;margin:0 6px 8px 0;padding:6px 12px;border-radius:999px;font-size:13.5px;font-weight:${isNew ? 700 : 500};${isNew ? `background:${U11.violet};color:#FFFFFF;` : `background:${U11.soft};color:${U11.muted};border:1px solid ${U11.line};`}">${t}</span>`
+  const btn = (url: string, label: string) => `<table cellpadding="0" cellspacing="0" role="presentation" style="margin:26px 0 0;"><tr>
+      <td bgcolor="${U11.ink}" style="background:${U11.ink};border-radius:999px;mso-padding-alt:14px 26px;">
+        <a href="${url}" target="_blank" style="display:inline-block;padding:14px 26px;font-size:15px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:999px;">${label}</a>
+      </td></tr></table>`
+  const side = (title: string, text: string) => `<td width="50%" valign="top" style="padding:16px;background:${U11.soft};border-radius:14px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${U11.muted};">${title}</p>
+      <p style="margin:0;font-size:15px;color:${U11.ink};line-height:1.45;">${text}</p></td>`
+  const calcRow = (n: number, result: string, highlight = false) => `<tr>
+      <td style="padding:12px 0;border-top:1px solid ${U11.line};font-size:15px;color:${U11.body};">${n} Empfehlungen</td>
+      <td align="right" style="padding:12px 0;border-top:1px solid ${U11.line};font-size:15px;font-weight:700;color:${highlight ? U11.violet : U11.ink};white-space:nowrap;">${result}</td></tr>`
+
+  const preheader = `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F4F4F5;">${UPDATE_2026_11_PREHEADER}${'&nbsp;&zwnj;'.repeat(40)}</div>`
+
+  return layoutCards([
+    `${preheader}${rainbow}
+     ${kicker('Update')}
+     ${h1('Deine Seite spricht jetzt 13 Sprachen')}
+     ${p(`${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau in den Ländern, in denen gerade besonders viele neue Teampartner dazukommen.`)}
+     <div style="margin:20px 0 4px;">${U11_NEW_LANGS.map(l => pill(l, true)).join('')}${U11_OLD_LANGS.map(l => pill(l, false)).join('')}</div>
+     ${p(`Besucher sehen deine Seite automatisch in ihrer Sprache, inklusive Video und deinem Über-mich-Text. <strong style="color:${U11.ink};">Du musst nichts tun.</strong>`)}`,
+
+    `${kicker('Weiterempfehlen')}
+     ${h1('Empfiehl FinestSites und spar dir dein Abo')}
+     ${p('Immer mehr von euch fragen mich danach. Deshalb hier kurz, wie es funktioniert:')}
+     <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin:20px 0 0;"><tr>
+       ${side('Du bekommst', '10 % von jeder Zahlung, solange die Person Kunde ist')}
+       <td width="10" style="width:10px;font-size:0;">&nbsp;</td>
+       ${side('Deine Empfehlung', '20 % auf den ersten Monat oder 10 % dauerhaft im Jahresabo')}
+     </tr></table>
+     <p style="margin:26px 0 6px;font-size:16px;font-weight:700;color:${U11.ink};">Ein Rechenbeispiel mit Pro</p>
+     <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
+       ${calcRow(3, `${u11Commission(3)} € im Monat`)}
+       ${calcRow(6, `${u11Commission(6)} € im Monat`)}
+       ${calcRow(12, `${u11Commission(12)} € im Monat`, true)}
+     </table>
+     <p style="margin:10px 0 0;padding:14px 16px;background:${U11.violetSoft};border-radius:14px;font-size:15px;color:${U11.ink};line-height:1.5;">
+       Bei 12 Empfehlungen ist <strong>dein eigenes Pro-Abo (27 € im Monat) komplett bezahlt</strong>. Die Gutschrift wird automatisch mit deinem Abo verrechnet.
+     </p>
+     <p style="margin:10px 0 0;font-size:12.5px;color:${U11.muted};line-height:1.55;">Gerechnet mit Pro im Monatsabo: 10 % vom Nettobetrag, rund 2,27 € je Empfehlung und Monat. Einmal deine Abrechnungsangaben hinterlegen, dann läuft alles von selbst.</p>
+     ${btn(`${APP_URL}/affiliate`, 'Meinen Empfehlungslink holen')}`,
+
+    `${p(`Fragen? Antworte einfach auf diese Mail, ich lese alles selbst.`)}
+     ${p(`Viele Grüße<br /><strong style="color:${U11.ink};">Daniel von FinestSites</strong>`, 'margin-top:14px;')}
+     <div style="margin:24px 0 0;padding:18px 0 0;border-top:1px solid ${U11.line};">
+       ${p(`<strong style="color:${U11.ink};">P.S. an alle Android-Tester:</strong> Danke für die vielen Rückmeldungen! Wir setzen gerade alles technisch um, und Google macht es uns dabei nicht ganz leicht. Ich melde mich selbstverständlich bei jedem von euch persönlich. Bitte habt noch ein bisschen Geduld.`, 'font-size:14.5px;')}
+     </div>`,
+  ], prefs)
+}
+
+export function update202611Text({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
+  const name = launchFirstName(firstName)
+  return [
+    'UPDATE: Deine Seite spricht jetzt 13 Sprachen',
+    '',
+    `${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau in den Ländern, in denen gerade besonders viele neue Teampartner dazukommen.`,
+    '',
+    `Neu: ${U11_NEW_LANGS.join(', ')}`,
+    `Schon dabei: ${U11_OLD_LANGS.join(', ')}`,
+    '',
+    'Besucher sehen deine Seite automatisch in ihrer Sprache, inklusive Video und deinem Über-mich-Text. Du musst nichts tun.',
+    '',
+    'WEITEREMPFEHLEN: Empfiehl FinestSites und spar dir dein Abo',
+    '',
+    'Du bekommst: 10 % von jeder Zahlung, solange die Person Kunde ist.',
+    'Deine Empfehlung bekommt: 20 % auf den ersten Monat oder 10 % dauerhaft im Jahresabo.',
+    '',
+    'Ein Rechenbeispiel (Pro im Monatsabo, 10 % vom Nettobetrag):',
+    `3 Empfehlungen mit Pro: ${u11Commission(3)} € im Monat`,
+    `6 Empfehlungen mit Pro: ${u11Commission(6)} € im Monat`,
+    `12 Empfehlungen mit Pro: ${u11Commission(12)} € im Monat`,
+    'Bei 12 Empfehlungen ist dein eigenes Pro-Abo (27 € im Monat) komplett bezahlt. Die Gutschrift wird automatisch mit deinem Abo verrechnet.',
+    '',
+    `Deinen Empfehlungslink findest du hier: ${APP_URL}/affiliate`,
+    '',
+    'Fragen? Antworte einfach auf diese Mail, ich lese alles selbst.',
+    'Viele Grüße',
+    'Daniel von FinestSites',
+    '',
+    'P.S. an alle Android-Tester: Danke für die vielen Rückmeldungen! Wir setzen gerade alles technisch um, und Google macht es uns dabei nicht ganz leicht. Ich melde mich selbstverständlich bei jedem von euch persönlich. Bitte habt noch ein bisschen Geduld.',
+    '',
+    '---',
+    ...(prefs ? [`Diese Mails abbestellen: ${prefs.unsubscribeUrl}`, `E-Mail-Einstellungen: ${prefs.settingsUrl}`] : []),
+    'Impressum: https://finestsites.io/impressum',
+  ].join('\n')
+}
+
 // ─── Partner-Auszahlungen: Sammelhinweis an den Admin (seit 16.10.2026) ───────
 // Eine Mail pro Lauf (Cron/Admin/Wartung), nie pro Partner. Nur an ADMIN_EMAIL.
 export function affiliatePayoutAdminAlertEmail({ context, paidCount, items }: {
