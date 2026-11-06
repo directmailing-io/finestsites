@@ -1706,7 +1706,7 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
           <tr>${flags.map(flagCell).join('')}</tr>
           <tr><td colspan="5" style="padding:0 18px 18px;font-family:${font};font-size:13px;line-height:1.55;color:${C.muted};text-align:center;">Außerdem: Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi</td></tr>`))}
         ${space(18)}
-        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp;Läuft automatisch, inklusive Video und ${nw('Über-mich-Text')}.<br /><strong style="color:${C.white};">Du musst nichts tun.</strong>`, 'font-size:15px;'))}
+        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp;Läuft automatisch, inkl. Video und ${nw('Über-mich-Text')}.<br /><strong style="color:${C.white};">Du musst nichts tun.</strong>`, 'font-size:15px;'))}
         ${space(56)}
 
         ${row(`${kicker('UPDATE 2 VON 2')}
@@ -1768,7 +1768,7 @@ export function update202611Text({ firstName, username, prefs }: { firstName?: s
     `Neu dazugekommen: ${U11_NEW_LANGS.join(', ')}`,
     `Außerdem: ${U11_OLD_LANGS.join(', ')}`,
     '',
-    'Besucher sehen deine Seite automatisch in ihrer Sprache, inklusive Video und deinem Über-mich-Text. Du musst nichts tun.',
+    'Besucher sehen deine Seite automatisch in ihrer Sprache, inkl. Video und deinem Über-mich-Text. Du musst nichts tun.',
     '',
     'UPDATE 2 VON 2: Empfiehl FinestSites. Dein Abo zahlt sich selbst.',
     '',
