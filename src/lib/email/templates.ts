@@ -1591,10 +1591,6 @@ export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firs
 export const UPDATE_2026_11_SUBJECT = '13 Sprachen für deine Seite und dein Empfehlungsbonus'
 export const UPDATE_2026_11_PREHEADER = 'Fünf neue Sprachen, ganz automatisch. Und so sparst du dir dein Abo, wenn du FinestSites weiterempfiehlst.'
 
-const U11 = {
-  violet: '#6B4FD8', violetSoft: '#F1EDFD', ink: '#111111', body: '#3D3D3D', muted: '#6F6F6F', line: '#ECEAE7', soft: '#F7F6F4',
-  rainbow: ['#F4B9AE', '#F5DBA2', '#CBE6CD', '#B8D2F1'],
-}
 const U11_NEW_LANGS = ['Türkisch', 'Serbisch', 'Spanisch', 'Chinesisch', 'Koreanisch']
 const U11_OLD_LANGS = ['Deutsch', 'Englisch', 'Italienisch', 'Russisch', 'Ukrainisch', 'Polnisch', 'Bulgarisch', 'Hindi']
 
@@ -1604,66 +1600,167 @@ function u11Commission(count: number): string {
   return (Math.round(perCustomer * count * 100) / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-export function update202611Email({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
-  const name = launchFirstName(firstName)
-  const rainbow = `<table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin:0 0 26px;"><tr>${U11.rainbow.map(c => `<td height="4" bgcolor="${c}" style="height:4px;font-size:0;line-height:0;background:${c};">&nbsp;</td>`).join('')}</tr></table>`
-  const kicker = (t: string) => `<p style="margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:${U11.violet};">${t}</p>`
-  const h1 = (t: string) => `<h1 style="margin:0 0 12px;font-size:25px;font-weight:700;color:${U11.ink};letter-spacing:-0.02em;line-height:1.22;">${t}</h1>`
-  const p = (t: string, extra = '') => `<p style="margin:0;font-size:15.5px;color:${U11.body};line-height:1.65;${extra}">${t}</p>`
-  const pill = (t: string, isNew: boolean) => `<span style="display:inline-block;margin:0 6px 8px 0;padding:6px 12px;border-radius:999px;font-size:13.5px;font-weight:${isNew ? 700 : 500};${isNew ? `background:${U11.violet};color:#FFFFFF;` : `background:${U11.soft};color:${U11.muted};border:1px solid ${U11.line};`}">${t}</span>`
-  const btn = (url: string, label: string) => `<table cellpadding="0" cellspacing="0" role="presentation" style="margin:26px 0 0;"><tr>
-      <td bgcolor="${U11.ink}" style="background:${U11.ink};border-radius:999px;mso-padding-alt:14px 26px;">
-        <a href="${url}" target="_blank" style="display:inline-block;padding:14px 26px;font-size:15px;font-weight:700;color:#FFFFFF;text-decoration:none;border-radius:999px;">${label}</a>
-      </td></tr></table>`
-  const side = (title: string, text: string) => `<td width="50%" valign="top" style="padding:16px;background:${U11.soft};border-radius:14px;">
-      <p style="margin:0 0 4px;font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:${U11.muted};">${title}</p>
-      <p style="margin:0;font-size:15px;color:${U11.ink};line-height:1.45;">${text}</p></td>`
-  const calcRow = (n: number, result: string, highlight = false) => `<tr>
-      <td style="padding:12px 0;border-top:1px solid ${U11.line};font-size:15px;color:${U11.body};">${n} Empfehlungen</td>
-      <td align="right" style="padding:12px 0;border-top:1px solid ${U11.line};font-size:15px;font-weight:700;color:${highlight ? U11.violet : U11.ink};white-space:nowrap;">${result}</td></tr>`
-
-  const preheader = `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:#F4F4F5;">${UPDATE_2026_11_PREHEADER}${'&nbsp;&zwnj;'.repeat(40)}</div>`
-
-  return layoutCards([
-    `${preheader}${rainbow}
-     ${kicker('Update')}
-     ${h1('Deine Seite spricht jetzt 13 Sprachen')}
-     ${p(`${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau in den Ländern, in denen gerade besonders viele neue Teampartner dazukommen.`)}
-     <div style="margin:20px 0 4px;">${U11_NEW_LANGS.map(l => pill(l, true)).join('')}${U11_OLD_LANGS.map(l => pill(l, false)).join('')}</div>
-     ${p(`Besucher sehen deine Seite automatisch in ihrer Sprache, inklusive Video und deinem Über-mich-Text. <strong style="color:${U11.ink};">Du musst nichts tun.</strong>`)}`,
-
-    `${kicker('Weiterempfehlen')}
-     ${h1('Empfiehl FinestSites und spar dir dein Abo')}
-     ${p('Immer mehr von euch fragen mich danach. Deshalb hier kurz, wie es funktioniert:')}
-     <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin:20px 0 0;"><tr>
-       ${side('Du bekommst', '10 % von jeder Zahlung, solange die Person Kunde ist')}
-       <td width="10" style="width:10px;font-size:0;">&nbsp;</td>
-       ${side('Deine Empfehlung', '20 % auf den ersten Monat oder 10 % dauerhaft im Jahresabo')}
-     </tr></table>
-     <p style="margin:26px 0 6px;font-size:16px;font-weight:700;color:${U11.ink};">Ein Rechenbeispiel mit Pro</p>
-     <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-       ${calcRow(3, `${u11Commission(3)} € im Monat`)}
-       ${calcRow(6, `${u11Commission(6)} € im Monat`)}
-       ${calcRow(12, `${u11Commission(12)} € im Monat`, true)}
-     </table>
-     <p style="margin:10px 0 0;padding:14px 16px;background:${U11.violetSoft};border-radius:14px;font-size:15px;color:${U11.ink};line-height:1.5;">
-       Bei 12 Empfehlungen ist <strong>dein eigenes Pro-Abo (27 € im Monat) komplett bezahlt</strong>. Die Gutschrift wird automatisch mit deinem Abo verrechnet.
-     </p>
-     <p style="margin:10px 0 0;font-size:12.5px;color:${U11.muted};line-height:1.55;">Gerechnet mit Pro im Monatsabo: 10 % vom Nettobetrag, rund 2,27 € je Empfehlung und Monat. Einmal deine Abrechnungsangaben hinterlegen, dann läuft alles von selbst.</p>
-     ${btn(`${APP_URL}/affiliate`, 'Meinen Empfehlungslink holen')}`,
-
-    `${p(`Fragen? Antworte einfach auf diese Mail, ich lese alles selbst.`)}
-     ${p(`Viele Grüße<br /><strong style="color:${U11.ink};">Daniel von FinestSites</strong>`, 'margin-top:14px;')}
-     <div style="margin:24px 0 0;padding:18px 0 0;border-top:1px solid ${U11.line};">
-       ${p(`<strong style="color:${U11.ink};">P.S. an alle Android-Tester:</strong> Danke für die vielen Rückmeldungen! Wir setzen gerade alles technisch um, und Google macht es uns dabei nicht ganz leicht. Ich melde mich selbstverständlich bei jedem von euch persönlich. Bitte habt noch ein bisschen Geduld.`, 'font-size:14.5px;')}
-     </div>`,
-  ], prefs)
+/** Persönlicher Empfehlungslink (gleiches Format wie /affiliate) und fertiger WhatsApp-Text dazu */
+function u11RefLink(username?: string | null): string | null {
+  const u = (username ?? '').trim()
+  return /^[a-z][a-z-]{1,29}$/.test(u) ? `https://finestsites.io/?ref=${u}` : null
+}
+function u11WhatsApp(link: string): string {
+  const msg = `Ich mache meine Webseiten mit FinestSites, super einfach und fertig designt. Schau es dir mal an, mit meinem Link bekommst du als Neukunde Rabatt: ${link}`
+  return `https://wa.me/?text=${encodeURIComponent(msg)}`
 }
 
-export function update202611Text({ firstName, prefs }: { firstName?: string; prefs?: PrefsFooter }): string {
+/**
+ * Update November 2026 im dunklen Premium-Layout der App-Mail (Daniel: helle Fassung „sehr langweilig“).
+ * Ohne Bilder außer dem Logo (Flaggen als Emoji, Balken als Tabellen), damit Spamfilter zufrieden sind.
+ * Jede Mail enthält den persönlichen Empfehlungslink des Empfängers (username), ohne Benutzernamen den Weg zu /affiliate.
+ */
+export function update202611Email({ firstName, username, prefs }: { firstName?: string; username?: string | null; prefs?: PrefsFooter }): string {
   const name = launchFirstName(firstName)
+  const link = u11RefLink(username)
+  const C = { bg: '#000000', card: '#141416', card2: '#1C1C20', line: '#26262B', white: '#F5F5F7', body: '#A1A1A6', muted: '#8E8E93', accent: '#B79CFF', violet: '#7C4DFF', green: '#30D158', amber: '#FFB340' }
+  const font = `'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif`
+  const row = (html: string, pad = '0 28px') => `<tr><td style="padding:${pad};">${html}</td></tr>`
+  const space = (h: number) => `<tr><td height="${h}" style="height:${h}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td></tr>`
+  const text = (html: string, style = '') => `<p style="margin:0;font-family:${font};font-size:16px;line-height:1.55;color:${C.body};text-align:center;${style}">${html}</p>`
+  const kicker = (t: string, color = C.accent) => `<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${color};text-align:center;letter-spacing:1.5px;">${t}</p>`
+  const h1 = (html: string) => `<h1 class="fs-h1" style="margin:14px 0 0;font-family:${font};font-size:36px;line-height:1.12;font-weight:700;color:${C.white};text-align:center;letter-spacing:-1px;">${html}</h1>`
+  const card = (inner: string, border = C.line, bg = C.card) => `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${bg}" style="background:${bg};border-radius:22px;border:1px solid ${border};">${inner}</table>`
+  const button = (href: string, label: string, bg: string, color: string) => `<table cellpadding="0" cellspacing="0" border="0" role="presentation" align="center" style="margin:0 auto;"><tr>
+      <td align="center" bgcolor="${bg}" style="background:${bg};border-radius:999px;mso-padding-alt:15px 30px;">
+        <a href="${href}" target="_blank" style="display:inline-block;padding:15px 30px;font-family:${font};font-size:16px;font-weight:700;color:${color};text-decoration:none;border-radius:999px;mso-padding-alt:0;">${label}</a>
+      </td></tr></table>`
+  const flags: [string, string][] = [['&#127481;&#127479;', 'Türkisch'], ['&#127479;&#127480;', 'Serbisch'], ['&#127466;&#127480;', 'Spanisch'], ['&#127464;&#127475;', 'Chinesisch'], ['&#127472;&#127479;', 'Koreanisch']]
+  const flagCell = ([f, l]: [string, string]) => `<td width="20%" align="center" valign="top" style="padding:20px 2px 18px;">
+      <div style="font-size:34px;line-height:40px;">${f}</div>
+      <div style="margin-top:6px;font-family:${font};font-size:12.5px;font-weight:700;color:${C.white};">${l}</div></td>`
+  const bar = (n: number, pct: number, amount: string, top = false) => `<tr>
+      <td width="92" valign="middle" style="padding:${top ? 0 : 12}px 10px 0 0;font-family:${font};font-size:14px;color:${C.body};white-space:nowrap;">${n} Kunden</td>
+      <td valign="middle" style="padding:${top ? 0 : 12}px 0 0;">
+        <table width="${pct}%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td height="12" bgcolor="${pct === 100 ? C.green : C.violet}" style="height:12px;font-size:0;line-height:0;border-radius:6px;background:${pct === 100 ? C.green : C.violet};">&nbsp;</td></tr></table>
+      </td>
+      <td width="86" align="right" valign="middle" style="padding:${top ? 0 : 12}px 0 0 10px;font-family:${font};font-size:14px;font-weight:700;color:${pct === 100 ? C.green : C.white};white-space:nowrap;">${amount}&nbsp;€</td></tr>`
+  const half = (title: string, body: string) => `<td width="50%" valign="top" bgcolor="${C.card2}" style="padding:16px 16px 18px;background:${C.card2};border-radius:16px;">
+      <p style="margin:0;font-family:${font};font-size:11.5px;font-weight:700;letter-spacing:1px;color:${C.muted};">${title}</p>
+      <p style="margin:6px 0 0;font-family:${font};font-size:15px;line-height:1.4;font-weight:700;color:${C.white};">${body}</p></td>`
+
+  const footer = prefs
+    ? `Du bekommst diese Mail, weil du ein FinestSites-Konto hast und „${prefs.categoryLabel}“ erhalten möchtest.<br />
+       <a href="${prefs.unsubscribeUrl}" style="color:${C.muted};text-decoration:underline;">Diese Mails abbestellen</a> &nbsp;·&nbsp;
+       <a href="${prefs.settingsUrl}" style="color:${C.muted};text-decoration:underline;">E-Mail-Einstellungen</a> &nbsp;·&nbsp;
+       <a href="mailto:info@finestsites.io" style="color:${C.muted};text-decoration:underline;">Support</a><br />
+       FinestSites · Daniel Kurzeja · <a href="https://finestsites.io/impressum" style="color:${C.muted};text-decoration:underline;">Impressum</a>`
+    : `© ${new Date().getFullYear()} FinestSites &nbsp;·&nbsp; <a href="mailto:info@finestsites.io" style="color:${C.muted};text-decoration:underline;">Support</a>`
+
+  const linkBlock = link
+    ? `${text('Dein persönlicher Empfehlungslink', `font-size:13px;font-weight:700;letter-spacing:1px;color:${C.muted};`)}
+       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="margin:10px 0 0;"><tr>
+         <td align="center" bgcolor="${C.card2}" style="padding:16px 12px;background:${C.card2};border-radius:14px;border:1px dashed #4A3A80;font-family:${font};font-size:17px;font-weight:700;color:${C.accent};word-break:break-all;">
+           <a href="${link}" target="_blank" style="color:${C.accent};text-decoration:none;">${link.replace('https://', '')}</a>
+         </td></tr></table>
+       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td height="18" style="height:18px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+       ${button(u11WhatsApp(link), 'Per WhatsApp teilen', C.green, '#000000')}
+       ${text(`<a href="${APP_URL}/affiliate" target="_blank" style="color:${C.body};text-decoration:underline;">Deine Gutschriften und alle Infos</a>`, 'margin-top:14px;font-size:14px;')}`
+    : `${button(`${APP_URL}/affiliate`, 'Meinen Empfehlungslink holen', C.white, '#000000')}`
+
+  return `<!DOCTYPE html>
+<html lang="de" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="supported-color-schemes" content="dark" />
+  <title>${UPDATE_2026_11_SUBJECT}</title>
+  <!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript>
+  <style>* { font-family: Arial, Helvetica, sans-serif !important; }</style><![endif]-->
+  <style>
+    @media screen {
+      @font-face { font-family: 'Plus Jakarta Sans'; font-weight: 400 700; font-style: normal;
+        src: url('${APP_URL}/fonts/PlusJakartaSans-latin.woff2') format('woff2'); }
+    }
+    :root { color-scheme: dark; supported-color-schemes: dark; }
+    body { margin:0 !important; padding:0 !important; width:100% !important; }
+    a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
+    u + #body a { color: inherit; text-decoration: none; }
+    @media screen and (max-width: 480px) { .fs-h1 { font-size: 31px !important; } .fs-big { font-size: 64px !important; } }
+  </style>
+</head>
+<body id="body" bgcolor="${C.bg}" style="margin:0;padding:0;background:${C.bg};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <div style="display:none;font-size:1px;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;mso-hide:all;color:${C.bg};">${UPDATE_2026_11_PREHEADER}${'&#847;&zwnj;&nbsp;'.repeat(60)}</div>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${C.bg}" style="background:${C.bg};">
+    <tr><td align="center" style="padding:40px 0 48px;">
+      <!--[if mso]><table width="560" cellpadding="0" cellspacing="0" border="0" role="presentation" align="center"><tr><td><![endif]-->
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="max-width:560px;width:100%;">
+
+        ${row(`<img src="${APP_LAUNCH_ASSETS}/logo-white.png" alt="FinestSites" width="120" height="25" style="display:block;margin:0 auto;width:120px;height:auto;border:0;outline:none;color:${C.white};font-family:${font};font-size:20px;font-weight:700;text-align:center;" />`)}
+        ${space(26)}
+        ${row(`<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>${['#F4B9AE', '#F5DBA2', '#CBE6CD', '#B8D2F1'].map(c => `<td height="3" bgcolor="${c}" style="height:3px;font-size:0;line-height:0;background:${c};">&nbsp;</td>`).join('')}</tr></table>`, '0 120px')}
+        ${space(40)}
+
+        ${row(`${kicker('UPDATE 1 VON 2')}
+               ${h1(`Deine Seite spricht jetzt <span style="color:${C.accent};white-space:nowrap;">13 Sprachen.</span>`)}
+               ${text(`${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau dort, wo gerade besonders viele neue Teampartner dazukommen.`, 'margin-top:18px;font-size:17px;')}`)}
+        ${space(28)}
+        ${row(card(`<tr>${flags.map(flagCell).join('')}</tr>
+          <tr><td colspan="5" style="padding:0 20px 18px;font-family:${font};font-size:13px;line-height:1.5;color:${C.muted};text-align:center;">Schon dabei: Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch, Hindi</td></tr>`))}
+        ${space(18)}
+        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp; Läuft automatisch, inklusive Video und Über-mich-Text. <strong style="color:${C.white};">Du musst nichts tun.</strong>`, 'font-size:15px;'))}
+        ${space(56)}
+
+        ${row(`${kicker('UPDATE 2 VON 2')}
+               ${h1(`Empfiehl FinestSites.<br /><span style="color:${C.accent};">Und dein Abo zahlt sich selbst.</span>`)}
+               ${text('Immer mehr von euch fragen mich danach. So einfach geht es:', 'margin-top:18px;font-size:17px;')}`)}
+        ${space(28)}
+        ${row(card(`<tr><td style="padding:26px 22px 8px;" align="center">
+            <p class="fs-big" style="margin:0;font-family:${font};font-size:72px;line-height:1;font-weight:700;color:${C.green};letter-spacing:-2px;">0&nbsp;€</p>
+            <p style="margin:10px 0 0;font-family:${font};font-size:16px;line-height:1.45;color:${C.white};font-weight:700;">kostet dich dein Pro-Abo<br />ab 12 empfohlenen Pro-Kunden</p>
+          </td></tr>
+          <tr><td style="padding:22px 22px 6px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
+              ${bar(3, 25, u11Commission(3), true)}
+              ${bar(6, 50, u11Commission(6))}
+              ${bar(12, 100, u11Commission(12))}
+            </table>
+            <p style="margin:12px 0 0;font-family:${font};font-size:12.5px;line-height:1.5;color:${C.muted};">Gutschrift pro Monat, gerechnet mit Pro im Monatsabo (27 €). Du bekommst 10 % vom Nettobetrag, automatisch mit deinem Abo verrechnet.</p>
+          </td></tr>
+          <tr><td style="padding:16px 14px 14px;">
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
+              ${half('DU BEKOMMST', '10 % von jeder Zahlung, solange sie Kunde sind')}
+              <td width="10" style="width:10px;font-size:0;">&nbsp;</td>
+              ${half('DEINE KONTAKTE', '20 % auf den ersten Monat oder 10 % im Jahresabo')}
+            </tr></table>
+          </td></tr>`))}
+        ${space(28)}
+        ${row(linkBlock)}
+        ${space(56)}
+
+        ${row(card(`<tr><td style="padding:22px 22px 24px;">
+            <p style="margin:0;font-family:${font};font-size:17px;font-weight:700;color:${C.amber};">P.S. an alle Android-Tester &#128591;</p>
+            <p style="margin:8px 0 0;font-family:${font};font-size:15px;line-height:1.55;color:${C.body};">Danke für die vielen Rückmeldungen! Wir setzen gerade alles technisch um, und Google macht es uns dabei nicht ganz leicht. Ich melde mich selbstverständlich bei jedem von euch persönlich. <strong style="color:${C.white};">Bitte habt noch ein bisschen Geduld.</strong></p>
+          </td></tr>`, '#5C4520'))}
+        ${space(40)}
+
+        ${row(`${text(`Fragen? Antworte einfach auf diese Mail, ich lese alles selbst.`)}
+               ${text('Daniel von FinestSites', `margin-top:10px;color:${C.white};font-weight:700;`)}`)}
+        ${space(40)}
+        ${row(`<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td style="padding-top:24px;border-top:1px solid ${C.line};font-family:${font};font-size:12px;line-height:1.7;color:${C.muted};text-align:center;">${footer}</td></tr></table>`)}
+
+      </table>
+      <!--[if mso]></td></tr></table><![endif]-->
+    </td></tr>
+  </table>
+</body>
+</html>`
+}
+
+export function update202611Text({ firstName, username, prefs }: { firstName?: string; username?: string | null; prefs?: PrefsFooter }): string {
+  const name = launchFirstName(firstName)
+  const link = u11RefLink(username)
   return [
-    'UPDATE: Deine Seite spricht jetzt 13 Sprachen',
+    'UPDATE 1 VON 2: Deine Seite spricht jetzt 13 Sprachen',
     '',
     `${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau in den Ländern, in denen gerade besonders viele neue Teampartner dazukommen.`,
     '',
@@ -1672,7 +1769,7 @@ export function update202611Text({ firstName, prefs }: { firstName?: string; pre
     '',
     'Besucher sehen deine Seite automatisch in ihrer Sprache, inklusive Video und deinem Über-mich-Text. Du musst nichts tun.',
     '',
-    'WEITEREMPFEHLEN: Empfiehl FinestSites und spar dir dein Abo',
+    'UPDATE 2 VON 2: Empfiehl FinestSites. Und dein Abo zahlt sich selbst.',
     '',
     'Du bekommst: 10 % von jeder Zahlung, solange die Person Kunde ist.',
     'Deine Empfehlung bekommt: 20 % auf den ersten Monat oder 10 % dauerhaft im Jahresabo.',
@@ -1683,7 +1780,8 @@ export function update202611Text({ firstName, prefs }: { firstName?: string; pre
     `12 Empfehlungen mit Pro: ${u11Commission(12)} € im Monat`,
     'Bei 12 Empfehlungen ist dein eigenes Pro-Abo (27 € im Monat) komplett bezahlt. Die Gutschrift wird automatisch mit deinem Abo verrechnet.',
     '',
-    `Deinen Empfehlungslink findest du hier: ${APP_URL}/affiliate`,
+    link ? `Dein persönlicher Empfehlungslink: ${link}` : `Deinen Empfehlungslink findest du hier: ${APP_URL}/affiliate`,
+    `Gutschriften und alle Infos: ${APP_URL}/affiliate`,
     '',
     'Fragen? Antworte einfach auf diese Mail, ich lese alles selbst.',
     'Viele Grüße',
