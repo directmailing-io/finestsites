@@ -1588,8 +1588,8 @@ export function appLaunch202611Text({ firstName, hasPlan = true, prefs }: { firs
 // Kategorie "updates", Versand nur über scripts/send-update-2026-11.ts (Test an Daniel, Rest nur mit Freigabe).
 // Bewusst ohne große Bilder (Spam-Filter mögen ein ausgewogenes Text-Bild-Verhältnis), Textfassung für multipart.
 
-export const UPDATE_2026_11_SUBJECT = '13 Sprachen für deine Seite und dein Empfehlungsbonus'
-export const UPDATE_2026_11_PREHEADER = 'Fünf neue Sprachen, ganz automatisch. Und so sparst du dir dein Abo, wenn du FinestSites weiterempfiehlst.'
+export const UPDATE_2026_11_SUBJECT = 'Wieder mal ein Update!'
+export const UPDATE_2026_11_PREHEADER = 'Deine Seiten sprechen jetzt 13 Sprachen. Und mit deinem Empfehlungslink zahlt sich dein Abo selbst.'
 
 const U11_NEW_LANGS = ['Türkisch', 'Serbisch', 'Spanisch', 'Chinesisch', 'Koreanisch']
 const U11_OLD_LANGS = ['Deutsch', 'Englisch', 'Italienisch', 'Russisch', 'Ukrainisch', 'Polnisch', 'Bulgarisch', 'Hindi']
@@ -1600,29 +1600,27 @@ function u11Commission(count: number): string {
   return (Math.round(perCustomer * count * 100) / 100).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-/** Persönlicher Empfehlungslink (gleiches Format wie /affiliate) und fertiger WhatsApp-Text dazu */
+/** Persönlicher Empfehlungslink (gleiches Format wie /affiliate) */
 function u11RefLink(username?: string | null): string | null {
   const u = (username ?? '').trim()
   return /^[a-z][a-z-]{1,29}$/.test(u) ? `https://finestsites.io/?ref=${u}` : null
-}
-function u11WhatsApp(link: string): string {
-  const msg = `Ich mache meine Webseiten mit FinestSites, super einfach und fertig designt. Schau es dir mal an, mit meinem Link bekommst du als Neukunde Rabatt: ${link}`
-  return `https://wa.me/?text=${encodeURIComponent(msg)}`
 }
 
 /**
  * Update November 2026 im dunklen Premium-Layout der App-Mail (Daniel: helle Fassung „sehr langweilig“).
  * Ohne Bilder außer dem Logo (Flaggen als Emoji, Balken als Tabellen), damit Spamfilter zufrieden sind.
  * Jede Mail enthält den persönlichen Empfehlungslink des Empfängers (username), ohne Benutzernamen den Weg zu /affiliate.
+ * Mobil zuerst: feste Umbrüche in den Überschriften, Vorlagennamen und Fachwörter mit nowrap, kleinere Flaggen-Beschriftung unter 400 px.
  */
 export function update202611Email({ firstName, username, prefs }: { firstName?: string; username?: string | null; prefs?: PrefsFooter }): string {
   const name = launchFirstName(firstName)
   const link = u11RefLink(username)
   const C = { bg: '#000000', card: '#141416', card2: '#1C1C20', line: '#26262B', white: '#F5F5F7', body: '#A1A1A6', muted: '#8E8E93', accent: '#B79CFF', violet: '#7C4DFF', green: '#30D158', amber: '#FFB340' }
   const font = `'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif`
-  const row = (html: string, pad = '0 28px') => `<tr><td style="padding:${pad};">${html}</td></tr>`
+  const row = (html: string, pad = '0 28px') => `<tr><td class="fs-pad" style="padding:${pad};">${html}</td></tr>`
   const space = (h: number) => `<tr><td height="${h}" style="height:${h}px;font-size:0;line-height:0;mso-line-height-rule:exactly;">&nbsp;</td></tr>`
-  const text = (html: string, style = '') => `<p style="margin:0;font-family:${font};font-size:16px;line-height:1.55;color:${C.body};text-align:center;${style}">${html}</p>`
+  const text = (html: string, style = '', cls = '') => `<p${cls ? ` class="${cls}"` : ''} style="margin:0;font-family:${font};font-size:16px;line-height:1.55;color:${C.body};text-align:center;${style}">${html}</p>`
+  const nw = (t: string) => `<span style="white-space:nowrap;">${t}</span>`
   const kicker = (t: string, color = C.accent) => `<p style="margin:0;font-family:${font};font-size:13px;font-weight:700;color:${color};text-align:center;letter-spacing:1.5px;">${t}</p>`
   const h1 = (html: string) => `<h1 class="fs-h1" style="margin:14px 0 0;font-family:${font};font-size:36px;line-height:1.12;font-weight:700;color:${C.white};text-align:center;letter-spacing:-1px;">${html}</h1>`
   const card = (inner: string, border = C.line, bg = C.card) => `<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" bgcolor="${bg}" style="background:${bg};border-radius:22px;border:1px solid ${border};">${inner}</table>`
@@ -1631,9 +1629,9 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
         <a href="${href}" target="_blank" style="display:inline-block;padding:15px 30px;font-family:${font};font-size:16px;font-weight:700;color:${color};text-decoration:none;border-radius:999px;mso-padding-alt:0;">${label}</a>
       </td></tr></table>`
   const flags: [string, string][] = [['&#127481;&#127479;', 'Türkisch'], ['&#127479;&#127480;', 'Serbisch'], ['&#127466;&#127480;', 'Spanisch'], ['&#127464;&#127475;', 'Chinesisch'], ['&#127472;&#127479;', 'Koreanisch']]
-  const flagCell = ([f, l]: [string, string]) => `<td width="20%" align="center" valign="top" style="padding:20px 2px 18px;">
+  const flagCell = ([f, l]: [string, string]) => `<td width="20%" align="center" valign="top" style="padding:14px 2px 16px;">
       <div style="font-size:34px;line-height:40px;">${f}</div>
-      <div style="margin-top:6px;font-family:${font};font-size:12.5px;font-weight:700;color:${C.white};">${l}</div></td>`
+      <div class="fs-flag" style="margin-top:6px;font-family:${font};font-size:12.5px;font-weight:700;color:${C.white};">${l}</div></td>`
   const bar = (n: number, pct: number, amount: string, top = false) => `<tr>
       <td width="92" valign="middle" style="padding:${top ? 0 : 12}px 10px 0 0;font-family:${font};font-size:14px;color:${C.body};white-space:nowrap;">${n} Kunden</td>
       <td valign="middle" style="padding:${top ? 0 : 12}px 0 0;">
@@ -1658,9 +1656,9 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
          <td align="center" bgcolor="${C.card2}" style="padding:16px 12px;background:${C.card2};border-radius:14px;border:1px dashed #4A3A80;font-family:${font};font-size:17px;font-weight:700;color:${C.accent};word-break:break-all;">
            <a href="${link}" target="_blank" style="color:${C.accent};text-decoration:none;">${link.replace('https://', '')}</a>
          </td></tr></table>
-       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td height="18" style="height:18px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
-       ${button(u11WhatsApp(link), 'Per WhatsApp teilen', C.green, '#000000')}
-       ${text(`<a href="${APP_URL}/affiliate" target="_blank" style="color:${C.body};text-decoration:underline;">Deine Gutschriften und alle Infos</a>`, 'margin-top:14px;font-size:14px;')}`
+       ${text('Einfach kopieren und an deine Kontakte schicken.', `margin-top:12px;font-size:14px;color:${C.muted};`)}
+       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td height="22" style="height:22px;font-size:0;line-height:0;">&nbsp;</td></tr></table>
+       ${button(`${APP_URL}/affiliate`, 'Gutschriften und alle Infos', C.white, '#000000')}`
     : `${button(`${APP_URL}/affiliate`, 'Meinen Empfehlungslink holen', C.white, '#000000')}`
 
   return `<!DOCTYPE html>
@@ -1685,7 +1683,9 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
     body { margin:0 !important; padding:0 !important; width:100% !important; }
     a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
     u + #body a { color: inherit; text-decoration: none; }
-    @media screen and (max-width: 480px) { .fs-h1 { font-size: 31px !important; } .fs-big { font-size: 64px !important; } }
+    @media screen and (max-width: 480px) { .fs-h1 { font-size: 30px !important; letter-spacing: -0.6px !important; } .fs-big { font-size: 64px !important; } .fs-lead { font-size: 16px !important; } }
+    @media screen and (max-width: 360px) { .fs-h1 { font-size: 26px !important; } }
+    @media screen and (max-width: 400px) { .fs-flag { font-size: 11px !important; } .fs-pad { padding-left: 20px !important; padding-right: 20px !important; } }
   </style>
 </head>
 <body id="body" bgcolor="${C.bg}" style="margin:0;padding:0;background:${C.bg};-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
@@ -1696,27 +1696,26 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
       <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="max-width:560px;width:100%;">
 
         ${row(`<img src="${APP_LAUNCH_ASSETS}/logo-white.png" alt="FinestSites" width="120" height="25" style="display:block;margin:0 auto;width:120px;height:auto;border:0;outline:none;color:${C.white};font-family:${font};font-size:20px;font-weight:700;text-align:center;" />`)}
-        ${space(26)}
-        ${row(`<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>${['#F4B9AE', '#F5DBA2', '#CBE6CD', '#B8D2F1'].map(c => `<td height="3" bgcolor="${c}" style="height:3px;font-size:0;line-height:0;background:${c};">&nbsp;</td>`).join('')}</tr></table>`, '0 120px')}
         ${space(40)}
 
         ${row(`${kicker('UPDATE 1 VON 2')}
-               ${h1(`Deine Seite spricht jetzt <span style="color:${C.accent};white-space:nowrap;">13 Sprachen.</span>`)}
-               ${text(`${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau dort, wo gerade besonders viele neue Teampartner dazukommen.`, 'margin-top:18px;font-size:17px;')}`)}
+               ${h1(`Deine Seiten sprechen<br />jetzt <span style="color:${C.accent};white-space:nowrap;">13 Sprachen.</span>`)}
+               ${text(`${name ? `Hey ${name}, deine` : 'Deine'} ${nw('Optimalset-Seite')}, ${nw('PM-Business-Seite')} und ${nw('cellRESET-Seite')} gibt es ab sofort in 13 Sprachen. Genau dort, wo gerade besonders viele neue Teampartner dazukommen.`, 'margin-top:18px;font-size:17px;', 'fs-lead')}`)}
         ${space(28)}
-        ${row(card(`<tr>${flags.map(flagCell).join('')}</tr>
-          <tr><td colspan="5" style="padding:0 20px 18px;font-family:${font};font-size:13px;line-height:1.5;color:${C.muted};text-align:center;">Schon dabei: Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch, Hindi</td></tr>`))}
+        ${row(card(`<tr><td colspan="5" style="padding:18px 18px 0;font-family:${font};font-size:11.5px;font-weight:700;letter-spacing:1.5px;color:${C.muted};text-align:center;">NEU DAZUGEKOMMEN</td></tr>
+          <tr>${flags.map(flagCell).join('')}</tr>
+          <tr><td colspan="5" style="padding:0 18px 18px;font-family:${font};font-size:13px;line-height:1.55;color:${C.muted};text-align:center;">Außerdem: Deutsch, Englisch, Italienisch, Russisch, Ukrainisch, Polnisch, Bulgarisch und Hindi</td></tr>`))}
         ${space(18)}
-        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp; Läuft automatisch, inklusive Video und Über-mich-Text. <strong style="color:${C.white};">Du musst nichts tun.</strong>`, 'font-size:15px;'))}
+        ${row(text(`<span style="color:${C.green};font-weight:700;">&#10003;</span>&nbsp;Läuft automatisch, inklusive Video und ${nw('Über-mich-Text')}.<br /><strong style="color:${C.white};">Du musst nichts tun.</strong>`, 'font-size:15px;'))}
         ${space(56)}
 
         ${row(`${kicker('UPDATE 2 VON 2')}
-               ${h1(`Empfiehl FinestSites.<br /><span style="color:${C.accent};">Und dein Abo zahlt sich selbst.</span>`)}
-               ${text('Immer mehr von euch fragen mich danach. So einfach geht es:', 'margin-top:18px;font-size:17px;')}`)}
+               ${h1(`Empfiehl FinestSites.<br /><span style="color:${C.accent};">Dein Abo zahlt<br />sich selbst.</span>`)}
+               ${text('Immer mehr von euch fragen mich danach.<br />So einfach geht es:', 'margin-top:18px;font-size:17px;', 'fs-lead')}`)}
         ${space(28)}
         ${row(card(`<tr><td style="padding:26px 22px 8px;" align="center">
             <p class="fs-big" style="margin:0;font-family:${font};font-size:72px;line-height:1;font-weight:700;color:${C.green};letter-spacing:-2px;">0&nbsp;€</p>
-            <p style="margin:10px 0 0;font-family:${font};font-size:16px;line-height:1.45;color:${C.white};font-weight:700;">kostet dich dein Pro-Abo<br />ab 12 empfohlenen Pro-Kunden</p>
+            <p style="margin:10px 0 0;font-family:${font};font-size:16px;line-height:1.45;color:${C.white};font-weight:700;">kostet dich dein ${nw('Pro-Abo')}<br />ab 12 empfohlenen ${nw('Pro-Kunden')}</p>
           </td></tr>
           <tr><td style="padding:22px 22px 6px;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation">
@@ -1724,13 +1723,13 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
               ${bar(6, 50, u11Commission(6))}
               ${bar(12, 100, u11Commission(12))}
             </table>
-            <p style="margin:12px 0 0;font-family:${font};font-size:12.5px;line-height:1.5;color:${C.muted};">Gutschrift pro Monat, gerechnet mit Pro im Monatsabo (27 €). Du bekommst 10 % vom Nettobetrag, automatisch mit deinem Abo verrechnet.</p>
+            <p style="margin:12px 0 0;font-family:${font};font-size:12.5px;line-height:1.5;color:${C.muted};">Gutschrift pro Monat, gerechnet mit Pro im Monatsabo (27&nbsp;€). Du bekommst 10&nbsp;% vom Nettobetrag, automatisch mit deinem Abo verrechnet.</p>
           </td></tr>
           <tr><td style="padding:16px 14px 14px;">
             <table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr>
-              ${half('DU BEKOMMST', '10 % von jeder Zahlung, solange sie Kunde sind')}
+              ${half('DU BEKOMMST', `10&nbsp;% von jeder Zahlung, solange sie Kunde sind`)}
               <td width="10" style="width:10px;font-size:0;">&nbsp;</td>
-              ${half('DEINE KONTAKTE', '20 % auf den ersten Monat oder 10 % im Jahresabo')}
+              ${half('DEINE KONTAKTE', `20&nbsp;% auf den ersten Monat oder 10&nbsp;% im ${nw('Jahresabo')}`)}
             </tr></table>
           </td></tr>`))}
         ${space(28)}
@@ -1743,7 +1742,7 @@ export function update202611Email({ firstName, username, prefs }: { firstName?: 
           </td></tr>`, '#5C4520'))}
         ${space(40)}
 
-        ${row(`${text(`Fragen? Antworte einfach auf diese Mail, ich lese alles selbst.`)}
+        ${row(`${text(`Fragen? Antworte einfach auf diese Mail,<br />ich lese alles selbst.`)}
                ${text('Daniel von FinestSites', `margin-top:10px;color:${C.white};font-weight:700;`)}`)}
         ${space(40)}
         ${row(`<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation"><tr><td style="padding-top:24px;border-top:1px solid ${C.line};font-family:${font};font-size:12px;line-height:1.7;color:${C.muted};text-align:center;">${footer}</td></tr></table>`)}
@@ -1760,16 +1759,18 @@ export function update202611Text({ firstName, username, prefs }: { firstName?: s
   const name = launchFirstName(firstName)
   const link = u11RefLink(username)
   return [
-    'UPDATE 1 VON 2: Deine Seite spricht jetzt 13 Sprachen',
+    'Wieder mal ein Update!',
     '',
-    `${name ? `Hey ${name}, deine` : 'Deine'} Optimalset- und PM-Business-Seite gibt es ab sofort in fünf weiteren Sprachen. Genau in den Ländern, in denen gerade besonders viele neue Teampartner dazukommen.`,
+    'UPDATE 1 VON 2: Deine Seiten sprechen jetzt 13 Sprachen',
     '',
-    `Neu: ${U11_NEW_LANGS.join(', ')}`,
-    `Schon dabei: ${U11_OLD_LANGS.join(', ')}`,
+    `${name ? `Hey ${name}, deine` : 'Deine'} Optimalset-Seite, PM-Business-Seite und cellRESET-Seite gibt es ab sofort in 13 Sprachen. Genau dort, wo gerade besonders viele neue Teampartner dazukommen.`,
+    '',
+    `Neu dazugekommen: ${U11_NEW_LANGS.join(', ')}`,
+    `Außerdem: ${U11_OLD_LANGS.join(', ')}`,
     '',
     'Besucher sehen deine Seite automatisch in ihrer Sprache, inklusive Video und deinem Über-mich-Text. Du musst nichts tun.',
     '',
-    'UPDATE 2 VON 2: Empfiehl FinestSites. Und dein Abo zahlt sich selbst.',
+    'UPDATE 2 VON 2: Empfiehl FinestSites. Dein Abo zahlt sich selbst.',
     '',
     'Du bekommst: 10 % von jeder Zahlung, solange die Person Kunde ist.',
     'Deine Empfehlung bekommt: 20 % auf den ersten Monat oder 10 % dauerhaft im Jahresabo.',
